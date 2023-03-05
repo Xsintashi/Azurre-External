@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace Offset{
+namespace Offset {
 	namespace netvars {
 		constexpr ::std::ptrdiff_t cs_gamerules_data = 0x0;
 		constexpr ::std::ptrdiff_t m_ArmorValue = 0x117CC;

@@ -5,6 +5,8 @@ class Config {
 public:
 	struct MiscConfig {
 		bool bhop = false;
+		bool thirdPerson = false;
+		int flashReduction = 0;
 	}m;
 };
 

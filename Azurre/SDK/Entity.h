@@ -14,6 +14,8 @@ public:
 	OFFSET(health, (entity), Offset::netvars::m_iHealth, int)
 	OFFSET(armor, (entity), Offset::netvars::m_ArmorValue, int)
 	OFFSET(teamNumber, (entity), Offset::netvars::m_iTeamNum, int)
+	OFFSET(flashMaxAlpha, (entity), Offset::netvars::m_flFlashMaxAlpha, float)
+	OFFSET(flashDuration, (entity), Offset::netvars::m_flFlashDuration, float)
 	OFFSET(flags, (entity), Offset::netvars::m_fFlags, int)
 
 };

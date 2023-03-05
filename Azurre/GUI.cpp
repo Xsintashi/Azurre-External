@@ -10,6 +10,8 @@
 #include <string>
 #include "SDK/Entity.h"
 #include "Config.h"
+#include "Hacks/SkinChanger.h"
+#include "SDK/GlobalVars.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -245,6 +247,12 @@ void GUI::EndRender() noexcept
 		ResetDevice();
 }
 
+static int skinID = 0;
+static float wear = 0.1f;
+static int seed = 10;
+static int statTrak = 10;
+static auto itemIndex = 0;
+
 void GUI::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
@@ -262,6 +270,27 @@ void GUI::Render() noexcept
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 		if (ImGui::BeginTabItem("Misc")) {
 			ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
+			ImGui::Checkbox("Thirdperson", &cfg->m.thirdPerson);
+			ImGui::SetNextItemWidth(200.0f);
+			ImGui::SliderInt("##flash", &cfg->m.flashReduction, 0, 100, "Flashbang Reduction: %i%");
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Skin Changer")) {
+			ImGui::PushItemWidth(200.0f);
+			ImGui::Combo("##1", &itemIndex, [](void* data, int idx, const char** out_text) {
+				*out_text = Skin::weapon_names[idx].name;
+			return true;
+				}, nullptr, Skin::weapon_names.size(), 5);
+
+			ImGui::InputInt("Skin ID", &skinID);
+			ImGui::InputFloat("Wear", &wear);
+			ImGui::InputInt("Seed", &seed);
+			ImGui::InputInt("StatTrak", &statTrak);
+			ImGui::PopItemWidth();
+
+			if (ImGui::Button("Update"))
+				Skin::add(Skin::weapon_names[itemIndex].definition_index, skinID, wear, seed, statTrak);
+
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Players")) {
@@ -292,6 +321,32 @@ void GUI::Render() noexcept
 				}
 				ImGui::EndTable();
 			}
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Debug")) {
+
+			static auto frameRate = 1.0f;
+			frameRate = 0.9f * frameRate + 0.1f * globalVars->absoluteFrameTime;
+			const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
+			const int tickRate = static_cast<int>(1 / globalVars->intervalPerTick); //tps
+
+			ImGui::Text("Fps: %i", framePerSecond);
+			ImGui::Text("Tick: %i", tickRate);
+			ImGui::Text("Client: 0x%p", IClient);
+			ImGui::Text("ClientState: 0x%p", IClientState);
+			ImGui::Text("Engine: 0x%p", IEngine);
+			ImGui::Text("RealTime: %.2f", globalVars->realTime);
+			ImGui::Text("FrameCount: %i", globalVars->frameCount);
+			ImGui::Text("AbsoluteFrametime: %.2f", globalVars->absoluteFrameTime);
+			ImGui::Text("AbsoluteFrameStartTimeStdDev: %.2f", globalVars->absoluteFrameStartTimeStdDev);
+			ImGui::Text("CurrentTime: %.2f", globalVars->currentTime);
+			ImGui::Text("FrameTime: %.2f", globalVars->frameTime);
+			ImGui::Text("MaxClients: %i", globalVars->maxClients);
+			ImGui::Text("TickCount: %i", globalVars->tickCount);
+			ImGui::Text("IntervalPerTick: %.2f", globalVars->intervalPerTick);
+			ImGui::Text("InterpolationAmount: %.2f", globalVars->interpolationAmount);
+			ImGui::Text("LocalPlayer: "); ImGui::SameLine();
+			ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", localPlayer ? localPlayer.get() : 0);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

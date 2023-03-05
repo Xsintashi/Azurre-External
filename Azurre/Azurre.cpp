@@ -3,6 +3,8 @@
 #include "Config.h"
 #include "Hacks/Misc.h"
 #include <thread>
+#include "Hacks/SkinChanger.h"
+#include "SDK/GlobalVars.h"
 
 int __stdcall wWinMain(
 	HINSTANCE instance,
@@ -11,6 +13,7 @@ int __stdcall wWinMain(
 	int commandShow)
 {
 	cfg.emplace(Config{});
+	globalVars.emplace(GlobalVars{});
 	Core::init();
 
 	// create gui
@@ -21,8 +24,11 @@ int __stdcall wWinMain(
 	while (GUI::isRunning)
 	{
 		Core::update();
-
+		Misc::forceReload(true);
+		Misc::noFlash();
 		Misc::bunnyHop();
+		Misc::thirdperson();
+		Skin::update();
 
 		GUI::BeginRender();
 		GUI::Render();

@@ -2,4 +2,7 @@
 
 namespace Misc {
 	void bunnyHop() noexcept;
+	void forceReload(bool onKey);
+	void thirdperson();
+	void noFlash();
 }

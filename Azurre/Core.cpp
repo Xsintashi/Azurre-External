@@ -7,6 +7,7 @@
 #include "SDK/LocalPlayer.h"
 #include "SDK/interfaces.h"
 #include "SDK/Entity.h"
+#include "SDK/GlobalVars.h"
 #include "SDK/PlayerInfo.h"
 
 void Core::init() {
@@ -18,6 +19,7 @@ void Core::init() {
 
 void Core::update() {
 	localPlayer.init(csgo.Read<uintptr_t>(IClient + Offset::signatures::dwLocalPlayer));
+	globalVars = csgo.Read<GlobalVars>(IEngine + Offset::signatures::dwGlobalVars);
 
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState + Offset::signatures::dwClientState_PlayerInfo);
 
