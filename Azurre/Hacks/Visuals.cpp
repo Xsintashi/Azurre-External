@@ -20,12 +20,12 @@ void Visuals::thirdperson() //shitty method
     if (GetAsyncKeyState(0x43) & 0x8000) //C Key
     {
         once = true;
-        csgo.Write<int>(localPlayer + Offset::netvars::m_iObserverMode, 1);
+        csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 1);
     }
     else if (GetAsyncKeyState(0x56) & 0x8000) //V Key
     {
         once = true;
-        csgo.Write<int>(localPlayer + Offset::netvars::m_iObserverMode, 3);
+        csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 3);
     }
     else
     {
@@ -66,5 +66,5 @@ void Visuals::noFlash() {
 
     const float reducedFlash = 255.0f - cfg->v.flashReduction * 2.55f;
 
-    csgo.Write<float>(localPlayer + Offset::netvars::m_flFlashMaxAlpha, reducedFlash);
+    csgo.Write<float>(localPlayer.get() + Offset::netvars::m_flFlashMaxAlpha, reducedFlash);
 }

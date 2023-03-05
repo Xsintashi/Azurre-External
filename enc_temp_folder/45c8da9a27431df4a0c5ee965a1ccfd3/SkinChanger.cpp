@@ -44,6 +44,12 @@ void Skin::update() {
 		if (!weapon) continue;
 
 		const short weaponIndex = csgo.Read<short>(weapon + Offset::netvars::m_iItemDefinitionIndex);
+		//if (weaponIndex == WeaponID::Knife || weaponIndex == WeaponID::KnifeT) {
+		//	csgo.Write<short>(weapon + Offset::netvars::m_iItemDefinitionIndex, 508);
+		//	csgo.Write<int>(weapon + Offset::netvars::m_nViewModelIndex, 391);
+		//	csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iWorldModelIndex, 392);
+		//	return;
+		//}
 
 		if (const int paint = weaponData[weaponIndex].skinID) {
 			const bool shouldUpdate = csgo.Read<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit) != paint || pleaseUpdate;

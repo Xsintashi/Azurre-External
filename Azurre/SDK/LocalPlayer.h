@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 class Entity;
 
 class LocalPlayer {
@@ -21,7 +23,7 @@ public:
 
     constexpr auto get() noexcept
     {
-        return localEntity;
+        return (uintptr_t)localEntity;
     }
 private:
     Entity* localEntity = 0;
