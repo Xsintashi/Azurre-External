@@ -1,5 +1,7 @@
 #include "GUI.h"
 #include "Core.h"
+#include "Config.h"
+#include "Hacks/Misc.h"
 #include <thread>
 
 int __stdcall wWinMain(
@@ -8,7 +10,7 @@ int __stdcall wWinMain(
 	PWSTR arguments,
 	int commandShow)
 {
-
+	cfg.emplace(Config{});
 	Core::init();
 
 	// create gui
@@ -19,6 +21,9 @@ int __stdcall wWinMain(
 	while (GUI::isRunning)
 	{
 		Core::update();
+
+		Misc::bunnyHop();
+
 		GUI::BeginRender();
 		GUI::Render();
 		GUI::EndRender();

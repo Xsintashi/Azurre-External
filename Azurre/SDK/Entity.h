@@ -12,6 +12,8 @@ public:
 	OFFSET(health, (entity), Offset::netvars::m_iHealth, int)
 	OFFSET(armor, (entity), Offset::netvars::m_ArmorValue, int)
 	OFFSET(teamNumber, (entity), Offset::netvars::m_iTeamNum, int)
+	OFFSET(flags, (entity), Offset::netvars::m_fFlags, int)
+
 };
 
 inline Entity entityOffsets;

@@ -150,8 +150,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Azurre\Config.h" />
     <ClInclude Include="Azurre\Core.h" />
     <ClInclude Include="Azurre\GUI.h" />
+    <ClInclude Include="Azurre\Hacks\Misc.h" />
     <ClInclude Include="Azurre\Memory.h" />
     <ClInclude Include="Azurre\Offsets.h" />
     <ClInclude Include="Azurre\SDK\Entity.h" />
@@ -169,9 +171,11 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Azurre\Config.cpp" />
     <ClCompile Include="Azurre\Core.cpp" />
     <ClCompile Include="Azurre\GUI.cpp" />
     <ClCompile Include="Azurre\Azurre.cpp" />
+    <ClCompile Include="Azurre\Hacks\Misc.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
