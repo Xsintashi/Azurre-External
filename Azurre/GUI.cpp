@@ -270,9 +270,14 @@ void GUI::Render() noexcept
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 		if (ImGui::BeginTabItem("Misc")) {
 			ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
-			ImGui::Checkbox("Thirdperson", &cfg->m.thirdPerson);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Visuals")) {
+			ImGui::Checkbox("Thirdperson", &cfg->v.thirdPerson);
+			//ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
+			ImGui::Checkbox("No Smoke", &cfg->v.noSmoke);
 			ImGui::SetNextItemWidth(200.0f);
-			ImGui::SliderInt("##flash", &cfg->m.flashReduction, 0, 100, "Flashbang Reduction: %i%");
+			ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Skin Changer")) {
@@ -332,9 +337,10 @@ void GUI::Render() noexcept
 
 			ImGui::Text("Fps: %i", framePerSecond);
 			ImGui::Text("Tick: %i", tickRate);
-			ImGui::Text("Client: 0x%p", IClient);
-			ImGui::Text("ClientState: 0x%p", IClientState);
-			ImGui::Text("Engine: 0x%p", IEngine);
+			ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient);
+			ImGui::Text("ClientState: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClientState);
+			ImGui::Text("Engine: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IEngine);
+			ImGui::Text("LocalPlayer: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", localPlayer ? localPlayer.get() : 0);
 			ImGui::Text("RealTime: %.2f", globalVars->realTime);
 			ImGui::Text("FrameCount: %i", globalVars->frameCount);
 			ImGui::Text("AbsoluteFrametime: %.2f", globalVars->absoluteFrameTime);
@@ -345,8 +351,6 @@ void GUI::Render() noexcept
 			ImGui::Text("TickCount: %i", globalVars->tickCount);
 			ImGui::Text("IntervalPerTick: %.2f", globalVars->intervalPerTick);
 			ImGui::Text("InterpolationAmount: %.2f", globalVars->interpolationAmount);
-			ImGui::Text("LocalPlayer: "); ImGui::SameLine();
-			ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", localPlayer ? localPlayer.get() : 0);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

@@ -155,6 +155,8 @@
     <ClInclude Include="Azurre\GUI.h" />
     <ClInclude Include="Azurre\Hacks\Misc.h" />
     <ClInclude Include="Azurre\Hacks\SkinChanger.h" />
+    <ClInclude Include="Azurre\Hacks\Visuals.h" />
+    <ClInclude Include="Azurre\Helpers.h" />
     <ClInclude Include="Azurre\Memory.h" />
     <ClInclude Include="Azurre\Offsets.h" />
     <ClInclude Include="Azurre\SDK\Entity.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="Azurre\SDK\Macros.h" />
     <ClInclude Include="Azurre\SDK\PlayerInfo.h" />
     <ClInclude Include="Azurre\SDK\SkinID.h" />
+    <ClInclude Include="Azurre\SDK\Vector.h" />
     <ClInclude Include="Azurre\SDK\WeaponID.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -181,6 +184,8 @@
     <ClCompile Include="Azurre\Azurre.cpp" />
     <ClCompile Include="Azurre\Hacks\Misc.cpp" />
     <ClCompile Include="Azurre\Hacks\SkinChanger.cpp" />
+    <ClCompile Include="Azurre\Hacks\Visuals.cpp" />
+    <ClCompile Include="Azurre\Helpers.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />

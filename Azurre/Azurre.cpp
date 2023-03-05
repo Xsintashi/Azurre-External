@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "Config.h"
 #include "Hacks/Misc.h"
+#include "Hacks/Visuals.h"
 #include <thread>
 #include "Hacks/SkinChanger.h"
 #include "SDK/GlobalVars.h"
@@ -25,9 +26,11 @@ int __stdcall wWinMain(
 	{
 		Core::update();
 		Misc::forceReload(true);
-		Misc::noFlash();
 		Misc::bunnyHop();
-		Misc::thirdperson();
+		Visuals::noFlash();
+		Visuals::thirdperson();
+		Visuals::remove3dSky();
+		Visuals::removeSmoke();
 		Skin::update();
 
 		GUI::BeginRender();

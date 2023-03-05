@@ -5,9 +5,15 @@ class Config {
 public:
 	struct MiscConfig {
 		bool bhop = false;
-		bool thirdPerson = false;
-		int flashReduction = 0;
 	}m;
+
+	struct VisualsConfig {
+		bool bhop = false;
+		bool thirdPerson = false;
+		bool no3DSky = false;
+		bool noSmoke = false;
+		int flashReduction = 0;
+	}v;
 };
 
 inline std::optional<Config> cfg;
