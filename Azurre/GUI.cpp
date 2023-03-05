@@ -350,6 +350,10 @@ void GUI::Render() noexcept
 			}
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("Discord")) {
+			ImGui::Checkbox("Enabled", &cfg->d.enabled);
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("Debug")) {
 
 			static auto frameRate = 1.0f;

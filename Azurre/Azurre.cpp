@@ -7,6 +7,7 @@
 #include "Hacks/SkinChanger.h"
 #include "SDK/GlobalVars.h"
 #include "Hacks/TriggerBot.h"
+#include "DiscordSDK/RPC.h"
 
 int __stdcall wWinMain(
 	HINSTANCE instance,
@@ -23,9 +24,12 @@ int __stdcall wWinMain(
 	GUI::CreateDevice();
 	GUI::CreateImGui();
 
+	Discord::Run();
+
 	while (GUI::isRunning)
 	{
 		Core::update();
+		Discord::Update();
 		TriggerBot::run();
 		Misc::forceReload(true);
 		Misc::bunnyHop();
@@ -41,6 +45,8 @@ int __stdcall wWinMain(
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
+
+	Discord::Shutdown();
 
 	// destroy gui
 	GUI::DestroyImGui();

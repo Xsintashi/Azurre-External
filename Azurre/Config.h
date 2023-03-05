@@ -16,6 +16,10 @@ public:
 		int flashReduction = 0;
 	}v;
 
+	struct DiscordConfig {
+		bool enabled = true;
+	}d;
+
 	struct TriggerBotConfig {
 		bool enabled = false;
 	}t;
