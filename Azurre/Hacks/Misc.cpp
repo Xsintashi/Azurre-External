@@ -12,7 +12,9 @@ void Misc::bunnyHop() noexcept {
 
 	if (!localPlayer) return;
 
-	const auto flags = entityOffsets.flags(localPlayer.get());
+	if (localPlayer->isDead()) return;
+
+	const auto flags = localPlayer->flags();
 
 	if (GetAsyncKeyState(VK_SPACE))
 		(flags & (1 << 0)) ?

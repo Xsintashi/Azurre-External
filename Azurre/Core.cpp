@@ -18,29 +18,29 @@ void Core::init() {
 };
 
 void Core::update() {
-	localPlayer.init(csgo.Read<uintptr_t>(IClient + Offset::signatures::dwLocalPlayer));
+	localPlayer.init((Entity*)csgo.Read<uintptr_t>(IClient + Offset::signatures::dwLocalPlayer));
 	globalVars = csgo.Read<GlobalVars>(IEngine + Offset::signatures::dwGlobalVars);
 
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState + Offset::signatures::dwClientState_PlayerInfo);
 
 	entityData.clear();
 	for (int unsigned idx = 0; idx <= 32; idx++) {
-		const auto& adress = getEntity(idx);
-		if (!adress) continue;
+		const auto& entity = getEntity(idx);
+		if (!entity) continue;
 
 		// Player Info
 		const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
 		playerInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
 
-		const auto& health = entityOffsets.health(adress);
-		const auto& armor = entityOffsets.armor(adress);
-		const auto& teamNumber = entityOffsets.teamNumber(adress);
-		const auto& money = entityOffsets.money(adress);
+		const auto& health = entity->health();
+		const auto& armor = entity->armor();
+		const auto& teamNumber = entity->teamNumber();
+		const auto& money = entity->money();
 		const std::string name = playerInfo.szName;
 		const bool bot = playerInfo.fakeplayer;
 		const unsigned long steamID = playerInfo.iSteamID;
-		//char placename[18] = entityOffsets.lastPlaceName(adress);
+		//char placename[18] = adress->lastPlaceName(entity);
 
-		entityData.push_back({ adress, idx, steamID, bot, name , health, armor, teamNumber, money });
+		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, teamNumber, money });
 	}
 };

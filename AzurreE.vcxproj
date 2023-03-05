@@ -185,6 +185,7 @@
     <ClCompile Include="Azurre\Azurre.cpp" />
     <ClCompile Include="Azurre\Hacks\Misc.cpp" />
     <ClCompile Include="Azurre\Hacks\SkinChanger.cpp" />
+    <ClCompile Include="Azurre\Hacks\TriggerBot.cpp" />
     <ClCompile Include="Azurre\Hacks\Visuals.cpp" />
     <ClCompile Include="Azurre\Helpers.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -195,6 +196,9 @@
     <ClCompile Include="imgui\imgui_stdlib.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Azurre\Hacks\TriggerBot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,8 +2,8 @@
 
 #include "interfaces.h"
 
-#define OFFSET(name, base, offsetName, returnType) \
-returnType name (uintptr_t base) noexcept \
+#define OFFSET(name, args, offsetName, returnType) \
+returnType name args noexcept \
 { \
-    return csgo.Read<returnType>(base + offsetName); \
+    return csgo.Read<returnType>((uintptr_t)this + offsetName); \
 }

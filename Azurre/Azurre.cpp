@@ -32,7 +32,7 @@ int __stdcall wWinMain(
 		Visuals::noFlash();
 		Visuals::thirdperson();
 		Visuals::remove3dSky();
-		Visuals::removeSmoke();
+		Misc::modifyClasses();
 		Skin::update();
 
 		GUI::BeginRender();

@@ -57,21 +57,28 @@ enum class ClassID {
 
 class Entity {
 public:
-	OFFSET(lastPlaceName, (entity), Offset::netvars::m_szLastPlaceName, LPVOID)
-	OFFSET(money, (entity), Offset::netvars::m_iAccount, int)
-	OFFSET(health, (entity), Offset::netvars::m_iHealth, int)
-	OFFSET(armor, (entity), Offset::netvars::m_ArmorValue, int)
-	OFFSET(teamNumber, (entity), Offset::netvars::m_iTeamNum, int)
-	OFFSET(flashMaxAlpha, (entity), Offset::netvars::m_flFlashMaxAlpha, float)
-	OFFSET(flashDuration, (entity), Offset::netvars::m_flFlashDuration, float)
-	OFFSET(flags, (entity), Offset::netvars::m_fFlags, int)
+	OFFSET(lastPlaceName, (), Offset::netvars::m_szLastPlaceName, LPVOID)
+	OFFSET(money, (), Offset::netvars::m_iAccount, int)
+	OFFSET(health, (), Offset::netvars::m_iHealth, int)
+	OFFSET(armor, (), Offset::netvars::m_ArmorValue, int)
+	OFFSET(teamNumber, (), Offset::netvars::m_iTeamNum, int)
+	OFFSET(flashMaxAlpha, (), Offset::netvars::m_flFlashMaxAlpha, float)
+	OFFSET(flashDuration, (), Offset::netvars::m_flFlashDuration, float)
+	OFFSET(flags, (), Offset::netvars::m_fFlags, int)
+	OFFSET(crosshairID, (), Offset::netvars::m_iCrosshairId, int)
+
+    bool isDead() noexcept {
+        return this->health() < 1;
+    }
+
+    bool isAlive() noexcept {
+        return !this->isDead();
+    }
 
 };
 
-inline Entity entityOffsets;
-
-static uintptr_t getEntity(int idx) {
-	const auto& player = csgo.Read<uintptr_t>(IClient + Offset::signatures::dwEntityList + idx * 0x10);
+static Entity* getEntity(int idx) {
+	const auto& player = csgo.Read<Entity*>(IClient + Offset::signatures::dwEntityList + idx * 0x10);
 	if (!player) return 0;
 	return player;
 }
@@ -82,7 +89,7 @@ static ClassID GetClassId(int EntBase)
 }
 
 struct PlayerData {
-	uintptr_t adress;
+	Entity* entity;
 	int unsigned idx;
 	unsigned long steamID;
 	bool isBot;

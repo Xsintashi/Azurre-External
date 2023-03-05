@@ -4,7 +4,7 @@ class Entity;
 
 class LocalPlayer {
 public:
-    void init(uintptr_t entity) noexcept
+    void init(Entity* entity) noexcept
     {
         localEntity = entity;
     }
@@ -24,7 +24,7 @@ public:
         return localEntity;
     }
 private:
-    uintptr_t localEntity = 0;
+    Entity* localEntity = 0;
 };
 
 

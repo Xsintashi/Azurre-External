@@ -15,6 +15,10 @@ public:
 		bool noSmoke = false;
 		int flashReduction = 0;
 	}v;
+
+	struct TriggerBotConfig {
+		bool enabled = false;
+	}t;
 };
 
 inline std::optional<Config> cfg;

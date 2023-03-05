@@ -36,7 +36,7 @@ void Skin::add(int weaponID, int skinID, float wear, int seed, int statTrak, int
 }
 
 void Skin::update() {
-	const auto& weapons = csgo.Read<std::array<unsigned long, 8>>(localPlayer.get() + Offset::netvars::m_hMyWeapons);
+	const auto& weapons = csgo.Read<std::array<unsigned long, 8>>(localPlayer + Offset::netvars::m_hMyWeapons);
 
 	for (const auto& handle : weapons) {
 		const auto& weapon = csgo.Read<uintptr_t>((IClient + Offset::signatures::dwEntityList + (handle & 0xFFF) * 0x10) - 0x10);
@@ -47,7 +47,7 @@ void Skin::update() {
 		//if (weaponIndex == WeaponID::Knife || weaponIndex == WeaponID::KnifeT) {
 		//	csgo.Write<short>(weapon + Offset::netvars::m_iItemDefinitionIndex, 508);
 		//	csgo.Write<int>(weapon + Offset::netvars::m_nViewModelIndex, 391);
-		//	csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iWorldModelIndex, 392);
+		//	csgo.Write<int>(localPlayer + Offset::netvars::m_iWorldModelIndex, 392);
 		//	return;
 		//}
 
