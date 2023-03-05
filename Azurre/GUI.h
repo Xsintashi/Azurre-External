@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d9.h>
 
-namespace gui
+namespace GUI
 {
 	// constant window size
 	constexpr int WIDTH = 500;

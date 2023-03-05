@@ -1,8 +1,14 @@
 #include "GUI.h"
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_dx9.h"
-#include "imgui/imgui_impl_win32.h"
+#include "SDK/Interfaces.h"
+#include "SDK/LocalPlayer.h"
+
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_dx9.h"
+#include "../imgui/imgui_impl_win32.h"
+
+#include <string>
+#include "SDK/Entity.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -23,11 +29,11 @@ long __stdcall WindowProcess(
 	switch (message)
 	{
 	case WM_SIZE: {
-		if (gui::device && wideParameter != SIZE_MINIMIZED)
+		if (GUI::device && wideParameter != SIZE_MINIMIZED)
 		{
-			gui::presentParameters.BackBufferWidth = LOWORD(longParameter);
-			gui::presentParameters.BackBufferHeight = HIWORD(longParameter);
-			gui::ResetDevice();
+			GUI::presentParameters.BackBufferWidth = LOWORD(longParameter);
+			GUI::presentParameters.BackBufferHeight = HIWORD(longParameter);
+			GUI::ResetDevice();
 		}
 	}return 0;
 
@@ -41,7 +47,7 @@ long __stdcall WindowProcess(
 	}return 0;
 
 	case WM_LBUTTONDOWN: {
-		gui::position = MAKEPOINTS(longParameter); // set click points
+		GUI::position = MAKEPOINTS(longParameter); // set click points
 	}return 0;
 
 	case WM_MOUSEMOVE: {
@@ -50,16 +56,16 @@ long __stdcall WindowProcess(
 			const auto points = MAKEPOINTS(longParameter);
 			auto rect = ::RECT{ };
 
-			GetWindowRect(gui::window, &rect);
+			GetWindowRect(GUI::window, &rect);
 
-			rect.left += points.x - gui::position.x;
-			rect.top += points.y - gui::position.y;
+			rect.left += points.x - GUI::position.x;
+			rect.top += points.y - GUI::position.y;
 
-			if (gui::position.x >= 0 &&
-				gui::position.x <= gui::WIDTH &&
-				gui::position.y >= 0 && gui::position.y <= 19)
+			if (GUI::position.x >= 0 &&
+				GUI::position.x <= GUI::WIDTH &&
+				GUI::position.y >= 0 && GUI::position.y <= 19)
 				SetWindowPos(
-					gui::window,
+					GUI::window,
 					HWND_TOPMOST,
 					rect.left,
 					rect.top,
@@ -75,7 +81,7 @@ long __stdcall WindowProcess(
 	return DefWindowProc(window, message, wideParameter, longParameter);
 }
 
-void gui::CreateHWindow(const char* windowName) noexcept
+void GUI::CreateHWindow(const char* windowName) noexcept
 {
 	windowClass.cbSize = sizeof(WNDCLASSEX);
 	windowClass.style = CS_CLASSDC;
@@ -111,13 +117,13 @@ void gui::CreateHWindow(const char* windowName) noexcept
 	UpdateWindow(window);
 }
 
-void gui::DestroyHWindow() noexcept
+void GUI::DestroyHWindow() noexcept
 {
 	DestroyWindow(window);
 	UnregisterClass(windowClass.lpszClassName, windowClass.hInstance);
 }
 
-bool gui::CreateDevice() noexcept
+bool GUI::CreateDevice() noexcept
 {
 	d3d = Direct3DCreate9(D3D_SDK_VERSION);
 
@@ -145,7 +151,7 @@ bool gui::CreateDevice() noexcept
 	return true;
 }
 
-void gui::ResetDevice() noexcept
+void GUI::ResetDevice() noexcept
 {
 	ImGui_ImplDX9_InvalidateDeviceObjects();
 
@@ -157,7 +163,7 @@ void gui::ResetDevice() noexcept
 	ImGui_ImplDX9_CreateDeviceObjects();
 }
 
-void gui::DestroyDevice() noexcept
+void GUI::DestroyDevice() noexcept
 {
 	if (device)
 	{
@@ -172,7 +178,7 @@ void gui::DestroyDevice() noexcept
 	}
 }
 
-void gui::CreateImGui() noexcept
+void GUI::CreateImGui() noexcept
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -186,14 +192,14 @@ void gui::CreateImGui() noexcept
 	ImGui_ImplDX9_Init(device);
 }
 
-void gui::DestroyImGui() noexcept
+void GUI::DestroyImGui() noexcept
 {
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void gui::BeginRender() noexcept
+void GUI::BeginRender() noexcept
 {
 	MSG message;
 	while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
@@ -214,7 +220,7 @@ void gui::BeginRender() noexcept
 	ImGui::NewFrame();
 }
 
-void gui::EndRender() noexcept
+void GUI::EndRender() noexcept
 {
 	ImGui::EndFrame();
 
@@ -238,7 +244,7 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
-void gui::Render() noexcept
+void GUI::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
@@ -251,7 +257,31 @@ void gui::Render() noexcept
 		ImGuiWindowFlags_NoMove
 	);
 
-	ImGui::Text("Hello World!");
+	ImGui::Text("Hello xs9 :)");
+
+	if (ImGui::BeginTable("Players", 4))
+	{
+		ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Player", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableHeadersRow();
+		for (int row = 0; row < entityData.size(); row++)
+		{
+			auto color = entityData[row].teamNumber == 2 ? ImVec4{0.92f, 0.82f, .54f, 1.f} : ImVec4{ 0.26f, 0.59f, 0.98f, 1.f };
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("%i", entityData[row].idx);
+			ImGui::TableNextColumn();
+			ImGui::TextColored( color ,"%s", entityData[row].name.c_str());
+			ImGui::TableNextColumn();
+			ImGui::Text("%i", entityData[row].health);
+			ImGui::TableNextColumn();
+			ImGui::Text("%i", entityData[row].armor);
+		}
+		ImGui::EndTable();
+	}
 
 	ImGui::End();
 }
