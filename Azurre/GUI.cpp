@@ -4,6 +4,7 @@
 #include "SDK/LocalPlayer.h"
 
 #include "../imgui/imgui.h"
+#include "../imgui/imgui_stdlib.h"
 #include "../imgui/imgui_impl_dx9.h"
 #include "../imgui/imgui_impl_win32.h"
 
@@ -251,7 +252,9 @@ static int skinID = 0;
 static float wear = 0.1f;
 static int seed = 10;
 static int statTrak = 10;
-static auto itemIndex = 0;
+static int quality = 0;
+static int itemIndex = 0;
+std::string nametag = "";
 
 void GUI::Render() noexcept
 {
@@ -270,6 +273,7 @@ void GUI::Render() noexcept
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 		if (ImGui::BeginTabItem("Misc")) {
 			ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
+			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Visuals")) {
@@ -291,10 +295,12 @@ void GUI::Render() noexcept
 			ImGui::InputFloat("Wear", &wear);
 			ImGui::InputInt("Seed", &seed);
 			ImGui::InputInt("StatTrak", &statTrak);
+			ImGui::Combo("Quality", &quality, "Normal\0Genuine\0Vintage\0?\0Unique\0Community\0Valve\0Protoype\0Customized\0StatTrak\0Completed\0Souvenir\0");
+			//ImGui::InputText("NameTag", &nametag);
 			ImGui::PopItemWidth();
 
 			if (ImGui::Button("Update"))
-				Skin::add(Skin::weapon_names[itemIndex].definition_index, skinID, wear, seed, statTrak);
+				Skin::add(Skin::weapon_names[itemIndex].definition_index, skinID, wear, seed, statTrak,quality , nametag);
 
 			ImGui::EndTabItem();
 		}

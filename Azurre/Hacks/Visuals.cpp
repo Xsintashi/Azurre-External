@@ -7,6 +7,7 @@
 #include "../SDK/LocalPlayer.h"
 #include <algorithm>
 #include "../SDK/Vector.h"
+#include "Misc.h"
 
 void Visuals::thirdperson() //shitty method
 {
@@ -51,22 +52,6 @@ void Visuals::remove3dSky() {
     else if (skyDisable == 160 && cfg->v.no3DSky == 0) {
         csgo.Write<BYTE>(IClient + 0xDC48A0 + 0x30, skyDisable + 1);
     }
-}
-
-void Visuals::removeSmoke() {
-
-    if (!localPlayer) return;
-
-    if (!cfg->v.noSmoke) return;
-  
-    for (int i = 0; i < 512; i++)
-    {
-        int EntBase = csgo.Read<int>(IClient + Offset::signatures::dwEntityList + i * 0x10);
-        if (EntBase == 0) continue;
-        if (GetClassId(EntBase) == ClassID::SmokeGrenadeProjectile)
-            csgo.Write<Vector>(EntBase + Offset::netvars::m_vecOrigin, Vector(999.f, 999.f, 999.f));
-    }
-    
 }
 
 void Visuals::noFlash() {

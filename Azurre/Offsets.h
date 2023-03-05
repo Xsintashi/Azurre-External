@@ -91,6 +91,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_nModelIndex = 0x258;
 		constexpr ::std::ptrdiff_t m_nTickBase = 0x3440;
 		constexpr ::std::ptrdiff_t m_nViewModelIndex = 0x29D0;
+		constexpr ::std::ptrdiff_t m_iWorldModelIndex = 0x3254;
 		constexpr ::std::ptrdiff_t m_rgflCoordinateFrame = 0x444;
 		constexpr ::std::ptrdiff_t m_szCustomName = 0x304C;
 		constexpr ::std::ptrdiff_t m_szLastPlaceName = 0x35C4;
@@ -100,6 +101,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_vecViewOffset = 0x108;
 		constexpr ::std::ptrdiff_t m_viewPunchAngle = 0x3030;
 		constexpr ::std::ptrdiff_t m_zoomLevel = 0x33E0;
+		constexpr ::std::ptrdiff_t m_bTabletReceptionIsBlocked = 0x34A8;
 	} // namespace netvars
 	namespace signatures {
 		constexpr ::std::ptrdiff_t anim_overlays = 0x2990;

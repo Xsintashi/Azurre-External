@@ -4,6 +4,7 @@
 class Config {
 public:
 	struct MiscConfig {
+		bool fixTablet = false;
 		bool bhop = false;
 	}m;
 

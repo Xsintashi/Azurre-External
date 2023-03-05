@@ -50,6 +50,6 @@ namespace Skin {
     {WeaponID::Xm1014, "XM1014"}
     });
 
-    void add(int weaponID, int skinID, float wear, int seed, int statTrak);
+    void add(int weaponID, int skinID, float wear, int seed, int statTrak, int quality, std::string nameTag);
     void update();
 }

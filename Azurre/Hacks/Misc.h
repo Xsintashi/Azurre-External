@@ -3,4 +3,5 @@
 namespace Misc {
 	void bunnyHop() noexcept;
 	void forceReload(bool onKey);
+	void modifyClasses();
 }

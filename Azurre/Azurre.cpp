@@ -6,6 +6,7 @@
 #include <thread>
 #include "Hacks/SkinChanger.h"
 #include "SDK/GlobalVars.h"
+#include "Hacks/TriggerBot.h"
 
 int __stdcall wWinMain(
 	HINSTANCE instance,
@@ -25,6 +26,7 @@ int __stdcall wWinMain(
 	while (GUI::isRunning)
 	{
 		Core::update();
+		TriggerBot::run();
 		Misc::forceReload(true);
 		Misc::bunnyHop();
 		Visuals::noFlash();
