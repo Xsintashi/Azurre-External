@@ -32,7 +32,7 @@ void Visuals::thirdperson() //shitty method
         if (once)
         {
             once = false;
-            csgo.Write<int>(localPlayer + Offset::netvars::m_iObserverMode, 0);
+            csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 0);
         }
     }
 

@@ -271,6 +271,22 @@ void GUI::Render() noexcept
 
 	ImGui::Text("Hello xs9 :)");
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
+		if (ImGui::BeginTabItem("Aimbot")) {
+			ImGui::Text("Soon!");
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("TriggerBot")) {
+			ImGui::Checkbox("Enabled", &cfg->t.enabled);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Glow")) {
+			ImGui::Text("Soon!");
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("ESP")) {
+			ImGui::Text("Soon!");
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("Misc")) {
 			ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);

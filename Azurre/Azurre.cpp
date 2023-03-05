@@ -26,7 +26,7 @@ int __stdcall wWinMain(
 	while (GUI::isRunning)
 	{
 		Core::update();
-		//TriggerBot::run();
+		TriggerBot::run();
 		Misc::forceReload(true);
 		Misc::bunnyHop();
 		Visuals::noFlash();
