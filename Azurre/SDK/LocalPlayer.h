@@ -11,7 +11,7 @@ public:
 
     constexpr operator bool() noexcept
     {
-        return localEntity != 0;
+        return localEntity != nullptr;
     }
 
     constexpr auto operator->() noexcept
