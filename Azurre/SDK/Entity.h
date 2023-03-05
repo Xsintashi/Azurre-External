@@ -9,6 +9,8 @@
 
 class Entity {
 public:
+	OFFSET(lastPlaceName, (entity), Offset::netvars::m_szLastPlaceName, LPVOID)
+	OFFSET(money, (entity), Offset::netvars::m_iAccount, int)
 	OFFSET(health, (entity), Offset::netvars::m_iHealth, int)
 	OFFSET(armor, (entity), Offset::netvars::m_ArmorValue, int)
 	OFFSET(teamNumber, (entity), Offset::netvars::m_iTeamNum, int)
@@ -33,6 +35,7 @@ struct PlayerData {
 	int health;
 	int armor;
 	int teamNumber;
+	int money;
 };
 
 inline std::vector<PlayerData> entityData;

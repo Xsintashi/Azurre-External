@@ -33,10 +33,12 @@ void Core::update() {
 		const auto& health = entityOffsets.health(adress);
 		const auto& armor = entityOffsets.armor(adress);
 		const auto& teamNumber = entityOffsets.teamNumber(adress);
+		const auto& money = entityOffsets.money(adress);
 		const std::string name = playerInfo.szName;
 		const bool bot = playerInfo.fakeplayer;
 		const unsigned long steamID = playerInfo.iSteamID;
+		//char placename[18] = entityOffsets.lastPlaceName(adress);
 
-		entityData.push_back({ adress, idx, steamID, bot, name , health, armor, teamNumber });
+		entityData.push_back({ adress, idx, steamID, bot, name , health, armor, teamNumber, money });
 	}
 };

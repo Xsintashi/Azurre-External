@@ -62,6 +62,7 @@ namespace Offset{
 		constexpr ::std::ptrdiff_t m_hOwner = 0x29DC;
 		constexpr ::std::ptrdiff_t m_hOwnerEntity = 0x14C;
 		constexpr ::std::ptrdiff_t m_hViewModel = 0x3308;
+		constexpr ::std::ptrdiff_t m_iAccount = 0x117B8;
 		constexpr ::std::ptrdiff_t m_iAccountID = 0x2FD8;
 		constexpr ::std::ptrdiff_t m_iClip1 = 0x3274;
 		constexpr ::std::ptrdiff_t m_iCompetitiveRanking = 0x1A84;

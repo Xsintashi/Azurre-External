@@ -259,30 +259,43 @@ void GUI::Render() noexcept
 	);
 
 	ImGui::Text("Hello xs9 :)");
-
-	if (ImGui::BeginTable("Players", 4))
-	{
-		ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Player", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableHeadersRow();
-		for (int row = 0; row < entityData.size(); row++)
-		{
-			auto color = entityData[row].teamNumber == 2 ? ImVec4{0.92f, 0.82f, .54f, 1.f} : ImVec4{ 0.26f, 0.59f, 0.98f, 1.f };
-
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-			ImGui::Text("%i", entityData[row].idx);
-			ImGui::TableNextColumn();
-			ImGui::TextColored( color ,"%s", entityData[row].name.c_str());
-			ImGui::TableNextColumn();
-			ImGui::Text("%i", entityData[row].health);
-			ImGui::TableNextColumn();
-			ImGui::Text("%i", entityData[row].armor);
+	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
+		if (ImGui::BeginTabItem("Misc")) {
+			ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
+			ImGui::EndTabItem();
 		}
-		ImGui::EndTable();
+		if (ImGui::BeginTabItem("Players")) {
+			if (ImGui::BeginTable("Players List", 5))
+			{
+				ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("Player", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableHeadersRow();
+				for (unsigned int row = 0; row < entityData.size(); row++)
+				{
+					auto teamColor = entityData[row].teamNumber == 2 ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{ 0.26f, 0.59f, 0.98f, 1.f };
+					auto hpColor = entityData[row].health < 50 ? entityData[row].health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f } ;
+					
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::Text("%i", entityData[row].idx);
+					ImGui::TableNextColumn();
+					ImGui::TextColored(teamColor, "%s", entityData[row].name.c_str());
+					ImGui::TableNextColumn();
+					ImGui::TextColored(hpColor, "%s", entityData[row].health < 1 ? "DEAD" : std::to_string(entityData[row].health).c_str());
+					ImGui::TableNextColumn();
+					ImGui::Text("%i", entityData[row].armor);
+					ImGui::TableNextColumn();
+					ImGui::Text("$%i", entityData[row].money);
+				}
+				ImGui::EndTable();
+			}
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
 	}
-	ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
+		
 	ImGui::End();
 }
