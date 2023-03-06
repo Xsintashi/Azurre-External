@@ -78,9 +78,9 @@ public:
 };
 
 static Entity* getEntity(int idx) {
-	const auto& player = csgo.Read<Entity*>(IClient + Offset::signatures::dwEntityList + idx * 0x10);
-	if (!player) return 0;
-	return player;
+	const auto& entity = csgo.Read<Entity*>(IClient + Offset::signatures::dwEntityList + idx * 0x10);
+	if (!entity) return 0;
+	return entity;
 }
 
 static ClassID GetClassId(int EntBase)

@@ -8,6 +8,7 @@
 #include "SDK/GlobalVars.h"
 #include "Hacks/TriggerBot.h"
 #include "DiscordSDK/RPC.h"
+#include "Hacks/Chams.h"
 
 int __stdcall wWinMain(
 	HINSTANCE instance,
@@ -31,6 +32,7 @@ int __stdcall wWinMain(
 		Core::update();
 		Discord::Update();
 		TriggerBot::run();
+		Chams::run();
 		Misc::forceReload(true);
 		Misc::bunnyHop();
 		Visuals::noFlash();

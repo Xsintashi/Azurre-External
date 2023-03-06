@@ -20,6 +20,13 @@ public:
 		bool enabled = true;
 	}d;
 
+	struct ChamsConfig {
+		bool enabled = false;
+		float brightness = 0.1f;
+		float enemy[3] = {0.f, 0.4f, 1.f};
+		float ally[3] = { 1.f, 0.f, 0.f };
+	}c;
+
 	struct TriggerBotConfig {
 		bool enabled = false;
 	}t;

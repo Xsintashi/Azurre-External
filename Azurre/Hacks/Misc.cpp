@@ -40,11 +40,11 @@ void Misc::modifyClasses() {
 
 	for (int i = 0; i < 512; i++)
 	{
-		int EntBase = csgo.Read<int>(IClient + Offset::signatures::dwEntityList + i * 0x10);
-		if (!EntBase) continue;
-		if (GetClassId(EntBase) == ClassID::SmokeGrenadeProjectile && cfg->v.noSmoke)
-			csgo.Write<Vector>(EntBase + Offset::netvars::m_vecOrigin, Vector(999.f, 999.f, 999.f));
-		if (GetClassId(EntBase) == ClassID::Tablet && cfg->m.fixTablet)
-			csgo.Write<bool>(EntBase + Offset::netvars::m_bTabletReceptionIsBlocked, false);
+		int entity = csgo.Read<int>(IClient + Offset::signatures::dwEntityList + i * 0x10);
+		if (!entity) continue;
+		if (cfg->v.noSmoke && GetClassId(entity) == ClassID::SmokeGrenadeProjectile)
+			csgo.Write<Vector>(entity + Offset::netvars::m_vecOrigin, Vector(999.f, 999.f, 999.f));
+		if (cfg->m.fixTablet && GetClassId(entity) == ClassID::Tablet)
+			csgo.Write<bool>(entity + Offset::netvars::m_bTabletReceptionIsBlocked, false);
 	}
 }

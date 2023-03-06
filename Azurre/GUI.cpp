@@ -283,6 +283,14 @@ void GUI::Render() noexcept
 			ImGui::Text("Soon!");
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("Chams")) {
+			ImGui::Checkbox("Enabled", &cfg->c.enabled);
+			ImGui::ColorEdit3("Enemies", cfg->c.enemy, ImGuiColorEditFlags_NoInputs);
+			ImGui::ColorEdit3("Allies", cfg->c.ally, ImGuiColorEditFlags_NoInputs);
+			ImGui::SetNextItemWidth(200.0f);
+			ImGui::SliderFloat("Brightness", &cfg->c.brightness, 0.1f, 1.f);
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("ESP")) {
 			ImGui::Text("Soon!");
 			ImGui::EndTabItem();
