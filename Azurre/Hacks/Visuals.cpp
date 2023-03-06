@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "../SDK/Vector.h"
 #include "Misc.h"
+#include "../GUI.h"
 
 void Visuals::thirdperson() //shitty method
 {
@@ -67,4 +68,21 @@ void Visuals::noFlash() {
     const float reducedFlash = 255.0f - cfg->v.flashReduction * 2.55f;
 
     csgo.Write<float>(localPlayer.get() + Offset::netvars::m_flFlashMaxAlpha, reducedFlash);
+}
+
+void Visuals::doNotRenderTeammates() {
+    while (GUI::isRunning){
+        if (!cfg->v.noAllies) continue;
+
+        if (!localPlayer) continue;
+
+        for (unsigned int i = 1; i <= 32; i++) {
+            const auto& entity = getEntity(i);
+            if (!entity) continue;
+
+            if (entity->teamNumber() == localPlayer->teamNumber())
+
+                csgo.Write<bool>((uintptr_t)entity + Offset::netvars::m_bReadyToDraw, false);
+        }
+    }
 }

@@ -27,6 +27,8 @@ int __stdcall wWinMain(
 
 	Discord::Run();
 
+	std::thread noTeammates = std::thread(Visuals::doNotRenderTeammates);
+
 	while (GUI::isRunning)
 	{
 		Core::update();
@@ -44,9 +46,10 @@ int __stdcall wWinMain(
 		GUI::BeginRender();
 		GUI::Render();
 		GUI::EndRender();
-
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
+
+	noTeammates.join();
 
 	Discord::Shutdown();
 

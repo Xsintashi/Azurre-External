@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 
+
 class Config {
 public:
 	struct MiscConfig {
@@ -13,6 +14,7 @@ public:
 		bool thirdPerson = false;
 		bool no3DSky = false;
 		bool noSmoke = false;
+		bool noAllies = false;
 		int flashReduction = 0;
 	}v;
 
@@ -26,6 +28,10 @@ public:
 		float enemy[3] = {0.f, 0.4f, 1.f};
 		float ally[3] = { 1.f, 0.f, 0.f };
 	}c;
+
+	struct Debug {
+		bool boolDebug0 = false;
+	} debug;
 
 	struct TriggerBotConfig {
 		bool enabled = false;

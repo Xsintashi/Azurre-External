@@ -102,6 +102,8 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_viewPunchAngle = 0x3030;
 		constexpr ::std::ptrdiff_t m_zoomLevel = 0x33E0;
 		constexpr ::std::ptrdiff_t m_bTabletReceptionIsBlocked = 0x34A8;
+
+		constexpr ::std::ptrdiff_t m_bReadyToDraw = 0x274;
 	} // namespace netvars
 	namespace signatures {
 		constexpr ::std::ptrdiff_t anim_overlays = 0x2990;

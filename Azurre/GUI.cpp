@@ -302,6 +302,7 @@ void GUI::Render() noexcept
 		}
 		if (ImGui::BeginTabItem("Visuals")) {
 			ImGui::Checkbox("Thirdperson", &cfg->v.thirdPerson);
+			ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
 			//ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
 			ImGui::Checkbox("No Smoke", &cfg->v.noSmoke);
 			ImGui::SetNextItemWidth(200.0f);
@@ -385,6 +386,9 @@ void GUI::Render() noexcept
 			ImGui::Text("TickCount: %i", globalVars->tickCount);
 			ImGui::Text("IntervalPerTick: %.2f", globalVars->intervalPerTick);
 			ImGui::Text("InterpolationAmount: %.2f", globalVars->interpolationAmount);
+
+			ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
+
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
