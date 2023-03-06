@@ -280,7 +280,10 @@ void GUI::Render() noexcept
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Glow")) {
-			ImGui::Text("Soon!");
+			ImGui::Checkbox("Enabled", &cfg->g.enabled);
+			ImGui::ColorEdit4("Enemies", cfg->g.enemy, ImGuiColorEditFlags_NoInputs);
+			ImGui::ColorEdit4("Allies", cfg->g.ally, ImGuiColorEditFlags_NoInputs);
+			ImGui::SetNextItemWidth(200.0f);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Chams")) {

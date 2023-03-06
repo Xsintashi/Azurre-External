@@ -32,6 +32,12 @@ public:
 		float ally[3] = { 1.f, 0.f, 0.f };
 	}c;
 
+	struct Glow {
+		bool enabled = false;
+		float enemy[4] = { 0.f, 0.4f, 1.f, 1.f };
+		float ally[4] = { 1.f, 0.f, 0.f, 1.f };
+	}g;
+
 	struct Debug {
 		bool boolDebug0 = false;
 	} debug;

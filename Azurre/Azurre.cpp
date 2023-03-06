@@ -1,14 +1,19 @@
 #include "GUI.h"
 #include "Core.h"
 #include "Config.h"
-#include "Hacks/Misc.h"
-#include "Hacks/Visuals.h"
-#include <thread>
-#include "Hacks/SkinChanger.h"
-#include "SDK/GlobalVars.h"
-#include "Hacks/TriggerBot.h"
-#include "DiscordSDK/RPC.h"
+
 #include "Hacks/Chams.h"
+#include "Hacks/Glow.h"
+#include "Hacks/Misc.h"
+#include "Hacks/SkinChanger.h"
+#include "Hacks/TriggerBot.h"
+#include "Hacks/Visuals.h"
+
+#include "SDK/GlobalVars.h"
+
+#include "DiscordSDK/RPC.h"
+
+#include <thread>
 
 int __stdcall wWinMain(
 	HINSTANCE instance,
@@ -28,14 +33,15 @@ int __stdcall wWinMain(
 	Discord::Run();
 
 	std::thread noTeammates = std::thread(Visuals::doNotRenderTeammates);
-	std::thread fakeLag = std::thread(Misc::fakeLag);
 
 	while (GUI::isRunning)
 	{
 		Core::update();
 		Discord::Update();
+		Misc::fakeLag();
 		TriggerBot::run();
 		Chams::run();
+		Glow::run();
 		Misc::forceReload(true);
 		Misc::bunnyHop();
 		Visuals::noFlash();
@@ -51,7 +57,6 @@ int __stdcall wWinMain(
 	}
 
 	noTeammates.join();
-	fakeLag.join();
 
 	Discord::Shutdown();
 
