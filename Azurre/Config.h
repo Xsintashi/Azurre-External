@@ -7,6 +7,9 @@ public:
 	struct MiscConfig {
 		bool fixTablet = false;
 		bool bhop = false;
+		bool fakeLag = false;
+		int fakeLagLimit = 0;
+		int fakeLagType = 0;
 	}m;
 
 	struct VisualsConfig {

@@ -291,13 +291,19 @@ void GUI::Render() noexcept
 			ImGui::SliderFloat("Brightness", &cfg->c.brightness, 0.1f, 1.f);
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("ESP")) {
-			ImGui::Text("Soon!");
-			ImGui::EndTabItem();
-		}
+		//if (ImGui::BeginTabItem("ESP")) {
+		//	ImGui::Text("Soon!");
+		//	ImGui::EndTabItem();
+		//}
 		if (ImGui::BeginTabItem("Misc")) {
 			ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
+			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag)) {
+				ImGui::PushItemWidth(220.0f);
+				ImGui::Combo("Mode", &cfg->m.fakeLagType, "Static\0Adaptative\0Random\0");
+				ImGui::SliderInt("Limit", &cfg->m.fakeLagLimit, 1, 16, "%d");
+				ImGui::PopItemWidth();
+			}
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Visuals")) {
@@ -370,6 +376,8 @@ void GUI::Render() noexcept
 			const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
 			const int tickRate = static_cast<int>(1 / globalVars->intervalPerTick); //tps
 
+			int chokedPackets = csgo.Read<int>(IClientState + Offset::signatures::clientstate_choked_commands);
+
 			ImGui::Text("Fps: %i", framePerSecond);
 			ImGui::Text("Tick: %i", tickRate);
 			ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient);
@@ -386,6 +394,8 @@ void GUI::Render() noexcept
 			ImGui::Text("TickCount: %i", globalVars->tickCount);
 			ImGui::Text("IntervalPerTick: %.2f", globalVars->intervalPerTick);
 			ImGui::Text("InterpolationAmount: %.2f", globalVars->interpolationAmount);
+
+			ImGui::Text("Choked Packets: %i", chokedPackets);
 
 			ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 

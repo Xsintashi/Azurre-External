@@ -28,6 +28,7 @@ int __stdcall wWinMain(
 	Discord::Run();
 
 	std::thread noTeammates = std::thread(Visuals::doNotRenderTeammates);
+	std::thread fakeLag = std::thread(Misc::fakeLag);
 
 	while (GUI::isRunning)
 	{
@@ -50,6 +51,7 @@ int __stdcall wWinMain(
 	}
 
 	noTeammates.join();
+	fakeLag.join();
 
 	Discord::Shutdown();
 

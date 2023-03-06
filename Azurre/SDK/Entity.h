@@ -3,6 +3,7 @@
 #include "Macros.h"
 #include "Interfaces.h"
 #include "../Core.h"
+#include "../SDK/Vector.h"
 #include "../Offsets.h"
 
 #include <vector>
@@ -66,6 +67,7 @@ public:
 	OFFSET(flashDuration, (), Offset::netvars::m_flFlashDuration, float)
 	OFFSET(flags, (), Offset::netvars::m_fFlags, int)
 	OFFSET(crosshairID, (), Offset::netvars::m_iCrosshairId, int)
+	OFFSET(velocity, (), Offset::netvars::m_vecVelocity, Vector)
 
     bool isDead() noexcept {
         return this->health() < 1;
