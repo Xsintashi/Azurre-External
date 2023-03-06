@@ -4,8 +4,8 @@
 namespace GUI
 {
 	// constant window size
-	constexpr int WIDTH = 500;
-	constexpr int HEIGHT = 300;
+	constexpr int WIDTH = 640;
+	constexpr int HEIGHT = 480;
 
 	// when this changes, exit threads
 	// and close menu :)
