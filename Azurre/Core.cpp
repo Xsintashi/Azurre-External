@@ -36,9 +36,9 @@ void Core::update() {
 		const auto& armor = entity->armor();
 		const auto& teamNumber = entity->teamNumber();
 		const auto& money = entity->money();
-		const std::string name = playerInfo.szName;
+		const std::string name = playerInfo.name;
 		const bool bot = playerInfo.fakeplayer;
-		const unsigned long steamID = playerInfo.iSteamID;
+		const const char* steamID = playerInfo.szSteamID;
 		//char placename[18] = adress->lastPlaceName(entity);
 
 		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, teamNumber, money });

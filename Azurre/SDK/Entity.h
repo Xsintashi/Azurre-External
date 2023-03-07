@@ -93,7 +93,7 @@ static ClassID GetClassId(int EntBase)
 struct PlayerData {
 	Entity* entity;
 	int unsigned idx;
-	unsigned long steamID;
+    const char* steamID;
 	bool isBot;
 	std::string name;
 	int health;

@@ -342,7 +342,7 @@ void GUI::Render() noexcept
 			if (ImGui::BeginTable("Players List", 5))
 			{
 				ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
-				ImGui::TableSetupColumn("Player", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthFixed);
@@ -356,7 +356,9 @@ void GUI::Render() noexcept
 					ImGui::TableNextColumn();
 					ImGui::Text("%i", entityData[row].idx);
 					ImGui::TableNextColumn();
+					ImGui::PushID(row);
 					ImGui::TextColored(teamColor, "%s", entityData[row].name.c_str());
+					ImGui::PopID();
 					ImGui::TableNextColumn();
 					ImGui::TextColored(hpColor, "%s", entityData[row].health < 1 ? "DEAD" : std::to_string(entityData[row].health).c_str());
 					ImGui::TableNextColumn();
