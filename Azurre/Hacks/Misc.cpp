@@ -32,7 +32,7 @@ void Misc::fakeLag() {
 
 	const auto& sendPacket = csgo.Read<BYTE>(IEngine + Offset::signatures::dwbSendPackets);
 	const auto& chokedPackets = csgo.Read<int>(IClientState + Offset::signatures::clientstate_choked_commands);
-	static int choke = 0;
+	int choke = 0;
 
 	if (cfg->m.fakeLag)
 	{
@@ -63,8 +63,23 @@ void Misc::forceReload(bool onKey) {
 		csgo.Write<std::int32_t>(csgo.Read<uintptr_t>(IEngine + Offset::signatures::dwClientState) + 0x174, -1);
 		return;
 	}
-	if (GetAsyncKeyState(VK_INSERT)) {
+	if (GetAsyncKeyState(VK_END)) {
 		csgo.Write<std::int32_t>(csgo.Read<uintptr_t>(IEngine + Offset::signatures::dwClientState) + 0x174, -1);
+	}
+}
+
+void Misc::entityLoop() {
+
+	if (!localPlayer) return;
+
+	for (unsigned int i = 1; i <= 32; i++) {
+		const auto& entity = getEntity(i);
+		if (!entity) continue;
+
+		if (entity->teamNumber() == localPlayer->teamNumber()) continue;
+
+		if(cfg->m.radarHack)
+			csgo.Write<bool>((uintptr_t)entity + Offset::netvars::m_bSpotted, true);
 	}
 }
 

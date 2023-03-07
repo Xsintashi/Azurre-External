@@ -200,6 +200,7 @@
     <ClInclude Include="Azurre\DiscordSDK\src\rpc_connection.h" />
     <ClInclude Include="Azurre\DiscordSDK\src\serialization.h" />
     <ClInclude Include="Azurre\GUI.h" />
+    <ClInclude Include="Azurre\Hacks\Aimbot.h" />
     <ClInclude Include="Azurre\Hacks\Chams.h" />
     <ClInclude Include="Azurre\Hacks\Glow.h" />
     <ClInclude Include="Azurre\Hacks\Misc.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="Azurre\DiscordSDK\src\serialization.cpp" />
     <ClCompile Include="Azurre\GUI.cpp" />
     <ClCompile Include="Azurre\Azurre.cpp" />
+    <ClCompile Include="Azurre\Hacks\Aimbot.cpp" />
     <ClCompile Include="Azurre\Hacks\Chams.cpp" />
     <ClCompile Include="Azurre\Hacks\Glow.cpp" />
     <ClCompile Include="Azurre\Hacks\Misc.cpp" />

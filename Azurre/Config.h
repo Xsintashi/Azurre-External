@@ -7,6 +7,7 @@ public:
 	struct MiscConfig {
 		bool fixTablet = false;
 		bool bhop = false;
+		bool radarHack = false;
 		bool fakeLag = false;
 		int fakeLagLimit = 0;
 		int fakeLagType = 0;
@@ -20,6 +21,17 @@ public:
 		bool noAllies = false;
 		int flashReduction = 0;
 	}v;
+
+	struct AimbotConfig {
+		bool enabled = false;
+		bool autoShot = false;
+		bool autoStop = false;
+		int bone = 0;
+		float fov = 0.f;
+		float smooth = 1.f;
+		bool rcs = false;
+
+	}a;
 
 	struct DiscordConfig {
 		bool enabled = true;

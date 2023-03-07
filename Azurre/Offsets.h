@@ -36,6 +36,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_bUseCustomAutoExposureMax = 0x9D9;
 		constexpr ::std::ptrdiff_t m_bUseCustomAutoExposureMin = 0x9D8;
 		constexpr ::std::ptrdiff_t m_bUseCustomBloomScale = 0x9DA;
+		constexpr ::std::ptrdiff_t m_bWaitForNoAttack = 0x99BC;
 		constexpr ::std::ptrdiff_t m_clrRender = 0x70;
 		constexpr ::std::ptrdiff_t m_dwBoneMatrix = 0x26A8;
 		constexpr ::std::ptrdiff_t m_fAccuracyPenalty = 0x3340;

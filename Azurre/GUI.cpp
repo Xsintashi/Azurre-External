@@ -249,9 +249,9 @@ void GUI::EndRender() noexcept
 }
 
 static int skinID = 0;
-static float wear = 0.1f;
-static int seed = 10;
-static int statTrak = 10;
+static float wear = 0.0f;
+static int seed = 0;
+static int statTrak = 0;
 static int quality = 0;
 static int itemIndex = 0;
 std::string nametag = "";
@@ -272,7 +272,15 @@ void GUI::Render() noexcept
 	ImGui::Text("Hello xs9 :)");
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 		if (ImGui::BeginTabItem("Aimbot")) {
-			ImGui::Text("Soon!");
+			ImGui::Checkbox("Enabled", &cfg->a.enabled);
+			ImGui::Checkbox("Auto-Shot", &cfg->a.autoShot);
+			ImGui::Checkbox("Auto-Stop", &cfg->a.autoStop);
+			ImGui::PushItemWidth(220.0f);
+			ImGui::Combo("Bone", &cfg->a.bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
+			ImGui::SliderFloat("##fov", &cfg->a.fov, 0.001f, 255.000f, "Fov: %.2f");
+			ImGui::SliderFloat("##smooth", &cfg->a.smooth, 1.00f, 100.00f, "Smooth: %.2f");
+			ImGui::PopItemWidth();
+			ImGui::Checkbox("RCS", &cfg->a.rcs);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("TriggerBot")) {
@@ -301,10 +309,11 @@ void GUI::Render() noexcept
 		if (ImGui::BeginTabItem("Misc")) {
 			ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
+			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
 			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag)) {
 				ImGui::PushItemWidth(220.0f);
 				ImGui::Combo("Mode", &cfg->m.fakeLagType, "Static\0Adaptative\0Random\0");
-				ImGui::SliderInt("Limit", &cfg->m.fakeLagLimit, 1, 16, "%d");
+				ImGui::SliderInt("##limit", &cfg->m.fakeLagLimit, 1, 16, "Limit: %d");
 				ImGui::PopItemWidth();
 			}
 			ImGui::EndTabItem();
@@ -322,7 +331,7 @@ void GUI::Render() noexcept
 			ImGui::PushItemWidth(200.0f);
 			ImGui::Combo("##1", &itemIndex, [](void* data, int idx, const char** out_text) {
 				*out_text = Skin::weapon_names[idx].name;
-			return true;
+					return true;
 				}, nullptr, Skin::weapon_names.size(), 5);
 
 			ImGui::InputInt("Skin ID", &skinID);
@@ -339,17 +348,18 @@ void GUI::Render() noexcept
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Players")) {
-			if (ImGui::BeginTable("Players List", 5))
+			if (ImGui::BeginTable("Players List", 6))
 			{
 				ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("Weapon", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableHeadersRow();
 				for (unsigned int row = 0; row < entityData.size(); row++)
 				{
-					auto teamColor = entityData[row].teamNumber == 2 ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{ 0.26f, 0.59f, 0.98f, 1.f };
+					auto teamColor = localPlayer.get() == (uintptr_t)entityData[row].entity ? ImVec4{ 1.0f, 0.25f, 1.0f, 1.f } : entityData[row].teamNumber == 2 ? ImVec4{0.92f, 0.82f, .54f, 1.f} : ImVec4{0.26f, 0.59f, 0.98f, 1.f};
 					auto hpColor = entityData[row].health < 50 ? entityData[row].health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f } ;
 					
 					ImGui::TableNextRow();
@@ -358,13 +368,18 @@ void GUI::Render() noexcept
 					ImGui::TableNextColumn();
 					ImGui::PushID(row);
 					ImGui::TextColored(teamColor, "%s", entityData[row].name.c_str());
+					if (ImGui::IsItemHovered())
+						ImGui::SetTooltip("%s", entityData[row].steamID);
 					ImGui::PopID();
 					ImGui::TableNextColumn();
 					ImGui::TextColored(hpColor, "%s", entityData[row].health < 1 ? "DEAD" : std::to_string(entityData[row].health).c_str());
 					ImGui::TableNextColumn();
-					ImGui::Text("%i", entityData[row].armor);
+					ImGui::Text("%i%s", entityData[row].armor, entityData[row].hasHelmet ? "+H" : "");
 					ImGui::TableNextColumn();
 					ImGui::Text("$%i", entityData[row].money);
+					ImGui::TableNextColumn();
+
+					ImGui::Text("%s", Skin::getWeaponIDName(entityData[row].weaponID));
 				}
 				ImGui::EndTable();
 			}

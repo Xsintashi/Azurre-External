@@ -67,7 +67,25 @@ public:
 	OFFSET(flashDuration, (), Offset::netvars::m_flFlashDuration, float)
 	OFFSET(flags, (), Offset::netvars::m_fFlags, int)
 	OFFSET(crosshairID, (), Offset::netvars::m_iCrosshairId, int)
+	OFFSET(shotsFired, (), Offset::netvars::m_iShotsFired, int)
 	OFFSET(velocity, (), Offset::netvars::m_vecVelocity, Vector)
+    OFFSET(aimPunch, (), Offset::netvars::m_aimPunchAngle, Vector)
+    OFFSET(origin, (), Offset::netvars::m_vecOrigin, Vector)
+    OFFSET(viewOffset, (), Offset::netvars::m_vecViewOffset, Vector)
+    OFFSET(hasHelmet, (), Offset::netvars::m_bHasHelmet, bool)
+    OFFSET(hasDefuser, (), Offset::netvars::m_bHasDefuser, bool)
+    OFFSET(spottedByMask, (), Offset::netvars::m_bSpottedByMask, bool)
+    OFFSET(spotted, (), Offset::netvars::m_bSpotted, bool)
+    OFFSET(isDefusing, (), Offset::netvars::m_bIsDefusing, bool)
+    OFFSET(waitForNoAttack, (), Offset::netvars::m_bWaitForNoAttack, bool)
+    OFFSET(boneMatrix, (), Offset::netvars::m_dwBoneMatrix, uintptr_t)
+    OFFSET(activeWeapon, (), Offset::netvars::m_hActiveWeapon, int)
+
+    OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
+
+    //Weapon
+    OFFSET(clip, (), Offset::netvars::m_iClip1, int)
+    OFFSET(isInReload, (), Offset::netvars::m_bInReload, bool)
 
     bool isDead() noexcept {
         return this->health() < 1;
@@ -75,6 +93,18 @@ public:
 
     bool isAlive() noexcept {
         return !this->isDead();
+    }
+
+    short getWeaponID() noexcept {
+        int weaponIndex = csgo.Read<int>((uintptr_t)this + Offset::netvars::m_hActiveWeapon) & 0xFFF;
+        if (!weaponIndex)
+            return 0;
+
+        const auto& activeWeapon = csgo.Read<Entity*>(IClient + Offset::signatures::dwEntityList + (weaponIndex - 1) * 0x10);
+        if (!activeWeapon)
+            return 0;
+
+        return csgo.Read<short>((uintptr_t)activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
     }
 
 };
@@ -85,9 +115,8 @@ static Entity* getEntity(int idx) {
 	return entity;
 }
 
-static ClassID GetClassId(int EntBase)
-{
-	return (ClassID)csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(EntBase + 8) + 2 * 4) + 1) + 20);
+static ClassID GetClassId(int entity) {
+	return (ClassID)csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(entity + 8) + 2 * 4) + 1) + 20);
 }
 
 struct PlayerData {
@@ -98,8 +127,11 @@ struct PlayerData {
 	std::string name;
 	int health;
 	int armor;
+    bool hasHelmet;
+    bool hasDefuser;
 	int teamNumber;
 	int money;
+	int weaponID;
 };
 
 inline std::vector<PlayerData> entityData;

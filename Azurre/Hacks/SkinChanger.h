@@ -52,4 +52,6 @@ namespace Skin {
 
     void add(int weaponID, int skinID, float wear, int seed, int statTrak, int quality, std::string nameTag);
     void update();
+    const char* getWeaponIDName(short ID) noexcept;
+
 }

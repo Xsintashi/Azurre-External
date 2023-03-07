@@ -34,13 +34,16 @@ void Core::update() {
 
 		const auto& health = entity->health();
 		const auto& armor = entity->armor();
+		const auto& hasHelmet = entity->hasHelmet();
+		const auto& hasDefuser = entity->hasDefuser();
 		const auto& teamNumber = entity->teamNumber();
 		const auto& money = entity->money();
+		const auto& weaponID = entity->getWeaponID();
 		const std::string name = playerInfo.name;
 		const bool bot = playerInfo.fakeplayer;
-		const const char* steamID = playerInfo.szSteamID;
+		const char* steamID = playerInfo.szSteamID;
 		//char placename[18] = adress->lastPlaceName(entity);
 
-		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, teamNumber, money });
+		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID });
 	}
 };

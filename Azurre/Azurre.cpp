@@ -14,6 +14,7 @@
 #include "DiscordSDK/RPC.h"
 
 #include <thread>
+#include "Hacks/Aimbot.h"
 
 int __stdcall wWinMain(
 	HINSTANCE instance,
@@ -32,16 +33,22 @@ int __stdcall wWinMain(
 
 	Discord::Run();
 
-	std::thread noTeammates = std::thread(Visuals::doNotRenderTeammates);
+	std::thread noTeammatesThread = std::thread(Visuals::doNotRenderTeammates);
+	std::thread glowThread = std::thread(Glow::run);
+	std::thread aimbotThread = std::thread(Aimbot::run);
 
 	while (GUI::isRunning)
 	{
+		if (GetAsyncKeyState(VK_INSERT))
+			::SetForegroundWindow(GUI::window);
+
 		Core::update();
 		Discord::Update();
-		Misc::fakeLag();
+		Misc::entityLoop();
+		Misc::fakeLag(); // disable while shotting
+		Aimbot::recoilSystem();
 		TriggerBot::run();
 		Chams::run();
-		Glow::run();
 		Misc::forceReload(true);
 		Misc::bunnyHop();
 		Visuals::noFlash();
@@ -55,8 +62,11 @@ int __stdcall wWinMain(
 		GUI::EndRender();
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
+	Misc::forceReload();
 
-	noTeammates.join();
+	glowThread.join();
+	noTeammatesThread.join();
+	aimbotThread.join();
 
 	Discord::Shutdown();
 
