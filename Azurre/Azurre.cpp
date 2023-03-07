@@ -51,6 +51,7 @@ int __stdcall wWinMain(
 		Chams::run();
 		Misc::forceReload(true);
 		Misc::bunnyHop();
+		Misc::fastStop();
 		Visuals::noFlash();
 		Visuals::thirdperson();
 		Visuals::remove3dSky();

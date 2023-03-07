@@ -1,4 +1,10 @@
 #include "Helpers.h"
+#include "Core.h"
+#include "Offsets.h"
+
+#include "SDK/Entity.h"
+#include "SDK/GlobalVars.h"
+#include "SDK/LocalPlayer.h"
 #include "SDK/Vector.h"
 
 Color3 Helpers::ConvertColors3(float in[3]) {
@@ -20,7 +26,16 @@ Color4 Helpers::ConvertColors4(float in[4]) {
 	return out;
 }
 
-Vector Helpers::calculateRelativeAngle(const Vector& source, const Vector& destination, const Vector& viewAngles) noexcept
-{
-	return ((destination - source).toAngle() - viewAngles).normalize();
+Vector Helpers::calculateRealAngles() {
+	Vector movementVector = localPlayer->velocity();
+	float viewAngles = csgo.Read<float>(IClientState + Offset::signatures::dwClientState_ViewAngles + 4);
+	Vector angle;
+	double viewAnglesRAD = viewAngles * 3.14159265359 / 180;
+	angle.x = (cos(viewAnglesRAD) * movementVector.x) - (sin(viewAnglesRAD) * (-movementVector.y));
+	angle.y = (sin(viewAnglesRAD) * movementVector.x) + (cos(viewAnglesRAD) * (-movementVector.y));
+	return angle;
+}
+
+Vector Helpers::calculateRelativeAngle(const Vector& source, const Vector& destination, const Vector& viewAngless) noexcept {
+	return ((destination - source).toAngle() - viewAngless).normalize();
 }

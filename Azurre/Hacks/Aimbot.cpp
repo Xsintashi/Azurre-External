@@ -4,10 +4,13 @@
 #include "../Offsets.h"
 #include "../Helpers.h"
 #include "../Config.h"
+
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
+
 #include "../../imgui/imgui.h"
+
 #include <chrono>
 
 void Aimbot::run() noexcept {
@@ -68,8 +71,6 @@ void Aimbot::run() noexcept {
 				csgo.Write<Vector>(IClientState + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f } );
 				if (cfg->a.autoShot) {
 					csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceAttack, 6);
-					std::this_thread::sleep_for(std::chrono::milliseconds(1));
-					csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceAttack, 4);
 				}
 			}
 		}

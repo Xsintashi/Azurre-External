@@ -1,7 +1,12 @@
 #include "GUI.h"
+#include "Config.h"
 
+#include "SDK/Entity.h"
+#include "SDK/GlobalVars.h"
 #include "SDK/Interfaces.h"
 #include "SDK/LocalPlayer.h"
+
+#include "Hacks/SkinChanger.h"
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_stdlib.h"
@@ -9,10 +14,6 @@
 #include "../imgui/imgui_impl_win32.h"
 
 #include <string>
-#include "SDK/Entity.h"
-#include "Config.h"
-#include "Hacks/SkinChanger.h"
-#include "SDK/GlobalVars.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -310,6 +311,7 @@ void GUI::Render() noexcept
 			ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
+			ImGui::Checkbox("Fast Stop ", &cfg->m.autoStop);
 			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag)) {
 				ImGui::PushItemWidth(220.0f);
 				ImGui::Combo("Mode", &cfg->m.fakeLagType, "Static\0Adaptative\0Random\0");

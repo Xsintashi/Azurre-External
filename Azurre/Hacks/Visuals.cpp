@@ -1,14 +1,15 @@
 #include "Visuals.h"
+#include "Misc.h"
 
+#include "../GUI.h"
 #include "../Config.h"
 
 #include "../SDK/Entity.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/LocalPlayer.h"
-#include <algorithm>
 #include "../SDK/Vector.h"
-#include "Misc.h"
-#include "../GUI.h"
+
+#include <algorithm>
 
 void Visuals::thirdperson() //shitty method
 {

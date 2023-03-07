@@ -17,5 +17,6 @@ namespace Helpers {
 	constexpr auto rad2deg(float radians) noexcept { return radians * (180.0f / std::numbers::pi_v<float>); }
 	Color3 ConvertColors3(float in[3]);
 	Color4 ConvertColors4(float in[4]);
+	Vector calculateRealAngles();
 	Vector calculateRelativeAngle(const Vector& source, const Vector& destination, const Vector& viewAngles) noexcept;
 }

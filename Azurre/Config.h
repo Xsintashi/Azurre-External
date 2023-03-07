@@ -1,13 +1,13 @@
 #pragma once
 #include <optional>
 
-
 class Config {
 public:
 	struct MiscConfig {
 		bool fixTablet = false;
 		bool bhop = false;
 		bool radarHack = false;
+		bool autoStop = false;
 		bool fakeLag = false;
 		int fakeLagLimit = 0;
 		int fakeLagType = 0;
