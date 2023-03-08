@@ -9,6 +9,7 @@
 #include "Hacks/SkinChanger.h"
 
 #include "../imgui/imgui.h"
+#include "../imgui/ImGuiCustom.h"
 #include "../imgui/imgui_stdlib.h"
 #include "../imgui/imgui_impl_dx9.h"
 #include "../imgui/imgui_impl_win32.h"
@@ -273,7 +274,11 @@ void GUI::Render() noexcept
 	ImGui::Text("Hello xs9 :)");
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 		if (ImGui::BeginTabItem("Aimbot")) {
+			ImGui::PushID("aimbot");
 			ImGui::Checkbox("Enabled", &cfg->a.enabled);
+			ImGui::SameLine();
+			ImGui::hotkey("", cfg->a.hotkey);
+			ImGui::PopID();
 			ImGui::Checkbox("Auto-Shot", &cfg->a.autoShot);
 			ImGui::Checkbox("Auto-Stop", &cfg->a.autoStop);
 			ImGui::PushItemWidth(220.0f);
@@ -285,7 +290,11 @@ void GUI::Render() noexcept
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("TriggerBot")) {
+			ImGui::PushID("triggerbot");
 			ImGui::Checkbox("Enabled", &cfg->t.enabled);
+			ImGui::SameLine();
+			ImGui::hotkey("", cfg->t.hotkey);
+			ImGui::PopID();
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Glow")) {
@@ -321,9 +330,12 @@ void GUI::Render() noexcept
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Visuals")) {
+			ImGui::PushID("thirderson");
 			ImGui::Checkbox("Thirdperson", &cfg->v.thirdPerson);
+			ImGui::SameLine();
+			ImGui::hotkey("", cfg->v.thirdPersonKey);
+			ImGui::PopID();
 			ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
-			//ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
 			ImGui::Checkbox("No Smoke", &cfg->v.noSmoke);
 			ImGui::SetNextItemWidth(200.0f);
 			ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");

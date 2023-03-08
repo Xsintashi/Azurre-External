@@ -1,6 +1,8 @@
 #pragma once
 #include <optional>
 
+#include "InputUtil.h"
+
 class Config {
 public:
 	struct MiscConfig {
@@ -16,6 +18,7 @@ public:
 	struct VisualsConfig {
 		bool bhop = false;
 		bool thirdPerson = false;
+		KeyBind thirdPersonKey;
 		bool no3DSky = false;
 		bool noSmoke = false;
 		bool noAllies = false;
@@ -24,6 +27,7 @@ public:
 
 	struct AimbotConfig {
 		bool enabled = false;
+		KeyBind hotkey;
 		bool autoShot = false;
 		bool autoStop = false;
 		int bone = 0;
@@ -56,6 +60,7 @@ public:
 
 	struct TriggerBotConfig {
 		bool enabled = false;
+		KeyBind hotkey;
 	}t;
 };
 

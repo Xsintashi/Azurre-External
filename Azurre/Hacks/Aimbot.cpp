@@ -15,6 +15,7 @@
 
 void Aimbot::run() noexcept {
 	while (GUI::isRunning) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (!cfg->a.enabled) continue;
 
 		if (!localPlayer || localPlayer->isDead() || localPlayer->isDefusing() || localPlayer->waitForNoAttack()) continue;
@@ -67,7 +68,7 @@ void Aimbot::run() noexcept {
 					bestAngle = angle;
 				}
 			}
-			if (bestAngle.notNull()) {
+			if (bestAngle.notNull() && cfg->a.hotkey.isDown()) {
 				csgo.Write<Vector>(IClientState + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f } );
 				
 				if (cfg->a.autoStop) {

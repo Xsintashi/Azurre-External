@@ -10,6 +10,7 @@
 #include "Hacks/Visuals.h"
 
 #include "SDK/GlobalVars.h"
+#include "InputUtil.h"
 
 #include "DiscordSDK/RPC.h"
 
@@ -54,7 +55,6 @@ int __stdcall wWinMain(
 		Misc::fastStop();
 		Visuals::noFlash();
 		Visuals::thirdperson();
-		Visuals::remove3dSky();
 		Misc::modifyClasses();
 		Skin::update();
 

@@ -10,6 +10,7 @@
 #include "../SDK/Vector.h"
 
 #include <algorithm>
+#include <thread>
 
 void Visuals::thirdperson() //shitty method
 {
@@ -19,40 +20,14 @@ void Visuals::thirdperson() //shitty method
 
     if (!localPlayer) return;
 
-    if (GetAsyncKeyState(0x43) & 0x8000) //C Key
-    {
+    if (cfg->v.thirdPersonKey.isDown()) {
         once = true;
         csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 1);
+        return;
     }
-    else if (GetAsyncKeyState(0x56) & 0x8000) //V Key
-    {
-        once = true;
-        csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 3);
-    }
-    else
-    {
-        if (once)
-        {
-            once = false;
-            csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 0);
-        }
-    }
-
-}
-
-void Visuals::remove3dSky() {
-
-    return; //doest work atm
-
-    if (!localPlayer) return;
-
-    int skyDisable = csgo.Read<BYTE>(IClient + 0xDC48A0 + 0x30);
-
-    if (skyDisable == 161 && cfg->v.no3DSky == 1) {
-        csgo.Write<BYTE>(IClient + 0xDC48A0 + 0x30, skyDisable - 1);
-    }
-    else if (skyDisable == 160 && cfg->v.no3DSky == 0) {
-        csgo.Write<BYTE>(IClient + 0xDC48A0 + 0x30, skyDisable + 1);
+    if (once) {
+        once = false;
+        csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 0);
     }
 }
 
@@ -73,16 +48,22 @@ void Visuals::noFlash() {
 
 void Visuals::doNotRenderTeammates() {
     while (GUI::isRunning){
-        if (!cfg->v.noAllies) continue;
-
-        if (!localPlayer) continue;
-
+        if (!cfg->v.noAllies || !localPlayer) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            continue;
+        }
         for (unsigned int i = 1; i <= 32; i++) {
             const auto& entity = getEntity(i);
-            if (!entity) continue;
+            if (!entity) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                continue;
+            }
+            if (entity->isDead() || entity->dormant()) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                continue;
+            }
 
             if (entity->teamNumber() == localPlayer->teamNumber())
-
                 csgo.Write<bool>((uintptr_t)entity + Offset::netvars::m_bReadyToDraw, false);
         }
     }

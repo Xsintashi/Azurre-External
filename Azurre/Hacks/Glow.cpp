@@ -7,9 +7,11 @@
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
+#include <thread>
 
 void Glow::run() noexcept {
 	while (GUI::isRunning) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (!localPlayer) continue;
 
 		if (!cfg->g.enabled) continue;

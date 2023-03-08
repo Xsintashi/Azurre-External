@@ -13,6 +13,8 @@ void TriggerBot::run() noexcept{
 
 	if (!cfg->t.enabled) return;
 
+	if (!cfg->t.hotkey.isDown()) return;
+
 	if (localPlayer->isDead()) return;
 
 	const auto& crosshair = localPlayer->crosshairID();
