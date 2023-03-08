@@ -113,7 +113,7 @@ void Misc::fastStop() noexcept	{
 	auto dKey = GetAsyncKeyState(0x44);
 	const float velocity = localPlayer->velocity().length2D();
 	Vector finalVector = Helpers::calculateRealAngles();
-	if (!wKey && !aKey && !sKey && !dKey && velocity >= 28.29f && (localPlayer->flags() & 1))
+	if (!wKey && !aKey && !sKey && !dKey && velocity >= 30.f && (localPlayer->flags() & 1))
 	{
 		if (finalVector.x >= 20) // FRONT, SO GO BACKWARDS
 		{
