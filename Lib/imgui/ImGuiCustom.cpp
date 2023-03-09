@@ -4,7 +4,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
 
-#include "../Azurre/InputUtil.h"
+#include "../../Azurre/InputUtil.h"
 
 void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const ImVec2& size) noexcept
 {

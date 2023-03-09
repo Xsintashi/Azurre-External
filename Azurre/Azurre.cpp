@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "Config.h"
 
+#include "Hacks/Aimbot.h"
 #include "Hacks/Chams.h"
 #include "Hacks/Glow.h"
 #include "Hacks/Misc.h"
@@ -15,7 +16,6 @@
 #include "DiscordSDK/RPC.h"
 
 #include <thread>
-#include "Hacks/Aimbot.h"
 
 int __stdcall wWinMain(
 	HINSTANCE instance,

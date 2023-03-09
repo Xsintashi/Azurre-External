@@ -30,9 +30,9 @@ Vector Helpers::calculateRealAngles() {
 	Vector movementVector = localPlayer->velocity();
 	float viewAngles = csgo.Read<float>(IClientState + Offset::signatures::dwClientState_ViewAngles + 4);
 	Vector angle;
-	double viewAnglesRAD = viewAngles * 3.14159265359 / 180;
-	angle.x = (cos(viewAnglesRAD) * movementVector.x) - (sin(viewAnglesRAD) * (-movementVector.y));
-	angle.y = (sin(viewAnglesRAD) * movementVector.x) + (cos(viewAnglesRAD) * (-movementVector.y));
+	viewAngles = deg2rad(viewAngles);
+	angle.x = (cos(viewAngles) * movementVector.x) - (sin(viewAngles) * (-movementVector.y));
+	angle.y = (sin(viewAngles) * movementVector.x) + (cos(viewAngles) * (-movementVector.y));
 	return angle;
 }
 

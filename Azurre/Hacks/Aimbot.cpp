@@ -9,7 +9,7 @@
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
 
-#include "../../imgui/imgui.h"
+#include "../../Lib/imgui/imgui.h"
 
 #include <chrono>
 

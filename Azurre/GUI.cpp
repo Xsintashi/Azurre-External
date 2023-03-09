@@ -8,11 +8,11 @@
 
 #include "Hacks/SkinChanger.h"
 
-#include "../imgui/imgui.h"
-#include "../imgui/ImGuiCustom.h"
-#include "../imgui/imgui_stdlib.h"
-#include "../imgui/imgui_impl_dx9.h"
-#include "../imgui/imgui_impl_win32.h"
+#include "../Lib/imgui/imgui.h"
+#include "../Lib/imgui/ImGuiCustom.h"
+#include "../Lib/imgui/imgui_stdlib.h"
+#include "../Lib/imgui/imgui_impl_dx9.h"
+#include "../Lib/imgui/imgui_impl_win32.h"
 
 #include <string>
 
