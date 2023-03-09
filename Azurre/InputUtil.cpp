@@ -78,11 +78,11 @@ static constexpr auto keyMap = std::to_array<Key>({
     { "LEFT", WIN32_LINUX(VK_LEFT, SDL_SCANCODE_LEFT) },
     { "LSHIFT", WIN32_LINUX(VK_LSHIFT, SDL_SCANCODE_LSHIFT) },
     { "M", WIN32_LINUX('M', SDL_SCANCODE_M) },
-    { "MOUSE1", 0 },
-    { "MOUSE2", 1 },
-    { "MOUSE3", 2 },
-    { "MOUSE4", 3 },
-    { "MOUSE5", 4 },
+    { "MOUSE1", VK_LBUTTON },
+    { "MOUSE2", VK_RBUTTON },
+    { "MOUSE3", VK_MBUTTON },
+    { "MOUSE4", XBUTTON1},
+    { "MOUSE5", XBUTTON2 },
     { "MULTIPLY", WIN32_LINUX(VK_MULTIPLY, SDL_SCANCODE_KP_MULTIPLY) },
     { "MWHEEL_DOWN", 0 },
     { "MWHEEL_UP", 0 },
@@ -148,9 +148,6 @@ bool KeyBind::isPressed() const noexcept
     if (keyCode == KeyCode::MOUSEWHEEL_UP)
         return ImGui::GetIO().MouseWheel > 0.0f;
 
-    if (keyCode >= KeyCode::MOUSE1 && keyCode <= KeyCode::MOUSE5)
-        return GetKeyState(keyMap[keyCode].code);
-
     return static_cast<std::size_t>(keyCode) < keyMap.size() && GetKeyState(keyMap[keyCode].code);
 }
 
@@ -164,9 +161,6 @@ bool KeyBind::isDown() const noexcept
 
     if (keyCode == KeyCode::MOUSEWHEEL_UP)
         return ImGui::GetIO().MouseWheel > 0.0f;
-
-    if (keyCode >= KeyCode::MOUSE1 && keyCode <= KeyCode::MOUSE5)
-        return (GetKeyState(keyMap[keyCode].code) & 0x8000) != 0;
 
     return static_cast<std::size_t>(keyCode) < keyMap.size() && GetAsyncKeyState(keyMap[keyCode].code);
 }

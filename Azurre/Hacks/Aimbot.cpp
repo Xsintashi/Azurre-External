@@ -68,7 +68,8 @@ void Aimbot::run() noexcept {
 					bestAngle = angle;
 				}
 			}
-			if (bestAngle.notNull() && cfg->a.hotkey.isDown()) {
+
+			if (bestAngle.notNull() && !cfg->a.hotkey.isSet() || (cfg->a.hotkey.isSet() && cfg->a.hotkey.isDown())) {
 				csgo.Write<Vector>(IClientState + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f } );
 				
 				if (cfg->a.autoStop) {

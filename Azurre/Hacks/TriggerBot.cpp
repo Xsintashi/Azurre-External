@@ -13,8 +13,6 @@ void TriggerBot::run() noexcept{
 
 	if (!cfg->t.enabled) return;
 
-	if (!cfg->t.hotkey.isDown()) return;
-
 	if (localPlayer->isDead()) return;
 
 	const auto& crosshair = localPlayer->crosshairID();
@@ -23,12 +21,20 @@ void TriggerBot::run() noexcept{
 
 	const auto& entity = csgo.Read<Entity*>(IClient + Offset::signatures::dwEntityList + (crosshair - 1) * 0x10);
 
+	int weaponIndex = csgo.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & 0xFFF;
+
+	if (!weaponIndex) return;
+
+	const auto& activeWeapon = getEntity(weaponIndex - 1);
+
+	if (!activeWeapon || activeWeapon->clip() < 1)
+		return;
+
 	if (entity->isDead()) return;
 
 	if (entity->teamNumber() == localPlayer->teamNumber()) return;
 
-	csgo.Write<uintptr_t>(IClient + Offset::signatures::dwForceAttack, 6);
-	std::this_thread::sleep_for(std::chrono::milliseconds(20));
-	csgo.Write<uintptr_t>(IClient + Offset::signatures::dwForceAttack, 4);
+	if(!cfg->t.hotkey.isSet() || (cfg->t.hotkey.isSet() && cfg->t.hotkey.isDown()))
+		csgo.Write<uintptr_t>(IClient + Offset::signatures::dwForceAttack, 6);
 
 }
