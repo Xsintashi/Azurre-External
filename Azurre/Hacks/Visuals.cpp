@@ -20,7 +20,7 @@ void Visuals::thirdperson() //shitty method
 
     if (!localPlayer) return;
 
-    if (!cfg->v.thirdPersonKey.isSet() || (cfg->v.thirdPersonKey.isSet() && cfg->v.thirdPersonKey.isDown())) {
+    if (cfg->v.thirdPersonKey.isActive()) {
         once = true;
         csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 1);
         return;

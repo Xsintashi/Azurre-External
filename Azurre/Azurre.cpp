@@ -38,13 +38,14 @@ int __stdcall wWinMain(
 	std::thread glowThread = std::thread(Glow::run);
 	std::thread aimbotThread = std::thread(Aimbot::run);
 
-	while (GUI::isRunning)
-	{
+	while (GUI::isRunning){
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (GetAsyncKeyState(VK_INSERT))
-			::SetForegroundWindow(GUI::window);
+			::SwitchToThisWindow(GUI::window, true);
 
 		Core::update();
 		Discord::Update();
+		Skin::update();
 		Misc::entityLoop();
 		Misc::fakeLag(); // disable while shotting
 		Aimbot::recoilSystem();
@@ -56,12 +57,10 @@ int __stdcall wWinMain(
 		Visuals::noFlash();
 		Visuals::thirdperson();
 		Misc::modifyClasses();
-		Skin::update();
 
 		GUI::BeginRender();
 		GUI::Render();
 		GUI::EndRender();
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
 	Misc::forceReload();
 

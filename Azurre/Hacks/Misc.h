@@ -7,4 +7,6 @@ namespace Misc {
 	void entityLoop();
 	void modifyClasses();
 	void fastStop() noexcept;
+
+	void updateInput() noexcept;
 }

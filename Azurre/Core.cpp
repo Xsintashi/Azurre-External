@@ -4,11 +4,17 @@
 
 #include <algorithm>    // std::sort
 
+#include "Hacks/Aimbot.h"
+#include "Hacks/TriggerBot.h"
+#include "Hacks/Visuals.h"
+
+
 #include "SDK/LocalPlayer.h"
 #include "SDK/interfaces.h"
 #include "SDK/Entity.h"
 #include "SDK/GlobalVars.h"
 #include "SDK/PlayerInfo.h"
+#include "Config.h"
 
 void Core::init() {
 	interfaces.emplace(Interfaces{});
@@ -18,10 +24,14 @@ void Core::init() {
 };
 
 void Core::update() {
-	localPlayer.init((Entity*)csgo.Read<uintptr_t>(IClient + Offset::signatures::dwLocalPlayer));
+	localPlayer.init(csgo.Read<Entity*>(IClient + Offset::signatures::dwLocalPlayer));
 	globalVars = csgo.Read<GlobalVars>(IEngine + Offset::signatures::dwGlobalVars);
 
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState + Offset::signatures::dwClientState_PlayerInfo);
+
+	cfg->a.hotkey.handleToggle();
+	cfg->t.hotkey.handleToggle();
+	cfg->v.thirdPersonKey.handleToggle();
 
 	entityData.clear();
 	for (int unsigned idx = 0; idx <= 32; idx++) {

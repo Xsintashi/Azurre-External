@@ -6,22 +6,23 @@
 #include "SDK/GlobalVars.h"
 #include "SDK/LocalPlayer.h"
 #include "SDK/Vector.h"
+#include "../../Config.h"
 
-Color3 Helpers::ConvertColors3(float in[3]) {
-	Color3 out;
-	out.r = static_cast<uint8_t>(in[0] * 255.f);
-	out.g = static_cast<uint8_t>(in[1] * 255.f);
-	out.b = static_cast<uint8_t>(in[2] * 255.f);
+std::array<uint8_t, 3> Helpers::ConvertColors3ToUint8_t(std::array<float, 3> in) {
+	std::array<uint8_t, 3> out;
+	out[0] = static_cast<uint8_t>(in[0] * 255.f);
+	out[1] = static_cast<uint8_t>(in[1] * 255.f);
+	out[2] = static_cast<uint8_t>(in[2] * 255.f);
 
 	return out;
 }
 
-Color4 Helpers::ConvertColors4(float in[4]) {
-	Color4 out;
-	out.r = static_cast<uint8_t>(in[0] * 255.f);
-	out.g = static_cast<uint8_t>(in[1] * 255.f);
-	out.b = static_cast<uint8_t>(in[2] * 255.f);
-	out.a = static_cast<uint8_t>(in[3] * 255.f);
+std::array<uint8_t, 4> Helpers::ConvertColors4ToUint8_t(std::array<float, 4> in) {
+	std::array<uint8_t, 4> out;
+	out[0] = static_cast<uint8_t>(in[0] * 255.f);
+	out[1] = static_cast<uint8_t>(in[1] * 255.f);
+	out[2] = static_cast<uint8_t>(in[2] * 255.f);
+	out[3] = static_cast<uint8_t>(in[3] * 255.f);
 
 	return out;
 }

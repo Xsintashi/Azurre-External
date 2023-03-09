@@ -36,19 +36,19 @@ void Misc::fakeLag() {
 	const auto& chokedPackets = csgo.Read<int>(IClientState + Offset::signatures::clientstate_choked_commands);
 	int choke = 0;
 
-	if (cfg->m.fakeLag)	{
+	if (cfg->m.fakeLag.enabled)	{
 		const float speed = localPlayer->velocity().length2D() >= 15.0f ? localPlayer->velocity().length2D() : 0.0f;
 
-		switch (cfg->m.fakeLagType) {
+		switch (cfg->m.fakeLag.type) {
 		case 0: //Static
-			choke = cfg->m.fakeLagLimit;
+			choke = cfg->m.fakeLag.limit;
 			break;
 		case 1: //Adaptive
-			choke = std::clamp(static_cast<int>(std::ceilf(64 / (speed * globalVars->intervalPerTick))), 1, cfg->m.fakeLagLimit);
+			choke = std::clamp(static_cast<int>(std::ceilf(64 / (speed * globalVars->intervalPerTick))), 1, cfg->m.fakeLag.limit);
 			break;
 		case 2: // Random
 			srand(static_cast<unsigned int>(time(NULL)));
-			choke = rand() % cfg->m.fakeLagLimit + 1;
+			choke = rand() % cfg->m.fakeLag.limit + 1;
 			break;
 		}
 	}
@@ -113,23 +113,14 @@ void Misc::fastStop() noexcept	{
 	auto dKey = GetAsyncKeyState(0x44);
 	const float velocity = localPlayer->velocity().length2D();
 	Vector finalVector = Helpers::calculateRealAngles();
-	if (!wKey && !aKey && !sKey && !dKey && velocity >= 30.f && (localPlayer->flags() & 1))
-	{
+	if (!wKey && !aKey && !sKey && !dKey && velocity >= 30.f && (localPlayer->flags() & 1)) {
 		if (finalVector.x >= 20) // FRONT, SO GO BACKWARDS
-		{
 			csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceBackward, 6);
-		}
 		if (finalVector.x <= -20) // BACK, SO GO FRONT
-		{
 			csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceForward, 6);
-		}
 		if (finalVector.y >= 20) // RIGHT, SO GO LEFT
-		{
 			csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceLeft, 6);
-		}
 		if (finalVector.y <= -20) // LEFT, SO GO RIGHT
-		{
 			csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceRight, 6);;
-		}
 	}
 }

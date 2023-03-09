@@ -250,14 +250,6 @@ void GUI::EndRender() noexcept
 		ResetDevice();
 }
 
-static int skinID = 0;
-static float wear = 0.0f;
-static int seed = 0;
-static int statTrak = 0;
-static int quality = 0;
-static int itemIndex = 0;
-std::string nametag = "";
-
 void GUI::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
@@ -279,8 +271,8 @@ void GUI::Render() noexcept
 			ImGui::SameLine();
 			ImGui::hotkey("", cfg->a.hotkey);
 			ImGui::PopID();
-			ImGui::Checkbox("Auto-Shot", &cfg->a.autoShot);
-			ImGui::Checkbox("Auto-Stop", &cfg->a.autoStop);
+			ImGui::Checkbox("Auto Shot", &cfg->a.autoShot);
+			ImGui::Checkbox("Auto Stop", &cfg->a.autoStop);
 			ImGui::PushItemWidth(220.0f);
 			ImGui::Combo("Bone", &cfg->a.bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
 			ImGui::SliderFloat("##fov", &cfg->a.fov, 0.001f, 255.000f, "Fov: %.2f");
@@ -299,32 +291,28 @@ void GUI::Render() noexcept
 		}
 		if (ImGui::BeginTabItem("Glow")) {
 			ImGui::Checkbox("Enabled", &cfg->g.enabled);
-			ImGui::ColorEdit4("Enemies", cfg->g.enemy, ImGuiColorEditFlags_NoInputs);
-			ImGui::ColorEdit4("Allies", cfg->g.ally, ImGuiColorEditFlags_NoInputs);
+			ImGuiCustom::colorPicker("Enemies", cfg->g.enemy);
+			ImGuiCustom::colorPicker("Allies", cfg->g.ally);
 			ImGui::SetNextItemWidth(200.0f);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Chams")) {
 			ImGui::Checkbox("Enabled", &cfg->c.enabled);
-			ImGui::ColorEdit3("Enemies", cfg->c.enemy, ImGuiColorEditFlags_NoInputs);
-			ImGui::ColorEdit3("Allies", cfg->c.ally, ImGuiColorEditFlags_NoInputs);
+			ImGuiCustom::colorPicker("Enemies", cfg->c.enemy);
+			ImGuiCustom::colorPicker("Allies", cfg->c.ally);
 			ImGui::SetNextItemWidth(200.0f);
 			ImGui::SliderFloat("Brightness", &cfg->c.brightness, 0.1f, 1.f);
 			ImGui::EndTabItem();
 		}
-		//if (ImGui::BeginTabItem("ESP")) {
-		//	ImGui::Text("Soon!");
-		//	ImGui::EndTabItem();
-		//}
 		if (ImGui::BeginTabItem("Misc")) {
-			ImGui::Checkbox("Bunny-Hop", &cfg->m.bhop);
+			ImGui::Checkbox("Bunny Hop", &cfg->m.bhop);
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
 			ImGui::Checkbox("Fast Stop ", &cfg->m.autoStop);
-			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag)) {
+			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled)) {
 				ImGui::PushItemWidth(220.0f);
-				ImGui::Combo("Mode", &cfg->m.fakeLagType, "Static\0Adaptative\0Random\0");
-				ImGui::SliderInt("##limit", &cfg->m.fakeLagLimit, 1, 16, "Limit: %d");
+				ImGui::Combo("Mode", &cfg->m.fakeLag.type, "Static\0Adaptative\0Random\0");
+				ImGui::SliderInt("##limit", &cfg->m.fakeLag.limit, 1, 16, "Limit: %d");
 				ImGui::PopItemWidth();
 			}
 			ImGui::EndTabItem();
@@ -342,23 +330,25 @@ void GUI::Render() noexcept
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Skin Changer")) {
+			static int itemIndex = 0;
+			static int itemIndexTemp = 0;
 			ImGui::PushItemWidth(200.0f);
 			ImGui::Combo("##1", &itemIndex, [](void* data, int idx, const char** out_text) {
-				*out_text = Skin::weapon_names[idx].name;
+				*out_text = Skin::weaponNames[idx].name;
 					return true;
-				}, nullptr, Skin::weapon_names.size(), 5);
+				}, nullptr, Skin::weaponNames.size(), 5);
 
-			ImGui::InputInt("Skin ID", &skinID);
-			ImGui::InputFloat("Wear", &wear);
-			ImGui::InputInt("Seed", &seed);
-			ImGui::InputInt("StatTrak", &statTrak);
-			ImGui::Combo("Quality", &quality, "Normal\0Genuine\0Vintage\0?\0Unique\0Community\0Valve\0Protoype\0Customized\0StatTrak\0Completed\0Souvenir\0");
-			//ImGui::InputText("NameTag", &nametag);
+			ImGui::InputInt("Skin ID", &cfg->s[itemIndex].skinID);
+			ImGui::InputFloat("Wear", &cfg->s[itemIndex].wear);
+			ImGui::InputInt("Seed", &cfg->s[itemIndex].seed);
+			ImGui::InputInt("StatTrak", &cfg->s[itemIndex].statTrak);
+			ImGui::Combo("Quality", &cfg->s[itemIndex].quality, "Normal\0Genuine\0Vintage\0?\0Unique\0Community\0Valve\0Protoype\0Customized\0StatTrak\0Completed\0Souvenir\0");
+			ImGui::InputText("NameTag", cfg->s[itemIndex].nameTag, sizeof(cfg->s[itemIndex].nameTag));
 			ImGui::PopItemWidth();
-
-			if (ImGui::Button("Update"))
-				Skin::add(Skin::weapon_names[itemIndex].definition_index, skinID, wear, seed, statTrak,quality , nametag);
-
+			if (itemIndexTemp != itemIndex) {
+				cfg->s[itemIndex].weaponID = Skin::weaponNames[itemIndex].definitionIndex;
+				itemIndexTemp = itemIndex;
+			}
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Players")) {
@@ -401,6 +391,112 @@ void GUI::Render() noexcept
 		}
 		if (ImGui::BeginTabItem("Discord")) {
 			ImGui::Checkbox("Enabled", &cfg->d.enabled);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Config")) {
+			ImGui::Columns(2, nullptr, false);
+			ImGui::SetColumnOffset(1, 170.0f);
+
+			static bool incrementalLoad = false;
+			ImGui::Checkbox("Incremental Load", &incrementalLoad);
+
+			ImGui::PushItemWidth(160.0f);
+
+			auto& configItems = cfg->getConfigs();
+			static int currentConfig = -1;
+			static float timeToNextConfigRefresh = 0.1f;
+			static std::string buffer;
+
+			timeToNextConfigRefresh -= ImGui::GetIO().DeltaTime;
+			if (timeToNextConfigRefresh <= 0.0f) {
+				cfg->listConfigs();
+				if (const auto it = std::find(configItems.begin(), configItems.end(), buffer); it != configItems.end())
+					currentConfig = std::distance(configItems.begin(), it);
+				timeToNextConfigRefresh = 0.1f;
+			}
+
+			if (static_cast<std::size_t>(currentConfig) >= configItems.size())
+				currentConfig = -1;
+
+			if (ImGui::ListBox("", &currentConfig, [](void* data, int idx, const char** out_text) {
+				auto& vector = *static_cast<std::vector<std::string>*>(data);
+			*out_text = vector[idx].c_str();
+			return true;
+			}, &configItems, configItems.size(), 5) && currentConfig != -1)
+			buffer = configItems[currentConfig];
+
+			ImGui::PushID(0);
+			if (ImGui::InputTextWithHint("", "config name", &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
+				if (currentConfig != -1)
+					cfg->rename(currentConfig, buffer.c_str());
+			}
+			ImGui::PopID();
+			ImGui::NextColumn();
+
+			ImGui::PushItemWidth(100.0f);
+
+			if (ImGui::Button("Open config directory"))
+				cfg->openConfigDir();
+
+			if (ImGui::Button("Create config", { 100.0f, 25.0f }))
+				cfg->add(buffer.c_str());
+
+			if (ImGui::Button("Reset config", { 100.0f, 25.0f }))
+				ImGui::OpenPopup("Config to reset");
+
+			if (ImGui::BeginPopup("Config to reset")) {
+				static constexpr const char* names[]{ "Whole"};
+				for (int i = 0; i < IM_ARRAYSIZE(names); i++) {
+					if (i == 1) ImGui::Separator();
+
+					if (ImGui::Selectable(names[i])) {
+						switch (i) {
+						case 0: cfg->reset(); break;
+						}
+					}
+				}
+				ImGui::EndPopup();
+			}
+			if (currentConfig != -1) {
+				if (ImGui::Button("Load selected", { 100.0f, 25.0f })) {
+					cfg->load(currentConfig, incrementalLoad);
+				}
+				if (ImGui::Button("Save selected", { 100.0f, 25.0f }))
+					ImGui::OpenPopup("##reallySave");
+				if (ImGui::BeginPopup("##reallySave"))
+				{
+					ImGui::TextUnformatted("Are you sure?");
+					if (ImGui::Button("No", { 45.0f, 0.0f }))
+						ImGui::CloseCurrentPopup();
+					ImGui::SameLine();
+					if (ImGui::Button("Yes", { 45.0f, 0.0f }))
+					{
+						cfg->save(currentConfig);
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+				if (ImGui::Button("Delete selected", { 100.0f, 25.0f }))
+					ImGui::OpenPopup("##reallyDelete");
+				if (ImGui::BeginPopup("##reallyDelete"))
+				{
+					ImGui::TextUnformatted("Are you sure?");
+					if (ImGui::Button("No", { 45.0f, 0.0f }))
+						ImGui::CloseCurrentPopup();
+					ImGui::SameLine();
+					if (ImGui::Button("Yes", { 45.0f, 0.0f }))
+					{
+						cfg->remove(currentConfig);
+						if (static_cast<std::size_t>(currentConfig) < configItems.size())
+							buffer = configItems[currentConfig];
+						else
+							buffer.clear();
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+			}
+			ImGui::Columns(1);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Debug")) {

@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Azurre\Config.h" />
+    <ClInclude Include="Azurre\ConfigStructs.h" />
     <ClInclude Include="Azurre\Core.h" />
     <ClInclude Include="Azurre\DiscordSDK\include\discord_register.h" />
     <ClInclude Include="Azurre\DiscordSDK\include\discord_rpc.h" />
@@ -230,6 +231,7 @@
     <ClInclude Include="Lib\imgui\imstb_textedit.h" />
     <ClInclude Include="Lib\imgui\imstb_truetype.h" />
     <ClInclude Include="Lib\nlohmann\json.hpp" />
+    <ClInclude Include="Lib\nlohmann\JsonForward.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

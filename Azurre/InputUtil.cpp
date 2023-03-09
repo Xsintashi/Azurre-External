@@ -8,6 +8,7 @@
 #include "../Lib/imgui/imgui.h"
 
 #include "InputUtil.h"
+#include <thread>
 
 struct Key {
     template <std::size_t N>
@@ -81,8 +82,8 @@ static constexpr auto keyMap = std::to_array<Key>({
     { "MOUSE1", VK_LBUTTON },
     { "MOUSE2", VK_RBUTTON },
     { "MOUSE3", VK_MBUTTON },
-    { "MOUSE4", XBUTTON1},
-    { "MOUSE5", XBUTTON2 },
+    { "MOUSE4", VK_XBUTTON1 },
+    { "MOUSE5", VK_XBUTTON2 },
     { "MULTIPLY", WIN32_LINUX(VK_MULTIPLY, SDL_SCANCODE_KP_MULTIPLY) },
     { "MWHEEL_DOWN", 0 },
     { "MWHEEL_UP", 0 },
@@ -126,10 +127,27 @@ static constexpr auto keyMap = std::to_array<Key>({
     { "`", WIN32_LINUX(VK_OEM_3, SDL_SCANCODE_GRAVE) }
     });
 
+static_assert(keyMap.size() == KeyBind::MAX);
 
 KeyBind::KeyBind(KeyCode keyCode) noexcept
 {
     this->keyCode = static_cast<std::size_t>(keyCode) < keyMap.size() ? keyCode : KeyCode::NONE;
+}
+
+KeyBind::KeyBind(const char* keyName) noexcept
+{
+    auto it = std::lower_bound(keyMap.begin(), keyMap.end(), keyName, [](const Key& key, const char* keyName) { return key.name < keyName; });
+    if (it != keyMap.end() && it->name == keyName)
+        keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
+    else
+        keyCode = KeyCode::NONE;
+}
+
+KeyBind::KeyBind(const std::string name, KeyMode keyMode) noexcept
+{
+    this->keyCode = KeyCode::NONE;
+    this->keyMode = keyMode;
+    this->activeName = name;
 }
 
 const char* KeyBind::toString() const noexcept
@@ -148,7 +166,7 @@ bool KeyBind::isPressed() const noexcept
     if (keyCode == KeyCode::MOUSEWHEEL_UP)
         return ImGui::GetIO().MouseWheel > 0.0f;
 
-    return static_cast<std::size_t>(keyCode) < keyMap.size() && GetKeyState(keyMap[keyCode].code);
+    return static_cast<std::size_t>(keyCode) < keyMap.size() && GetAsyncKeyState(keyMap[keyCode].code);
 }
 
 bool KeyBind::isDown() const noexcept
@@ -179,25 +197,84 @@ bool KeyBind::setToPressedKey() noexcept
         keyCode = KeyCode::MOUSEWHEEL_UP;
         return true;
     }
-
-    for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().MouseDown); ++i) {
-        if (ImGui::IsMouseClicked(i)) {
-            keyCode = KeyCode(KeyCode::MOUSE1 + i);
-            return true;
+    else {
+        for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().MouseDown); ++i) {
+            if (ImGui::IsMouseClicked(i)) {
+                keyCode = KeyCode(KeyCode::MOUSE1 + i);
+                return true;
+            }
         }
-    }
 
-    for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
-        if (!ImGui::IsKeyPressed(i))
-            continue;
-
-        if (const auto it = std::ranges::find(keyMap, i, &Key::code); it != keyMap.end()) {
-            keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
-            // Treat AltGr as RALT
-            if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(keyMap[KeyCode::RALT].code))
-                keyCode = KeyCode::RALT;
-            return true;
+        for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
+            if (ImGui::IsKeyPressed(i)) {
+                auto it = std::find_if(keyMap.begin(), keyMap.end(), [i](const Key& key) { return key.code == i; });
+                if (it != keyMap.end()) {
+                    keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
+                    // Treat AltGr as RALT
+                    if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(keyMap[KeyCode::RALT].code))
+                        keyCode = KeyCode::RALT;
+                    return true;
+                }
+            }
         }
     }
     return false;
+}
+
+void KeyBind::handleToggle() noexcept
+{
+    if (keyMode != KeyMode::Toggle)
+        return;
+
+    if (isPressed()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        toggledOn = !toggledOn;
+    }
+}
+
+bool KeyBind::isActive() const noexcept
+{
+    switch (keyMode)
+    {
+    case KeyMode::Off:
+        return false;
+    case KeyMode::Always:
+        return true;
+    case KeyMode::Hold:
+        return isDown();
+    case KeyMode::Toggle:
+        return isToggled();
+    default:
+        break;
+    }
+    return false;
+}
+
+bool KeyBind::canShowKeybind() noexcept
+{
+    if (!isActive())
+        return false;
+
+    if (keyMode != KeyMode::Hold && keyMode != KeyMode::Toggle)
+        return false;
+
+    return true;
+}
+
+void KeyBind::showKeybind() noexcept
+{
+    if (!isActive())
+        return;
+
+    switch (keyMode)
+    {
+    case KeyMode::Hold:
+        ImGui::TextWrapped("%s %s", "[hold]", this->activeName.c_str());
+        break;
+    case KeyMode::Toggle:
+        ImGui::TextWrapped("%s %s", "[toggled]", this->activeName.c_str());
+        break;
+    default:
+        break;
+    }
 }

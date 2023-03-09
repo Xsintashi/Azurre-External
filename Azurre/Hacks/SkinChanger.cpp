@@ -6,31 +6,16 @@
 #include "../SDK/SkinID.h"
 #include "../SDK/WeaponID.h"
 
-struct WeaponSkin {
-	int skinID = 0;
-
-	float wear = 0.1f;
-	int seed = 0;
-	int quality = 0;
-
-	bool enableStatrak = false;
-	int statTrak = 0;
-
-	const char* nameTag;
-};
-
-WeaponSkin weaponData[WeaponID::MAX_VALUE];
-
 bool pleaseUpdate = false;
 
-void Skin::add(int weaponID, int skinID, float wear, int seed, int statTrak, int quality, std::string nameTag) {
-	weaponData[weaponID].skinID = skinID;
-	weaponData[weaponID].wear = wear;
-	weaponData[weaponID].seed = seed;
-	weaponData[weaponID].enableStatrak = statTrak > 1 ? true : false;
-	weaponData[weaponID].statTrak = statTrak;
-	weaponData[weaponID].quality = quality;
-	weaponData[weaponID].nameTag = nameTag.c_str();
+void Skin::add(int idx, short weaponID, int skinID, float wear, int seed, int statTrak, int quality, char nameTag[161]) {
+    cfg->s[idx].weaponID = weaponID;
+    cfg->s[idx].skinID = skinID;
+    cfg->s[idx].wear = wear;
+    cfg->s[idx].seed = seed;
+    cfg->s[idx].statTrak = statTrak;
+    cfg->s[idx].quality = quality;
+    std::memcpy(cfg->s[idx].nameTag, nameTag, sizeof(nameTag));
 
 	pleaseUpdate = true;
 }
@@ -45,22 +30,30 @@ void Skin::update() {
 
 		const short weaponIndex = csgo.Read<short>(weapon + Offset::netvars::m_iItemDefinitionIndex);
 
-		if (const int paint = weaponData[weaponIndex].skinID) {
+        int ID = 0;
+        while (Skin::weaponNames[ID].definitionIndex != weaponIndex) {
+            if (ID == Skin::weaponNames.size() - 1)
+                return;
+            ID++;
+        }
+
+		if (const int paint = cfg->s[ID].skinID) {
 			const bool shouldUpdate = csgo.Read<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit) != paint || pleaseUpdate;
 
 			csgo.Write<int32_t>(weapon + Offset::netvars::m_iItemIDHigh, -1);
 
 			csgo.Write<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit, paint);
-			csgo.Write<float>(weapon + Offset::netvars::m_flFallbackWear, weaponData[weaponIndex].wear);
+			csgo.Write<float>(weapon + Offset::netvars::m_flFallbackWear, cfg->s[ID].wear);
 
-			csgo.Write<int32_t>(weapon + Offset::netvars::m_nFallbackSeed, weaponData[weaponIndex].seed);
-			csgo.Write<int>(weapon + Offset::netvars::m_iEntityQuality, weaponData[weaponIndex].quality);
+			csgo.Write<int32_t>(weapon + Offset::netvars::m_nFallbackSeed, cfg->s[ID].seed);
+			csgo.Write<int>(weapon + Offset::netvars::m_iEntityQuality, cfg->s[ID].quality);
 
-			if (weaponData[weaponIndex].enableStatrak)
-				csgo.Write<int32_t>(weapon + Offset::netvars::m_nFallbackStatTrak, weaponData[weaponIndex].statTrak);
+			if (cfg->s[ID].statTrak > 1)
+				csgo.Write<int32_t>(weapon + Offset::netvars::m_nFallbackStatTrak, cfg->s[ID].statTrak);
 
-			//if(strcmp(weaponData[weaponIndex].nameTag, "\0"))
-			//	csgo.Write<LPVOID>(weapon + Offset::netvars::m_szCustomName, (LPVOID)weaponData[weaponIndex].nameTag);
+            if (strcmp(cfg->s[ID].nameTag, "\0")) {
+                WriteProcessMemory(csgo.processHandle, (LPVOID)(weapon + Offset::netvars::m_szCustomName), cfg->s[ID].nameTag, sizeof(char[161]), 0);
+            }
 
 			csgo.Write<int32_t>(weapon + Offset::netvars::m_iAccountID, csgo.Read<int32_t>(weapon + Offset::netvars::m_OriginalOwnerXuidLow));
 

@@ -6,14 +6,14 @@
 
 namespace Skin {
 
-    struct weapon_name {
-        constexpr weapon_name(WeaponID definition_index, const char* name) : definition_index(definition_index), name(name) {}
+    struct weaponName {
+        constexpr weaponName(WeaponID definitionIndex, const char* name) : definitionIndex(definitionIndex), name(name) {}
 
-        WeaponID definition_index;
+        WeaponID definitionIndex;
         const char* name;
     };
 
-    constexpr auto weapon_names = std::to_array<weapon_name>({
+    constexpr auto weaponNames = std::to_array<weaponName>({
     {WeaponID::Ak47, "AK-47"},
     {WeaponID::Aug, "AUG"},
     {WeaponID::Awp, "AWP"},
@@ -47,10 +47,11 @@ namespace Skin {
     {WeaponID::Tec9, "Tec-9"},
     {WeaponID::Ump45, "UMP-45"},
     {WeaponID::Usp_s, "USP-S"},
-    {WeaponID::Xm1014, "XM1014"}
+    {WeaponID::Xm1014, "XM1014"},
+    {WeaponID::Daggers, "Shadow Daggers"}
     });
 
-    void add(int weaponID, int skinID, float wear, int seed, int statTrak, int quality, std::string nameTag);
+    void add(int idx, short weaponID, int skinID, float wear, int seed, int statTrak, int quality, char nameTag[161]);
     void update();
     const char* getWeaponIDName(short ID) noexcept;
 

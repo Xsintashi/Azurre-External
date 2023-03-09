@@ -10,9 +10,8 @@ class Memory
 {
 private:
 	std::uintptr_t processId = 0;
-	void* processHandle = nullptr;
-
 public:
+	void* processHandle = nullptr;
 	// Constructor that finds the process id
 	// and opens a handle
 	Memory(const std::string_view processName) noexcept

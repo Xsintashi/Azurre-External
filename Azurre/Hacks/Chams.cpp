@@ -7,13 +7,12 @@
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
 
-
 void Chams::run() noexcept {
 
 	if (!localPlayer) return;
 
-	const Color3 enemyColor = Helpers::ConvertColors3(cfg->c.enemy);
-	const Color3 allyColor = Helpers::ConvertColors3(cfg->c.ally);
+	const auto enemyColor = Helpers::ConvertColors3ToUint8_t(cfg->c.enemy.color);
+	const auto allyColor = Helpers::ConvertColors3ToUint8_t(cfg->c.ally.color);
 
 	static bool toggle = false;
 
@@ -27,9 +26,9 @@ void Chams::run() noexcept {
 
 		if (cfg->c.enabled) {
 			if (entity->teamNumber() == localPlayer->teamNumber())
-				csgo.Write<Color3>((uintptr_t)entity + Offset::netvars::m_clrRender, allyColor);
+				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, allyColor);
 			else
-				csgo.Write<Color3>((uintptr_t)entity + Offset::netvars::m_clrRender, enemyColor);
+				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, enemyColor);
 
 			float brightness = cfg->c.brightness * 10.f;
 			const auto _this = static_cast<uintptr_t>(IEngine + Offset::signatures::model_ambient_min - 0x2c);
@@ -38,9 +37,9 @@ void Chams::run() noexcept {
 		} else if(toggle){
 
 			if (entity->teamNumber() == localPlayer->teamNumber())
-				csgo.Write<Color3>((uintptr_t)entity + Offset::netvars::m_clrRender, Color3(255, 255, 255));
+				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
 			else
-				csgo.Write<Color3>((uintptr_t)entity + Offset::netvars::m_clrRender, Color3(255, 255, 255));
+				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
 
 			float brightness = 0;
 			const auto _this = static_cast<uintptr_t>(IEngine + Offset::signatures::model_ambient_min - 0x2c);

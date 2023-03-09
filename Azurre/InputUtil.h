@@ -1,4 +1,13 @@
 #pragma once
+#include <string>
+
+enum KeyMode
+{
+    Off,
+    Always,
+    Hold,
+    Toggle
+};
 
 class KeyBind {
 public:
@@ -110,19 +119,33 @@ public:
         MAX
     };
 
-    KeyBind() = default;
-    explicit KeyBind(KeyCode keyCode) noexcept;
+    KeyBind(KeyCode keyCode) noexcept;
+    KeyBind(const char* keyName) noexcept;
+    KeyBind(const std::string name, KeyMode keyMode = KeyMode::Off) noexcept;
 
     bool operator==(KeyCode keyCode) const noexcept { return this->keyCode == keyCode; }
-    friend bool operator==(const KeyBind& a, const KeyBind& b) noexcept { return a.keyCode == b.keyCode; }
+    bool operator==(const KeyBind& other) const noexcept { return this->keyCode == other.keyCode && this->keyMode == other.keyMode; }
 
-    [[nodiscard]] const char* toString() const noexcept;
-    [[nodiscard]] bool isPressed() const noexcept;
-    [[nodiscard]] bool isDown() const noexcept;
-    [[nodiscard]] bool isSet() const noexcept { return keyCode != KeyCode::NONE; }
-
+    const char* toString() const noexcept;
+    bool isPressed() const noexcept;
+    bool isDown() const noexcept;
+    bool isSet() const noexcept { return keyCode != KeyCode::NONE; }
 
     bool setToPressedKey() noexcept;
+
+    void handleToggle() noexcept;
+    bool isToggled() const noexcept { return toggledOn; }
+    void setToggleTo(bool value) noexcept { toggledOn = value; }
+
+    bool isActive() const noexcept;
+    bool canShowKeybind() noexcept;
+    void showKeybind() noexcept;
+
+    void reset() noexcept { keyCode = KeyCode::NONE; }
+
+    KeyMode keyMode = KeyMode::Always;
+    std::string activeName = { };
 private:
-    KeyCode keyCode = KeyCode::NONE;
+    KeyCode keyCode;
+    bool toggledOn = true;
 };
