@@ -433,6 +433,18 @@ void GUI::Render() noexcept
 
 			ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 
+			ImGui::PushID("Roll");
+			static float roll = 0.f;
+			static float tempRoll = 0.f;
+			ImGui::SetNextItemWidth(128);
+			ImGui::SliderFloat("", &roll, -45.f, 45.f, "Roll: %.1f");
+			if (roll != tempRoll) {
+				tempRoll = roll;
+				const auto& viewAngles = csgo.Read<ImVec2>(IClientState + Offset::signatures::dwClientState_ViewAngles);
+				csgo.Write<Vector>(IClientState + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
+			}
+			ImGui::PopID();
+
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
