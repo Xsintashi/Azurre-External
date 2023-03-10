@@ -171,6 +171,7 @@ bool KeyBind::isPressed() const noexcept
 
 bool KeyBind::isDown() const noexcept
 {
+
     if (keyCode == KeyCode::NONE)
         return false;
 

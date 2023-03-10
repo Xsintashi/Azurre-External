@@ -2,8 +2,6 @@
 #include "Core.h"
 #include "Offsets.h"
 
-#include <algorithm>    // std::sort
-
 #include "Hacks/Aimbot.h"
 #include "Hacks/TriggerBot.h"
 #include "Hacks/Visuals.h"
@@ -52,8 +50,10 @@ void Core::update() {
 		const std::string name = playerInfo.name;
 		const bool bot = playerInfo.fakeplayer;
 		const char* steamID = playerInfo.szSteamID;
-		//char placename[18] = adress->lastPlaceName(entity);
+		char temp[18];
+		ReadProcessMemory(csgo.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
+		std::string placename = temp;
 
-		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID });
+		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename });
 	}
 };

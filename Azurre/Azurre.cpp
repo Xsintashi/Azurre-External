@@ -10,10 +10,12 @@
 #include "Hacks/TriggerBot.h"
 #include "Hacks/Visuals.h"
 
-#include "SDK/GlobalVars.h"
-#include "InputUtil.h"
-
 #include "DiscordSDK/RPC.h"
+
+#include "SDK/GlobalVars.h"
+
+#include "InputUtil.h"
+#include "Helpers.h"
 
 #include <thread>
 

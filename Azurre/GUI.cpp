@@ -352,7 +352,7 @@ void GUI::Render() noexcept
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Players")) {
-			if (ImGui::BeginTable("Players List", 6))
+			if (ImGui::BeginTable("Players List", 7))
 			{
 				ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
@@ -360,6 +360,7 @@ void GUI::Render() noexcept
 				ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableSetupColumn("Weapon", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthFixed);
 				ImGui::TableHeadersRow();
 				for (unsigned int row = 0; row < entityData.size(); row++)
 				{
@@ -382,8 +383,9 @@ void GUI::Render() noexcept
 					ImGui::TableNextColumn();
 					ImGui::Text("$%i", entityData[row].money);
 					ImGui::TableNextColumn();
-
 					ImGui::Text("%s", Skin::getWeaponIDName(entityData[row].weaponID));
+					ImGui::TableNextColumn();
+					ImGui::Text("%s", entityData[row].placename.c_str());
 				}
 				ImGui::EndTable();
 			}

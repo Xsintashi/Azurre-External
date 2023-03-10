@@ -132,6 +132,7 @@ struct PlayerData {
 	int teamNumber;
 	int money;
 	int weaponID;
+    std::string placename;
 };
 
 inline std::vector<PlayerData> entityData;
