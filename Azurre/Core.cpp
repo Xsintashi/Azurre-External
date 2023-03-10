@@ -19,6 +19,7 @@ void Core::init() {
 	IClient = csgo.GetModuleAddress("client.dll");
 	IEngine = csgo.GetModuleAddress("engine.dll");
 	IClientState = csgo.Read<uintptr_t>(IEngine + Offset::signatures::dwClientState);
+	IPlayerResource = csgo.Read<uintptr_t>(IClient + Offset::signatures::dwPlayerResource);
 };
 
 void Core::update() {
