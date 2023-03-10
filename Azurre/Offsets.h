@@ -1,5 +1,4 @@
 #pragma once
-
 #include <cstddef>
 
 namespace Offset {
@@ -33,6 +32,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_bSpotted = 0x93D;
 		constexpr ::std::ptrdiff_t m_bSpottedByMask = 0x980;
 		constexpr ::std::ptrdiff_t m_bStartedArming = 0x3400;
+		constexpr ::std::ptrdiff_t m_bTabletReceptionIsBlocked = 0x34A8;
 		constexpr ::std::ptrdiff_t m_bUseCustomAutoExposureMax = 0x9D9;
 		constexpr ::std::ptrdiff_t m_bUseCustomAutoExposureMin = 0x9D8;
 		constexpr ::std::ptrdiff_t m_bUseCustomBloomScale = 0x9DA;
@@ -83,6 +83,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_iShotsFired = 0x103E0;
 		constexpr ::std::ptrdiff_t m_iState = 0x3268;
 		constexpr ::std::ptrdiff_t m_iTeamNum = 0xF4;
+		constexpr ::std::ptrdiff_t m_iWorldModelIndex = 0x3254;
 		constexpr ::std::ptrdiff_t m_lifeState = 0x25F;
 		constexpr ::std::ptrdiff_t m_nBombSite = 0x2994;
 		constexpr ::std::ptrdiff_t m_nFallbackPaintKit = 0x31D8;
@@ -92,7 +93,6 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_nModelIndex = 0x258;
 		constexpr ::std::ptrdiff_t m_nTickBase = 0x3440;
 		constexpr ::std::ptrdiff_t m_nViewModelIndex = 0x29D0;
-		constexpr ::std::ptrdiff_t m_iWorldModelIndex = 0x3254;
 		constexpr ::std::ptrdiff_t m_rgflCoordinateFrame = 0x444;
 		constexpr ::std::ptrdiff_t m_szCustomName = 0x304C;
 		constexpr ::std::ptrdiff_t m_szLastPlaceName = 0x35C4;
@@ -102,12 +102,11 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_vecViewOffset = 0x108;
 		constexpr ::std::ptrdiff_t m_viewPunchAngle = 0x3030;
 		constexpr ::std::ptrdiff_t m_zoomLevel = 0x33E0;
-		constexpr ::std::ptrdiff_t m_bTabletReceptionIsBlocked = 0x34A8;
-
 		constexpr ::std::ptrdiff_t m_bReadyToDraw = 0x274;
 	} // namespace netvars
 	namespace signatures {
 		constexpr ::std::ptrdiff_t anim_overlays = 0x2990;
+		constexpr ::std::ptrdiff_t clearHudWeapon = 0xADC0F178;
 		constexpr ::std::ptrdiff_t clientstate_choked_commands = 0x4D30;
 		constexpr ::std::ptrdiff_t clientstate_delta_ticks = 0x174;
 		constexpr ::std::ptrdiff_t clientstate_last_outgoing_command = 0x4D2C;
@@ -152,12 +151,14 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t dwZoomSensitivityRatioPtr = 0xDF4380;
 		constexpr ::std::ptrdiff_t dwbSendPackets = 0xDD2B2;
 		constexpr ::std::ptrdiff_t dwppDirect3DDevice9 = 0xA62C0;
-		constexpr ::std::ptrdiff_t find_hud_element = 0x251DFBD0;
+		constexpr ::std::ptrdiff_t find_hud_element = 0x526BFBD0;
 		constexpr ::std::ptrdiff_t force_update_spectator_glow = 0x3D91CA;
+		constexpr ::std::ptrdiff_t hud = 0x52369B0;
 		constexpr ::std::ptrdiff_t interface_engine_cvar = 0x3FA9C;
 		constexpr ::std::ptrdiff_t is_c4_owner = 0x3E69E0;
 		constexpr ::std::ptrdiff_t m_bDormant = 0xED;
 		constexpr ::std::ptrdiff_t m_bIsLocalPlayer = 0x3628;
+		constexpr ::std::ptrdiff_t m_bIsOtherEnemy = 0xCCE8CE8E;
 		constexpr ::std::ptrdiff_t m_flSpawnTime = 0x103C0;
 		constexpr ::std::ptrdiff_t m_pStudioHdr = 0x2950;
 		constexpr ::std::ptrdiff_t m_pitchClassPtr = 0x5239020;

@@ -55,11 +55,9 @@ void Visuals::doNotRenderTeammates() {
         for (unsigned int i = 1; i <= 32; i++) {
             const auto& entity = getEntity(i);
             if (!entity) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
                 continue;
             }
             if (entity->isDead() || entity->dormant()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
                 continue;
             }
 

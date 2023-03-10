@@ -85,7 +85,7 @@ public:
 	} v;
 
     struct SkinChangerConfig {
-		short weaponID = 0;
+		short weaponID = -1;
 		int skinID = 0;
 		float wear = 0.0f;
 		int seed = 0;

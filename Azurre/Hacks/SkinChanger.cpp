@@ -33,11 +33,11 @@ void Skin::update() {
         int ID = 0;
         while (Skin::weaponNames[ID].definitionIndex != weaponIndex) {
             if (ID == Skin::weaponNames.size() - 1)
-                return;
+                break;
             ID++;
         }
-
-		if (const int paint = cfg->s[ID].skinID) {
+        
+        if (const int paint = cfg->s[ID].skinID) {
 			const bool shouldUpdate = csgo.Read<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit) != paint || pleaseUpdate;
 
 			csgo.Write<int32_t>(weapon + Offset::netvars::m_iItemIDHigh, -1);

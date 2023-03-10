@@ -7,6 +7,7 @@
 #include "SDK/LocalPlayer.h"
 
 #include "Hacks/SkinChanger.h"
+#include "Hacks/Misc.h"
 
 #include "../Lib/imgui/imgui.h"
 #include "../Lib/imgui/ImGuiCustom.h"
@@ -337,7 +338,12 @@ void GUI::Render() noexcept
 				*out_text = Skin::weaponNames[idx].name;
 					return true;
 				}, nullptr, Skin::weaponNames.size(), 5);
-
+			ImGui::SameLine();
+			if (ImGui::Button("Update")) {
+				cfg->s[itemIndex].weaponID = Skin::weaponNames[itemIndex].definitionIndex;
+				itemIndexTemp = itemIndex;
+				Misc::forceReload();
+			}
 			ImGui::InputInt("Skin ID", &cfg->s[itemIndex].skinID);
 			ImGui::InputFloat("Wear", &cfg->s[itemIndex].wear);
 			ImGui::InputInt("Seed", &cfg->s[itemIndex].seed);
@@ -345,10 +351,6 @@ void GUI::Render() noexcept
 			ImGui::Combo("Quality", &cfg->s[itemIndex].quality, "Normal\0Genuine\0Vintage\0?\0Unique\0Community\0Valve\0Protoype\0Customized\0StatTrak\0Completed\0Souvenir\0");
 			ImGui::InputText("NameTag", cfg->s[itemIndex].nameTag, sizeof(cfg->s[itemIndex].nameTag));
 			ImGui::PopItemWidth();
-			if (itemIndexTemp != itemIndex) {
-				cfg->s[itemIndex].weaponID = Skin::weaponNames[itemIndex].definitionIndex;
-				itemIndexTemp = itemIndex;
-			}
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Players")) {
