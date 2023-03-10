@@ -78,10 +78,14 @@ public:
 	struct VisualsConfig {
 		bool thirdPerson = false;
 		KeyBind thirdPersonKey = "thirdperson";
-		bool no3DSky = false;
 		bool noSmoke = false;
 		bool noAllies = false;
 		int flashReduction = 0;
+		struct CustomPostProcessing {
+			bool enabled = false;
+			float worldExposure = 0.0f;
+			float bloomScale = 0.0f;
+		} customPostProcessing;
 	} v;
 
     struct SkinChangerConfig {

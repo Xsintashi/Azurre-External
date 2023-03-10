@@ -25,6 +25,7 @@ enum class ClassID {
     DynamicProp = 52,
     EconEntity = 53,
     EconWearable,
+    ToneMapController = 69,
     Hostage = 97,
     Inferno = 100,
     Healthshot = 104,

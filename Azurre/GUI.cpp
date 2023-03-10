@@ -319,6 +319,18 @@ void GUI::Render() noexcept
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Visuals")) {
+			ImGui::PushID("PostProcessingPopup");
+			ImGui::Checkbox("Custom post-processing", &cfg->v.customPostProcessing.enabled);
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				ImGui::SliderFloat("Bloom", &cfg->v.customPostProcessing.bloomScale, 0.0f, 750.f, "%.3f", ImGuiSliderFlags_Logarithmic);
+				ImGui::SliderFloat("Exposure", &cfg->v.customPostProcessing.worldExposure, 0.0f, 2000.f, "%.3f", ImGuiSliderFlags_Logarithmic);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
 			ImGui::PushID("thirderson");
 			ImGui::Checkbox("Thirdperson", &cfg->v.thirdPerson);
 			ImGui::SameLine();

@@ -96,6 +96,18 @@ void Misc::modifyClasses() {
 			csgo.Write<Vector>(entity + Offset::netvars::m_vecOrigin, Vector(999.f, 999.f, 999.f));
 		if (cfg->m.fixTablet && GetClassId(entity) == ClassID::Tablet)
 			csgo.Write<bool>(entity + Offset::netvars::m_bTabletReceptionIsBlocked, false);
+		if (cfg->v.customPostProcessing.enabled && GetClassId((int)entity) == ClassID::ToneMapController) {
+			csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomBloomScale, cfg->v.customPostProcessing.enabled);
+			csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMax, cfg->v.customPostProcessing.enabled);
+			csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMin, cfg->v.customPostProcessing.enabled);
+
+			float bloomScale = cfg->v.customPostProcessing.bloomScale * 0.01f;
+			float worldExposure = cfg->v.customPostProcessing.worldExposure * 0.001f;
+
+			csgo.Write<float>(entity + Offset::netvars::m_flCustomBloomScale, bloomScale);
+			csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMax, worldExposure);
+			csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMin, worldExposure);
+		}
 	}
 }
 

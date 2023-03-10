@@ -155,12 +155,19 @@ static void from_json(const json& j, Config::TriggerBotConfig& c) {
     read(j, "Hotkey", c.hotkey);
 }
 
+static void from_json(const json& j, Config::VisualsConfig::CustomPostProcessing& c) {
+    read(j, "Enabled", c.enabled);
+    read(j, "Bloom Scale", c.bloomScale);
+    read(j, "World Exposures", c.worldExposure);
+}
+
 static void from_json(const json& j, Config::VisualsConfig& c) {
     read(j, "No Allies", c.noAllies);
     read(j, "No Smoke", c.noSmoke);
     read(j, "Flash Reduction", c.flashReduction);
     read(j, "Third Person", c.thirdPerson);
     read(j, "Third Person Key", c.thirdPersonKey);
+    read<value_t::object>(j, "Custom PostProcessing", c.customPostProcessing);
 }
 
 void Config::load(size_t id, bool incremental) noexcept
@@ -314,6 +321,12 @@ static void to_json(json& j, const Config::TriggerBotConfig& o) {
     WRITE("Hotkey", hotkey);
 }
 
+static void to_json(json& j, const Config::VisualsConfig::CustomPostProcessing& o, const Config::VisualsConfig::CustomPostProcessing& dummy) {
+    WRITE("Enabled", enabled);
+    WRITE("Bloom Scale", bloomScale);
+    WRITE("World Exposures", worldExposure);
+}
+
 static void to_json(json& j, const Config::VisualsConfig& o) {
     const Config::VisualsConfig dummy;
 
@@ -322,6 +335,7 @@ static void to_json(json& j, const Config::VisualsConfig& o) {
     WRITE("Flash Reduction", flashReduction);
     WRITE("Third Person", thirdPerson);
     WRITE("Third Person Key", thirdPersonKey);
+    WRITE("Custom PostProcessing", customPostProcessing);
 }
 
 #pragma endregion
