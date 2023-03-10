@@ -18,7 +18,7 @@ void Glow::run() noexcept {
 
 		const auto glowObjectManager = csgo.Read<std::uintptr_t>(IClient + Offset::signatures::dwGlowObjectManager);
 
-		for (auto i = 1; i <= 32; ++i)
+		for (auto i = 1; i <= 512; ++i)
 		{
 			const auto entity = getEntity(i);
 

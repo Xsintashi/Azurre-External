@@ -79,8 +79,8 @@ void Misc::entityLoop() {
 
 		if (entity->isSameTeam()) continue;
 
-		if(cfg->m.radarHack)
-			csgo.Write<bool>((uintptr_t)entity + Offset::netvars::m_bSpotted, true);
+		if (cfg->m.radarHack)
+			entity->spotted((bool*)true);
 	}
 }
 
@@ -90,12 +90,25 @@ void Misc::modifyClasses() {
 
 	for (int i = 0; i < 512; i++)
 	{
-		int entity = csgo.Read<int>(IClient + Offset::signatures::dwEntityList + i * 0x10);
+		Entity* entity = getEntity(i);
 		if (!entity) continue;
-		if (cfg->v.noSmoke && GetClassId(entity) == ClassID::SmokeGrenadeProjectile)
-			csgo.Write<Vector>(entity + Offset::netvars::m_vecOrigin, Vector(999.f, 999.f, 999.f));
-		if (cfg->m.fixTablet && GetClassId(entity) == ClassID::Tablet)
-			csgo.Write<bool>(entity + Offset::netvars::m_bTabletReceptionIsBlocked, false);
+		if (cfg->v.noSmoke && GetClassId((int)entity) == ClassID::SmokeGrenadeProjectile) {
+			Vector pos = { 999.f, -999.f, 999.f };
+			entity->origin(&pos);
+		}
+		if (cfg->m.fixTablet && GetClassId((int)entity) == ClassID::Tablet)
+			entity->tabletReceptionIsBlocked((bool*)false);
+		if (cfg->v.customPostProcessing.enabled && GetClassId((int)entity) == ClassID::ToneMapController) {
+			entity->useCustomBloomScale(&cfg->v.customPostProcessing.enabled);
+			entity->useCustomAutoExposureMax(&cfg->v.customPostProcessing.enabled);
+			entity->useCustomAutoExposureMin(&cfg->v.customPostProcessing.enabled);
+			float bloomScale = cfg->v.customPostProcessing.bloomScale * 0.01f;
+			float worldExposure = cfg->v.customPostProcessing.worldExposure * 0.001f;
+
+			entity->customBloomScale(&bloomScale);
+			entity->customAutoExposureMin(&worldExposure);
+			entity->customAutoExposureMax(&worldExposure);
+		}
 	}
 }
 

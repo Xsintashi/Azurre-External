@@ -25,6 +25,7 @@ enum class ClassID {
     DynamicProp = 52,
     EconEntity = 53,
     EconWearable,
+    ToneMapController = 69,
     Hostage = 97,
     Inferno = 100,
     Healthshot = 104,
@@ -59,34 +60,47 @@ enum class ClassID {
 
 class Entity {
 public:
-	OFFSET(lastPlaceName, (), Offset::netvars::m_szLastPlaceName, LPVOID)
-	OFFSET(money, (), Offset::netvars::m_iAccount, int)
-	OFFSET(health, (), Offset::netvars::m_iHealth, int)
-	OFFSET(armor, (), Offset::netvars::m_ArmorValue, int)
-	OFFSET(teamNumber, (), Offset::netvars::m_iTeamNum, int)
-	OFFSET(flashMaxAlpha, (), Offset::netvars::m_flFlashMaxAlpha, float)
-	OFFSET(flashDuration, (), Offset::netvars::m_flFlashDuration, float)
-	OFFSET(flags, (), Offset::netvars::m_fFlags, int)
-	OFFSET(crosshairID, (), Offset::netvars::m_iCrosshairId, int)
-	OFFSET(shotsFired, (), Offset::netvars::m_iShotsFired, int)
-	OFFSET(velocity, (), Offset::netvars::m_vecVelocity, Vector)
-    OFFSET(aimPunch, (), Offset::netvars::m_aimPunchAngle, Vector)
-    OFFSET(origin, (), Offset::netvars::m_vecOrigin, Vector)
-    OFFSET(viewOffset, (), Offset::netvars::m_vecViewOffset, Vector)
-    OFFSET(hasHelmet, (), Offset::netvars::m_bHasHelmet, bool)
-    OFFSET(hasDefuser, (), Offset::netvars::m_bHasDefuser, bool)
-    OFFSET(spottedByMask, (), Offset::netvars::m_bSpottedByMask, bool)
-    OFFSET(spotted, (), Offset::netvars::m_bSpotted, bool)
-    OFFSET(isDefusing, (), Offset::netvars::m_bIsDefusing, bool)
-    OFFSET(waitForNoAttack, (), Offset::netvars::m_bWaitForNoAttack, bool)
-    OFFSET(boneMatrix, (), Offset::netvars::m_dwBoneMatrix, uintptr_t)
-    OFFSET(activeWeapon, (), Offset::netvars::m_hActiveWeapon, int)
+	OFFSET(lastPlaceName, Offset::netvars::m_szLastPlaceName, LPVOID)
+	OFFSET(money, Offset::netvars::m_iAccount, int)
+	OFFSET(health, Offset::netvars::m_iHealth, int)
+	OFFSET(armor, Offset::netvars::m_ArmorValue, int)
+	OFFSET(teamNumber, Offset::netvars::m_iTeamNum, int)
+	OFFSET(flashMaxAlpha, Offset::netvars::m_flFlashMaxAlpha, float)
+	OFFSET(flashDuration, Offset::netvars::m_flFlashDuration, float)
+	OFFSET(flags, Offset::netvars::m_fFlags, int)
+	OFFSET(crosshairID, Offset::netvars::m_iCrosshairId, int)
+	OFFSET(shotsFired, Offset::netvars::m_iShotsFired, int)
+	OFFSET(observerMode, Offset::netvars::m_iObserverMode, int)
+	OFFSET(velocity, Offset::netvars::m_vecVelocity, Vector)
+    OFFSET(aimPunch, Offset::netvars::m_aimPunchAngle, Vector)
+    OFFSET(origin, Offset::netvars::m_vecOrigin, Vector)
+    OFFSET(viewOffset, Offset::netvars::m_vecViewOffset, Vector)
+    OFFSET(hasHelmet, Offset::netvars::m_bHasHelmet, bool)
+    OFFSET(hasDefuser, Offset::netvars::m_bHasDefuser, bool)
+    OFFSET(spottedByMask, Offset::netvars::m_bSpottedByMask, bool)
+    OFFSET(readyToDraw, Offset::netvars::m_bReadyToDraw, bool)
+    OFFSET(spotted, Offset::netvars::m_bSpotted, bool)
+    OFFSET(isDefusing, Offset::netvars::m_bIsDefusing, bool)
+    OFFSET(waitForNoAttack, Offset::netvars::m_bWaitForNoAttack, bool)
+    OFFSET(boneMatrix, Offset::netvars::m_dwBoneMatrix, uintptr_t)
+    OFFSET(activeWeapon, Offset::netvars::m_hActiveWeapon, int)
 
-    OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
+    OFFSET(dormant, Offset::signatures::m_bDormant, bool)
 
     //Weapon
-    OFFSET(clip, (), Offset::netvars::m_iClip1, int)
-    OFFSET(isInReload, (), Offset::netvars::m_bInReload, bool)
+    OFFSET(clip, Offset::netvars::m_iClip1, int)
+    OFFSET(isInReload, Offset::netvars::m_bInReload, bool)
+
+    //CTablet
+    OFFSET(tabletReceptionIsBlocked, Offset::netvars::m_bTabletReceptionIsBlocked, bool)
+
+    //TonemapController
+    OFFSET(useCustomAutoExposureMin, Offset::netvars::m_bUseCustomAutoExposureMin, bool)
+    OFFSET(useCustomAutoExposureMax, Offset::netvars::m_bUseCustomAutoExposureMax, bool)
+    OFFSET(useCustomBloomScale, Offset::netvars::m_bUseCustomBloomScale, bool)
+    OFFSET(customAutoExposureMin, Offset::netvars::m_flCustomAutoExposureMin, float)
+    OFFSET(customAutoExposureMax, Offset::netvars::m_flCustomAutoExposureMax, float)
+    OFFSET(customBloomScale, Offset::netvars::m_flCustomBloomScale, float)
 
     bool isDead() noexcept {
         return this->health() < 1;
