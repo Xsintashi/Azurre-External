@@ -21,8 +21,25 @@ int __stdcall wWinMain(
 	HINSTANCE instance,
 	HINSTANCE previousInstance,
 	PWSTR arguments,
-	int commandShow)
-{
+	int commandShow) {
+
+	// Try to open the mutex.
+	HANDLE mutex = OpenMutex(
+		MUTEX_ALL_ACCESS, 0, "azurreE");
+
+	if (!mutex)
+		// Mutex doesn’t exist. This is
+		// the first instance so create
+		// the mutex.
+		mutex =
+		CreateMutex(0, 0, "azurreE");
+	else {
+		// The mutex exists so this is the
+		// the second instance so return.
+		MessageBoxA(nullptr, "Only one instance of the software can be running at one time.", "Azurre External", MB_OK | MB_ICONINFORMATION);
+		return 0;
+	}
+
 	cfg.emplace(Config{});
 	globalVars.emplace(GlobalVars{});
 	Core::init();
