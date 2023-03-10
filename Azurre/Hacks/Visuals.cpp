@@ -22,12 +22,12 @@ void Visuals::thirdperson() //shitty method
 
     if (cfg->v.thirdPersonKey.isActive()) {
         once = true;
-        localPlayer->observerMode((int*)1);
+        csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 1);
         return;
     }
     if (once) {
         once = false;
-        localPlayer->observerMode((int*)0);
+        csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iObserverMode, 0);
     }
 }
 
