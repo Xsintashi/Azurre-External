@@ -25,12 +25,14 @@ void Glow::run() noexcept {
 			if (!entity)
 				continue;
 
-			if (entity->teamNumber() == localPlayer->teamNumber() && cfg->v.noAllies)
+			if (entity->isSameTeam() && cfg->v.noAllies)
 				continue;
+
+			if ((!cfg->g.ally.enabled && entity->isSameTeam()) || (!cfg->g.enemy.enabled && !entity->isSameTeam())) continue;
 
 			static uint8_tColor4 color;
 
-			if (entity->teamNumber() == localPlayer->teamNumber())
+			if (entity->isSameTeam())
 				color = Helpers::ConvertColors4ToUint8_t(cfg->g.ally.color);
 			else
 				color = Helpers::ConvertColors4ToUint8_t(cfg->g.enemy.color);;

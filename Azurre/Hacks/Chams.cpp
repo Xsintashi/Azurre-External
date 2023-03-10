@@ -24,8 +24,14 @@ void Chams::run() noexcept {
 		const auto& entity = getEntity(i);
 		if (!entity) continue;
 
+		if ((!cfg->c.ally.enabled && entity->isSameTeam()) || (!cfg->c.enemy.enabled && !entity->isSameTeam())) continue;
+
 		if (cfg->c.enabled) {
-			if (entity->teamNumber() == localPlayer->teamNumber())
+
+			if (entity->isSameTeam() && cfg->v.noAllies)
+				continue;
+
+			if (entity->isSameTeam())
 				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, allyColor);
 			else
 				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, enemyColor);
@@ -36,7 +42,7 @@ void Chams::run() noexcept {
 			toggle = true;
 		} else if(toggle){
 
-			if (entity->teamNumber() == localPlayer->teamNumber())
+			if (entity->isSameTeam())
 				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
 			else
 				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });

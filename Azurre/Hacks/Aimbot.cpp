@@ -47,7 +47,7 @@ void Aimbot::run() noexcept {
 			if (entity->isDead() || entity->dormant() || !entity->spottedByMask())
 				continue;
 
-			if (entity->teamNumber() == localPlayer->teamNumber())
+			if (entity->isSameTeam())
 				continue;
 
 			for (auto bone : { 8, 4, 3, 7, 6, 5 }) {

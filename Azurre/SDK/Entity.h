@@ -3,6 +3,7 @@
 #include "Macros.h"
 #include "Interfaces.h"
 #include "../Core.h"
+#include "../SDK/LocalPlayer.h"
 #include "../SDK/Vector.h"
 #include "../Offsets.h"
 
@@ -89,6 +90,10 @@ public:
 
     bool isDead() noexcept {
         return this->health() < 1;
+    }
+
+    bool isSameTeam() noexcept {
+        return this->teamNumber() == localPlayer->teamNumber();
     }
 
     bool isAlive() noexcept {

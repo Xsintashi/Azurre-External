@@ -32,7 +32,7 @@ void TriggerBot::run() noexcept{
 
 	if (entity->isDead()) return;
 
-	if (entity->teamNumber() == localPlayer->teamNumber()) return;
+	if (entity->isSameTeam()) return;
 
 	if(!cfg->t.hotkey.isSet() || (cfg->t.hotkey.isSet() && cfg->t.hotkey.isDown()))
 		csgo.Write<uintptr_t>(IClient + Offset::signatures::dwForceAttack, 6);

@@ -63,7 +63,7 @@ void Visuals::doNotRenderTeammates() {
                 continue;
             }
 
-            if (entity->teamNumber() == localPlayer->teamNumber())
+            if (entity->isSameTeam())
                 csgo.Write<bool>((uintptr_t)entity + Offset::netvars::m_bReadyToDraw, false);
         }
     }
