@@ -447,13 +447,21 @@ void GUI::Render() noexcept
 				ImGui::OpenPopup("Config to reset");
 
 			if (ImGui::BeginPopup("Config to reset")) {
-				static constexpr const char* names[]{ "Whole"};
+				static constexpr const char* names[]{ "Whole", "Aimbot", "Chams", "Discord", "Glow", "Misc", "Skin Changer", "TriggerBot", "Visuals"};
 				for (int i = 0; i < IM_ARRAYSIZE(names); i++) {
 					if (i == 1) ImGui::Separator();
 
 					if (ImGui::Selectable(names[i])) {
 						switch (i) {
 						case 0: cfg->reset(); break;
+						case 1:	cfg->a = {}; break;
+						case 2:	cfg->c = {}; break;
+						case 3:	cfg->d = {}; break;
+						case 4:	cfg->g = {}; break;
+						case 5:	cfg->m = {}; break;
+						case 6:	cfg->s = {}; break;
+						case 7:	cfg->t = {}; break;
+						case 8:	cfg->v = {}; break;
 						}
 					}
 				}

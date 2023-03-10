@@ -1,14 +1,12 @@
 #include "InputUtil.h"
-
+#include <thread>
 #include <array>
 #include <string_view>
-
 #include <Windows.h>
 
 #include "../Lib/imgui/imgui.h"
 
 #include "InputUtil.h"
-#include <thread>
 
 struct Key {
     template <std::size_t N>
@@ -171,7 +169,6 @@ bool KeyBind::isPressed() const noexcept
 
 bool KeyBind::isDown() const noexcept
 {
-
     if (keyCode == KeyCode::NONE)
         return false;
 
