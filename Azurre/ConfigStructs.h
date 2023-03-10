@@ -322,7 +322,7 @@ static void read(const json& j, const char* key, char* o, std::size_t size) noex
         return;
 
     if (const auto& val = j[key]; val.is_string()) {
-        #pragma warning( disable : 4996 )
+#pragma warning( disable : 4996 )
         std::strncpy(o, val.get<std::string>().c_str(), size);
         o[size - 1] = '\0';
     }

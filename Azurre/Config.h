@@ -91,7 +91,7 @@ public:
 		int seed = 0;
 		int quality = 0;
 		int statTrak = 0;
-		char nameTag[161] = "\xE2\x80\xA8\x61\xE2\x80\xA8\x7A\xE2\x80\xA8\x75\xE2\x80\xA8\x72\xE2\x80\xA8\x72\xE2\x80\xA8\x65\xE2\x80\xA8";
+		char nameTag[161] = "";
     };
 
 	std::array<SkinChangerConfig, 36> s;

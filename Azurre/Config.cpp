@@ -12,6 +12,7 @@
 #include "Helpers.h"
 
 #include "Hacks/SkinChanger.h"
+#include "Hacks/Misc.h"
 
 Config::Config() noexcept
 {
@@ -188,11 +189,12 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read<value_t::object>(j, "Discord", d);
     read<value_t::object>(j, "Glow", g);
     read<value_t::object>(j, "Misc", m);
-    read<value_t::object>(j, "Skin Changer", s);
+    read<value_t::array>(j, "Skin Changer", s);
     read<value_t::object>(j, "TrggerBot", t);
     read<value_t::object>(j, "Visuals", v);
 
     Skin::update();
+    Misc::forceReload();
 }
 
 #pragma endregion
@@ -315,11 +317,11 @@ static void to_json(json& j, const Config::TriggerBotConfig& o) {
 static void to_json(json& j, const Config::VisualsConfig& o) {
     const Config::VisualsConfig dummy;
 
-   WRITE("No Allies", noAllies);
-   WRITE("No Smoke", noSmoke);
-   WRITE("Flash Reduction", flashReduction);
-   WRITE("Third Person", thirdPerson);
-   WRITE("Third Person Key", thirdPersonKey);
+    WRITE("No Allies", noAllies);
+    WRITE("No Smoke", noSmoke);
+    WRITE("Flash Reduction", flashReduction);
+    WRITE("Third Person", thirdPerson);
+    WRITE("Third Person Key", thirdPersonKey);
 }
 
 #pragma endregion
