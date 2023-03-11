@@ -83,7 +83,7 @@ int __stdcall wWinMain(
 		if (cfg->m.playerList) GUI::RenderPlayerList();
 #if defined(_DEBUG)
 		GUI::RenderDebugWindow();
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 #endif
 		GUI::EndRender();
 	}

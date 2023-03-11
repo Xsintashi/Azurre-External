@@ -4,6 +4,7 @@
 #define IEngine interfaces->engine
 #define IClientState interfaces->clientState
 #define IPlayerResource interfaces->playerResource
+#define IConsole interfaces->console
 
 namespace Core {
 	void init();

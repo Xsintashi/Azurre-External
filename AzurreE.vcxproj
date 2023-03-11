@@ -155,8 +155,12 @@
     <ClInclude Include="Azurre\SDK\Macros.h" />
     <ClInclude Include="Azurre\SDK\PlayerInfo.h" />
     <ClInclude Include="Azurre\SDK\SkinID.h" />
+    <ClInclude Include="Azurre\SDK\UserCmd.h" />
+    <ClInclude Include="Azurre\SDK\UserInterface.h" />
     <ClInclude Include="Azurre\SDK\Vector.h" />
+    <ClInclude Include="Azurre\SDK\ViewMatrix.h" />
     <ClInclude Include="Azurre\SDK\WeaponID.h" />
+    <ClInclude Include="Azurre\stb_image.h" />
     <ClInclude Include="Lib\imgui\imconfig.h" />
     <ClInclude Include="Lib\imgui\imgui.h" />
     <ClInclude Include="Lib\imgui\ImGuiCustom.h" />
@@ -191,6 +195,7 @@
     <ClCompile Include="Azurre\Hacks\Visuals.cpp" />
     <ClCompile Include="Azurre\Helpers.cpp" />
     <ClCompile Include="Azurre\InputUtil.cpp" />
+    <ClCompile Include="Azurre\SDK\UserInterface.cpp" />
     <ClCompile Include="Lib\imgui\imgui.cpp" />
     <ClCompile Include="Lib\imgui\ImGuiCustom.cpp" />
     <ClCompile Include="Lib\imgui\imgui_demo.cpp" />

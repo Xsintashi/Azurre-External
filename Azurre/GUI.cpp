@@ -5,6 +5,7 @@
 #include "SDK/GlobalVars.h"
 #include "SDK/Interfaces.h"
 #include "SDK/LocalPlayer.h"
+#include "SDK/UserInterface.h"
 
 #include "Hacks/SkinChanger.h"
 #include "Hacks/Misc.h"
@@ -349,6 +350,12 @@ void GUI::RenderDebugWindow() noexcept {
 		const auto& viewAngles = csgo.Read<ImVec2>(IClientState + Offset::signatures::dwClientState_ViewAngles);
 		csgo.Write<Vector>(IClientState + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
 	}
+	static std::string cmd = "";
+	ImGui::InputText("convar", &cmd);
+	ImGui::SameLine();
+	if (ImGui::Button("Send"))
+		usr0::SendConsoleCommand(cmd);
+	
 	ImGui::PopID();
 	ImGui::End();
 }

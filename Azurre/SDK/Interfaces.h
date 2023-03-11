@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include <Windows.h>
 
 class Memory;
 
@@ -9,6 +10,7 @@ public:
 	uintptr_t clientState;
 	uintptr_t engine;
 	uintptr_t playerResource;
+	HWND console;
 };
 
 inline std::optional<Interfaces> interfaces;

@@ -21,6 +21,8 @@ void Core::init() {
 	IEngine = csgo.GetModuleAddress("engine.dll");
 	IClientState = csgo.Read<uintptr_t>(IEngine + Offset::signatures::dwClientState);
 	IPlayerResource = csgo.Read<uintptr_t>(IClient + Offset::signatures::dwPlayerResource);
+	do { IConsole = FindWindowA("Valve001", NULL);
+	} while (IConsole == nullptr);
 };
 
 void Core::update() {
