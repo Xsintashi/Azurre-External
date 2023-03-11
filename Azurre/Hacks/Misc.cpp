@@ -77,7 +77,7 @@ void Misc::entityLoop() {
 		const auto& entity = getEntity(i);
 		if (!entity) continue;
 
-		if (entity->isSameTeam()) continue;
+		if (entity->isSameTeam() || entity == (Entity*)localPlayer.get()) continue;
 
 		if(cfg->m.radarHack)
 			csgo.Write<bool>((uintptr_t)entity + Offset::netvars::m_bSpotted, true);
