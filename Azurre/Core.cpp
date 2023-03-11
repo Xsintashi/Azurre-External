@@ -13,6 +13,7 @@
 #include "SDK/GlobalVars.h"
 #include "SDK/PlayerInfo.h"
 #include "Config.h"
+#include "DiscordSDK/RPC.h"
 
 void Core::init() {
 	interfaces.emplace(Interfaces{});
@@ -31,6 +32,8 @@ void Core::update() {
 	cfg->a.hotkey.handleToggle();
 	cfg->t.hotkey.handleToggle();
 	cfg->v.thirdPersonKey.handleToggle();
+
+	Discord::Update();
 
 	entityData.clear();
 	for (int unsigned idx = 0; idx <= 32; idx++) {

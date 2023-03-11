@@ -1,13 +1,7 @@
 #pragma once
 #include <d3d9.h>
 
-namespace GUI
-{
-
-	// constant window size
-	constexpr int WIDTH = 640;
-	constexpr int HEIGHT = 480;
-
+namespace GUI {
 	// when this changes, exit threads
 	// and close menu :)
 	inline bool isRunning = true;
@@ -39,6 +33,13 @@ namespace GUI
 
 	void BeginRender() noexcept;
 	void EndRender() noexcept;
+
+	void updateColors() noexcept;
+
+	void update() noexcept;
+
+	// Windows
+	void RenderDebugWindow() noexcept;
 	void RenderPlayerList() noexcept;
 	void RenderMainMenu() noexcept;
 }

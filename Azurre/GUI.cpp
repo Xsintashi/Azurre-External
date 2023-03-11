@@ -68,7 +68,7 @@ long __stdcall WindowProcess(
 			rect.left += points.x - GUI::position.x;
 			rect.top += points.y - GUI::position.y;
 
-			if (GUI::position.x >= 0 &&
+			/*if (GUI::position.x >= 0 &&
 				GUI::position.x <= GUI::WIDTH &&
 				GUI::position.y >= 0 && GUI::position.y <= 19)
 				SetWindowPos(
@@ -78,7 +78,7 @@ long __stdcall WindowProcess(
 					rect.top,
 					0, 0,
 					SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOZORDER
-				);
+				);*/
 		}
 
 	}return 0;
@@ -112,8 +112,8 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 		WS_POPUP,
 		100,
 		100,
-		1,
-		1,
+		320,
+		240,
 		0,
 		0,
 		windowClass.hInstance,
@@ -121,7 +121,8 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 	);
 
 
-	ShowWindow(window, SW_SHOWDEFAULT);
+
+	//ShowWindow(window, SW_SHOWDEFAULT); // Shows black main window. We dont wanna see it
 	UpdateWindow(window);
 }
 
@@ -264,16 +265,102 @@ void GUI::EndRender() noexcept
 		ResetDevice();
 }
 
-void GUI::RenderPlayerList() noexcept {
+void GUI::updateColors() noexcept
+{
+	switch (cfg->u.menuColors) {
+	default:
+	case 0: ImGui::StyleColorsAzurre(); break;
+	case 1: ImGui::StyleColorsGenshi(); break;
+	case 2: ImGui::StyleColorsLime(); break;
+	case 3: ImGui::StyleColorsRed(); break;
+	case 4: ImGui::StyleColorsGold(); break;
+	case 5: ImGui::StyleColorsPandora(); break;
+	case 6: ImGui::StyleColorsLight(); break;
+	case 7: ImGui::StyleColorsDeepDark(); break;
+	case 8: ImGui::StyleColorsVisualStudio(); break;
+	case 9: ImGui::StyleColorsGoldSrc(); break;
+	case 10: ImGui::StyleColorsClassic(); break;
+	case 11: ImGui::StyleColorsNeverlose(); break;
+	case 12: ImGui::StyleColorsAimware(); break;
+	case 13: ImGui::StyleColorsOnetap(); break;
+	case 14: break; //Custom
+	}
+}
+
+void GUI::update() noexcept {
+
+	SetWindowPos(window, cfg->u.alwaysOnTop ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+
+	auto& guiSettings = ImGui::GetStyle();
+	guiSettings.AntiAliasedLines = cfg->u.antiAliasing;
+    guiSettings.AntiAliasedLinesUseTex = cfg->u.antiAliasing;
+    guiSettings.AntiAliasedFill = cfg->u.antiAliasing;
+    guiSettings.WindowBorderSize = cfg->u.windowBorder ? 1.f : 0.f;
+    guiSettings.PopupBorderSize = cfg->u.windowBorder ? 1.f : 0.f;
+    guiSettings.FrameBorderSize = cfg->u.frameBorder ? 1.f : 0.f;
+    guiSettings.WindowTitleAlign = cfg->u.centerTitle ? ImVec2{0.5f, 0.5f} : ImVec2{ 0.f, 0.5f };
+}
+
+void GUI::RenderDebugWindow() noexcept {
 	ImGui::Begin(
-		"PlayerList",
-		&cfg->m.playerList,
+		"Debug",
+		nullptr,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_AlwaysAutoResize
 	);
+	static auto frameRate = 1.0f;
+	frameRate = 0.9f * frameRate + 0.1f * globalVars->absoluteFrameTime;
+	const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
+	const int tickRate = static_cast<int>(1 / globalVars->intervalPerTick); //tps
 
-	ImGui::SetNextWindowPos({16.f, 16.f });
-	ImGui::SetNextWindowSize({ GUI::WIDTH / 4, GUI::HEIGHT / 4 });
+	int chokedPackets = csgo.Read<int>(IClientState + Offset::signatures::clientstate_choked_commands);
+
+	ImGui::TextUnformatted("Build date: " __DATE__ " " __TIME__);
+
+	ImGui::Text("Fps: %i", framePerSecond);
+	ImGui::Text("Tick: %i", tickRate);
+	ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient);
+	ImGui::Text("ClientState: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClientState);
+	ImGui::Text("Engine: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IEngine);
+	ImGui::Text("PlayerResource: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IPlayerResource);
+	ImGui::Text("LocalPlayer: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", localPlayer ? localPlayer.get() : 0);
+	ImGui::Text("RealTime: %.2f", globalVars->realTime);
+	ImGui::Text("FrameCount: %i", globalVars->frameCount);
+	ImGui::Text("AbsoluteFrametime: %.2f", globalVars->absoluteFrameTime);
+	ImGui::Text("AbsoluteFrameStartTimeStdDev: %.2f", globalVars->absoluteFrameStartTimeStdDev);
+	ImGui::Text("CurrentTime: %.2f", globalVars->currentTime);
+	ImGui::Text("FrameTime: %.2f", globalVars->frameTime);
+	ImGui::Text("MaxClients: %i", globalVars->maxClients);
+	ImGui::Text("TickCount: %i", globalVars->tickCount);
+	ImGui::Text("IntervalPerTick: %.2f", globalVars->intervalPerTick);
+	ImGui::Text("InterpolationAmount: %.2f", globalVars->interpolationAmount);
+
+	ImGui::Text("Choked Packets: %i", chokedPackets);
+
+	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
+
+	ImGui::PushID("Roll");
+	static float roll = 0.f;
+	static float tempRoll = 0.f;
+	ImGui::SetNextItemWidth(128);
+	ImGui::SliderFloat("", &roll, -45.f, 45.f, "Roll: %.1f");
+	if (roll != tempRoll) {
+		tempRoll = roll;
+		const auto& viewAngles = csgo.Read<ImVec2>(IClientState + Offset::signatures::dwClientState_ViewAngles);
+		csgo.Write<Vector>(IClientState + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
+	}
+	ImGui::PopID();
+	ImGui::End();
+}
+
+void GUI::RenderPlayerList() noexcept {
+	ImGui::Begin(
+		"Player List",
+		&cfg->m.playerList,
+		ImGuiWindowFlags_AlwaysAutoResize
+	);
+
+	ImGui::SetNextWindowSize({ -1, -1 });
 	if (ImGui::BeginTable("Players List", 7))
 	{
 		ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
@@ -316,13 +403,11 @@ void GUI::RenderPlayerList() noexcept {
 
 
 void GUI::RenderMainMenu() noexcept {
-	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
+	ImGui::SetNextWindowSize({ -1, -1 });
 	ImGui::Begin(
 		"Azurre External 0.1",
 		&isRunning,
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoSavedSettings |
-		ImGuiWindowFlags_NoCollapse
+		ImGuiWindowFlags_AlwaysAutoResize
 	);
 
 	ImGui::Text("Hello xs9 :)");
@@ -353,7 +438,6 @@ void GUI::RenderMainMenu() noexcept {
 		}
 		if (ImGui::BeginTabItem("Glow")) {
 			ImGui::Checkbox("Enabled", &cfg->g.enabled);
-			ImGui::Checkbox("Type", &cfg->g.type);
 			ImGuiCustom::colorPicker("Enemies", cfg->g.enemy);
 			ImGuiCustom::colorPicker("Allies", cfg->g.ally);
 			ImGui::SetNextItemWidth(200.0f);
@@ -430,6 +514,18 @@ void GUI::RenderMainMenu() noexcept {
 		}
 		if (ImGui::BeginTabItem("Discord")) {
 			ImGui::Checkbox("Enabled", &cfg->d.enabled);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("GUI")) {
+
+			if (ImGui::Combo("Menu colors", &cfg->u.menuColors, "Azurre\0Genshi\0Emerald\0Bloddy Red\0Gold Mine\0Pandora\0Holy Light\0Deep Dark\0Visual Studio\0GoldSrc\0ImGui\0Neverlose\0Aimware\0Onetap\0Custom\0"))
+				updateColors();
+
+			ImGui::Checkbox("Always on Top",&cfg->u.alwaysOnTop);
+			ImGui::Checkbox("AntiAliasing",&cfg->u.antiAliasing);
+			ImGui::Checkbox("Center Title",&cfg->u.centerTitle);
+			ImGui::Checkbox("Frame Border",&cfg->u.frameBorder);
+			ImGui::Checkbox("Window Border",&cfg->u.windowBorder);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Config")) {
@@ -544,51 +640,6 @@ void GUI::RenderMainMenu() noexcept {
 				}
 			}
 			ImGui::Columns(1);
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("Debug")) {
-
-			static auto frameRate = 1.0f;
-			frameRate = 0.9f * frameRate + 0.1f * globalVars->absoluteFrameTime;
-			const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
-			const int tickRate = static_cast<int>(1 / globalVars->intervalPerTick); //tps
-
-			int chokedPackets = csgo.Read<int>(IClientState + Offset::signatures::clientstate_choked_commands);
-
-			ImGui::Text("Fps: %i", framePerSecond);
-			ImGui::Text("Tick: %i", tickRate);
-			ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient);
-			ImGui::Text("ClientState: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClientState);
-			ImGui::Text("Engine: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IEngine);
-			ImGui::Text("PlayerResource: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IPlayerResource);
-			ImGui::Text("LocalPlayer: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", localPlayer ? localPlayer.get() : 0);
-			ImGui::Text("RealTime: %.2f", globalVars->realTime);
-			ImGui::Text("FrameCount: %i", globalVars->frameCount);
-			ImGui::Text("AbsoluteFrametime: %.2f", globalVars->absoluteFrameTime);
-			ImGui::Text("AbsoluteFrameStartTimeStdDev: %.2f", globalVars->absoluteFrameStartTimeStdDev);
-			ImGui::Text("CurrentTime: %.2f", globalVars->currentTime);
-			ImGui::Text("FrameTime: %.2f", globalVars->frameTime);
-			ImGui::Text("MaxClients: %i", globalVars->maxClients);
-			ImGui::Text("TickCount: %i", globalVars->tickCount);
-			ImGui::Text("IntervalPerTick: %.2f", globalVars->intervalPerTick);
-			ImGui::Text("InterpolationAmount: %.2f", globalVars->interpolationAmount);
-
-			ImGui::Text("Choked Packets: %i", chokedPackets);
-
-			ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
-
-			ImGui::PushID("Roll");
-			static float roll = 0.f;
-			static float tempRoll = 0.f;
-			ImGui::SetNextItemWidth(128);
-			ImGui::SliderFloat("", &roll, -45.f, 45.f, "Roll: %.1f");
-			if (roll != tempRoll) {
-				tempRoll = roll;
-				const auto& viewAngles = csgo.Read<ImVec2>(IClientState + Offset::signatures::dwClientState_ViewAngles);
-				csgo.Write<Vector>(IClientState + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
-			}
-			ImGui::PopID();
-
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

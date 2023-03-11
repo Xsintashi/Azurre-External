@@ -317,9 +317,24 @@ namespace ImGui
     IMGUI_API const char*   GetVersion();                               // get the compiled version string e.g. "1.80 WIP" (essentially the value for IMGUI_VERSION from the compiled version of imgui.cpp)
 
     // Styles
+    IMGUI_API void          StyleColorsGenshi(ImGuiStyle* dst = NULL);  // Genshi
+    IMGUI_API void          StyleColorsRed(ImGuiStyle* dst = NULL);     // Genshi
+    IMGUI_API void          StyleColorsLime(ImGuiStyle* dst = NULL);    // Genshi 
+    IMGUI_API void          StyleColorsAzurre(ImGuiStyle* dst = NULL);  // Azurre
+    IMGUI_API void          StyleColorsPandora(ImGuiStyle* dst = NULL);       // Azurre
+    // Default
     IMGUI_API void          StyleColorsDark(ImGuiStyle* dst = NULL);    // new, recommended style (default)
     IMGUI_API void          StyleColorsLight(ImGuiStyle* dst = NULL);   // best used with borders and a custom, thicker font
-    IMGUI_API void          StyleColorsClassic(ImGuiStyle* dst = NULL); // classic imgui style
+    IMGUI_API void          StyleColorsClassic(ImGuiStyle* dst = NULL);
+
+    // Not Mine
+    IMGUI_API void          StyleColorsGold(ImGuiStyle* dst = NULL);    // R3nzTheCodeGOD's gold style
+    IMGUI_API void          StyleColorsDeepDark(ImGuiStyle* dst = NULL);// janekb04's dark style
+    IMGUI_API void          StyleColorsVisualStudio(ImGuiStyle* dst = NULL);// MomoDeve's dark style
+    IMGUI_API void          StyleColorsGoldSrc(ImGuiStyle* dst = NULL);
+    IMGUI_API void          StyleColorsNeverlose(ImGuiStyle* dst = NULL); // NEPS
+    IMGUI_API void          StyleColorsAimware(ImGuiStyle* dst = NULL); // NEPS
+    IMGUI_API void          StyleColorsOnetap(ImGuiStyle* dst = NULL); // NEPS
 
     // Windows
     // - Begin() = push window to the stack and start appending to it. End() = pop window from the stack.
@@ -1594,6 +1609,7 @@ enum ImGuiBackendFlags_
 enum ImGuiCol_
 {
     ImGuiCol_Text,
+    ImGuiCol_TextTitle,				// Window title text
     ImGuiCol_TextDisabled,
     ImGuiCol_WindowBg,              // Background of normal windows
     ImGuiCol_ChildBg,               // Background of child windows

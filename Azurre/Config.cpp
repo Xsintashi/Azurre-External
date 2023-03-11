@@ -124,6 +124,15 @@ static void from_json(const json& j, Config::GlowConfig& c) {
     read<value_t::object>(j, "Enemy", c.enemy);
 }
 
+static void from_json(const json& j, Config::GuiConfig& c) {
+    read(j, "AntiAliasing" , c.antiAliasing);
+    read(j, "Window Border" , c.windowBorder);
+    read(j, "Center Title" , c.centerTitle);
+    read(j, "Frame Border" , c.frameBorder);
+    read(j, "Always On Top", c.alwaysOnTop);
+    read(j, "Menu Colors", c.menuColors);
+}
+
 static void from_json(const json& j, Config::MiscConfig::FakeLag& c)
 {
     read(j, "Enabled", c.enabled);
@@ -200,6 +209,7 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read<value_t::array>(j, "Skin Changer", s);
     read<value_t::object>(j, "TrggerBot", t);
     read<value_t::object>(j, "Visuals", v);
+    read<value_t::object>(j, "GUI", u);
 
     Skin::update();
     Misc::forceReload();
@@ -285,6 +295,17 @@ static void to_json(json& j, const Config::GlowConfig& o) {
     WRITE("Enemy", enemy);
 }
 
+static void to_json(json& j, const Config::GuiConfig& o) {
+    const Config::GuiConfig dummy;
+
+    WRITE("AntiAliasing", antiAliasing);
+    WRITE("Window Border", windowBorder);
+    WRITE("Center Title", centerTitle);
+    WRITE("Frame Border", frameBorder);
+    WRITE("Always On Top", alwaysOnTop);
+    WRITE("Menu Colors", menuColors);
+}
+
 static void to_json(json& j, const Config::MiscConfig::FakeLag& o, const Config::MiscConfig::FakeLag& dummy)
 {
     WRITE("Enabled", enabled);
@@ -357,6 +378,7 @@ void Config::save(size_t id) const noexcept
         j["Skin Changer"] = s;
         j["TriggerBot"] = t;
         j["Visuals"] = v;
+        j["GUI"] = u;
 
         removeEmptyObjects(j);
         out << std::setw(2) << j;

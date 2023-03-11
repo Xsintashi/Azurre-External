@@ -63,7 +63,7 @@ int __stdcall wWinMain(
 			::SwitchToThisWindow(GUI::window, true);
 
 		Core::update();
-		Discord::Update();
+
 		Skin::update();
 		Misc::entityLoop();
 		Misc::fakeLag(); // disable while shotting
@@ -77,9 +77,14 @@ int __stdcall wWinMain(
 		Visuals::thirdperson();
 		Misc::modifyClasses();
 
+		GUI::update();
 		GUI::BeginRender();
 		GUI::RenderMainMenu();
 		if (cfg->m.playerList) GUI::RenderPlayerList();
+#if defined(_DEBUG)
+		GUI::RenderDebugWindow();
+		ImGui::ShowDemoWindow();
+#endif
 		GUI::EndRender();
 	}
 	Misc::forceReload();

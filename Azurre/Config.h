@@ -54,7 +54,6 @@ public:
 
 	struct GlowConfig {
 		bool enabled = false;
-		bool type = false;
 		ColorToggle enemy = { 0.f, 0.4f, 1.f, 1.f };
 		ColorToggle ally = { 1.f, 0.f, 0.f, 1.f };
 	} g;
@@ -76,6 +75,16 @@ public:
 		bool enabled = false;
 		KeyBind hotkey = "trigger";
 	} t;
+
+	struct GuiConfig {
+		bool antiAliasing = true;
+		bool windowBorder = false;
+		bool centerTitle = true;
+		bool frameBorder = false;
+		bool alwaysOnTop = false;
+
+		int menuColors = 0;
+	} u;
 
 	struct VisualsConfig {
 		bool thirdPerson = false;
