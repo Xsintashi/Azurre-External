@@ -136,6 +136,7 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Auto Stop", c.autoStop);
     read(j, "Fix Tablet Signal", c.fixTablet);
     read(j, "Engine Radar", c.radarHack);
+    read(j, "Player List", c.playerList);
     read<value_t::object>(j, "Fake Lag", c.fakeLag);
 }
 
@@ -299,6 +300,7 @@ static void to_json(json& j, const Config::MiscConfig& o) {
     WRITE("Fix Tablet Signal", fixTablet);
     WRITE("Engine Radar", radarHack);
     WRITE("Fake Lag", fakeLag);
+    WRITE("Player List", playerList);
 }
 
 static void to_json(json& j, const Config::SkinChangerConfig& o)
