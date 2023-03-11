@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
-
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "../Lib/nlohmann/json.hpp"
 #include "InputUtil.h"
 #include "../Lib/imgui/imgui.h"

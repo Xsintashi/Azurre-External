@@ -4,7 +4,7 @@
 #include <ShlObj.h>
 
 #include "../Lib/nlohmann/json.hpp"
-
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "../Lib/imgui/imgui.h"
 #include "../Lib/imgui/imgui_internal.h"
 

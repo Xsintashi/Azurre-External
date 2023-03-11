@@ -78,7 +78,8 @@ int __stdcall wWinMain(
 		Misc::modifyClasses();
 
 		GUI::BeginRender();
-		GUI::Render();
+		GUI::RenderMainMenu();
+		if (cfg->m.playerList) GUI::RenderPlayerList();
 		GUI::EndRender();
 	}
 	Misc::forceReload();

@@ -4,6 +4,7 @@
 #include <string_view>
 #include <Windows.h>
 
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "../Lib/imgui/imgui.h"
 
 #include "InputUtil.h"
@@ -183,7 +184,7 @@ bool KeyBind::isDown() const noexcept
 
 bool KeyBind::setToPressedKey() noexcept
 {
-    if (ImGui::IsKeyPressed(ImGui::GetIO().KeyMap[ImGuiKey_Escape])) {
+    if (ImGui::IsKeyPressed(static_cast<ImGuiKey>(ImGui::GetIO().KeyMap[ImGuiKey_Escape]))) {
         keyCode = KeyCode::NONE;
         return true;
     }
@@ -204,12 +205,12 @@ bool KeyBind::setToPressedKey() noexcept
         }
 
         for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
-            if (ImGui::IsKeyPressed(i)) {
+            if (ImGui::IsKeyPressed(static_cast<ImGuiKey>(i))) {
                 auto it = std::find_if(keyMap.begin(), keyMap.end(), [i](const Key& key) { return key.code == i; });
                 if (it != keyMap.end()) {
                     keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
                     // Treat AltGr as RALT
-                    if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(keyMap[KeyCode::RALT].code))
+                    if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(static_cast<ImGuiKey>(keyMap[KeyCode::RALT].code)))
                         keyCode = KeyCode::RALT;
                     return true;
                 }

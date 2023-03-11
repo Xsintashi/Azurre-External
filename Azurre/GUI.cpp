@@ -8,7 +8,7 @@
 
 #include "Hacks/SkinChanger.h"
 #include "Hacks/Misc.h"
-
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "../Lib/imgui/imgui.h"
 #include "../Lib/imgui/ImGuiCustom.h"
 #include "../Lib/imgui/imgui_stdlib.h"
@@ -112,13 +112,14 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 		WS_POPUP,
 		100,
 		100,
-		WIDTH,
-		HEIGHT,
+		1,
+		1,
 		0,
 		0,
 		windowClass.hInstance,
 		0
 	);
+
 
 	ShowWindow(window, SW_SHOWDEFAULT);
 	UpdateWindow(window);
@@ -132,27 +133,19 @@ void GUI::DestroyHWindow() noexcept
 
 bool GUI::CreateDevice() noexcept
 {
-	d3d = Direct3DCreate9(D3D_SDK_VERSION);
-
-	if (!d3d)
+	if ((d3d = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)
 		return false;
 
+	// Create the D3DDevice
 	ZeroMemory(&presentParameters, sizeof(presentParameters));
-
 	presentParameters.Windowed = TRUE;
 	presentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	presentParameters.BackBufferFormat = D3DFMT_UNKNOWN;
+	presentParameters.BackBufferFormat = D3DFMT_UNKNOWN; // Need to use an explicit format with alpha if needing per-pixel alpha composition.
 	presentParameters.EnableAutoDepthStencil = TRUE;
 	presentParameters.AutoDepthStencilFormat = D3DFMT_D16;
-	presentParameters.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-
-	if (d3d->CreateDevice(
-		D3DADAPTER_DEFAULT,
-		D3DDEVTYPE_HAL,
-		window,
-		D3DCREATE_HARDWARE_VERTEXPROCESSING,
-		&presentParameters,
-		&device) < 0)
+	presentParameters.PresentationInterval = D3DPRESENT_INTERVAL_ONE;           // Present with vsync
+	//g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;   // Present without vsync, maximum unthrottled framerate
+	if (d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, window, D3DCREATE_HARDWARE_VERTEXPROCESSING, &presentParameters, &device) < 0)
 		return false;
 
 	return true;
@@ -189,11 +182,23 @@ void GUI::CreateImGui() noexcept
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ::ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
 	io.IniFilename = NULL;
 
 	ImGui::StyleColorsDark();
+
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(device);
@@ -236,12 +241,20 @@ void GUI::EndRender() noexcept
 	device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 
 	device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 255), 1.0f, 0);
-
 	if (device->BeginScene() >= 0)
 	{
 		ImGui::Render();
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 		device->EndScene();
+	}
+
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+	// Update and Render additional Platform Windows
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
 	}
 
 	const auto result = device->Present(0, 0, 0, 0);
@@ -251,17 +264,65 @@ void GUI::EndRender() noexcept
 		ResetDevice();
 }
 
-void GUI::Render() noexcept
-{
-	ImGui::SetNextWindowPos({ 0, 0 });
+void GUI::RenderPlayerList() noexcept {
+	ImGui::Begin(
+		"PlayerList",
+		&cfg->m.playerList,
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_AlwaysAutoResize
+	);
+
+	ImGui::SetNextWindowPos({16.f, 16.f });
+	ImGui::SetNextWindowSize({ GUI::WIDTH / 4, GUI::HEIGHT / 4 });
+	if (ImGui::BeginTable("Players List", 7))
+	{
+		ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Weapon", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableHeadersRow();
+		for (unsigned int row = 0; row < entityData.size(); row++)
+		{
+			auto teamColor = localPlayer.get() == (uintptr_t)entityData[row].entity ? ImVec4{ 1.0f, 0.25f, 1.0f, 1.f } : entityData[row].teamNumber == 2 ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{ 0.26f, 0.59f, 0.98f, 1.f };
+			auto hpColor = entityData[row].health < 50 ? entityData[row].health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f };
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("%i", entityData[row].idx);
+			ImGui::TableNextColumn();
+			ImGui::PushID(row);
+			ImGui::TextColored(teamColor, "%s", entityData[row].name.c_str());
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("%s", entityData[row].steamID);
+			ImGui::PopID();
+			ImGui::TableNextColumn();
+			ImGui::TextColored(hpColor, "%s", entityData[row].health < 1 ? "DEAD" : std::to_string(entityData[row].health).c_str());
+			ImGui::TableNextColumn();
+			ImGui::Text("%i%s", entityData[row].armor, entityData[row].hasHelmet ? "+H" : "");
+			ImGui::TableNextColumn();
+			ImGui::Text("$%i", entityData[row].money);
+			ImGui::TableNextColumn();
+			ImGui::Text("%s", Skin::getWeaponIDName(entityData[row].weaponID));
+			ImGui::TableNextColumn();
+			ImGui::Text("%s", entityData[row].placename.c_str());
+		}
+		ImGui::EndTable();
+	}
+	ImGui::End();
+}
+
+
+void GUI::RenderMainMenu() noexcept {
 	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
 	ImGui::Begin(
 		"Azurre External 0.1",
 		&isRunning,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoSavedSettings |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoMove
+		ImGuiWindowFlags_NoCollapse
 	);
 
 	ImGui::Text("Hello xs9 :)");
@@ -292,6 +353,7 @@ void GUI::Render() noexcept
 		}
 		if (ImGui::BeginTabItem("Glow")) {
 			ImGui::Checkbox("Enabled", &cfg->g.enabled);
+			ImGui::Checkbox("Type", &cfg->g.type);
 			ImGuiCustom::colorPicker("Enemies", cfg->g.enemy);
 			ImGuiCustom::colorPicker("Allies", cfg->g.ally);
 			ImGui::SetNextItemWidth(200.0f);
@@ -309,7 +371,8 @@ void GUI::Render() noexcept
 			ImGui::Checkbox("Bunny Hop", &cfg->m.bhop);
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
-			ImGui::Checkbox("Fast Stop ", &cfg->m.autoStop);
+			ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
+			ImGui::Checkbox("Player List", &cfg->m.playerList);
 			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled)) {
 				ImGui::PushItemWidth(220.0f);
 				ImGui::Combo("Mode", &cfg->m.fakeLag.type, "Static\0Adaptative\0Random\0");
@@ -363,46 +426,6 @@ void GUI::Render() noexcept
 			ImGui::Combo("Quality", &cfg->s[itemIndex].quality, "Normal\0Genuine\0Vintage\0?\0Unique\0Community\0Valve\0Protoype\0Customized\0StatTrak\0Completed\0Souvenir\0");
 			ImGui::InputText("NameTag", cfg->s[itemIndex].nameTag, sizeof(cfg->s[itemIndex].nameTag));
 			ImGui::PopItemWidth();
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("Players")) {
-			if (ImGui::BeginTable("Players List", 7))
-			{
-				ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
-				ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
-				ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthFixed);
-				ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
-				ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthFixed);
-				ImGui::TableSetupColumn("Weapon", ImGuiTableColumnFlags_WidthFixed);
-				ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthFixed);
-				ImGui::TableHeadersRow();
-				for (unsigned int row = 0; row < entityData.size(); row++)
-				{
-					auto teamColor = localPlayer.get() == (uintptr_t)entityData[row].entity ? ImVec4{ 1.0f, 0.25f, 1.0f, 1.f } : entityData[row].teamNumber == 2 ? ImVec4{0.92f, 0.82f, .54f, 1.f} : ImVec4{0.26f, 0.59f, 0.98f, 1.f};
-					auto hpColor = entityData[row].health < 50 ? entityData[row].health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f } ;
-					
-					ImGui::TableNextRow();
-					ImGui::TableNextColumn();
-					ImGui::Text("%i", entityData[row].idx);
-					ImGui::TableNextColumn();
-					ImGui::PushID(row);
-					ImGui::TextColored(teamColor, "%s", entityData[row].name.c_str());
-					if (ImGui::IsItemHovered())
-						ImGui::SetTooltip("%s", entityData[row].steamID);
-					ImGui::PopID();
-					ImGui::TableNextColumn();
-					ImGui::TextColored(hpColor, "%s", entityData[row].health < 1 ? "DEAD" : std::to_string(entityData[row].health).c_str());
-					ImGui::TableNextColumn();
-					ImGui::Text("%i%s", entityData[row].armor, entityData[row].hasHelmet ? "+H" : "");
-					ImGui::TableNextColumn();
-					ImGui::Text("$%i", entityData[row].money);
-					ImGui::TableNextColumn();
-					ImGui::Text("%s", Skin::getWeaponIDName(entityData[row].weaponID));
-					ImGui::TableNextColumn();
-					ImGui::Text("%s", entityData[row].placename.c_str());
-				}
-				ImGui::EndTable();
-			}
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Discord")) {
@@ -570,6 +593,5 @@ void GUI::Render() noexcept
 		}
 		ImGui::EndTabBar();
 	}
-		
 	ImGui::End();
 }

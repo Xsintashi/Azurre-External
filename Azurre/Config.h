@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "../Lib/imgui/imgui.h"
 
 #include "ConfigStructs.h"
@@ -54,6 +54,7 @@ public:
 
 	struct GlowConfig {
 		bool enabled = false;
+		bool type = false;
 		ColorToggle enemy = { 0.f, 0.4f, 1.f, 1.f };
 		ColorToggle ally = { 1.f, 0.f, 0.f, 1.f };
 	} g;
@@ -63,6 +64,7 @@ public:
 		bool bhop = false;
 		bool radarHack = false;
 		bool autoStop = false;
+		bool playerList = false;
 		struct FakeLag {
 			bool enabled = false;
 			int limit = 0;

@@ -8,7 +8,7 @@
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
-
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "../../Lib/imgui/imgui.h"
 
 #include <chrono>

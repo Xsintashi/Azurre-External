@@ -3,6 +3,7 @@
 
 namespace GUI
 {
+
 	// constant window size
 	constexpr int WIDTH = 640;
 	constexpr int HEIGHT = 480;
@@ -19,8 +20,8 @@ namespace GUI
 	inline POINTS position = { };
 
 	// direct x state vars
-	inline PDIRECT3D9 d3d = nullptr;
-	inline LPDIRECT3DDEVICE9 device = nullptr;
+	inline PDIRECT3D9 d3d = 0;
+	inline LPDIRECT3DDEVICE9 device = 0;
 	inline D3DPRESENT_PARAMETERS presentParameters = { };
 
 	// handle window creation & destruction
@@ -38,5 +39,6 @@ namespace GUI
 
 	void BeginRender() noexcept;
 	void EndRender() noexcept;
-	void Render() noexcept;
+	void RenderPlayerList() noexcept;
+	void RenderMainMenu() noexcept;
 }
