@@ -39,7 +39,8 @@ void Glow::run() noexcept {
 
 			const auto glowIndex = csgo.Read<std::int32_t>((uintptr_t)entity + Offset::netvars::m_iGlowIndex);
 
-			// do glow by writing each variable
+			csgo.Write<uint8_t>(IClient + Offset::signatures::force_update_spectator_glow, 235); //Fix Flickering
+
 			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x8, color[0]); //Red
 			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0xC, color[1]); //Green
 			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x10, color[2]); //Blue
