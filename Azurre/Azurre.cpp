@@ -13,8 +13,11 @@
 #include "DiscordSDK/RPC.h"
 
 #include "SDK/GlobalVars.h"
+#include "SDK/Interfaces.h"
+#include "SDK/LocalPlayer.h"
 
 #include "InputUtil.h"
+#include "Offsets.h"
 #include "Helpers.h"
 
 #include <thread>
@@ -57,6 +60,8 @@ int __stdcall wWinMain(
 	std::thread glowThread = std::thread(Glow::run);
 	std::thread aimbotThread = std::thread(Aimbot::run);
 
+	Misc::changeWindowTitle();
+
 	while (GUI::isRunning){
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (GetAsyncKeyState(VK_INSERT))
@@ -88,6 +93,7 @@ int __stdcall wWinMain(
 		GUI::EndRender();
 	}
 	Misc::forceReload();
+	Misc::changeWindowTitle(true);
 
 	glowThread.join();
 	noTeammatesThread.join();

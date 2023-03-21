@@ -22,6 +22,7 @@ void Core::init() {
 	IClientState = csgo.Read<uintptr_t>(IEngine + Offset::signatures::dwClientState);
 	IPlayerResource = csgo.Read<uintptr_t>(IClient + Offset::signatures::dwPlayerResource);
 	IConsole = FindWindowA("Valve001", NULL);
+	localPlayer.init(csgo.Read<Entity*>(IClient + Offset::signatures::dwLocalPlayer));
 };
 
 void Core::update() {

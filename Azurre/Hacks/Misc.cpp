@@ -27,7 +27,7 @@ void Misc::bunnyHop() noexcept {
 
 }
 
-void Misc::fakeLag() {
+void Misc::fakeLag() noexcept {
 	if (!localPlayer) return;
 
 	if (localPlayer->isDead()) return;
@@ -58,18 +58,38 @@ void Misc::fakeLag() {
 	csgo.Write<byte>(IEngine + Offset::signatures::dwbSendPackets, chokedPackets >= choke);
 }
 
-void Misc::forceReload(bool onKey) {
+void Misc::changeWindowTitle(bool restore) noexcept {
+	if (restore) {
+		SetWindowTextA(IConsole, "Counter-Strike: Global Offensive - Direct3D 9");
+		return;
+	}
+
+	std::stringstream title;
+	title << "Counter-Strike: Global Offensive - Azurre External 0.1";
+#if defined(_DEBUG)
+	title << " | ";
+	title << " Client: 0x" << std::hex << IClient;
+	title << " Engine: 0x" << std::hex << IEngine;
+	title << " LocalPlayer: 0x" << std::hex << localPlayer.get();
+#endif
+	std::string titleConverted = title.str();
+	SetWindowTextA(IConsole, titleConverted.c_str());
+}
+
+void Misc::forceReload(bool onKey) noexcept {
 
 	if (!onKey) {
 		csgo.Write<std::int32_t>(IClientState + 0x174, -1);
+		changeWindowTitle();
 		return;
 	}
 	if (GetAsyncKeyState(VK_END)) {
 		csgo.Write<std::int32_t>(IClientState + 0x174, -1);
+		changeWindowTitle();
 	}
 }
 
-void Misc::entityLoop() {
+void Misc::entityLoop() noexcept {
 
 	if (!localPlayer) return;
 
@@ -84,7 +104,7 @@ void Misc::entityLoop() {
 	}
 }
 
-void Misc::modifyClasses() {
+void Misc::modifyClasses() noexcept {
 
 	if (!localPlayer) return;
 

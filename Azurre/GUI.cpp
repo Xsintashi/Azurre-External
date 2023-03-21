@@ -518,7 +518,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("Skin Changer")) {
+		if (ImGui::BeginTabItem("Changer")) {
 			static int itemIndex = 0;
 			static int itemIndexTemp = 0;
 			ImGui::PushItemWidth(200.0f);
@@ -742,7 +742,7 @@ void GUI::RenderMainMenu() noexcept {
 				ImGui::OpenPopup("Config to reset");
 
 			if (ImGui::BeginPopup("Config to reset")) {
-				static constexpr const char* names[]{ "Whole", "Aimbot", "Chams", "Discord", "Glow", "Misc", "Skin Changer", "TriggerBot", "Visuals"};
+				static constexpr const char* names[]{ "Whole", "Aimbot", "Chams", "Discord", "Glow", "Misc", "Changer", "TriggerBot", "Visuals"};
 				for (int i = 0; i < IM_ARRAYSIZE(names); i++) {
 					if (i == 1) ImGui::Separator();
 
