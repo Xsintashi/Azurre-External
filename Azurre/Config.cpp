@@ -149,8 +149,7 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read<value_t::object>(j, "Fake Lag", c.fakeLag);
 }
 
-static void from_json(const json& j, Config::SkinChangerConfig& c)
-{
+static void from_json(const json& j, Config::SkinChangerConfig& c) {
     read(j, "Definition index", c.skinID);
     read(j, "Quality", c.quality);
     read(j, "Paint Kit", c.skinID);
@@ -160,6 +159,12 @@ static void from_json(const json& j, Config::SkinChangerConfig& c)
     read(j, "Custom name", c.nameTag, sizeof(c.nameTag));
 }
 
+static void from_json(const json& j, Config::ChangerConfig& c) {
+    read(j, "CT Knife", c.CTKnife);
+    read(j, "T Knife", c.TTKnife);
+    read(j, "CT Agent", c.CTAgent);
+    read(j, "T Agent", c.TTAgent);
+}
 static void from_json(const json& j, Config::TriggerBotConfig& c) {
     read(j, "Enabled", c.enabled);
     read(j, "Hotkey", c.hotkey);
@@ -206,7 +211,8 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read<value_t::object>(j, "Discord", d);
     read<value_t::object>(j, "Glow", g);
     read<value_t::object>(j, "Misc", m);
-    read<value_t::array>(j, "Skin Changer", s);
+    read<value_t::array>(j, "Skins", s);
+    read<value_t::object>(j, "Changer", ch);
     read<value_t::object>(j, "TrggerBot", t);
     read<value_t::object>(j, "Visuals", v);
     read<value_t::object>(j, "GUI", u);
@@ -338,6 +344,16 @@ static void to_json(json& j, const Config::SkinChangerConfig& o)
         j["Custom name"] = o.nameTag;
 }
 
+static void to_json(json& j, const Config::ChangerConfig& o)
+{
+    const Config::ChangerConfig dummy;
+
+    WRITE("CT Knife", CTKnife);
+    WRITE("T Knife", TTKnife);
+    WRITE("CT Agent", CTAgent);
+    WRITE("T Agent", TTAgent);
+}
+
 static void to_json(json& j, const Config::TriggerBotConfig& o) {
     const Config::TriggerBotConfig dummy;
     WRITE("Enabled", enabled);
@@ -375,7 +391,8 @@ void Config::save(size_t id) const noexcept
         j["Discord"] = d;
         j["Glow"] = g;
         j["Misc"] = m;
-        j["Skin Changer"] = s;
+        j["Skins"] = s;
+        j["Changer"] = ch;
         j["TriggerBot"] = t;
         j["Visuals"] = v;
         j["GUI"] = u;
@@ -415,6 +432,7 @@ void Config::reset() noexcept
     g = {};
     m = {};
     s = {};
+    ch = {};
     t = {};
     v = {};
     Skin::update();

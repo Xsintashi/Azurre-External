@@ -38,6 +38,8 @@ namespace GUI {
 
 	void update() noexcept;
 
+	void loadWindow() noexcept;
+
 	// Windows
 	void RenderDebugWindow() noexcept;
 	void RenderPlayerList() noexcept;

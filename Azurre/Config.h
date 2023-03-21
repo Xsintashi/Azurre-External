@@ -59,6 +59,7 @@ public:
 	} g;
 
 	struct MiscConfig {
+		KeyBind bringMenu = "Bring Menu";
 		bool fixTablet = false;
 		bool bhop = false;
 		bool radarHack = false;
@@ -106,10 +107,17 @@ public:
 		int seed = 0;
 		int quality = 0;
 		int statTrak = 0;
-		char nameTag[161] = "";
+		char nameTag[20] = "";
     };
 
-	std::array<SkinChangerConfig, 36> s;
+	struct ChangerConfig{
+		int CTKnife = 0;
+		int TTKnife = 1;
+		int CTAgent = 0;
+		int TTAgent = 0;
+	}ch;
+
+	std::array<SkinChangerConfig, 56> s;
 
 	struct Debug {
 		bool boolDebug0 = false;

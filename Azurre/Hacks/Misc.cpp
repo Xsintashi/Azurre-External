@@ -61,11 +61,11 @@ void Misc::fakeLag() {
 void Misc::forceReload(bool onKey) {
 
 	if (!onKey) {
-		csgo.Write<std::int32_t>(csgo.Read<uintptr_t>(IEngine + Offset::signatures::dwClientState) + 0x174, -1);
+		csgo.Write<std::int32_t>(IClientState + 0x174, -1);
 		return;
 	}
 	if (GetAsyncKeyState(VK_END)) {
-		csgo.Write<std::int32_t>(csgo.Read<uintptr_t>(IEngine + Offset::signatures::dwClientState) + 0x174, -1);
+		csgo.Write<std::int32_t>(IClientState + 0x174, -1);
 	}
 }
 

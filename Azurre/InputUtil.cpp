@@ -184,7 +184,7 @@ bool KeyBind::isDown() const noexcept
 
 bool KeyBind::setToPressedKey() noexcept
 {
-    if (ImGui::IsKeyPressed(static_cast<ImGuiKey>(ImGui::GetIO().KeyMap[ImGuiKey_Escape]))) {
+    if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
         keyCode = KeyCode::NONE;
         return true;
     }
@@ -196,25 +196,24 @@ bool KeyBind::setToPressedKey() noexcept
         keyCode = KeyCode::MOUSEWHEEL_UP;
         return true;
     }
-    else {
-        for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().MouseDown); ++i) {
-            if (ImGui::IsMouseClicked(i)) {
-                keyCode = KeyCode(KeyCode::MOUSE1 + i);
-                return true;
-            }
-        }
 
-        for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
-            if (ImGui::IsKeyPressed(static_cast<ImGuiKey>(i))) {
-                auto it = std::find_if(keyMap.begin(), keyMap.end(), [i](const Key& key) { return key.code == i; });
-                if (it != keyMap.end()) {
-                    keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
-                    // Treat AltGr as RALT
-                    if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(static_cast<ImGuiKey>(keyMap[KeyCode::RALT].code)))
-                        keyCode = KeyCode::RALT;
-                    return true;
-                }
-            }
+    for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().MouseDown); ++i) {
+        if (ImGui::IsMouseClicked(i)) {
+            keyCode = KeyCode(KeyCode::MOUSE1 + i);
+            return true;
+        }
+    }
+
+    for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
+        if (!ImGui::IsKeyPressed(static_cast<ImGuiKey>(i)))
+            continue;
+
+        if (const auto it = std::ranges::find(keyMap, i, &Key::code); it != keyMap.end()) {
+            keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
+            // Treat AltGr as RALT
+            if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_LeftAlt))
+                keyCode = KeyCode::RALT;
+            return true;
         }
     }
     return false;
@@ -225,8 +224,13 @@ void KeyBind::handleToggle() noexcept
     if (keyMode != KeyMode::Toggle)
         return;
 
-    if (isPressed()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    static int limit = 0;
+
+    if (limit < 1)
+        limit--;
+
+    if (isPressed() && limit == 0) {
+        limit = 250;
         toggledOn = !toggledOn;
     }
 }

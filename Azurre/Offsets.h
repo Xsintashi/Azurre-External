@@ -41,6 +41,8 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_dwBoneMatrix = 0x26A8;
 		constexpr ::std::ptrdiff_t m_fAccuracyPenalty = 0x3340;
 		constexpr ::std::ptrdiff_t m_fFlags = 0x104;
+		constexpr ::std::ptrdiff_t m_flBloomExponent = 0x9EC;
+		constexpr ::std::ptrdiff_t m_flBloomSaturation = 0x9F0;
 		constexpr ::std::ptrdiff_t m_flC4Blow = 0x29A0;
 		constexpr ::std::ptrdiff_t m_flCustomAutoExposureMax = 0x9E0;
 		constexpr ::std::ptrdiff_t m_flCustomAutoExposureMin = 0x9DC;
@@ -97,6 +99,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_szCustomName = 0x304C;
 		constexpr ::std::ptrdiff_t m_szLastPlaceName = 0x35C4;
 		constexpr ::std::ptrdiff_t m_thirdPersonViewAngles = 0x31E8;
+		constexpr ::std::ptrdiff_t m_vecColor = 0xB00;
 		constexpr ::std::ptrdiff_t m_vecOrigin = 0x138;
 		constexpr ::std::ptrdiff_t m_vecVelocity = 0x114;
 		constexpr ::std::ptrdiff_t m_vecViewOffset = 0x108;
@@ -106,7 +109,7 @@ namespace Offset {
 	} // namespace netvars
 	namespace signatures {
 		constexpr ::std::ptrdiff_t anim_overlays = 0x2990;
-		constexpr ::std::ptrdiff_t clearHudWeapon = 0xADC0F178;
+		constexpr ::std::ptrdiff_t clearHudWeapon = 0xADA1F178;
 		constexpr ::std::ptrdiff_t clientstate_choked_commands = 0x4D30;
 		constexpr ::std::ptrdiff_t clientstate_delta_ticks = 0x174;
 		constexpr ::std::ptrdiff_t clientstate_last_outgoing_command = 0x4D2C;
@@ -151,7 +154,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t dwZoomSensitivityRatioPtr = 0xDF4380;
 		constexpr ::std::ptrdiff_t dwbSendPackets = 0xDD2B2;
 		constexpr ::std::ptrdiff_t dwppDirect3DDevice9 = 0xA62C0;
-		constexpr ::std::ptrdiff_t find_hud_element = 0x526BFBD0;
+		constexpr ::std::ptrdiff_t find_hud_element = 0x528AFBD0;
 		constexpr ::std::ptrdiff_t force_update_spectator_glow = 0x3D91CA;
 		constexpr ::std::ptrdiff_t hud = 0x52369B0;
 		constexpr ::std::ptrdiff_t interface_engine_cvar = 0x3FA9C;
@@ -166,5 +169,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t model_ambient_min = 0x5A1194;
 		constexpr ::std::ptrdiff_t set_abs_angles = 0x1E72D0;
 		constexpr ::std::ptrdiff_t set_abs_origin = 0x1E7110;
+
+		constexpr ::std::ptrdiff_t dwModelPrecacheTable = 0x52A4;
 	} // namespace signatures
 }

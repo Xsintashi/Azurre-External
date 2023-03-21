@@ -302,6 +302,24 @@ void GUI::update() noexcept {
     guiSettings.WindowTitleAlign = cfg->u.centerTitle ? ImVec2{0.5f, 0.5f} : ImVec2{ 0.f, 0.5f };
 }
 
+void GUI::loadWindow() noexcept {
+	ImGui::SetNextWindowSize({ 320,240 });
+	ImGui::Begin(
+		"Loading...",
+		&isRunning,
+		ImGuiWindowFlags_AlwaysAutoResize
+	);
+
+	ImGui::Text("Hello xs9 :)");
+	ImGui::Text("Waiting For csgo.exe...");
+	ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient);
+	ImGui::Text("Engine: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IEngine);
+	if (ImGui::Button("Run CS:GO")) {
+		WinExec("steam://run/730", SW_NORMAL);
+	}
+	ImGui::End();
+}
+
 void GUI::RenderDebugWindow() noexcept {
 	ImGui::Begin(
 		"Debug",
@@ -335,6 +353,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("TickCount: %i", globalVars->tickCount);
 	ImGui::Text("IntervalPerTick: %.2f", globalVars->intervalPerTick);
 	ImGui::Text("InterpolationAmount: %.2f", globalVars->interpolationAmount);
+	ImGui::Text("GameState: %i", gameState);
 
 	ImGui::Text("Choked Packets: %i", chokedPackets);
 
@@ -355,7 +374,6 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::SameLine();
 	if (ImGui::Button("Send"))
 		usr0::SendConsoleCommand(cmd);
-	
 	ImGui::PopID();
 	ImGui::End();
 }
@@ -410,7 +428,7 @@ void GUI::RenderPlayerList() noexcept {
 
 
 void GUI::RenderMainMenu() noexcept {
-	ImGui::SetNextWindowSize({ -1, -1 });
+	ImGui::SetNextWindowSize({ 640, 480 });
 	ImGui::Begin(
 		"Azurre External 0.1",
 		&isRunning,
@@ -445,9 +463,8 @@ void GUI::RenderMainMenu() noexcept {
 		}
 		if (ImGui::BeginTabItem("Glow")) {
 			ImGui::Checkbox("Enabled", &cfg->g.enabled);
-			ImGuiCustom::colorPicker("Enemies", cfg->g.enemy);
-			ImGuiCustom::colorPicker("Allies", cfg->g.ally);
-			ImGui::SetNextItemWidth(200.0f);
+			ImGuiCustom::colorPicker("Enemies", cfg->g.enemy.color.data(), &cfg->g.enemy.color[3], nullptr, nullptr, &cfg->g.enemy.enabled);
+			ImGuiCustom::colorPicker("Allies", cfg->g.ally.color.data(), &cfg->g.ally.color[3], nullptr, nullptr, &cfg->g.ally.enabled);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Chams")) {
@@ -459,6 +476,11 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Misc")) {
+			ImGui::PushID("menu");
+			ImGui::Text("Bring Menu");
+			ImGui::SameLine();
+			ImGuiCustom::classicHotkey("", cfg->m.bringMenu);
+			ImGui::PopID();
 			ImGui::Checkbox("Bunny Hop", &cfg->m.bhop);
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
@@ -516,6 +538,139 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::InputInt("StatTrak", &cfg->s[itemIndex].statTrak);
 			ImGui::Combo("Quality", &cfg->s[itemIndex].quality, "Normal\0Genuine\0Vintage\0?\0Unique\0Community\0Valve\0Protoype\0Customized\0StatTrak\0Completed\0Souvenir\0");
 			ImGui::InputText("NameTag", cfg->s[itemIndex].nameTag, sizeof(cfg->s[itemIndex].nameTag));
+			ImGui::Separator();
+			ImGui::Combo("T Knife", &cfg->ch.TTKnife, [](void* data, int idx, const char** out_text) {
+				*out_text = Skin::knifeNames[idx].name;
+			return true;
+				}, nullptr, Skin::knifeNames.size(), 5);
+			ImGui::Combo("CT Knife", &cfg->ch.CTKnife, [](void* data, int idx, const char** out_text) {
+				*out_text = Skin::knifeNames[idx].name;
+			return true;
+				}, nullptr, Skin::knifeNames.size(), 5);
+			ImGui::Separator();
+
+			constexpr const char* modelsGUI[]{
+				"Default",
+				"Special Agent Ava | FBI",
+				"Operator | FBI SWAT",
+				"Markus Delrow | FBI HRT",
+				"Michael Syfers | FBI Sniper",
+				"B Squadron Officer | SAS",
+				"Seal Team 6 Soldier | NSWC SEAL",
+				"Buckshot | NSWC SEAL",
+				"Lt. Commander Ricksaw | NSWC SEAL",
+				"Third Commando Company | KSK",
+				"'Two Times' McCoy | USAF TACP",
+				"Dragomir | Sabre",
+				"Rezan The Ready | Sabre",
+				"'The Doctor' Romanov | Sabre",
+				"Maximus | Sabre",
+				"Blackwolf | Sabre",
+				"The Elite Mr. Muhlik | Elite Crew",
+				"Ground Rebel | Elite Crew",
+				"Osiris | Elite Crew",
+				"Prof. Shahmat | Elite Crew",
+				"Enforcer | Phoenix",
+				"Slingshot | Phoenix",
+				"Soldier | Phoenix",
+				"Street Soldier | Phoenix",
+				"'Blueberries' Buckshot | NSWC SEAL",
+				"'Two Times' McCoy | TACP Cavalry",
+				"Rezan the Redshirt | Sabre",
+				"Dragomir | Sabre Footsoldier",
+				"Cmdr. Mae 'Dead Cold' Jamison | SWAT",
+				"001st Lieutenant Farlow | SWAT",
+				"John 'Van Healen' Kask | SWAT",
+				"Bio-Haz Specialist | SWAT",
+				"Sergeant Bombson | SWAT",
+				"Chem-Haz Specialist | SWAT",
+				"Sir Bloody Miami Darryl | The Professionals",
+				"Sir Bloody Silent Darryl | The Professionals",
+				"Sir Bloody Skullhead Darryl | The Professionals",
+				"Sir Bloody Darryl Royale | The Professionals",
+				"Sir Bloody Loudmouth Darryl | The Professionals",
+				"Safecracker Voltzmann | The Professionals",
+				"Little Kev | The Professionals",
+				"Number K | The Professionals",
+				"Getaway Sally | The Professionals",
+				"Anarchist",
+				"Anarchist (Variant A)",
+				"Anarchist (Variant B)",
+				"Anarchist (Variant C)",
+				"Anarchist (Variant D)",
+				"Pirate",
+				"Pirate (Variant A)",
+				"Pirate (Variant B)",
+				"Pirate (Variant C)",
+				"Pirate (Variant D)",
+				"Professional",
+				"Professional (Variant 1)",
+				"Professional (Variant 2)",
+				"Professional (Variant 3)",
+				"Professional (Variant 4)",
+				"Separatist",
+				"Separatist (Variant A)",
+				"Separatist (Variant B)",
+				"Separatist (Variant C)",
+				"Separatist (Variant D)",
+				"GIGN",
+				"GIGN (Variant A)",
+				"GIGN (Variant B)",
+				"GIGN (Variant C)",
+				"GIGN (Variant D)",
+				"GSG-9",
+				"GSG-9 (Variant A)",
+				"GSG-9 (Variant B)",
+				"GSG-9 (Variant C)",
+				"GSG-9 (Variant D)",
+				"IDF",
+				"IDF (Variant B)",
+				"IDF (Variant C)",
+				"IDF (Variant D)",
+				"IDF (Variant E)",
+				"IDF (Variant F)",
+				"SWAT",
+				"SWAT (Variant A)",
+				"SWAT (Variant B)",
+				"SWAT (Variant C)",
+				"SWAT (Variant D)",
+				"SAS (Variant A)",
+				"SAS (Variant B)",
+				"SAS (Variant C)",
+				"SAS (Variant D)",
+				"ST6",
+				"ST6 (Variant A)",
+				"ST6 (Variant B)",
+				"ST6 (Variant C)",
+				"ST6 (Variant D)",
+				"Balkan (Variant E)",
+				"Balkan (Variant A)",
+				"Balkan (Variant B)",
+				"Balkan (Variant C)",
+				"Balkan (Variant D)",
+				"Jumpsuit (Variant A)",
+				"Jumpsuit (Variant B)",
+				"Jumpsuit (Variant C)",
+				"Phoenix Heavy",
+				"Heavy",
+				"Leet (Variant A)",
+				"Leet (Variant B)",
+				"Leet (Variant C)",
+				"Leet (Variant D)",
+				"Leet (Variant E)",
+				"Phoenix",
+				"Phoenix (Variant A)",
+				"Phoenix (Variant B)",
+				"Phoenix (Variant C)",
+				"Phoenix (Variant D)",
+				"FBI",
+				"FBI (Variant A)",
+				"FBI (Variant C)",
+				"FBI (Variant D)",
+				"FBI (Variant E)"
+			};
+			ImGui::Combo("T Player Model", &cfg->ch.TTAgent, modelsGUI, IM_ARRAYSIZE(modelsGUI));
+			ImGui::Combo("CT Player Model", &cfg->ch.CTAgent, modelsGUI, IM_ARRAYSIZE(modelsGUI));
 			ImGui::PopItemWidth();
 			ImGui::EndTabItem();
 		}
@@ -595,11 +750,11 @@ void GUI::RenderMainMenu() noexcept {
 						switch (i) {
 						case 0: cfg->reset(); break;
 						case 1:	cfg->a = {}; break;
-						case 2:	cfg->c = {}; break;
+						case 2:	cfg->c = {};  break;
 						case 3:	cfg->d = {}; break;
 						case 4:	cfg->g = {}; break;
 						case 5:	cfg->m = {}; break;
-						case 6:	cfg->s = {}; break;
+						case 6:	cfg->s = {}; cfg->ch = {}; break;
 						case 7:	cfg->t = {}; break;
 						case 8:	cfg->v = {}; break;
 						}

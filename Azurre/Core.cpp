@@ -21,14 +21,13 @@ void Core::init() {
 	IEngine = csgo.GetModuleAddress("engine.dll");
 	IClientState = csgo.Read<uintptr_t>(IEngine + Offset::signatures::dwClientState);
 	IPlayerResource = csgo.Read<uintptr_t>(IClient + Offset::signatures::dwPlayerResource);
-	do { IConsole = FindWindowA("Valve001", NULL);
-	} while (IConsole == nullptr);
+	IConsole = FindWindowA("Valve001", NULL);
 };
 
 void Core::update() {
 	localPlayer.init(csgo.Read<Entity*>(IClient + Offset::signatures::dwLocalPlayer));
 	globalVars = csgo.Read<GlobalVars>(IEngine + Offset::signatures::dwGlobalVars);
-
+	gameState = csgo.Read<int>(IClientState + 0x108);
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState + Offset::signatures::dwClientState_PlayerInfo);
 
 	cfg->a.hotkey.handleToggle();
@@ -50,7 +49,7 @@ void Core::update() {
 		const auto& armor = entity->armor();
 		const auto& hasHelmet = entity->hasHelmet();
 		const auto& hasDefuser = entity->hasDefuser();
-		const auto& teamNumber = entity->teamNumber();
+		const auto& teamNumber = static_cast<int>(entity->teamNumber());
 		const auto& money = entity->money();
 		const auto& weaponID = entity->getWeaponID();
 		const std::string name = playerInfo.name;

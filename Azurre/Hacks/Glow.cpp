@@ -41,10 +41,10 @@ void Glow::run() noexcept {
 
 			csgo.Write<uint8_t>(IClient + Offset::signatures::force_update_spectator_glow, 235); //Fix Flickering
 
-			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x8, color[0]); //Red
-			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0xC, color[1]); //Green
-			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x10, color[2]); //Blue
-			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x14, color[3]); //Alpha
+			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x8, color[0] / 255.f); //Red
+			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0xC, color[1] / 255.f); //Green
+			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x10, color[2] / 255.f); //Blue
+			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x14, color[3] / 255.f); //Alpha
 
 			csgo.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x28, true);
 			csgo.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x29, true);

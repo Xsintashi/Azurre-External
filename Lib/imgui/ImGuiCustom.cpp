@@ -12,9 +12,12 @@ void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const 
 
     if (ImGui::GetActiveID() == id)
     {
-        ImGui::Button("...");
-        if (key.setToPressedKey())
-            ImGui::ClearActiveID();
+        PushStyleColor(ImGuiCol_Button, GetColorU32(ImGuiCol_ButtonActive));
+        Button("Press a key...", size);
+        PopStyleColor();
+        GetCurrentContext()->ActiveIdAllowOverlap = true;
+        if ((!IsItemHovered() && GetIO().MouseClicked[0]) || key.setToPressedKey())
+            ClearActiveID();
     }
     else
     {
@@ -82,6 +85,30 @@ void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const 
     ImGui::AlignTextToFramePadding();
     if (std::strncmp(label, "##", 2))
         ImGui::TextUnformatted(label, std::strstr(label, "##"));
+    ImGui::PopID();
+}
+
+void ImGuiCustom::classicHotkey(const char* label, KeyBind& key, float samelineOffset, const ImVec2& size) noexcept
+{
+    const auto id = ImGui::GetID(label);
+    ImGui::PushID(label);
+
+    ImGui::TextUnformatted(label);
+    ImGui::SameLine(samelineOffset);
+
+    if (ImGui::GetActiveID() == id) {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_ButtonActive));
+        ImGui::Button("Press a key...", size);
+        ImGui::PopStyleColor();
+
+        ImGui::GetCurrentContext()->ActiveIdAllowOverlap = true;
+        if ((!ImGui::IsItemHovered() && ImGui::GetIO().MouseClicked[0]) || key.setToPressedKey())
+            ImGui::ClearActiveID();
+    }
+    else if (ImGui::Button(key.toString(), size)) {
+        ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+    }
+
     ImGui::PopID();
 }
 

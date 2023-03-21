@@ -9,6 +9,13 @@
 
 #include <vector>
 
+enum class Team {
+    None = 0,
+    Spectators,
+    TT,
+    CT
+};
+
 enum class ClassID {
     BaseCSGrenadeProjectile = 9,
     BreachChargeProjectile = 29,
@@ -64,7 +71,7 @@ public:
 	OFFSET(money, (), Offset::netvars::m_iAccount, int)
 	OFFSET(health, (), Offset::netvars::m_iHealth, int)
 	OFFSET(armor, (), Offset::netvars::m_ArmorValue, int)
-	OFFSET(teamNumber, (), Offset::netvars::m_iTeamNum, int)
+	OFFSET(teamNumber, (), Offset::netvars::m_iTeamNum, Team)
 	OFFSET(flashMaxAlpha, (), Offset::netvars::m_flFlashMaxAlpha, float)
 	OFFSET(flashDuration, (), Offset::netvars::m_flFlashDuration, float)
 	OFFSET(flags, (), Offset::netvars::m_fFlags, int)

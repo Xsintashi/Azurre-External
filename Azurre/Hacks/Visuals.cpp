@@ -49,14 +49,18 @@ void Visuals::noFlash() {
 void Visuals::doNotRenderTeammates() {
     while (GUI::isRunning){
         if (!cfg->v.noAllies || !localPlayer) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             continue;
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         for (unsigned int i = 1; i <= 32; i++) {
             const auto& entity = getEntity(i);
             if (!entity) {
                 continue;
             }
+
+            if((uintptr_t)entity == localPlayer.get())
+
             if (entity->isDead() || entity->dormant()) {
                 continue;
             }

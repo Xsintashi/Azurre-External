@@ -13,4 +13,6 @@ namespace Core {
 
 #include "Memory.h"
 
+inline int gameState = 0;
+
 inline Memory csgo = Memory{ "csgo.exe" };

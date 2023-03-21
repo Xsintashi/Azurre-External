@@ -13,6 +13,7 @@ struct ColorToggleThicknessRounding;
 
 namespace ImGuiCustom
 {
+    void classicHotkey(const char* label, KeyBind& key, float samelineOffset = 0.0f, const ImVec2& size = { 100.0f, 0.0f }) noexcept;
     void colorPicker(const char* name, float color[3], float* alpha = nullptr, bool* rainbow = nullptr, float* rainbowSpeed = nullptr, bool* enable = nullptr, float* thickness = nullptr, float* rounding = nullptr, bool* outline = nullptr) noexcept;
     void colorPicker(const char* name, ColorToggle3& colorConfig) noexcept;
     void colorPicker(const char* name, Color4& colorConfig, bool* enable = nullptr, float* thickness = nullptr) noexcept;
