@@ -445,6 +445,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::PopID();
 			ImGui::Checkbox("Auto Shot", &cfg->a.autoShot);
 			ImGui::Checkbox("Auto Stop", &cfg->a.autoStop);
+			ImGui::Checkbox("Friendly Fire", &cfg->a.friendlyFire);
 			ImGui::PushItemWidth(220.0f);
 			ImGui::Combo("Bone", &cfg->a.bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
 			ImGui::SliderFloat("##fov", &cfg->a.fov, 0.001f, 255.000f, "Fov: %.2f");
@@ -459,6 +460,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::SameLine();
 			ImGui::hotkey("", cfg->t.hotkey);
 			ImGui::PopID();
+			ImGui::Checkbox("Friendly Fire", &cfg->t.friendlyFire);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Glow")) {

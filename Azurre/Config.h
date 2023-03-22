@@ -33,6 +33,7 @@ public:
 	struct AimbotConfig {
 		bool enabled = false;
 		KeyBind hotkey = "aimbot";
+		bool friendlyFire = false;
 		bool autoShot = false;
 		bool autoStop = false;
 		int bone = 0;
@@ -74,6 +75,7 @@ public:
 
 	struct TriggerBotConfig {
 		bool enabled = false;
+		bool friendlyFire = false;
 		KeyBind hotkey = "trigger";
 	} t;
 

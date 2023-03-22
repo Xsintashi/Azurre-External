@@ -32,9 +32,9 @@ void TriggerBot::run() noexcept{
 
 	if (entity->isDead()) return;
 
-	if (entity->isSameTeam()) return;
+	if (!cfg->t.friendlyFire && entity->isSameTeam()) return;
 
-	if(!cfg->t.hotkey.isSet() || (cfg->t.hotkey.isSet() && cfg->t.hotkey.isDown()))
+	if (cfg->t.hotkey.isActive())
 		csgo.Write<uintptr_t>(IClient + Offset::signatures::dwForceAttack, 6);
 
 }
