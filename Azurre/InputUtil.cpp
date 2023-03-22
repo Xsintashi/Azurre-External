@@ -229,10 +229,8 @@ void KeyBind::handleToggle() noexcept
     if (limit < 1)
         limit--;
 
-    if (isPressed() && limit == 0) {
-        limit = 250;
-        toggledOn = !toggledOn;
-    }
+    if (isPressed())
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
 }
 
 bool KeyBind::isActive() const noexcept
