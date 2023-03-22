@@ -211,9 +211,9 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read<value_t::object>(j, "Discord", d);
     read<value_t::object>(j, "Glow", g);
     read<value_t::object>(j, "Misc", m);
-    read<value_t::array>(j, "Skins", s);
+    read<value_t::array> (j, "Skins", s);
     read<value_t::object>(j, "Changer", ch);
-    read<value_t::object>(j, "TrggerBot", t);
+    read<value_t::object>(j, "TriggerBot", t);
     read<value_t::object>(j, "Visuals", v);
     read<value_t::object>(j, "GUI", u);
 
