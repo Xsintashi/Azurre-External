@@ -16,7 +16,7 @@ void Glow::run() noexcept {
 
 		if (!cfg->g.enabled) continue;
 
-		const auto glowObjectManager = csgo.Read<std::uintptr_t>(IClient + Offset::signatures::dwGlowObjectManager);
+		const auto glowObjectManager = csgo.Read<std::uintptr_t>(IClient.address + Offset::signatures::dwGlowObjectManager);
 
 		for (auto i = 1; i <= 32; ++i)
 		{
@@ -39,7 +39,7 @@ void Glow::run() noexcept {
 
 			const auto glowIndex = csgo.Read<std::int32_t>((uintptr_t)entity + Offset::netvars::m_iGlowIndex);
 
-			csgo.Write<uint8_t>(IClient + Offset::signatures::force_update_spectator_glow, 235); //Fix Flickering
+			csgo.Write<uint8_t>(IClient.address + Offset::signatures::force_update_spectator_glow, 235); //Fix Flickering
 
 			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x8, color[0] / 255.f); //Red
 			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0xC, color[1] / 255.f); //Green

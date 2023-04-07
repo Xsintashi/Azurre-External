@@ -224,13 +224,10 @@ void KeyBind::handleToggle() noexcept
     if (keyMode != KeyMode::Toggle)
         return;
 
-    static int limit = 0;
-
-    if (limit < 1)
-        limit--;
-
-    if (isPressed())
+    if (isPressed()) {
+        toggledOn = !toggledOn;
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    }
 }
 
 bool KeyBind::isActive() const noexcept

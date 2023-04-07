@@ -130,7 +130,7 @@ constexpr const char* models[]{
 
 int getModelIndex(const char* modelName)
 {
-    int modelPrecacheTable = csgo.Read<int>(IClientState + Offset::signatures::dwModelPrecacheTable);
+    int modelPrecacheTable = csgo.Read<int>(IClientState.address + Offset::signatures::dwModelPrecacheTable);
     int offset = csgo.Read<int>(modelPrecacheTable + 0x40);
     int items = csgo.Read<int>(offset + 0xC);
     int offset2 = items + 0xC;
@@ -242,7 +242,7 @@ void Skin::update() {
     static const int knifeIndexTT = getModelIndexByID(WeaponID::KnifeT);
 
 	for (const auto& handle : weapons) {
-		const auto& weapon = csgo.Read<intptr_t>((IClient + Offset::signatures::dwEntityList + (handle & 0xFFF) * 0x10) - 0x10);
+		const auto& weapon = csgo.Read<intptr_t>((IClient.address + Offset::signatures::dwEntityList + (handle & 0xFFF) * 0x10) - 0x10);
 
 		if (!weapon) continue;
 
@@ -291,7 +291,7 @@ void Skin::update() {
 
         if ((localPlayer->teamNumber() == Team::CT && cfg->ch.CTKnife != 0) || (localPlayer->teamNumber() == Team::TT && cfg->ch.TTKnife != 1)) {
             DWORD knifeViewModel = csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_hViewModel) & 0xfff;
-            knifeViewModel = csgo.Read<DWORD>(IClient + Offset::signatures::dwEntityList + (knifeViewModel - 1) * 0x10);
+            knifeViewModel = csgo.Read<DWORD>(IClient.address + Offset::signatures::dwEntityList + (knifeViewModel - 1) * 0x10);
 
             if (knifeViewModel == 0) { continue; }
 
@@ -301,11 +301,11 @@ void Skin::update() {
                 int defIndex = Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex;
 
                 csgo.Write<DWORD>(knifeViewModel + Offset::netvars::m_nModelIndex, knifeIndex);
-                csgo.Write<std::int32_t>(IClientState + 0x174, -1);
+                csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
             }
         }
         if (shouldUpdate) {
-            csgo.Write<std::int32_t>(IClientState + 0x174, -1);
+            csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
             pleaseUpdate = false;
         }
 	}
@@ -316,7 +316,7 @@ void Skin::update() {
         if (!index) return;
         if (csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex) != index) {
             csgo.Write<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex, index);
-            csgo.Write<std::int32_t>(IClientState + 0x174, -1);
+            csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
         }
     }
 }

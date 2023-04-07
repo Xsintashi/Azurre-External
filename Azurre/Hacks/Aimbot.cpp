@@ -21,7 +21,7 @@ void Aimbot::run() noexcept {
 		if (!localPlayer || localPlayer->isDead() || localPlayer->isDefusing() || localPlayer->waitForNoAttack()) continue;
 
 		const auto eyePosition = localPlayer->origin() + localPlayer->viewOffset();
-		const auto& viewAngles = csgo.Read<ImVec2>(IClientState + Offset::signatures::dwClientState_ViewAngles);
+		const auto& viewAngles = csgo.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
 
 		const auto& aimPunch = localPlayer->aimPunch() * 2.f;
 
@@ -70,23 +70,23 @@ void Aimbot::run() noexcept {
 			}
 
 			if (bestAngle.notNull() && cfg->a.hotkey.isActive()) {
-				csgo.Write<Vector>(IClientState + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f } );
+				csgo.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f } );
 				
 				if (cfg->a.autoStop) {
 					const float velocity = localPlayer->velocity().length2D();
 					Vector finalVector = Helpers::calculateRealAngles();
 					if (velocity >= 30.f && (localPlayer->flags() & 1)) {
 						if (finalVector.x >= 20) // FRONT, SO GO BACKWARDS
-							csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceBackward, 6);
+							csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceBackward, 6);
 						if (finalVector.x <= -20) // BACK, SO GO FRONT
-							csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceForward, 6);
+							csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceForward, 6);
 						if (finalVector.y >= 20) // RIGHT, SO GO LEFT
-							csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceLeft, 6);
+							csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceLeft, 6);
 						if (finalVector.y <= -20) // LEFT, SO GO RIGHT
-							csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceRight, 6);;
+							csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6);;
 					}
 				} if (cfg->a.autoShot || (cfg->a.autoShot && cfg->a.autoStop && localPlayer->velocity().length2D() < 15.f)) {
-					csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceAttack, 6);
+					csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
 				}
 			}
 		}
@@ -103,7 +103,7 @@ void Aimbot::recoilSystem() noexcept {
 
 	static ImVec2 oldAimPunch = {};
 
-	const auto& viewAngles = csgo.Read<ImVec2>(IClientState + Offset::signatures::dwClientState_ViewAngles);
+	const auto& viewAngles = csgo.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
 
 	if (localPlayer->shotsFired()) {
 
@@ -125,7 +125,7 @@ void Aimbot::recoilSystem() noexcept {
 		while (newAngles.y < -180.f)
 			newAngles.y += 360.f;
 
-		csgo.Write<ImVec2>(IClientState + Offset::signatures::dwClientState_ViewAngles, newAngles);
+		csgo.Write<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, newAngles);
 
 		oldAimPunch.x = localPlayer->aimPunch().x * 2.f;
 		oldAimPunch.y = localPlayer->aimPunch().y * 2.f;

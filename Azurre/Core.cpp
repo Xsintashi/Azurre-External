@@ -17,19 +17,21 @@
 
 void Core::init() {
 	interfaces.emplace(Interfaces{});
-	IClient = csgo.GetModuleAddress("client.dll");
-	IEngine = csgo.GetModuleAddress("engine.dll");
-	IClientState = csgo.Read<uintptr_t>(IEngine + Offset::signatures::dwClientState);
-	IPlayerResource = csgo.Read<uintptr_t>(IClient + Offset::signatures::dwPlayerResource);
+	IClient.address = csgo.GetModuleAddress("client.dll");
+	IClient.size = csgo.ModuleSize("client.dll");
+	IEngine.address = csgo.GetModuleAddress("engine.dll");
+	IEngine.size = csgo.ModuleSize("engine.dll");
+	IClientState.address = csgo.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
+	IPlayerResource.address = csgo.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
 	IConsole = FindWindowA("Valve001", NULL);
-	localPlayer.init(csgo.Read<Entity*>(IClient + Offset::signatures::dwLocalPlayer));
+	localPlayer.init(csgo.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 };
 
 void Core::update() {
-	localPlayer.init(csgo.Read<Entity*>(IClient + Offset::signatures::dwLocalPlayer));
-	globalVars = csgo.Read<GlobalVars>(IEngine + Offset::signatures::dwGlobalVars);
-	gameState = csgo.Read<int>(IClientState + 0x108);
-	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState + Offset::signatures::dwClientState_PlayerInfo);
+	localPlayer.init(csgo.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
+	globalVars = csgo.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
+	gameState = csgo.Read<int>(IClientState.address + 0x108);
+	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
 
 	cfg->a.hotkey.handleToggle();
 	cfg->t.hotkey.handleToggle();

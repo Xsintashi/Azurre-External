@@ -68,6 +68,29 @@ public:
 		return result;
 	}
 
+	const std::uintptr_t ModuleSize(const std::string_view moduleName)
+	{
+		::MODULEENTRY32 entry = { };
+		entry.dwSize = sizeof(::MODULEENTRY32);
+
+		const auto snapShot = ::CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, processId);
+
+		std::uintptr_t result = 0;
+
+		while (::Module32Next(snapShot, &entry))
+		{
+			if (!moduleName.compare(entry.szModule))
+			{
+				return entry.modBaseSize;
+			}
+		}
+
+		if (snapShot)
+			::CloseHandle(snapShot);
+
+		return 0;
+	}
+
 	// Read process memory
 	template <typename T>
 	constexpr const T Read(const std::uintptr_t& address) const noexcept
@@ -83,4 +106,5 @@ public:
 	{
 		::WriteProcessMemory(processHandle, reinterpret_cast<void*>(address), &value, sizeof(T), NULL);
 	}
+	DWORD grabSig(DWORD base, DWORD size, BYTE* sign, char* mask);
 };

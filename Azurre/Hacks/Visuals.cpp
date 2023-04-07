@@ -37,10 +37,6 @@ void Visuals::noFlash() {
 
     if (!cfg->v.flashReduction) return;
 
-    const auto& duration = localPlayer->flashDuration();
-
-    if (duration < 5.f) return;
-
     const float reducedFlash = 255.0f - cfg->v.flashReduction * 2.55f;
 
     csgo.Write<float>(localPlayer.get() + Offset::netvars::m_flFlashMaxAlpha, reducedFlash);

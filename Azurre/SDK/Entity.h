@@ -113,7 +113,7 @@ public:
         if (!weaponIndex)
             return 0;
 
-        const auto& activeWeapon = csgo.Read<Entity*>(IClient + Offset::signatures::dwEntityList + (weaponIndex - 1) * 0x10);
+        const auto& activeWeapon = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weaponIndex - 1) * 0x10);
         if (!activeWeapon)
             return 0;
 
@@ -123,7 +123,7 @@ public:
 };
 
 static Entity* getEntity(int idx) {
-	const auto& entity = csgo.Read<Entity*>(IClient + Offset::signatures::dwEntityList + idx * 0x10);
+	const auto& entity = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + idx * 0x10);
 	if (!entity) return 0;
 	return entity;
 }

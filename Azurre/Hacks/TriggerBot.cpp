@@ -19,7 +19,7 @@ void TriggerBot::run() noexcept{
 
 	if (!crosshair || crosshair > 64) return;
 
-	const auto& entity = csgo.Read<Entity*>(IClient + Offset::signatures::dwEntityList + (crosshair - 1) * 0x10);
+	const auto& entity = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (crosshair - 1) * 0x10);
 
 	int weaponIndex = csgo.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & 0xFFF;
 
@@ -35,6 +35,6 @@ void TriggerBot::run() noexcept{
 	if (!cfg->t.friendlyFire && entity->isSameTeam()) return;
 
 	if (cfg->t.hotkey.isActive())
-		csgo.Write<uintptr_t>(IClient + Offset::signatures::dwForceAttack, 6);
+		csgo.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
 
 }

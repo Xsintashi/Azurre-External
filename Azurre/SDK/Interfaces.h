@@ -4,12 +4,17 @@
 
 class Memory;
 
+struct Module{
+	uintptr_t address;
+	DWORD size;
+};
+
 class Interfaces {
 public:
-	uintptr_t client;
-	uintptr_t clientState;
-	uintptr_t engine;
-	uintptr_t playerResource;
+	Module client;
+	Module clientState;
+	Module engine;
+	Module playerResource;
 	HWND console;
 };
 

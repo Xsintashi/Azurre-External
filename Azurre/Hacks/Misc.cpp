@@ -22,8 +22,8 @@ void Misc::bunnyHop() noexcept {
 
 	if (GetAsyncKeyState(VK_SPACE))
 		(flags & (1 << 0)) ?
-		csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceJump, 6) :
-		csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceJump, 4);
+		csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
+		csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
 
 }
 
@@ -32,8 +32,8 @@ void Misc::fakeLag() noexcept {
 
 	if (localPlayer->isDead()) return;
 
-	const auto& sendPacket = csgo.Read<BYTE>(IEngine + Offset::signatures::dwbSendPackets);
-	const auto& chokedPackets = csgo.Read<int>(IClientState + Offset::signatures::clientstate_choked_commands);
+	const auto& sendPacket = csgo.Read<BYTE>(IEngine.address + Offset::signatures::dwbSendPackets);
+	const auto& chokedPackets = csgo.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
 	int choke = 0;
 
 	if (cfg->m.fakeLag.enabled)	{
@@ -55,7 +55,7 @@ void Misc::fakeLag() noexcept {
 
 	choke = std::clamp(choke, 0, 16);
 
-	csgo.Write<byte>(IEngine + Offset::signatures::dwbSendPackets, chokedPackets >= choke);
+	csgo.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, chokedPackets >= choke);
 }
 
 void Misc::changeWindowTitle(bool restore) noexcept {
@@ -68,8 +68,8 @@ void Misc::changeWindowTitle(bool restore) noexcept {
 	title << "Counter-Strike: Global Offensive - Azurre External 0.1";
 #if defined(_DEBUG)
 	title << " | ";
-	title << " Client: 0x" << std::hex << IClient;
-	title << " Engine: 0x" << std::hex << IEngine;
+	title << " Client: 0x" << std::hex << IClient.address;
+	title << " Engine: 0x" << std::hex << IEngine.address;
 	title << " LocalPlayer: 0x" << std::hex << localPlayer.get();
 #endif
 	std::string titleConverted = title.str();
@@ -79,12 +79,12 @@ void Misc::changeWindowTitle(bool restore) noexcept {
 void Misc::forceReload(bool onKey) noexcept {
 
 	if (!onKey) {
-		csgo.Write<std::int32_t>(IClientState + 0x174, -1);
+		csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
 		changeWindowTitle();
 		return;
 	}
 	if (GetAsyncKeyState(VK_END)) {
-		csgo.Write<std::int32_t>(IClientState + 0x174, -1);
+		csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
 		changeWindowTitle();
 	}
 }
@@ -110,7 +110,7 @@ void Misc::modifyClasses() noexcept {
 
 	for (int i = 0; i < 512; i++)
 	{
-		int entity = csgo.Read<int>(IClient + Offset::signatures::dwEntityList + i * 0x10);
+		int entity = csgo.Read<int>(IClient.address + Offset::signatures::dwEntityList + i * 0x10);
 		if (!entity) continue;
 		if (cfg->v.noSmoke && GetClassId(entity) == ClassID::SmokeGrenadeProjectile)
 			csgo.Write<Vector>(entity + Offset::netvars::m_vecOrigin, Vector(999.f, 999.f, 999.f));
@@ -147,12 +147,12 @@ void Misc::fastStop() noexcept	{
 	Vector finalVector = Helpers::calculateRealAngles();
 	if (!wKey && !aKey && !sKey && !dKey && velocity >= 30.f && (localPlayer->flags() & 1)) {
 		if (finalVector.x >= 20) // FRONT, SO GO BACKWARDS
-			csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceBackward, 6);
+			csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceBackward, 6);
 		if (finalVector.x <= -20) // BACK, SO GO FRONT
-			csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceForward, 6);
+			csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceForward, 6);
 		if (finalVector.y >= 20) // RIGHT, SO GO LEFT
-			csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceLeft, 6);
+			csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceLeft, 6);
 		if (finalVector.y <= -20) // LEFT, SO GO RIGHT
-			csgo.Write<std::uintptr_t>(IClient + Offset::signatures::dwForceRight, 6);;
+			csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6);;
 	}
 }

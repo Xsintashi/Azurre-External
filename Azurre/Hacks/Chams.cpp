@@ -37,8 +37,8 @@ void Chams::run() noexcept {
 				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, enemyColor);
 
 			float brightness = cfg->c.brightness * 10.f;
-			const auto _this = static_cast<uintptr_t>(IEngine + Offset::signatures::model_ambient_min - 0x2c);
-			csgo.Write<int32_t>(IEngine + Offset::signatures::model_ambient_min, *reinterpret_cast<uintptr_t*>(&brightness) ^ _this);
+			const auto _this = static_cast<uintptr_t>(IEngine.address + Offset::signatures::model_ambient_min - 0x2c);
+			csgo.Write<int32_t>(IEngine.address + Offset::signatures::model_ambient_min, *reinterpret_cast<uintptr_t*>(&brightness) ^ _this);
 			toggle = true;
 		} else if(toggle){
 
@@ -48,8 +48,8 @@ void Chams::run() noexcept {
 				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
 
 			float brightness = 0;
-			const auto _this = static_cast<uintptr_t>(IEngine + Offset::signatures::model_ambient_min - 0x2c);
-			csgo.Write<int32_t>(IEngine + Offset::signatures::model_ambient_min, *reinterpret_cast<uintptr_t*>(&brightness) ^ _this);
+			const auto _this = static_cast<uintptr_t>(IEngine.address + Offset::signatures::model_ambient_min - 0x2c);
+			csgo.Write<int32_t>(IEngine.address + Offset::signatures::model_ambient_min, *reinterpret_cast<uintptr_t*>(&brightness) ^ _this);
 		}
 	}
 	if(toggle)

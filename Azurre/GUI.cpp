@@ -332,16 +332,16 @@ void GUI::RenderDebugWindow() noexcept {
 	const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
 	const int tickRate = static_cast<int>(1 / globalVars->intervalPerTick); //tps
 
-	int chokedPackets = csgo.Read<int>(IClientState + Offset::signatures::clientstate_choked_commands);
+	int chokedPackets = csgo.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
 
 	ImGui::TextUnformatted("Build date: " __DATE__ " " __TIME__);
 
 	ImGui::Text("Fps: %i", framePerSecond);
 	ImGui::Text("Tick: %i", tickRate);
-	ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient);
-	ImGui::Text("ClientState: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClientState);
-	ImGui::Text("Engine: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IEngine);
-	ImGui::Text("PlayerResource: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IPlayerResource);
+	ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient.address);
+	ImGui::Text("ClientState: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClientState.address);
+	ImGui::Text("Engine: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IEngine.address);
+	ImGui::Text("PlayerResource: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IPlayerResource.address);
 	ImGui::Text("LocalPlayer: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", localPlayer ? localPlayer.get() : 0);
 	ImGui::Text("RealTime: %.2f", globalVars->realTime);
 	ImGui::Text("FrameCount: %i", globalVars->frameCount);
@@ -366,8 +366,8 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::SliderFloat("", &roll, -45.f, 45.f, "Roll: %.1f");
 	if (roll != tempRoll) {
 		tempRoll = roll;
-		const auto& viewAngles = csgo.Read<ImVec2>(IClientState + Offset::signatures::dwClientState_ViewAngles);
-		csgo.Write<Vector>(IClientState + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
+		const auto& viewAngles = csgo.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
+		csgo.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
 	}
 	static std::string cmd = "";
 	ImGui::InputText("convar", &cmd);
