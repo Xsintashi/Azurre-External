@@ -49,6 +49,21 @@ public:
 		ColorToggle3 ally = { 1.f, 0.f, 0.f };
 	} c;
 
+	struct ClanTagConfig {
+
+		struct CustomClanTag {
+			std::string prefix = "";
+			std::string tag = "";
+			std::string teamTag = "";
+			std::string postfix = "";
+			bool hideName = false;
+			int type = 0;
+			float speed = 0.5f;
+		} custom;
+
+		int mode = 0;
+	} clanTag;
+
 	struct DiscordConfig {
 		bool enabled = true;
 	} d;
@@ -132,4 +147,4 @@ private:
     std::vector<std::string> configs;
 };
 
-inline std::optional<Config> cfg;
+inline std::unique_ptr<Config> cfg;

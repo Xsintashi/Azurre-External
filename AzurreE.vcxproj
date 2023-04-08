@@ -189,6 +189,7 @@
     <ClCompile Include="Azurre\Azurre.cpp" />
     <ClCompile Include="Azurre\Hacks\Aimbot.cpp" />
     <ClCompile Include="Azurre\Hacks\Chams.cpp" />
+    <ClCompile Include="Azurre\Hacks\Clantag.cpp" />
     <ClCompile Include="Azurre\Hacks\Glow.cpp" />
     <ClCompile Include="Azurre\Hacks\Misc.cpp" />
     <ClCompile Include="Azurre\Hacks\SkinChanger.cpp" />
@@ -210,6 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="Azurre\Hacks\Clantag.h" />
     <None Include="Azurre\Hacks\TriggerBot.h" />
     <None Include="LICENSE" />
     <None Include="README.md" />

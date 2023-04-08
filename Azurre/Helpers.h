@@ -17,4 +17,13 @@ namespace Helpers {
 	std::array<uint8_t, 4> ConvertColors4ToUint8_t(std::array<float, 4> in);
 	Vector calculateRealAngles();
 	Vector calculateRelativeAngle(const Vector& source, const Vector& destination, const Vector& viewAngles) noexcept;
+
+	constexpr std::uint8_t utf8SeqLen(char firstByte) noexcept
+	{
+		return (firstByte & 0x80) == 0x00 ? 1 :
+			(firstByte & 0xE0) == 0xC0 ? 2 :
+			(firstByte & 0xF0) == 0xE0 ? 3 :
+			(firstByte & 0xF8) == 0xF0 ? 4 :
+			0;
+	}
 }

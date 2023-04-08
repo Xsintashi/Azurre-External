@@ -4,6 +4,7 @@
 
 #include "Hacks/Aimbot.h"
 #include "Hacks/Chams.h"
+#include "Hacks/Clantag.h"
 #include "Hacks/Glow.h"
 #include "Hacks/Misc.h"
 #include "Hacks/SkinChanger.h"
@@ -45,7 +46,7 @@ int __stdcall wWinMain(
 		return 0;
 	}
 
-	cfg.emplace(Config{});
+	cfg = std::make_unique<Config>();
 	globalVars.emplace(GlobalVars{});
 	Core::init();
 
@@ -75,6 +76,7 @@ int __stdcall wWinMain(
 		Aimbot::recoilSystem();
 		TriggerBot::run();
 		Chams::run();
+		Clan::update();
 		Misc::forceReload(true);
 		Misc::bunnyHop();
 		Misc::fastStop();
@@ -94,7 +96,7 @@ int __stdcall wWinMain(
 	}
 	Misc::forceReload();
 	Misc::changeWindowTitle(true);
-
+	Clan::setClanTag("","");
 	glowThread.join();
 	noTeammatesThread.join();
 	aimbotThread.join();

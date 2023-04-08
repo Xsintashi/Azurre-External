@@ -17,6 +17,7 @@
 #include "../Lib/imgui/imgui_impl_win32.h"
 
 #include <string>
+#include "Hacks/Clantag.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -494,6 +495,33 @@ void GUI::RenderMainMenu() noexcept {
 				ImGui::SliderInt("##limit", &cfg->m.fakeLag.limit, 1, 16, "Limit: %d");
 				ImGui::PopItemWidth();
 			}
+			ImGui::PushItemWidth(220.0f);
+			ImGui::Combo("ClanTag", &cfg->clanTag.mode, "None\0Azurre\0Clock\0Reverse\0Velocity\0Position\0HP\0\\n Overflow\0gamesense\0Custom\0Stealer\0");
+			if (cfg->clanTag.mode == 9) {
+				ImGui::PushID("ClanTagCustom");
+				ImGui::SameLine();
+				if (ImGui::Button("..."))
+					ImGui::OpenPopup("##custom");
+
+				if (ImGui::BeginPopup("##custom")) {
+					ImGui::PushItemWidth(120.f);
+
+					ImGui::Combo("Type", &cfg->clanTag.custom.type, "Static\0Rotate\0Rotate Backwards\0Add\0Remove\0");
+					if (ImGui::InputText("Name", &cfg->clanTag.custom.tag))
+						Clan::update(false, true);
+					if (ImGui::InputText("Team", &cfg->clanTag.custom.teamTag))
+						Clan::update(false, true);
+					if (ImGui::InputText("Prefix", &cfg->clanTag.custom.prefix))
+						Clan::update(false, true);
+					if (ImGui::InputText("Postfix", &cfg->clanTag.custom.postfix))
+						Clan::update(false, true);
+					ImGui::SliderFloat("##speed", &cfg->clanTag.custom.speed, 0.01f, 1.f, "Speed: %.2f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_Logarithmic);
+					ImGui::Checkbox("Hide Name", &cfg->clanTag.custom.hideName);
+					ImGui::PopItemWidth();
+				}
+				ImGui::PopID();
+			}
+			ImGui::PushItemWidth(220.0f);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Visuals")) {
