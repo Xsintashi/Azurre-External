@@ -50,7 +50,6 @@ public:
 	} c;
 
 	struct ClanTagConfig {
-
 		struct CustomClanTag {
 			std::string prefix = "";
 			std::string tag = "";
@@ -60,7 +59,6 @@ public:
 			int type = 0;
 			float speed = 0.5f;
 		} custom;
-
 		int mode = 0;
 	} clanTag;
 
@@ -147,4 +145,4 @@ private:
     std::vector<std::string> configs;
 };
 
-inline std::unique_ptr<Config> cfg;
+inline std::optional<Config> cfg;

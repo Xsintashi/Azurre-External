@@ -44,7 +44,7 @@ void Misc::fakeLag() noexcept {
 			choke = cfg->m.fakeLag.limit;
 			break;
 		case 1: //Adaptive
-			choke = std::clamp(static_cast<int>(std::ceilf(64 / (speed * globalVars->intervalPerTick))), 1, cfg->m.fakeLag.limit);
+			//choke = std::clamp(static_cast<int>(std::ceilf(64 / (speed * globalVars->intervalPerTick))), 1, cfg->m.fakeLag.limit);
 			break;
 		case 2: // Random
 			srand(static_cast<unsigned int>(time(NULL)));

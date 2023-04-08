@@ -496,8 +496,8 @@ void GUI::RenderMainMenu() noexcept {
 				ImGui::PopItemWidth();
 			}
 			ImGui::PushItemWidth(220.0f);
-			ImGui::Combo("ClanTag", &cfg->clanTag.mode, "None\0Azurre\0Clock\0Reverse\0Velocity\0Position\0HP\0\\n Overflow\0gamesense\0Custom\0Stealer\0");
-			if (cfg->clanTag.mode == 9) {
+			ImGui::Combo("ClanTag", &cfg->clanTag.mode, "None\0Azurre\0Clock\0Reverse\0Velocity\0Position\0HP\0\\n Overflow\0Custom\0");
+			if (cfg->clanTag.mode == 8) {
 				ImGui::PushID("ClanTagCustom");
 				ImGui::SameLine();
 				if (ImGui::Button("..."))
@@ -518,10 +518,11 @@ void GUI::RenderMainMenu() noexcept {
 					ImGui::SliderFloat("##speed", &cfg->clanTag.custom.speed, 0.01f, 1.f, "Speed: %.2f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_Logarithmic);
 					ImGui::Checkbox("Hide Name", &cfg->clanTag.custom.hideName);
 					ImGui::PopItemWidth();
+					ImGui::EndPopup();
 				}
 				ImGui::PopID();
 			}
-			ImGui::PushItemWidth(220.0f);
+			ImGui::PopItemWidth();
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Visuals")) {

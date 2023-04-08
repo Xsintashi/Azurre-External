@@ -62,32 +62,33 @@ void Clan::setClanTag(const char* name, const char* team) {
 void azurreClanTag() noexcept {
 
     const char* clantagAzurre[] = {
-
-    "rre            ",
-    "re             ",
-    "e              ",
-    "               ",
-    "              a",
-    "             az",
-    "            azu",
-    "           azur",
-    "          azurr",
-    "         azurre",
-    "        azurre ",
-    "       azurre  ",
-    "      azurre   ",
-    "     azurre    ",
-    "    azurre     ",
-    "   azurre      ",
-    "  azurre       ",
-    " azurre        ",
-    "azurre         ",
-    "zurre          ",
-    "urre           ",
+    "rreX            ",
+    "reX             ",
+    "eX              ",
+    "X               ",
+    "                ",
+    "               a",
+    "              az",
+    "             azu",
+    "            azur",
+    "           azurr",
+    "          azurre",
+    "         azurreX",
+    "        azurreX ",
+    "       azurreX  ",
+    "      azurreX   ",
+    "     azurreX    ",
+    "    azurreX     ",
+    "   azurreX      ",
+    "  azurreX       ",
+    " azurreX        ",
+    "azurreX         ",
+    "zurreX          ",
+    "urreX           ",
     };
-
+    
     int serverTime = static_cast<int>(((globalVars->currentTime / 0.296875f) + 6.60925f - 0.07f));
-    Clan::setClanTag(std::string(clantagAzurre[serverTime % 21]).append("\n").c_str(), clantagAzurre[serverTime % 21]);
+    Clan::setClanTag(std::string(clantagAzurre[serverTime % 23]).append("\n").c_str(), clantagAzurre[serverTime % 23]);
 }
 
 struct neededVars {

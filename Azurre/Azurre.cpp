@@ -46,7 +46,7 @@ int __stdcall wWinMain(
 		return 0;
 	}
 
-	cfg = std::make_unique<Config>();
+	cfg.emplace(Config{});
 	globalVars.emplace(GlobalVars{});
 	Core::init();
 

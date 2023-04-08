@@ -107,6 +107,21 @@ static void from_json(const json& j, Config::AimbotConfig& c) {
     read(j, "RCS", c.rcs);
 }
 
+static void from_json(const json& j, Config::ClanTagConfig::CustomClanTag& c) {
+    read<value_t::string>(j, "Prefix", c.prefix);
+    read<value_t::string>(j, "Tag", c.tag);
+    read<value_t::string>(j, "TeamTag", c.teamTag);
+    read<value_t::string>(j, "Postfix", c.postfix);
+    read(j, "Hide Name", c.hideName);
+    read(j, "Type", c.type);
+    read(j, "Speed", c.speed);
+}
+
+static void from_json(const json& j, Config::ClanTagConfig& c) {
+    read(j, "Mode", c.mode);
+    read<value_t::object>(j, "Custom", c.custom);
+}
+
 static void from_json(const json& j, Config::ChamsConfig& c) {
     read(j, "Enabled", c.enabled);
     read(j, "Brightness", c.brightness);
@@ -208,6 +223,7 @@ void Config::load(const char8_t* name, bool incremental) noexcept
 
     read<value_t::object>(j, "Aimbot", a);
     read<value_t::object>(j, "Chams", c);
+    read<value_t::object>(j, "ClanTag", clanTag);
     read<value_t::object>(j, "Discord", d);
     read<value_t::object>(j, "Glow", g);
     read<value_t::object>(j, "Misc", m);
@@ -279,6 +295,23 @@ static void to_json(json& j, const Config::AimbotConfig& o){
     WRITE("RCS", rcs);
 }
 
+static void to_json(json& j, const Config::ClanTagConfig::CustomClanTag& o, const Config::ClanTagConfig::CustomClanTag& dummy) {
+    WRITE("Prefix", prefix);
+    WRITE("Tag", tag);
+    WRITE("TeamTag", teamTag);
+    WRITE("Postfix", postfix);
+    WRITE("Hide Name", hideName);
+    WRITE("Type", type);
+    WRITE("Speed", speed);
+}
+
+static void to_json(json& j, const Config::ClanTagConfig& o){
+    const Config::ClanTagConfig dummy;
+
+    WRITE("Mode", mode);
+    WRITE("Custom", custom);
+}
+
 static void to_json(json& j, const Config::ChamsConfig& o) {
     const Config::ChamsConfig dummy;
 
@@ -312,8 +345,8 @@ static void to_json(json& j, const Config::GuiConfig& o) {
     WRITE("Menu Colors", menuColors);
 }
 
-static void to_json(json& j, const Config::MiscConfig::FakeLag& o, const Config::MiscConfig::FakeLag& dummy)
-{
+static void to_json(json& j, const Config::MiscConfig::FakeLag& o, const Config::MiscConfig::FakeLag& dummy){
+
     WRITE("Enabled", enabled);
     WRITE("Limit", limit);
     WRITE("Type", type);
@@ -388,6 +421,7 @@ void Config::save(size_t id) const noexcept
 
         j["Aimbot"] = a;
         j["Chams"] = c;
+        j["ClanTag"] = clanTag;
         j["Discord"] = d;
         j["Glow"] = g;
         j["Misc"] = m;
@@ -428,6 +462,7 @@ void Config::reset() noexcept
 {
     a = {};
     c = {};
+    clanTag = {};
     d = {};
     g = {};
     m = {};
