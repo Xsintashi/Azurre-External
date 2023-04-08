@@ -144,7 +144,6 @@ static void from_json(const json& j, Config::GuiConfig& c) {
     read(j, "Window Border" , c.windowBorder);
     read(j, "Center Title" , c.centerTitle);
     read(j, "Frame Border" , c.frameBorder);
-    read(j, "Always On Top", c.alwaysOnTop);
     read(j, "Menu Colors", c.menuColors);
 }
 
@@ -341,7 +340,6 @@ static void to_json(json& j, const Config::GuiConfig& o) {
     WRITE("Window Border", windowBorder);
     WRITE("Center Title", centerTitle);
     WRITE("Frame Border", frameBorder);
-    WRITE("Always On Top", alwaysOnTop);
     WRITE("Menu Colors", menuColors);
 }
 

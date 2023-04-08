@@ -10,6 +10,12 @@ namespace GUI {
 	inline HWND window = nullptr;
 	inline WNDCLASSEX windowClass = { };
 
+	// window overlay
+	inline RECT overlayRect;
+	inline RECT marginRect;
+	inline int resX;
+	inline int resY;
+
 	// points for window movement
 	inline POINTS position = { };
 
@@ -20,6 +26,7 @@ namespace GUI {
 
 	// handle window creation & destruction
 	void CreateHWindow(const char* windowName) noexcept;
+	void CreateHWindow(const wchar_t* windowName) noexcept;
 	void DestroyHWindow() noexcept;
 
 	// handle device creation & destruction
@@ -44,4 +51,10 @@ namespace GUI {
 	void RenderDebugWindow() noexcept;
 	void RenderPlayerList() noexcept;
 	void RenderMainMenu() noexcept;
+	void overlay() noexcept;
 }
+
+struct vertex {
+	float x, y, z, rhw;
+	D3DCOLOR color;
+};

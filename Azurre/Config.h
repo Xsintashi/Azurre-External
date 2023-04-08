@@ -97,7 +97,6 @@ public:
 		bool windowBorder = false;
 		bool centerTitle = true;
 		bool frameBorder = false;
-		bool alwaysOnTop = false;
 
 		int menuColors = 0;
 	} u;

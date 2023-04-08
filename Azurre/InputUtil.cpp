@@ -165,7 +165,7 @@ bool KeyBind::isPressed() const noexcept
     if (keyCode == KeyCode::MOUSEWHEEL_UP)
         return ImGui::GetIO().MouseWheel > 0.0f;
 
-    return static_cast<std::size_t>(keyCode) < keyMap.size() && GetAsyncKeyState(keyMap[keyCode].code);
+    return static_cast<std::size_t>(keyCode) < keyMap.size() && (GetAsyncKeyState(keyMap[keyCode].code) & 1);
 }
 
 bool KeyBind::isDown() const noexcept

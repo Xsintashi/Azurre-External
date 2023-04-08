@@ -18,6 +18,8 @@
 
 #include <string>
 #include "Hacks/Clantag.h"
+#include <dwmapi.h>
+#include <d3d9.h>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -93,39 +95,51 @@ long __stdcall WindowProcess(
 void GUI::CreateHWindow(const char* windowName) noexcept
 {
 	windowClass.cbSize = sizeof(WNDCLASSEX);
-	windowClass.style = CS_CLASSDC;
+	windowClass.style = CS_HREDRAW | CS_VREDRAW;
 	windowClass.lpfnWndProc = WindowProcess;
 	windowClass.cbClsExtra = 0;
 	windowClass.cbWndExtra = 0;
-	windowClass.hInstance = GetModuleHandleA(0);
+	windowClass.hInstance = 0;
 	windowClass.hIcon = 0;
-	windowClass.hCursor = 0;
-	windowClass.hbrBackground = 0;
+	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	windowClass.hbrBackground = HBRUSH(RGB(0, 0, 0));
 	windowClass.lpszMenuName = 0;
 	windowClass.lpszClassName = "azurreE";
 	windowClass.hIconSm = 0;
 
 	RegisterClassEx(&windowClass);
 
+	GetClientRect(window, &overlayRect);
+	GetWindowRect(window, &marginRect);
+
+	resX = marginRect.right - marginRect.left;
+	resY = marginRect.bottom - marginRect.top;
+
 	window = CreateWindowEx(
-		0,
+		WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT,
 		"azurreE",
 		windowName,
-		WS_POPUP,
-		100,
-		100,
-		320,
-		240,
+		WS_POPUP | WS_VISIBLE,
+		0,
+		0,
+		1920,
+		1080,
 		0,
 		0,
 		windowClass.hInstance,
 		0
 	);
+	SetLayeredWindowAttributes(window, RGB(0, 0, 0), BYTE(0), LWA_ALPHA);
+	SetLayeredWindowAttributes(window, 0, RGB(0, 0, 0), LWA_COLORKEY);
 
-
-
-	//ShowWindow(window, SW_SHOWDEFAULT); // Shows black main window. We dont wanna see it
+	MARGINS marg = { marginRect.left ,marginRect.top - resY - (marginRect.bottom - marginRect.top), resX ,resY };
+	DwmExtendFrameIntoClientArea(window, &marg);
+	ShowWindow(window, SW_SHOW); 
 	UpdateWindow(window);
+	if (IsIconic(IConsole))
+	SetWindowPos(IConsole, window, 0, 0, resX, resY, SWP_NOMOVE | SWP_NOSIZE);
+	else
+	SetWindowPos(IConsole, window, 0, 0, resX, resY, SWP_NOMOVE | SWP_NOSIZE);
 }
 
 void GUI::DestroyHWindow() noexcept
@@ -141,12 +155,15 @@ bool GUI::CreateDevice() noexcept
 
 	// Create the D3DDevice
 	ZeroMemory(&presentParameters, sizeof(presentParameters));
-	presentParameters.Windowed = TRUE;
+	presentParameters.Windowed = true;
 	presentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	presentParameters.BackBufferFormat = D3DFMT_UNKNOWN; // Need to use an explicit format with alpha if needing per-pixel alpha composition.
-	presentParameters.EnableAutoDepthStencil = TRUE;
+	presentParameters.BackBufferFormat = D3DFMT_A8R8G8B8;
+	presentParameters.BackBufferWidth = resX;
+	presentParameters.BackBufferHeight = resY;
+	presentParameters.hDeviceWindow = window;
+	presentParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	presentParameters.EnableAutoDepthStencil = true;
 	presentParameters.AutoDepthStencilFormat = D3DFMT_D16;
-	presentParameters.PresentationInterval = D3DPRESENT_INTERVAL_ONE;           // Present with vsync
 	//g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;   // Present without vsync, maximum unthrottled framerate
 	if (d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, window, D3DCREATE_HARDWARE_VERTEXPROCESSING, &presentParameters, &device) < 0)
 		return false;
@@ -290,9 +307,6 @@ void GUI::updateColors() noexcept
 }
 
 void GUI::update() noexcept {
-
-	SetWindowPos(window, cfg->u.alwaysOnTop ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-
 	auto& guiSettings = ImGui::GetStyle();
 	guiSettings.AntiAliasedLines = cfg->u.antiAliasing;
     guiSettings.AntiAliasedLinesUseTex = cfg->u.antiAliasing;
@@ -714,7 +728,6 @@ void GUI::RenderMainMenu() noexcept {
 			if (ImGui::Combo("Menu colors", &cfg->u.menuColors, "Azurre\0Genshi\0Emerald\0Bloddy Red\0Gold Mine\0Pandora\0Holy Light\0Deep Dark\0Visual Studio\0GoldSrc\0ImGui\0Neverlose\0Aimware\0Onetap\0Custom\0"))
 				updateColors();
 
-			ImGui::Checkbox("Always on Top",&cfg->u.alwaysOnTop);
 			ImGui::Checkbox("AntiAliasing",&cfg->u.antiAliasing);
 			ImGui::Checkbox("Center Title",&cfg->u.centerTitle);
 			ImGui::Checkbox("Frame Border",&cfg->u.frameBorder);
@@ -838,4 +851,8 @@ void GUI::RenderMainMenu() noexcept {
 		ImGui::EndTabBar();
 	}
 	ImGui::End();
+}
+
+void GUI::overlay() noexcept {
+	ImGui::GetBackgroundDrawList()->AddText({ 0, 0 }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), "Azurre 0.1\nHello xs9 :)\nHello Jarek");
 }

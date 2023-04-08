@@ -64,9 +64,16 @@ int __stdcall wWinMain(
 	Misc::changeWindowTitle();
 
 	while (GUI::isRunning){
+		static bool showMenu = true;
+		SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
-		if (GetAsyncKeyState(VK_INSERT))
-			::SwitchToThisWindow(GUI::window, true);
+		if (GetAsyncKeyState(VK_INSERT) & 1) {
+			showMenu = !showMenu;
+			if (showMenu)
+				SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
+			else
+				SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT);
+		}
 
 		Core::update();
 
@@ -86,11 +93,12 @@ int __stdcall wWinMain(
 
 		GUI::update();
 		GUI::BeginRender();
-		GUI::RenderMainMenu();
+		if (showMenu)GUI::RenderMainMenu();
 		if (cfg->m.playerList) GUI::RenderPlayerList();
+		GUI::overlay();
 #if defined(_DEBUG)
-		GUI::RenderDebugWindow();
-		//ImGui::ShowDemoWindow();
+		if (showMenu) GUI::RenderDebugWindow();
+		// if (showMenu) ImGui::ShowDemoWindow();
 #endif
 		GUI::EndRender();
 	}
