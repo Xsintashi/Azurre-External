@@ -66,6 +66,18 @@ public:
 		bool enabled = true;
 	} d;
 
+	struct ESPConfig {
+		bool enabled = false;
+		bool box = false;
+		bool playerNames = false;
+
+		struct health {
+			bool enabled = false;
+			ColorToggle3 solidColor = { 0.f, 1.0f, 0.f };
+			ColorToggle3 showHealthNumber = { 1.f, 1.f, 1.f };
+		} health;
+	} esp;
+
 	struct GlowConfig {
 		bool enabled = false;
 		ColorToggle enemy = { 0.f, 0.4f, 1.f, 1.f };

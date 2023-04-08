@@ -133,6 +133,11 @@ static void from_json(const json& j, Config::DiscordConfig& c) {
     read(j, "Enabled", c.enabled);
 }
 
+static void from_json(const json& j, Config::ESPConfig& c) {
+    read(j, "Enabled", c.enabled);
+    read(j, "Boxes", c.box);
+}
+
 static void from_json(const json& j, Config::GlowConfig& c) {
     read(j, "Enabled", c.enabled);
     read<value_t::object>(j, "Ally", c.ally);
@@ -224,6 +229,7 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read<value_t::object>(j, "Chams", c);
     read<value_t::object>(j, "ClanTag", clanTag);
     read<value_t::object>(j, "Discord", d);
+    read<value_t::object>(j, "ESP", esp);
     read<value_t::object>(j, "Glow", g);
     read<value_t::object>(j, "Misc", m);
     read<value_t::array> (j, "Skins", s);
@@ -326,6 +332,13 @@ static void to_json(json& j, const Config::DiscordConfig& o) {
     WRITE("Enabled", enabled);
 }
 
+static void to_json(json& j, const Config::ESPConfig& o) {
+    const Config::ESPConfig dummy;
+
+    WRITE("Enabled", enabled);
+    WRITE("Boxes", box);
+}
+
 static void to_json(json& j, const Config::GlowConfig& o) {
     const Config::GlowConfig dummy;
     WRITE("Enabled", enabled);
@@ -421,6 +434,7 @@ void Config::save(size_t id) const noexcept
         j["Chams"] = c;
         j["ClanTag"] = clanTag;
         j["Discord"] = d;
+        j["ESP"] = esp;
         j["Glow"] = g;
         j["Misc"] = m;
         j["Skins"] = s;
@@ -462,6 +476,7 @@ void Config::reset() noexcept
     c = {};
     clanTag = {};
     d = {};
+    esp = {};
     g = {};
     m = {};
     s = {};

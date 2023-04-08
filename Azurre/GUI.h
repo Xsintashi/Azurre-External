@@ -26,7 +26,6 @@ namespace GUI {
 
 	// handle window creation & destruction
 	void CreateHWindow(const char* windowName) noexcept;
-	void CreateHWindow(const wchar_t* windowName) noexcept;
 	void DestroyHWindow() noexcept;
 
 	// handle device creation & destruction

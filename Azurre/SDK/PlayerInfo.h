@@ -21,4 +21,4 @@ struct PlayerInfo {
 	bool            ishltv;
 	unsigned int    customfiles[4];
 	unsigned char   filesdownloaded;
-} playerInfo;
+};

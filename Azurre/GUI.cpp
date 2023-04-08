@@ -1,5 +1,6 @@
 #include "GUI.h"
 #include "Config.h"
+#include "Core.h"
 
 #include "SDK/Entity.h"
 #include "SDK/GlobalVars.h"
@@ -7,6 +8,8 @@
 #include "SDK/LocalPlayer.h"
 #include "SDK/UserInterface.h"
 
+#include "Hacks/Clantag.h"
+#include "Hacks/ESP.h"
 #include "Hacks/SkinChanger.h"
 #include "Hacks/Misc.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -17,7 +20,6 @@
 #include "../Lib/imgui/imgui_impl_win32.h"
 
 #include <string>
-#include "Hacks/Clantag.h"
 #include <dwmapi.h>
 #include <d3d9.h>
 
@@ -115,6 +117,10 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 	resX = marginRect.right - marginRect.left;
 	resY = marginRect.bottom - marginRect.top;
 
+	RECT desktop;
+	const HWND hDesktop = GetDesktopWindow();
+	GetWindowRect(hDesktop, &desktop);
+
 	window = CreateWindowEx(
 		WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT,
 		"azurreE",
@@ -122,8 +128,8 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 		WS_POPUP | WS_VISIBLE,
 		0,
 		0,
-		1920,
-		1080,
+		desktop.right,
+		desktop.bottom,
 		0,
 		0,
 		windowClass.hInstance,
@@ -136,10 +142,6 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 	DwmExtendFrameIntoClientArea(window, &marg);
 	ShowWindow(window, SW_SHOW); 
 	UpdateWindow(window);
-	if (IsIconic(IConsole))
-	SetWindowPos(IConsole, window, 0, 0, resX, resY, SWP_NOMOVE | SWP_NOSIZE);
-	else
-	SetWindowPos(IConsole, window, 0, 0, resX, resY, SWP_NOMOVE | SWP_NOSIZE);
 }
 
 void GUI::DestroyHWindow() noexcept
@@ -353,6 +355,9 @@ void GUI::RenderDebugWindow() noexcept {
 
 	ImGui::Text("Fps: %i", framePerSecond);
 	ImGui::Text("Tick: %i", tickRate);
+	ImGui::Text("Screen Size: %2.fx%2.f", screenSize.x, screenSize.y);
+	ImGui::Text("Game Size: %2.fx%2.f", gameScreenSize.x, gameScreenSize.y);
+	ImGui::Text("Game Pos: %2.fx%2.f", gameScreenPos.x, gameScreenPos.y);
 	ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient.address);
 	ImGui::Text("ClientState: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClientState.address);
 	ImGui::Text("Engine: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IEngine.address);
@@ -450,7 +455,7 @@ void GUI::RenderMainMenu() noexcept {
 		ImGuiWindowFlags_AlwaysAutoResize
 	);
 
-	ImGui::Text("Hello xs9 :)");
+	ImGui::Text("Hello xs9 :) Hello Jarek");
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 		if (ImGui::BeginTabItem("Aimbot")) {
 			ImGui::PushID("aimbot");
@@ -490,6 +495,14 @@ void GUI::RenderMainMenu() noexcept {
 			ImGuiCustom::colorPicker("Allies", cfg->c.ally);
 			ImGui::SetNextItemWidth(200.0f);
 			ImGui::SliderFloat("Brightness", &cfg->c.brightness, 0.1f, 1.f);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("ESP")) {
+			ImGui::Checkbox("Enabled", &cfg->esp.enabled);
+			ImGui::Checkbox("Boxes", &cfg->esp.box);
+			ImGui::Checkbox("Health Bar", &cfg->esp.health.enabled);
+			ImGui::Checkbox("Player Name", &cfg->esp.playerNames);
+
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Misc")) {
@@ -855,4 +868,12 @@ void GUI::RenderMainMenu() noexcept {
 
 void GUI::overlay() noexcept {
 	ImGui::GetBackgroundDrawList()->AddText({ 0, 0 }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), "Azurre 0.1\nHello xs9 :)\nHello Jarek");
+
+	ImGui::GetBackgroundDrawList()->AddRect(
+		gameScreenPos,
+		gameScreenPosEnd,
+		ImGui::GetColorU32({ 0.f, 0.4f, 1.f, 0.5f }),
+		0, 0, 2.5f);
+
+	ESP::render();
 }

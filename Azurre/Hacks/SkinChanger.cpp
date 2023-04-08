@@ -235,6 +235,7 @@ void Skin::add(int idx, short weaponID, int skinID, float wear, int seed, int st
 }
 
 void Skin::update() {
+    return;
 	const auto& weapons = csgo.Read<std::array<unsigned long, 8>>(localPlayer.get() + Offset::netvars::m_hMyWeapons);
     int knifeIndex = getModelIndexByID(Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex);
 

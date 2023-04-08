@@ -64,7 +64,6 @@ int __stdcall wWinMain(
 	Misc::changeWindowTitle();
 
 	while (GUI::isRunning){
-		static bool showMenu = true;
 		SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (GetAsyncKeyState(VK_INSERT) & 1) {
@@ -93,7 +92,7 @@ int __stdcall wWinMain(
 
 		GUI::update();
 		GUI::BeginRender();
-		if (showMenu)GUI::RenderMainMenu();
+		if (showMenu) GUI::RenderMainMenu();
 		if (cfg->m.playerList) GUI::RenderPlayerList();
 		GUI::overlay();
 #if defined(_DEBUG)
@@ -102,6 +101,8 @@ int __stdcall wWinMain(
 #endif
 		GUI::EndRender();
 	}
+	csgo.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, true);
+
 	Misc::forceReload();
 	Misc::changeWindowTitle(true);
 	Clan::setClanTag("","");

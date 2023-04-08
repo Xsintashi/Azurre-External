@@ -33,6 +33,14 @@ void Core::update() {
 	gameState = csgo.Read<int>(IClientState.address + 0x108);
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
 
+	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
+	RECT rct;
+	if (GetWindowRect(IConsole, &rct)) {
+		gameScreenPos = { static_cast<float>(rct.left) , static_cast<float>(rct.top) };
+		gameScreenPosEnd = { gameScreenPos.x + gameScreenSize.x , gameScreenPos.y + gameScreenSize.y };
+		gameScreenSize = { static_cast<float>(rct.right - rct.left), static_cast<float>(rct.bottom - rct.top) };
+	}
+
 	cfg->a.hotkey.handleToggle();
 	cfg->t.hotkey.handleToggle();
 	cfg->v.thirdPersonKey.handleToggle();
@@ -46,7 +54,7 @@ void Core::update() {
 
 		// Player Info
 		const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
-		playerInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
+		PlayerInfo playerInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
 
 		const auto& health = entity->health();
 		const auto& armor = entity->armor();
@@ -60,7 +68,7 @@ void Core::update() {
 		const char* steamID = playerInfo.szSteamID;
 		char temp[18];
 		ReadProcessMemory(csgo.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
-		std::string placename = temp;
+		std::string placename = (temp + '\0');
 
 		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename });
 	}

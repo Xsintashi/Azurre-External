@@ -6,6 +6,8 @@
 using uint8_tColor3 = std::array<uint8_t, 3>;
 using uint8_tColor4 = std::array<uint8_t, 4>;
 
+struct Matrix4x4;
+struct ImVec2;
 struct Vector;
 struct Color3;
 struct Color4;
@@ -17,6 +19,8 @@ namespace Helpers {
 	std::array<uint8_t, 4> ConvertColors4ToUint8_t(std::array<float, 4> in);
 	Vector calculateRealAngles();
 	Vector calculateRelativeAngle(const Vector& source, const Vector& destination, const Vector& viewAngles) noexcept;
+
+	Vector world2Screen(const ImVec2& screenSize, const Vector& pos, Matrix4x4 matrix);
 
 	constexpr std::uint8_t utf8SeqLen(char firstByte) noexcept
 	{

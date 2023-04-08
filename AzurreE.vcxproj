@@ -137,6 +137,7 @@
     <ClInclude Include="Azurre\DiscordSDK\src\rapidjson\writer.h" />
     <ClInclude Include="Azurre\DiscordSDK\src\rpc_connection.h" />
     <ClInclude Include="Azurre\DiscordSDK\src\serialization.h" />
+    <ClInclude Include="Azurre\Hacks\ESP.h" />
     <ClInclude Include="Azurre\GUI.h" />
     <ClInclude Include="Azurre\Hacks\Aimbot.h" />
     <ClInclude Include="Azurre\Hacks\Chams.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Azurre\SDK\Interfaces.h" />
     <ClInclude Include="Azurre\SDK\LocalPlayer.h" />
     <ClInclude Include="Azurre\SDK\Macros.h" />
+    <ClInclude Include="Azurre\SDK\Matrix.h" />
     <ClInclude Include="Azurre\SDK\PlayerInfo.h" />
     <ClInclude Include="Azurre\SDK\SkinID.h" />
     <ClInclude Include="Azurre\SDK\UserCmd.h" />
@@ -185,6 +187,7 @@
     <ClCompile Include="Azurre\DiscordSDK\src\discord_rpc.cpp" />
     <ClCompile Include="Azurre\DiscordSDK\src\rpc_connection.cpp" />
     <ClCompile Include="Azurre\DiscordSDK\src\serialization.cpp" />
+    <ClCompile Include="Azurre\Hacks\ESP.cpp" />
     <ClCompile Include="Azurre\GUI.cpp" />
     <ClCompile Include="Azurre\Azurre.cpp" />
     <ClCompile Include="Azurre\Hacks\Aimbot.cpp" />
