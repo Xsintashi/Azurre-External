@@ -100,7 +100,9 @@ public:
 
 	struct TriggerBotConfig {
 		bool enabled = false;
+		bool safe = false;
 		bool friendlyFire = false;
+		int delay = 0;
 		KeyBind hotkey = "trigger";
 	} t;
 
@@ -109,6 +111,7 @@ public:
 		bool windowBorder = false;
 		bool centerTitle = true;
 		bool frameBorder = false;
+		bool roundBorder = false;
 
 		int menuColors = 0;
 	} u;

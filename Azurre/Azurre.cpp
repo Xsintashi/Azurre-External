@@ -60,6 +60,7 @@ int __stdcall wWinMain(
 	std::thread noTeammatesThread = std::thread(Visuals::doNotRenderTeammates);
 	std::thread glowThread = std::thread(Glow::run);
 	std::thread aimbotThread = std::thread(Aimbot::run);
+	std::thread skinUpdateThread = std::thread(Skin::update);
 
 	Misc::changeWindowTitle();
 
@@ -75,8 +76,6 @@ int __stdcall wWinMain(
 		}
 
 		Core::update();
-
-		Skin::update();
 		Misc::entityLoop();
 		Misc::fakeLag(); // disable while shotting
 		Aimbot::recoilSystem();
@@ -106,9 +105,10 @@ int __stdcall wWinMain(
 	Misc::forceReload();
 	Misc::changeWindowTitle(true);
 	Clan::setClanTag("","");
-	glowThread.join();
-	noTeammatesThread.join();
-	aimbotThread.join();
+	//glowThread.join();
+	//noTeammatesThread.join();
+	//aimbotThread.join();
+	//skinUpdateThread.join();
 
 	Discord::Shutdown();
 

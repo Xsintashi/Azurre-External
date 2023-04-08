@@ -34,7 +34,19 @@ void TriggerBot::run() noexcept{
 
 	if (!cfg->t.friendlyFire && entity->isSameTeam()) return;
 
-	if (cfg->t.hotkey.isActive())
-		csgo.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
+	if (cfg->t.hotkey.isActive()) {
+		static DWORD time = GetTickCount();
+		if (GetTickCount() - time >= cfg->t.delay) {
+			if (cfg->t.safe) {
+				mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+				std::this_thread::sleep_for(std::chrono::milliseconds(2));
+				mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+			}
+			else csgo.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
+
+			time = GetTickCount();
+		}
+	}
+		
 
 }

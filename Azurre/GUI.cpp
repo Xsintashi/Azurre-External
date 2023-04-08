@@ -104,7 +104,7 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 	windowClass.hInstance = 0;
 	windowClass.hIcon = 0;
 	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	windowClass.hbrBackground = HBRUSH(RGB(0, 0, 0));
+	windowClass.hbrBackground = 0;
 	windowClass.lpszMenuName = 0;
 	windowClass.lpszClassName = "azurreE";
 	windowClass.hIconSm = 0;
@@ -122,7 +122,7 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 	GetWindowRect(hDesktop, &desktop);
 
 	window = CreateWindowEx(
-		WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT,
+		WS_EX_LAYERED | WS_EX_TRANSPARENT,
 		"azurreE",
 		windowName,
 		WS_POPUP | WS_VISIBLE,
@@ -135,13 +135,15 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 		windowClass.hInstance,
 		0
 	);
+
+	SetForegroundWindow(IConsole);
 	SetLayeredWindowAttributes(window, RGB(0, 0, 0), BYTE(0), LWA_ALPHA);
 	SetLayeredWindowAttributes(window, 0, RGB(0, 0, 0), LWA_COLORKEY);
 
 	MARGINS marg = { marginRect.left ,marginRect.top - resY - (marginRect.bottom - marginRect.top), resX ,resY };
 	DwmExtendFrameIntoClientArea(window, &marg);
 	ShowWindow(window, SW_SHOW); 
-	UpdateWindow(window);
+	SetWindowPos(window, HWND_TOPMOST, marginRect.left, marginRect.top, resX, resY, SWP_NOMOVE | SWP_NOSIZE);//del swp_nomove and etc
 }
 
 void GUI::DestroyHWindow() noexcept
@@ -157,15 +159,12 @@ bool GUI::CreateDevice() noexcept
 
 	// Create the D3DDevice
 	ZeroMemory(&presentParameters, sizeof(presentParameters));
-	presentParameters.Windowed = true;
+	presentParameters.Windowed = TRUE;
 	presentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	presentParameters.BackBufferFormat = D3DFMT_A8R8G8B8;
-	presentParameters.BackBufferWidth = resX;
-	presentParameters.BackBufferHeight = resY;
-	presentParameters.hDeviceWindow = window;
-	presentParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-	presentParameters.EnableAutoDepthStencil = true;
+	presentParameters.BackBufferFormat = D3DFMT_UNKNOWN; // Need to use an explicit format with alpha if needing per-pixel alpha composition.
+	presentParameters.EnableAutoDepthStencil = TRUE;
 	presentParameters.AutoDepthStencilFormat = D3DFMT_D16;
+	presentParameters.PresentationInterval = D3DPRESENT_INTERVAL_ONE;           // Present with vsync
 	//g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;   // Present without vsync, maximum unthrottled framerate
 	if (d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, window, D3DCREATE_HARDWARE_VERTEXPROCESSING, &presentParameters, &device) < 0)
 		return false;
@@ -206,21 +205,11 @@ void GUI::CreateImGui() noexcept
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
 	io.IniFilename = NULL;
 
 	ImGui::StyleColorsDark();
-
-	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-	ImGuiStyle& style = ImGui::GetStyle();
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	}
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(device);
@@ -257,6 +246,8 @@ void GUI::BeginRender() noexcept
 void GUI::EndRender() noexcept
 {
 	ImGui::EndFrame();
+	ImGui::Render();
+	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
 	device->SetRenderState(D3DRS_ZENABLE, FALSE);
 	device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
@@ -279,11 +270,7 @@ void GUI::EndRender() noexcept
 		ImGui::RenderPlatformWindowsDefault();
 	}
 
-	const auto result = device->Present(0, 0, 0, 0);
-
-	// Handle loss of D3D9 device
-	if (result == D3DERR_DEVICELOST && device->TestCooperativeLevel() == D3DERR_DEVICENOTRESET)
-		ResetDevice();
+	device->Present(0, 0, 0, 0);
 }
 
 void GUI::updateColors() noexcept
@@ -310,6 +297,28 @@ void GUI::updateColors() noexcept
 
 void GUI::update() noexcept {
 	auto& guiSettings = ImGui::GetStyle();
+
+	if (cfg->u.roundBorder) {
+		guiSettings.WindowRounding = 7.f;
+		guiSettings.ChildRounding = 10.0f;
+		guiSettings.FrameRounding = 10.0f;
+		guiSettings.GrabRounding = 10.0f;
+		guiSettings.PopupRounding = 10.0f;
+		guiSettings.ScrollbarRounding = 10.0f;
+		guiSettings.LogSliderDeadzone = 10.0f;
+		guiSettings.TabRounding = 7.0f;
+	}
+	else {
+		guiSettings.WindowRounding = 0.f;
+		guiSettings.ChildRounding = 0.0f;
+		guiSettings.FrameRounding = 0.0f;
+		guiSettings.GrabRounding = 0.0f;
+		guiSettings.PopupRounding = 0.0f;
+		guiSettings.ScrollbarRounding = 0.0f;
+		guiSettings.LogSliderDeadzone = 0.0f;
+		guiSettings.TabRounding = 0.0f;
+	}
+
 	guiSettings.AntiAliasedLines = cfg->u.antiAliasing;
     guiSettings.AntiAliasedLinesUseTex = cfg->u.antiAliasing;
     guiSettings.AntiAliasedFill = cfg->u.antiAliasing;
@@ -480,7 +489,16 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::SameLine();
 			ImGui::hotkey("", cfg->t.hotkey);
 			ImGui::PopID();
+			ImGui::Checkbox("Safe", &cfg->t.safe);
+			ImGui::PushID("safe");
+			ImGui::SameLine();
+			ImGui::TextDisabled("?");
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Uses Non WPM Method");
+			ImGui::PopID();
 			ImGui::Checkbox("Friendly Fire", &cfg->t.friendlyFire);
+			ImGui::SetNextItemWidth(200.0f);
+			ImGui::SliderInt("Between Shots Delay", &cfg->t.delay, 0, 1000);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Glow")) {
@@ -744,6 +762,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::Checkbox("AntiAliasing",&cfg->u.antiAliasing);
 			ImGui::Checkbox("Center Title",&cfg->u.centerTitle);
 			ImGui::Checkbox("Frame Border",&cfg->u.frameBorder);
+			ImGui::Checkbox("Round Border",&cfg->u.roundBorder);
 			ImGui::Checkbox("Window Border",&cfg->u.windowBorder);
 			ImGui::EndTabItem();
 		}
@@ -869,11 +888,11 @@ void GUI::RenderMainMenu() noexcept {
 void GUI::overlay() noexcept {
 	ImGui::GetBackgroundDrawList()->AddText({ 0, 0 }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), "Azurre 0.1\nHello xs9 :)\nHello Jarek");
 
-	ImGui::GetBackgroundDrawList()->AddRect(
-		gameScreenPos,
-		gameScreenPosEnd,
-		ImGui::GetColorU32({ 0.f, 0.4f, 1.f, 0.5f }),
-		0, 0, 2.5f);
+	//ImGui::GetBackgroundDrawList()->AddRect( //Draws Rectangle around csgo window
+	//	gameScreenPos,
+	//	gameScreenPosEnd,
+	//	ImGui::GetColorU32({ 0.f, 0.4f, 1.f, 0.5f }),
+	//	0, 0, 2.5f);
 
 	ESP::render();
 }
