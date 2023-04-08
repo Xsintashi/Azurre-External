@@ -272,6 +272,11 @@ void Skin::update() {
         const int paint = cfg->s[ID].skinID;
 		const bool shouldUpdate = csgo.Read<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit) != paint || pleaseUpdate;
 
+        if (shouldUpdate) {
+            csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
+            pleaseUpdate = false;
+        }
+
 		csgo.Write<int32_t>(weapon + Offset::netvars::m_iItemIDHigh, -1);
 
 		csgo.Write<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit, paint);
@@ -301,12 +306,7 @@ void Skin::update() {
                 int defIndex = Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex;
 
                 csgo.Write<DWORD>(knifeViewModel + Offset::netvars::m_nModelIndex, knifeIndex);
-                csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
             }
-        }
-        if (shouldUpdate) {
-            csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
-            pleaseUpdate = false;
         }
 	}
     const auto localPlayerModel = csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex);
@@ -316,7 +316,6 @@ void Skin::update() {
         if (!index) return;
         if (csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex) != index) {
             csgo.Write<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex, index);
-            csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
         }
     }
 }
