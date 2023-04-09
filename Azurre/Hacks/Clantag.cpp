@@ -227,7 +227,7 @@ void Clan::update(bool reset, bool update) noexcept
 
     case 1: azurreClanTag(); return;
     case 2: clock(); return;
-    case 3: string("\u202e\u202e"); return;
+    case 3: string("\xE2\x80\xAE\xE2\x80\xAE"); return;
     case 4: velocity(); return;
     case 5: position(); return;
     case 6: health(); return;

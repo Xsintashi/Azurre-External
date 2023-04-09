@@ -237,7 +237,7 @@ void Skin::add(int idx, short weaponID, int skinID, float wear, int seed, int st
 
 void Skin::update() {
     while (GUI::isRunning) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         const auto& weapons = csgo.Read<std::array<unsigned long, 8>>(localPlayer.get() + Offset::netvars::m_hMyWeapons);
         const int& knifeIndex = getModelIndexByID(Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex);
 
@@ -316,7 +316,7 @@ void Skin::update() {
         if (cfg->ch.TTAgent || cfg->ch.CTAgent) {
             int modelIndex = localPlayer->teamNumber() == Team::TT ? cfg->ch.TTAgent : cfg->ch.CTAgent;
             int index = getModelIndex(models[modelIndex - 1]);
-            if (!index) return;
+            if (!index) continue;
             if (csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex) != index) {
                 csgo.Write<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex, index);
             }

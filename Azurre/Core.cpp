@@ -1,8 +1,12 @@
 #include "Memory.h"
 #include "Core.h"
+#include "GUI.h"
 #include "Offsets.h"
 
 #include "Hacks/Aimbot.h"
+#include "Hacks/Chams.h"
+#include "Hacks/Clantag.h"
+#include "Hacks/Misc.h"
 #include "Hacks/TriggerBot.h"
 #include "Hacks/Visuals.h"
 
@@ -73,3 +77,19 @@ void Core::update() {
 		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename });
 	}
 };
+
+void Core::_() noexcept {
+	while (GUI::isRunning) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(5)); // ~ 30 loops per second
+		update();
+		Misc::fakeLag(); // disable while shotting
+		Aimbot::recoilSystem();
+		TriggerBot::run();
+		Chams::run();
+		Clan::update();
+		Misc::bunnyHop();
+		Misc::fastStop();
+		Visuals::noFlash();
+		Visuals::thirdperson();
+	}
+}

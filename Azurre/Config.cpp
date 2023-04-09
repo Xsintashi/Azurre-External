@@ -13,6 +13,7 @@
 
 #include "Hacks/SkinChanger.h"
 #include "Hacks/Misc.h"
+#include "Hacks/Clantag.h"
 
 Config::Config() noexcept
 {
@@ -135,7 +136,6 @@ static void from_json(const json& j, Config::DiscordConfig& c) {
 
 static void from_json(const json& j, Config::ESPConfig& c) {
     read(j, "Enabled", c.enabled);
-    read(j, "Boxes", c.box);
 }
 
 static void from_json(const json& j, Config::GlowConfig& c) {
@@ -239,8 +239,8 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read<value_t::object>(j, "Visuals", v);
     read<value_t::object>(j, "GUI", u);
 
-    Skin::update();
     Misc::forceReload();
+    Clan::setClanTag("", "");
 }
 
 #pragma endregion
@@ -337,7 +337,6 @@ static void to_json(json& j, const Config::ESPConfig& o) {
     const Config::ESPConfig dummy;
 
     WRITE("Enabled", enabled);
-    WRITE("Boxes", box);
 }
 
 static void to_json(json& j, const Config::GlowConfig& o) {
@@ -485,7 +484,9 @@ void Config::reset() noexcept
     ch = {};
     t = {};
     v = {};
-    Skin::update();
+
+    Misc::forceReload();
+    Clan::setClanTag("", "");
 }
 
 void Config::listConfigs() noexcept

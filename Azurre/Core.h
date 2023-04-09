@@ -13,6 +13,7 @@ struct ImVec2;
 namespace Core {
 	void init();
 	void update();
+	void _() noexcept;
 };
 
 #include "Memory.h"

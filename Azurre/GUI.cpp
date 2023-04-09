@@ -122,7 +122,7 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 	GetWindowRect(hDesktop, &desktop);
 
 	window = CreateWindowEx(
-		WS_EX_LAYERED | WS_EX_TRANSPARENT,
+		WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST | WS_EX_NOACTIVATE,
 		"azurreE",
 		windowName,
 		WS_POPUP | WS_VISIBLE,
@@ -137,11 +137,11 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 	);
 
 	SetForegroundWindow(IConsole);
-	SetLayeredWindowAttributes(window, RGB(0, 0, 0), BYTE(0), LWA_ALPHA);
+	SetLayeredWindowAttributes(window, NULL, 0, LWA_ALPHA);
 	SetLayeredWindowAttributes(window, 0, RGB(0, 0, 0), LWA_COLORKEY);
 
-	MARGINS marg = { marginRect.left ,marginRect.top - resY - (marginRect.bottom - marginRect.top), resX ,resY };
-	DwmExtendFrameIntoClientArea(window, &marg);
+	MARGINS margin = { -1 };
+	DwmExtendFrameIntoClientArea(window, &margin);
 	ShowWindow(window, SW_SHOW); 
 	SetWindowPos(window, HWND_TOPMOST, marginRect.left, marginRect.top, resX, resY, SWP_NOMOVE | SWP_NOSIZE);//del swp_nomove and etc
 }
@@ -164,8 +164,7 @@ bool GUI::CreateDevice() noexcept
 	presentParameters.BackBufferFormat = D3DFMT_UNKNOWN; // Need to use an explicit format with alpha if needing per-pixel alpha composition.
 	presentParameters.EnableAutoDepthStencil = TRUE;
 	presentParameters.AutoDepthStencilFormat = D3DFMT_D16;
-	presentParameters.PresentationInterval = D3DPRESENT_INTERVAL_ONE;           // Present with vsync
-	//g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;   // Present without vsync, maximum unthrottled framerate
+	presentParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 	if (d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, window, D3DCREATE_HARDWARE_VERTEXPROCESSING, &presentParameters, &device) < 0)
 		return false;
 
@@ -246,14 +245,12 @@ void GUI::BeginRender() noexcept
 void GUI::EndRender() noexcept
 {
 	ImGui::EndFrame();
-	ImGui::Render();
-	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
 	device->SetRenderState(D3DRS_ZENABLE, FALSE);
 	device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 
-	device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 255), 1.0f, 0);
+	device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 0), 1.f, 0);
 	if (device->BeginScene() >= 0)
 	{
 		ImGui::Render();
@@ -516,11 +513,41 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("ESP")) {
+			static int team = 0;
+			static int spotted = 0;
 			ImGui::Checkbox("Enabled", &cfg->esp.enabled);
-			ImGui::Checkbox("Boxes", &cfg->esp.box);
-			ImGui::Checkbox("Health Bar", &cfg->esp.health.enabled);
-			ImGui::Checkbox("Player Name", &cfg->esp.playerNames);
+			ImGui::Combo("##player", &team, "Allies\0Enemies\0");
+			if (team) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
+			ImGui::Checkbox("Player Name", &cfg->esp.players[team][spotted].name);
+			ImGui::Checkbox("Boxes", &cfg->esp.players[team][spotted].box.enabled);
+			ImGui::PushID("boxes");
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
 
+			if (ImGui::BeginPopup("")) {
+				if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[team][spotted].box.gradientColor)) {
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[team][spotted].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[team][spotted].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+
+				}
+				else
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[team][spotted].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+			ImGui::Checkbox("Health Bar", &cfg->esp.players[team][spotted].healthBar.enabled);
+			ImGui::PushID("healbar");
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[team][spotted].healthBar.solidColor.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].healthBar.solidColor.enabled);
+				ImGuiCustom::colorPicker("Health Number", cfg->esp.players[team][spotted].healthBar.showHealthNumber.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].healthBar.showHealthNumber.enabled);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Misc")) {
@@ -886,7 +913,10 @@ void GUI::RenderMainMenu() noexcept {
 }
 
 void GUI::overlay() noexcept {
-	ImGui::GetBackgroundDrawList()->AddText({ 0, 0 }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), "Azurre 0.1\nHello xs9 :)\nHello Jarek");
+	constexpr const char* builtDate = __DATE__;
+	constexpr const char* builtTime = __TIME__;
+	const std::string watermark = std::string("Azurre 0.1 | Built: ").append(builtDate).append(" ").append(builtTime).append("\nHello xs9 :)\nHello Jarek :)\nHello KanashiQba :)");
+	ImGui::GetBackgroundDrawList()->AddText({ 0, 0 }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), watermark.c_str());
 
 	//ImGui::GetBackgroundDrawList()->AddRect( //Draws Rectangle around csgo window
 	//	gameScreenPos,
