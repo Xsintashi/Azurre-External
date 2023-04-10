@@ -639,6 +639,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::hotkey("", cfg->v.thirdPersonKey);
 			ImGui::PopID();
 			ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
+			ImGui::Checkbox("Disable PostProcess", &cfg->v.noPostProcessing);
 			ImGui::Checkbox("No Shadows", &cfg->v.noShadows);
 			ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
 			ImGui::Checkbox("No Smoke", &cfg->v.noSmoke);
