@@ -3,6 +3,7 @@
 #include "../Config.h"
 #include "../GUI.h"
 
+#include "../SDK/Convar.h"
 #include "../SDK/Entity.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/LocalPlayer.h"
@@ -110,18 +111,21 @@ void Misc::modifyConVars() noexcept {
 	if (gameState != 6) return;
 
 #pragma region No3DSky
-	const int skyValue = csgo.Read<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30);
-	if (skyValue == 41 && cfg->v.no3DSky)
-		csgo.Write<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30, skyValue - 1);
-	else if (skyValue == 40 && !cfg->v.no3DSky)
-		csgo.Write<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30, skyValue + 1);
+
+	ConVar sky{ IClient.address + Offset::cvars::r_3dsky };
+	ConVar shadow{ IClient.address + Offset::cvars::cl_csm_enabled };
+
+	if (sky.getIntValue() == 41 && cfg->v.no3DSky)
+		sky.setValue(sky.getIntValue() - 1);
+	else if (sky.getIntValue() == 40 && !cfg->v.no3DSky)
+		sky.setValue(sky.getIntValue() + 1);
 #pragma endregion No3DSky
 #pragma region NoShadows
-	const int shadowValue = csgo.Read<BYTE>(IClient.address + Offset::cvars::cl_csm_enabled + 0x30);
-	if (shadowValue == 41 && cfg->v.noShadows)
-		csgo.Write<BYTE>(IClient.address + Offset::cvars::cl_csm_enabled + 0x30, shadowValue - 1);
-	else if (shadowValue == 40 && !cfg->v.noShadows)
-		csgo.Write<BYTE>(IClient.address + Offset::cvars::cl_csm_enabled + 0x30, shadowValue + 1);
+	
+	if (shadow.getIntValue() == 41 && cfg->v.noShadows)
+		shadow.setValue(shadow.getIntValue() - 1);
+	else if (shadow.getIntValue() == 40 && !cfg->v.noShadows)
+		shadow.setValue(shadow.getIntValue() + 1);
 #pragma endregion NoShadows
 }
 

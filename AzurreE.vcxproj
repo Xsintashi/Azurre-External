@@ -150,6 +150,7 @@
     <ClInclude Include="Azurre\Memory.h" />
     <ClInclude Include="Azurre\Offsets.h" />
     <ClInclude Include="Azurre\SDK\ClientState.h" />
+    <ClInclude Include="Azurre\SDK\Convar.h" />
     <ClInclude Include="Azurre\SDK\Entity.h" />
     <ClInclude Include="Azurre\SDK\GlobalVars.h" />
     <ClInclude Include="Azurre\SDK\Interfaces.h" />
