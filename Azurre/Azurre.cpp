@@ -109,6 +109,7 @@ int __stdcall wWinMain(
 
 	Misc::forceReload();
 	Misc::changeWindowTitle(true);
+	Misc::modifyConVars(true);
 	Clan::setClanTag("","");
 	glowThread.join();
 	noTeammatesThread.join();

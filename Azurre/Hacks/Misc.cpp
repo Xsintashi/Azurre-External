@@ -105,7 +105,8 @@ void Misc::entityLoop() noexcept {
 	}
 }
 
-void Misc::modifyConVars() noexcept {
+void Misc::modifyConVars(bool reset) noexcept {
+
 	if (!localPlayer) return;
 
 	if (gameState != 6) return;
@@ -114,6 +115,23 @@ void Misc::modifyConVars() noexcept {
 
 	ConVar sky{ IClient.address + Offset::cvars::r_3dsky };
 	ConVar shadow{ IClient.address + Offset::cvars::cl_csm_enabled };
+
+	if (reset) {
+		sky.setValue(41);
+		shadow.setValue(41);
+		return;
+	}
+
+#if _DEBUG
+	static bool doOnce = true; // for tests
+	if (doOnce) {
+		int flags = shadow.getFlags();
+		flags &= ~(CVarFlags::DEVELOPMENTONLY);
+		flags &= ~(CVarFlags::HIDDEN);
+		shadow.flags(flags);
+		doOnce = false;
+	}
+#endif
 
 	if (sky.getIntValue() == 41 && cfg->v.no3DSky)
 		sky.setValue(sky.getIntValue() - 1);

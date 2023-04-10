@@ -6,7 +6,7 @@ namespace Misc {
 	void changeWindowTitle(bool restore = false) noexcept;
 	void forceReload(bool onKey = false) noexcept;
 	void entityLoop() noexcept;
-	void modifyConVars() noexcept;
+	void modifyConVars(bool reset = false) noexcept;
 	void modifyClasses() noexcept;
 	void fastStop() noexcept;
 }
