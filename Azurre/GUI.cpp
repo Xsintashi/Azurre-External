@@ -96,6 +96,8 @@ long __stdcall WindowProcess(
 
 void GUI::CreateHWindow(const char* windowName) noexcept
 {
+	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
+
 	windowClass.cbSize = sizeof(WNDCLASSEX);
 	windowClass.style = CS_HREDRAW | CS_VREDRAW;
 	windowClass.lpfnWndProc = WindowProcess;
@@ -103,7 +105,7 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 	windowClass.cbWndExtra = 0;
 	windowClass.hInstance = 0;
 	windowClass.hIcon = 0;
-	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	windowClass.hCursor = LoadCursor(NULL, IDC_CROSS);
 	windowClass.hbrBackground = 0;
 	windowClass.lpszMenuName = 0;
 	windowClass.lpszClassName = "azurreE";
@@ -111,39 +113,43 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 
 	RegisterClassEx(&windowClass);
 
-	GetClientRect(window, &overlayRect);
-	GetWindowRect(window, &marginRect);
-
-	resX = marginRect.right - marginRect.left;
-	resY = marginRect.bottom - marginRect.top;
-
-	RECT desktop;
-	const HWND hDesktop = GetDesktopWindow();
-	GetWindowRect(hDesktop, &desktop);
+	int x = static_cast<int>(screenSize.x);
+	int y = static_cast<int>(screenSize.y);
 
 	window = CreateWindowEx(
-		WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST | WS_EX_NOACTIVATE,
+		WS_EX_LAYERED | WS_EX_TRANSPARENT,
 		"azurreE",
 		windowName,
 		WS_POPUP | WS_VISIBLE,
 		0,
 		0,
-		desktop.right,
-		desktop.bottom,
+		x,
+		y,
 		0,
 		0,
 		windowClass.hInstance,
 		0
 	);
 
-	SetForegroundWindow(IConsole);
-	SetLayeredWindowAttributes(window, NULL, 0, LWA_ALPHA);
-	SetLayeredWindowAttributes(window, 0, RGB(0, 0, 0), LWA_COLORKEY);
+	SetLayeredWindowAttributes(window, NULL, 255, LWA_ALPHA);
 
-	MARGINS margin = { -1 };
-	DwmExtendFrameIntoClientArea(window, &margin);
+	RECT clientArea{};
+	GetClientRect(window, &clientArea);
+	RECT windowArea{};
+	GetWindowRect(window, &windowArea);
+	POINT diff{};
+	ClientToScreen(window, &diff);
+
+	const MARGINS margins{
+		windowArea.left + (diff.x - windowArea.left),
+		windowArea.top + (diff.y - windowArea.top),
+		clientArea.right,
+		clientArea.bottom
+	};
+	DwmExtendFrameIntoClientArea(window, &margins);
+
 	ShowWindow(window, SW_SHOW); 
-	SetWindowPos(window, HWND_TOPMOST, marginRect.left, marginRect.top, resX, resY, SWP_NOMOVE | SWP_NOSIZE);//del swp_nomove and etc
+	SetWindowPos(window, HWND_TOPMOST, windowArea.left, windowArea.top, 1920, 1080, SWP_NOMOVE | SWP_NOSIZE);
 }
 
 void GUI::DestroyHWindow() noexcept
@@ -209,6 +215,11 @@ void GUI::CreateImGui() noexcept
 	io.IniFilename = NULL;
 
 	ImGui::StyleColorsDark();
+
+	auto& guiSettings = ImGui::GetStyle();
+	guiSettings.WindowBorderSize = cfg->u.windowBorder ? 1.f : 0.f;
+	guiSettings.PopupBorderSize = cfg->u.windowBorder ? 1.f : 0.f;
+	guiSettings.FrameBorderSize = cfg->u.frameBorder ? 1.f : 0.f;
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(device);
@@ -326,20 +337,30 @@ void GUI::update() noexcept {
 }
 
 void GUI::loadWindow() noexcept {
-	ImGui::SetNextWindowSize({ 320,240 });
+	ImGui::SetNextWindowSize({ -1, -1 });
 	ImGui::Begin(
 		"Loading...",
 		&isRunning,
-		ImGuiWindowFlags_AlwaysAutoResize
+		ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse
 	);
+	static int timeLeft = 15;
+
+	if (timeLeft < 1)
+		isRunning = false;
+
+	static DWORD time = GetTickCount();
+	if (GetTickCount() - time >= 1000) {
+		time = GetTickCount();
+		timeLeft--;
+	}
 
 	ImGui::Text("Hello xs9 :)");
 	ImGui::Text("Waiting For csgo.exe...");
+	ImGui::Text("CS:GO: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IConsole);
 	ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient);
 	ImGui::Text("Engine: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IEngine);
-	if (ImGui::Button("Run CS:GO")) {
-		WinExec("steam://run/730", SW_NORMAL);
-	}
+	if (!IConsole) ImGui::Text("\nAuto-Closing in %d seconds!", timeLeft);
+	else ImGui::Text("\nPreparing...!", timeLeft);
 	ImGui::End();
 }
 
@@ -364,6 +385,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("Screen Size: %2.fx%2.f", screenSize.x, screenSize.y);
 	ImGui::Text("Game Size: %2.fx%2.f", gameScreenSize.x, gameScreenSize.y);
 	ImGui::Text("Game Pos: %2.fx%2.f", gameScreenPos.x, gameScreenPos.y);
+	ImGui::Text("CS:GO: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IConsole);
 	ImGui::Text("Client: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClient.address);
 	ImGui::Text("ClientState: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IClientState.address);
 	ImGui::Text("Engine: "); ImGui::SameLine(); ImGui::TextColored({ 0.0f, 0.38f, 1.0f, 1.0f }, "0x%p", IEngine.address);
@@ -384,6 +406,19 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("Choked Packets: %i", chokedPackets);
 
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
+
+	{
+
+		int skyDisable = csgo.Read<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30);
+
+		if (skyDisable == 161 && cfg->debug.boolDebug0) {
+			csgo.Write<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30, skyDisable - 1);
+		}
+		else if (skyDisable == 160 && !cfg->debug.boolDebug0) {
+			csgo.Write<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30, skyDisable + 1);
+		}
+
+	}
 
 	ImGui::PushID("Roll");
 	static float roll = 0.f;
@@ -518,7 +553,8 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::Checkbox("Enabled", &cfg->esp.enabled);
 			ImGui::Combo("##player", &team, "Allies\0Enemies\0");
 			if (team) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
-			ImGui::Checkbox("Player Name", &cfg->esp.players[team][spotted].name);
+			ImGuiCustom::colorPicker("Name", cfg->esp.players[team][spotted].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].other.names.enabled);
+			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[team][spotted].other.weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].other.weapons.enabled);
 			ImGui::Checkbox("Boxes", &cfg->esp.players[team][spotted].box.enabled);
 			ImGui::PushID("boxes");
 			ImGui::SameLine();
@@ -529,7 +565,6 @@ void GUI::RenderMainMenu() noexcept {
 				if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[team][spotted].box.gradientColor)) {
 					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[team][spotted].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
 					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[team][spotted].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
-
 				}
 				else
 					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[team][spotted].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
@@ -548,6 +583,7 @@ void GUI::RenderMainMenu() noexcept {
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();
+			ImGuiCustom::colorPicker("Lines", cfg->esp.players[team][spotted].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].other.lines.enabled);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Misc")) {
@@ -617,8 +653,10 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::PopID();
 			ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
 			ImGui::Checkbox("No Smoke", &cfg->v.noSmoke);
-			ImGui::SetNextItemWidth(200.0f);
+			ImGui::PushItemWidth(200.0f);
 			ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");
+			ImGui::SliderInt("##fov", &cfg->v.fov, 30, 150, "Fov: %d");
+			ImGui::PopItemWidth();
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Changer")) {
@@ -915,7 +953,7 @@ void GUI::RenderMainMenu() noexcept {
 void GUI::overlay() noexcept {
 	constexpr const char* builtDate = __DATE__;
 	constexpr const char* builtTime = __TIME__;
-	const std::string watermark = std::string("Azurre 0.1 | Built: ").append(builtDate).append(" ").append(builtTime).append("\nHello xs9 :)\nHello Jarek :)\nHello KanashiQba :)");
+	const std::string watermark = std::string("Azurre 0.1 | Built: ").append(builtDate).append(" ").append(builtTime).append("\nHello xs9 :)\nHello Jarek :)");
 	ImGui::GetBackgroundDrawList()->AddText({ 0, 0 }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), watermark.c_str());
 
 	//ImGui::GetBackgroundDrawList()->AddRect( //Draws Rectangle around csgo window

@@ -29,14 +29,14 @@ int __stdcall wWinMain(
 
 	// Try to open the mutex.
 	HANDLE mutex = OpenMutex(
-		MUTEX_ALL_ACCESS, 0, "azurreE");
+		MUTEX_ALL_ACCESS, 0, "azurreX");
 
 	if (!mutex)
 		// Mutex doesn’t exist. This is
 		// the first instance so create
 		// the mutex.
 		mutex =
-		CreateMutex(0, 0, "azurreE");
+		CreateMutex(0, 0, "azurreX");
 	else {
 		// The mutex exists so this is the
 		// the second instance so return.
@@ -46,7 +46,7 @@ int __stdcall wWinMain(
 
 	cfg.emplace(Config{});
 	globalVars.emplace(GlobalVars{});
-	Core::init();
+	interfaces.emplace(Interfaces{});
 
 	// create gui
 	GUI::CreateHWindow("Azurre External");
@@ -54,29 +54,36 @@ int __stdcall wWinMain(
 	GUI::CreateImGui();
 
 	Discord::Run();
+	//SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT); //Soon
+	//while (!IConsole && GUI::isRunning) {
+	//	IConsole = FindWindowA("Valve001", NULL);
+	//	GUI::BeginRender();
+	//	GUI::loadWindow();
+	//	GUI::EndRender();
+	//}
+	//SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
+	Core::init();
+	Misc::changeWindowTitle();
 
 	std::thread noTeammatesThread = std::thread(Visuals::doNotRenderTeammates);
 	std::thread glowThread = std::thread(Glow::run);
 	std::thread aimbotThread = std::thread(Aimbot::run);
-	std::thread skinUpdateThread = std::thread(Skin::update);
 	std::thread coreThread = std::thread(Core::_);
 
-	Misc::changeWindowTitle();
-
 	while (GUI::isRunning){
-		SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
-		std::this_thread::sleep_for(std::chrono::milliseconds(33)); // ~ 30 loops per second cuz of huge framedrop caused by overlay
+		std::this_thread::sleep_for(std::chrono::milliseconds(8)); // cap to 128tps
 		if (GetAsyncKeyState(VK_INSERT) & 1) {
+
 			ImGuiIO& io = ImGui::GetIO(); (void)io;
 			showMenu = !showMenu;
 			if (showMenu) {
-				SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
+				SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_APPWINDOW);
 				io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 				io.WantCaptureMouse = true;
 				io.WantCaptureKeyboard = true;
 			}
 			else {
-				SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT);
+				SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW);
 				io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 				io.WantCaptureMouse = false;
 				io.WantCaptureKeyboard = false;
@@ -85,7 +92,7 @@ int __stdcall wWinMain(
 		Misc::entityLoop();
 		Misc::forceReload(true);
 		Misc::modifyClasses();
-
+		Skin::update();
 		GUI::update();
 		GUI::BeginRender();
 		if (showMenu) GUI::RenderMainMenu();
@@ -105,7 +112,6 @@ int __stdcall wWinMain(
 	glowThread.join();
 	noTeammatesThread.join();
 	aimbotThread.join();
-	skinUpdateThread.join();
 	coreThread.join();
 
 	Discord::Shutdown();

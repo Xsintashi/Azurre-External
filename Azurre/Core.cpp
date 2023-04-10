@@ -20,18 +20,18 @@
 #include "DiscordSDK/RPC.h"
 
 void Core::init() {
-	interfaces.emplace(Interfaces{});
+	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
 	IClient.address = csgo.GetModuleAddress("client.dll");
 	IClient.size = csgo.ModuleSize("client.dll");
 	IEngine.address = csgo.GetModuleAddress("engine.dll");
 	IEngine.size = csgo.ModuleSize("engine.dll");
 	IClientState.address = csgo.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
 	IPlayerResource.address = csgo.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
-	IConsole = FindWindowA("Valve001", NULL);
 	localPlayer.init(csgo.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 };
 
 void Core::update() {
+	IConsole = FindWindowA("Valve001", NULL);
 	localPlayer.init(csgo.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 	globalVars = csgo.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
 	gameState = csgo.Read<int>(IClientState.address + 0x108);
@@ -91,5 +91,6 @@ void Core::_() noexcept {
 		Misc::fastStop();
 		Visuals::noFlash();
 		Visuals::thirdperson();
+		Visuals::fov();
 	}
 }

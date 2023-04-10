@@ -66,3 +66,10 @@ void Visuals::doNotRenderTeammates() {
         }
     }
 }
+
+void Visuals::fov() noexcept {
+
+    if (!localPlayer) return;
+
+    csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iFOV, cfg->v.fov);
+}

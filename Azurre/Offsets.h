@@ -171,4 +171,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t set_abs_angles = 0x1E76F0;
 		constexpr ::std::ptrdiff_t set_abs_origin = 0x1E7530;
 	} // namespace signatures
+	namespace cvars{ //hardcoded!  use IDA to get them //Example: https://media.discordapp.net/attachments/856920214805807154/1094994748164554863/image.png
+		constexpr ::std::ptrdiff_t r_3dsky = 0xDF5628; 
+	}
 }

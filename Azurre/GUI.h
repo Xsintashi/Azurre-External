@@ -10,12 +10,6 @@ namespace GUI {
 	inline HWND window = nullptr;
 	inline WNDCLASSEX windowClass = { };
 
-	// window overlay
-	inline RECT overlayRect;
-	inline RECT marginRect;
-	inline int resX;
-	inline int resY;
-
 	// points for window movement
 	inline POINTS position = { };
 

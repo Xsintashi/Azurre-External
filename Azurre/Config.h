@@ -69,6 +69,13 @@ public:
 	struct ESPConfig {
 		bool enabled = false;
 		struct Player{
+
+			struct Other {
+				ColorToggle3 names = { 1.f, 1.f, 1.f };
+				ColorToggle3 weapons = { 1.f, 1.f, 1.f };
+				ColorToggle3 lines = { 1.f, 1.f, 1.f };
+			} other;
+
 			struct Box {
 				bool enabled = false;
 				bool gradientColor = false;
@@ -76,7 +83,6 @@ public:
 				Color3 grandientTop = { 1.f, 1.f, 1.f };
 				Color3 grandientBottom = { 1.f, 1.f, 1.f };
 			} box;
-			bool name = false;
 
 			struct health {
 				bool enabled = false;
@@ -131,6 +137,7 @@ public:
 		bool noSmoke = false;
 		bool noAllies = false;
 		int flashReduction = 0;
+		int fov = 90;
 		struct CustomPostProcessing {
 			bool enabled = false;
 			float worldExposure = 0.0f;

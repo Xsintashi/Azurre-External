@@ -16,6 +16,7 @@
 #include "../../Lib/imgui/imgui_impl_win32.h"
 #include <string>
 #include "../SDK/PlayerInfo.h"
+#include "SkinChanger.h"
 
 #define drawList ImGui::GetBackgroundDrawList()
 
@@ -24,6 +25,10 @@ void drawBorderBox(ImVec2 pos, float width, float height, ImU32 color, ImU32 col
 	drawList->AddRectFilledMultiColor({ pos.x - width + .5f, pos.y }, { pos.x - width - .5f, pos.y - height }, color, color, color_, color_); //LEFT
 	drawList->AddRectFilledMultiColor({ pos.x + width + .5f, pos.y }, { pos.x + width - .5f, pos.y - height }, color, color, color_, color_); //RIGHT
 	drawList->AddRectFilled({ pos.x - width, pos.y - height - .5f }, { pos.x + width, pos.y - height + .5f }, color_); //BOTTOM
+}
+
+void drawLines(ImVec2 pos, ImVec2 pos_, ImU32 color) {
+	drawList->AddLine(pos, pos_, color); //TOP
 }
 
 void drawHealthBar(ImVec2 pos, float width, float height, int health, ImU32 color, ImU32 colorNumber, ColorToggle3 showHealthNumber) {
@@ -41,9 +46,6 @@ void drawPlayerName(ImVec2 pos, float width, float height, std::string name, ImU
 }
 
 void renderPlayer(Entity* player, int index, Matrix4x4 m) {
-	const ImU32 color = ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f });
-	const ImU32 red = ImGui::GetColorU32({ 1.f, 0.f, 0.f, 1.f });
-
 	int tab = 1;
 	if (player->isSameTeam()) tab = 0;
 
@@ -54,7 +56,7 @@ void renderPlayer(Entity* player, int index, Matrix4x4 m) {
 #pragma region Box
 	Vector pos = player->origin();
 	Vector head;
-	pos.z -= 8.f;
+	pos.z -= 16.f + ((localPlayer->origin().z - player->origin().z) / 2.f * 0.1f - 8.f); //fixes a bit height of the box
 	head.x = pos.x;
 	head.y = pos.y;
 	head.z = pos.z + 75.f;
@@ -86,19 +88,26 @@ void renderPlayer(Entity* player, int index, Matrix4x4 m) {
 	const auto colorHealthBarFinal = config.healthBar.solidColor.enabled ? colorHealthBar : colorHealthBarMix;
 #pragma endregion Health Bar
 #pragma region Player Name
+	const auto colorNames = ImGui::GetColorU32({ config.other.names.color[0], config.other.names.color[1], config.other.names.color[2], 1.f });
+	const auto colorWeapon = ImGui::GetColorU32({ config.other.weapons.color[0], config.other.weapons.color[1], config.other.weapons.color[2], 1.f });
+
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
 	const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
 	PlayerInfo pInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (index * 0x34)));
 	std::string name = pInfo.name;
-#pragma endregion Player Name
+	std::string weapon = Skin::getWeaponIDName(player->getWeaponID());
 
+#pragma endregion Player Name
+	const auto colorLines = ImGui::GetColorU32({ config.other.lines.color[0], config.other.lines.color[1], config.other.lines.color[2], 1.f });
 #pragma region Skeleton
 #pragma endregion Skeleton
 
 	if (posScreen.z >= 0.01f) {
-		if (config.box.enabled) drawBorderBox({gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y}, width, height, colorFinal, colorFinal_);
+		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, colorFinal, colorFinal_);
 		if (config.healthBar.enabled) drawHealthBar({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
-		if (config.name) drawPlayerName({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, color);
+		if (config.other.names.enabled) drawPlayerName({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, colorNames);
+		if (config.other.weapons.enabled) drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y}, width, height, weapon, colorWeapon);
+		if (config.other.lines.enabled) drawLines({ gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, colorLines);
 	}
 }
 
