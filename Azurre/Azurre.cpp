@@ -92,6 +92,7 @@ int __stdcall wWinMain(
 		Misc::entityLoop();
 		Misc::forceReload(true);
 		Misc::modifyClasses();
+		Misc::modifyConVars();
 		Skin::update();
 		GUI::update();
 		GUI::BeginRender();

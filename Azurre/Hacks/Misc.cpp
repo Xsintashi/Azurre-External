@@ -104,6 +104,27 @@ void Misc::entityLoop() noexcept {
 	}
 }
 
+void Misc::modifyConVars() noexcept {
+	if (!localPlayer) return;
+
+	if (gameState != 6) return;
+
+#pragma region No3DSky
+	const int skyValue = csgo.Read<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30);
+	if (skyValue == 41 && cfg->v.no3DSky)
+		csgo.Write<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30, skyValue - 1);
+	else if (skyValue == 40 && !cfg->v.no3DSky)
+		csgo.Write<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30, skyValue + 1);
+#pragma endregion No3DSky
+#pragma region NoShadows
+	const int shadowValue = csgo.Read<BYTE>(IClient.address + Offset::cvars::cl_csm_enabled + 0x30);
+	if (shadowValue == 41 && cfg->v.noShadows)
+		csgo.Write<BYTE>(IClient.address + Offset::cvars::cl_csm_enabled + 0x30, shadowValue - 1);
+	else if (shadowValue == 40 && !cfg->v.noShadows)
+		csgo.Write<BYTE>(IClient.address + Offset::cvars::cl_csm_enabled + 0x30, shadowValue + 1);
+#pragma endregion NoShadows
+}
+
 void Misc::modifyClasses() noexcept {
 
 	if (!localPlayer) return;

@@ -199,6 +199,9 @@ static void from_json(const json& j, Config::VisualsConfig::CustomPostProcessing
 static void from_json(const json& j, Config::VisualsConfig& c) {
     read(j, "No Allies", c.noAllies);
     read(j, "No Smoke", c.noSmoke);
+    read(j, "No Shadows", c.noShadows);
+    read(j, "No 3DSky", c.no3DSky);
+    read(j, "Fov", c.fov);
     read(j, "Flash Reduction", c.flashReduction);
     read(j, "Third Person", c.thirdPerson);
     read(j, "Third Person Key", c.thirdPersonKey);
@@ -416,6 +419,9 @@ static void to_json(json& j, const Config::VisualsConfig& o) {
 
     WRITE("No Allies", noAllies);
     WRITE("No Smoke", noSmoke);
+    WRITE("No Shadows", noShadows);
+    WRITE("No 3DSky", no3DSky);
+    WRITE("Fov", fov);
     WRITE("Flash Reduction", flashReduction);
     WRITE("Third Person", thirdPerson);
     WRITE("Third Person Key", thirdPersonKey);

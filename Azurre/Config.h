@@ -136,6 +136,8 @@ public:
 		KeyBind thirdPersonKey = "thirdperson";
 		bool noSmoke = false;
 		bool noAllies = false;
+		bool no3DSky = false;
+		bool noShadows = false;
 		int flashReduction = 0;
 		int fov = 90;
 		struct CustomPostProcessing {

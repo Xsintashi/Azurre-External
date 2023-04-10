@@ -407,19 +407,6 @@ void GUI::RenderDebugWindow() noexcept {
 
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 
-	{
-
-		int skyDisable = csgo.Read<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30);
-
-		if (skyDisable == 161 && cfg->debug.boolDebug0) {
-			csgo.Write<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30, skyDisable - 1);
-		}
-		else if (skyDisable == 160 && !cfg->debug.boolDebug0) {
-			csgo.Write<BYTE>(IClient.address + Offset::cvars::r_3dsky + 0x30, skyDisable + 1);
-		}
-
-	}
-
 	ImGui::PushID("Roll");
 	static float roll = 0.f;
 	static float tempRoll = 0.f;
@@ -652,6 +639,8 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::hotkey("", cfg->v.thirdPersonKey);
 			ImGui::PopID();
 			ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
+			ImGui::Checkbox("No Shadows", &cfg->v.noShadows);
+			ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
 			ImGui::Checkbox("No Smoke", &cfg->v.noSmoke);
 			ImGui::PushItemWidth(200.0f);
 			ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");
