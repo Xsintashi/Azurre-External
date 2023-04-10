@@ -202,6 +202,7 @@ static void from_json(const json& j, Config::VisualsConfig& c) {
     read(j, "No Shadows", c.noShadows);
     read(j, "No 3DSky", c.no3DSky);
     read(j, "No PostProcessing", c.noPostProcessing);
+    read(j, "Ragdoll Gravity", c.ragdollGravity);
     read(j, "Fov", c.fov);
     read(j, "Flash Reduction", c.flashReduction);
     read(j, "Third Person", c.thirdPerson);
@@ -423,6 +424,7 @@ static void to_json(json& j, const Config::VisualsConfig& o) {
     WRITE("No Shadows", noShadows);
     WRITE("No 3DSky", no3DSky);
     WRITE("No PostProcessing", noPostProcessing);
+    WRITE("Ragdoll Gravity", ragdollGravity);
     WRITE("Fov", fov);
     WRITE("Flash Reduction", flashReduction);
     WRITE("Third Person", thirdPerson);

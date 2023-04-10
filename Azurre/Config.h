@@ -106,6 +106,7 @@ public:
 		bool radarHack = false;
 		bool autoStop = false;
 		bool playerList = false;
+		bool grenadeTrajectory = false;
 		struct FakeLag {
 			bool enabled = false;
 			int limit = 0;
@@ -141,6 +142,7 @@ public:
 		bool noPostProcessing = false;
 		int flashReduction = 0;
 		int fov = 90;
+		int ragdollGravity = 600;
 		struct CustomPostProcessing {
 			bool enabled = false;
 			float worldExposure = 0.0f;

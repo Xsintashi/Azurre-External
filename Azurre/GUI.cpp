@@ -583,6 +583,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
 			ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
+			ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
 			ImGui::Checkbox("Player List", &cfg->m.playerList);
 			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled)) {
 				ImGui::PushItemWidth(220.0f);
@@ -646,6 +647,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::PushItemWidth(200.0f);
 			ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");
 			ImGui::SliderInt("##fov", &cfg->v.fov, 30, 150, "Fov: %d");
+			ImGui::SliderInt("##ragdollGravity", &cfg->v.ragdollGravity, -1000, 1000, "Ragdoll Gravity: %d");
 			ImGui::PopItemWidth();
 			ImGui::EndTabItem();
 		}

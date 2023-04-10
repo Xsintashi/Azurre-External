@@ -115,6 +115,8 @@ void Misc::modifyConVars(bool reset) noexcept {
 
 	ConVar sky{ IClient.address + Offset::cvars::r_3dsky };
 	ConVar shadow{ IClient.address + Offset::cvars::cl_csm_enabled };
+	ConVar gravity{ IClient.address + Offset::cvars::cl_ragdoll_gravity };
+	ConVar grenade{ IClient.address + Offset::cvars::cl_grenadepreview };
 
 	if (reset) {
 		sky.setValue(41);
@@ -125,10 +127,10 @@ void Misc::modifyConVars(bool reset) noexcept {
 #if _DEBUG
 	static bool doOnce = true; // for tests
 	if (doOnce) {
-		int flags = shadow.getFlags();
+		int flags = sky.getFlags();
 		flags &= ~(CVarFlags::DEVELOPMENTONLY);
 		flags &= ~(CVarFlags::HIDDEN);
-		shadow.flags(flags);
+		sky.flags(flags);
 		doOnce = false;
 	}
 #endif
@@ -137,14 +139,18 @@ void Misc::modifyConVars(bool reset) noexcept {
 		sky.setValue(sky.getIntValue() - 1);
 	else if (sky.getIntValue() == 40 && !cfg->v.no3DSky)
 		sky.setValue(sky.getIntValue() + 1);
-#pragma endregion No3DSky
-#pragma region NoShadows
-	
+
 	if (shadow.getIntValue() == 41 && cfg->v.noShadows)
 		shadow.setValue(shadow.getIntValue() - 1);
 	else if (shadow.getIntValue() == 40 && !cfg->v.noShadows)
 		shadow.setValue(shadow.getIntValue() + 1);
-#pragma endregion NoShadows
+
+	if (!grenade.getIntValue() && cfg->m.grenadeTrajectory)
+		grenade.setValue(grenade.getIntValue() - 1);
+	else if (grenade.getIntValue() && !cfg->m.grenadeTrajectory)
+		grenade.setValue(grenade.getIntValue() + 1);
+
+	return;
 }
 
 void Misc::modifyClasses() noexcept {
