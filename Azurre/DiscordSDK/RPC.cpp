@@ -11,7 +11,13 @@
 void Discord::Run() {
 	DiscordEventHandlers Handler;
 	memset(&Handler, 0, sizeof(Handler));
-	Discord_Initialize("918239241299972156", &Handler, 1, NULL);
+
+	constexpr __int64 __s___a__f___453y__s8ohfa34 = 749755080889974835;
+	constexpr __int64 u98u98u98u98u98u98u98u98u12 = 493592757869187087;
+
+	constexpr __int64 ID = __s___a__f___453y__s8ohfa34 ^ u98u98u98u98u98u98u98u98u12;
+
+	Discord_Initialize(std::to_string(ID).c_str(), &Handler, 1, NULL);
 
 	Update();
 }
