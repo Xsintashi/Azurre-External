@@ -111,16 +111,14 @@ void Misc::modifyConVars(bool reset) noexcept {
 
 	if (gameState != 6) return;
 
-#pragma region No3DSky
-
 	ConVar sky{ IClient.address + Offset::cvars::r_3dsky };
 	ConVar shadow{ IClient.address + Offset::cvars::cl_csm_enabled };
-	ConVar gravity{ IClient.address + Offset::cvars::cl_ragdoll_gravity };
 	ConVar grenade{ IClient.address + Offset::cvars::cl_grenadepreview };
 
 	if (reset) {
 		sky.setValue(41);
 		shadow.setValue(41);
+		grenade.setValue(0);
 		return;
 	}
 
@@ -149,8 +147,6 @@ void Misc::modifyConVars(bool reset) noexcept {
 		grenade.setValue(grenade.getIntValue() - 1);
 	else if (grenade.getIntValue() && !cfg->m.grenadeTrajectory)
 		grenade.setValue(grenade.getIntValue() + 1);
-
-	return;
 }
 
 void Misc::modifyClasses() noexcept {
