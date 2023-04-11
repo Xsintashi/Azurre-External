@@ -84,7 +84,7 @@ public:
 				Color3 grandientBottom = { 1.f, 1.f, 1.f };
 			} box;
 
-			struct health {
+			struct HealthBar {
 				bool enabled = false;
 				ColorToggle3 solidColor = { 0.f, 1.f, 0.f };
 				ColorToggle3 showHealthNumber = { 1.f, 1.f, 1.f };
