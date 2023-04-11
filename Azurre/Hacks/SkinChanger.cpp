@@ -313,6 +313,7 @@ void Skin::update() {
     }
     const auto localPlayerModel = csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex);
     if (cfg->ch.TTAgent || cfg->ch.CTAgent) {
+        if (localPlayer->teamNumber() == Team::Spectators) return;
         int modelIndex = localPlayer->teamNumber() == Team::TT ? cfg->ch.TTAgent : cfg->ch.CTAgent;
         int index = getModelIndex(models[modelIndex - 1]);
         if (!index) return;
