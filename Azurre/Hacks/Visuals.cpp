@@ -71,5 +71,7 @@ void Visuals::fov() noexcept {
 
     if (!localPlayer) return;
 
+    if (cfg->v.fov == 90) return;
+
     csgo.Write<int>(localPlayer.get() + Offset::netvars::m_iFOV, cfg->v.fov);
 }

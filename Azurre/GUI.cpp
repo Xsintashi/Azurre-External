@@ -943,10 +943,28 @@ void GUI::RenderMainMenu() noexcept {
 }
 
 void GUI::overlay() noexcept {
+void watermark() {
 	constexpr const char* builtDate = __DATE__;
 	constexpr const char* builtTime = __TIME__;
-	const std::string watermark = std::string("Azurre 0.1 | Built: ").append(builtDate).append(" ").append(builtTime).append("\nHello xs9 :)\nHello Jarek :)");
-	ImGui::GetBackgroundDrawList()->AddText({ 0, 0 }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), watermark.c_str());
+	const std::string watermark = std::string("Azurre 0.1 | Built: ").append(builtDate).append(" ").append(builtTime).append(" | Hello xs9 (:) Hello Jarek");
+	for (unsigned int i = 0; i < watermark.size(); i++) {
+
+		constexpr float pi = std::numbers::pi_v<float>;
+		const float r = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime) * 0.5f + 0.5f);
+		const float g = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime + 2 * pi / 3) * 0.5f + 0.5f);
+		const float b = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime + 4 * pi / 3) * 0.5f + 0.5f);
+
+		const auto color = ImGui::GetColorU32(ImVec4{ r, g, b, 1.f });
+
+		std::string sym(1, watermark[i]);
+		ImGui::GetBackgroundDrawList()->AddText({ i * 8.f, 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) }, color, sym.c_str());
+		ImGui::GetBackgroundDrawList()->AddText({ i * 8.f + 1.f , 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) + 1.f }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), sym.c_str());
+	}
+}
+
+void GUI::overlay() noexcept {
+
+	watermark();
 
 	//ImGui::GetBackgroundDrawList()->AddRect( //Draws Rectangle around csgo window
 	//	gameScreenPos,
