@@ -135,12 +135,13 @@ public:
 	struct VisualsConfig {
 		bool thirdPerson = false;
 		KeyBind thirdPersonKey = "thirdperson";
-		bool noSmoke = false;
+		bool noParticles = false;
 		bool noAllies = false;
 		bool no3DSky = false;
 		bool noShadows = false;
 		int flashReduction = 0;
 		int fov = 90;
+		int skybox = 0;
 		struct CustomPostProcessing {
 			bool enabled = false;
 			float worldExposure = 0.0f;

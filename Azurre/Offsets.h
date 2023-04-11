@@ -176,5 +176,9 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t cl_csm_enabled = 0xDE6928;
 		constexpr ::std::ptrdiff_t cl_ragdoll_gravity = 0xDF1A00;
 		constexpr ::std::ptrdiff_t cl_grenadepreview = 0xE06C00;
+		constexpr ::std::ptrdiff_t sv_skyname = 0xDF0B38;
+		constexpr ::std::ptrdiff_t r_drawparticles = 0xDF15C8;
+		constexpr ::std::ptrdiff_t cl_ragdoll_physics_enable = 0xDF6F90;
+
 	}
 }

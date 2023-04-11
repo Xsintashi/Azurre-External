@@ -11,6 +11,7 @@
 
 #include <chrono>
 #include <algorithm>
+#include "../SDK/UserInterface.h"
 
 void Misc::bunnyHop() noexcept {
 	if (!cfg->m.bhop) return;
@@ -114,6 +115,9 @@ void Misc::modifyConVars(bool reset) noexcept {
 	ConVar sky{ IClient.address + Offset::cvars::r_3dsky };
 	ConVar shadow{ IClient.address + Offset::cvars::cl_csm_enabled };
 	ConVar grenade{ IClient.address + Offset::cvars::cl_grenadepreview };
+	ConVar skyname{ IClient.address + Offset::cvars::sv_skyname };
+	ConVar particles{ IClient.address + Offset::cvars::r_drawparticles };
+	const static int skynameFlags = skyname.getFlags();
 
 	if (reset) {
 		sky.setValue(41);
@@ -122,31 +126,48 @@ void Misc::modifyConVars(bool reset) noexcept {
 		return;
 	}
 
-#if _DEBUG
 	static bool doOnce = true; // for tests
 	if (doOnce) {
-		int flags = sky.getFlags();
-		flags &= ~(CVarFlags::DEVELOPMENTONLY);
-		flags &= ~(CVarFlags::HIDDEN);
-		sky.flags(flags);
+		int flags = skyname.getFlags();
+		flags &= ~(CVarFlags::REPLICATED);
+		flags &= ~(CVarFlags::CHEAT);
+		skyname.flags(flags);
 		doOnce = false;
 	}
-#endif
 
-	if (sky.getIntValue() == 41 && cfg->v.no3DSky)
+	if (sky.getIntValue() == 0x29 && cfg->v.no3DSky)
 		sky.setValue(sky.getIntValue() - 1);
-	else if (sky.getIntValue() == 40 && !cfg->v.no3DSky)
+	else if (sky.getIntValue() == 0x28 && !cfg->v.no3DSky)
 		sky.setValue(sky.getIntValue() + 1);
 
-	if (shadow.getIntValue() == 41 && cfg->v.noShadows)
+	if (shadow.getIntValue() == 0x29 && cfg->v.noShadows)
 		shadow.setValue(shadow.getIntValue() - 1);
-	else if (shadow.getIntValue() == 40 && !cfg->v.noShadows)
+	else if (shadow.getIntValue() == 0x28 && !cfg->v.noShadows)
 		shadow.setValue(shadow.getIntValue() + 1);
 
 	if (!grenade.getIntValue() && cfg->m.grenadeTrajectory)
 		grenade.setValue(grenade.getIntValue() - 1);
 	else if (grenade.getIntValue() && !cfg->m.grenadeTrajectory)
 		grenade.setValue(grenade.getIntValue() + 1);
+
+	if (particles.getIntValue() == 0xC9 && cfg->v.noParticles)
+		particles.setValue(particles.getIntValue() - 1);
+	else if (particles.getIntValue() == 0xC8 && !cfg->v.noParticles)
+		particles.setValue(particles.getIntValue() + 1);
+
+	static int tempSkybox = 0;
+
+	if (cfg->v.skybox && tempSkybox != cfg->v.skybox) {
+		static int flags = skynameFlags;
+		flags &= ~(CVarFlags::REPLICATED);
+		flags &= ~(CVarFlags::CHEAT);
+		skyname.flags(flags);
+		std::string cmd = "sv_skyname " + std::string(skyboxList[cfg->v.skybox]);
+		usr0::SendConsoleCommand(cmd.c_str());
+		skyname.flags(skynameFlags);
+		tempSkybox = cfg->v.skybox;
+	}
+
 }
 
 void Misc::modifyClasses() noexcept {
@@ -157,8 +178,6 @@ void Misc::modifyClasses() noexcept {
 	{
 		int entity = csgo.Read<int>(IClient.address + Offset::signatures::dwEntityList + i * 0x10);
 		if (!entity) continue;
-		if (cfg->v.noSmoke && GetClassId(entity) == ClassID::SmokeGrenadeProjectile)
-			csgo.Write<Vector>(entity + Offset::netvars::m_vecOrigin, Vector(999.f, 999.f, 999.f));
 		if (cfg->m.fixTablet && GetClassId(entity) == ClassID::Tablet)
 			csgo.Write<bool>(entity + Offset::netvars::m_bTabletReceptionIsBlocked, false);
 		if (cfg->v.customPostProcessing.enabled && GetClassId((int)entity) == ClassID::ToneMapController) {

@@ -642,8 +642,9 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
 			ImGui::Checkbox("No Shadows", &cfg->v.noShadows);
 			ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
-			ImGui::Checkbox("No Smoke", &cfg->v.noSmoke);
+			ImGui::Checkbox("No Particles", &cfg->v.noParticles);
 			ImGui::PushItemWidth(200.0f);
+			ImGui::Combo("Skybox", &cfg->v.skybox, skyboxList.data(), skyboxList.size());
 			ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");
 			ImGui::SliderInt("##fov", &cfg->v.fov, 30, 150, "Fov: %d");
 			ImGui::PopItemWidth();
@@ -941,9 +942,13 @@ void GUI::RenderMainMenu() noexcept {
 }
 
 void watermark() {
+#if _DEBUG
 	constexpr const char* builtDate = __DATE__;
 	constexpr const char* builtTime = __TIME__;
 	const std::string watermark = std::string("Azurre 0.1 | Built: ").append(builtDate).append(" ").append(builtTime).append(" | Hello xs9 :)");
+#else
+	const std::string watermark = std::string("Azurre 0.1 | FPS: ").append(builtDate).append(" ").append(builtTime).append(" | Hello xs9 :)");
+#endif
 	for (unsigned int i = 0; i < watermark.size(); i++) {
 
 		constexpr float pi = std::numbers::pi_v<float>;
