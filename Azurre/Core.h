@@ -18,7 +18,12 @@ namespace Core {
 
 #include "Memory.h"
 
-inline bool showMenu = true;
+inline bool showMenu =
+#if _DEBUG
+false;
+#else
+true;
+#endif;
 inline int gameState = 0;
 inline ImVec2 screenSize;
 inline ImVec2 gameScreenSize = {};

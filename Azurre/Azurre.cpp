@@ -69,7 +69,9 @@ int __stdcall wWinMain(
 	std::thread glowThread = std::thread(Glow::run);
 	std::thread aimbotThread = std::thread(Aimbot::run);
 	std::thread coreThread = std::thread(Core::_);
-
+#if _DEBUG
+	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW);
+#endif
 	while (GUI::isRunning){
 		std::this_thread::sleep_for(std::chrono::milliseconds(8)); // cap to 128tps
 		if (GetAsyncKeyState(VK_INSERT) & 1) {
