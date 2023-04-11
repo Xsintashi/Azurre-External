@@ -942,7 +942,6 @@ void GUI::RenderMainMenu() noexcept {
 	ImGui::End();
 }
 
-void GUI::overlay() noexcept {
 void watermark() {
 	constexpr const char* builtDate = __DATE__;
 	constexpr const char* builtTime = __TIME__;
