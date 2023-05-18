@@ -89,6 +89,13 @@ public:
     OFFSET(waitForNoAttack, (), Offset::netvars::m_bWaitForNoAttack, bool)
     OFFSET(boneMatrix, (), Offset::netvars::m_dwBoneMatrix, uintptr_t)
     OFFSET(activeWeapon, (), Offset::netvars::m_hActiveWeapon, int)
+    OFFSET(eyeAngleX, (), Offset::netvars::m_angEyeAnglesX, float)
+    OFFSET(eyeAngleY, (), Offset::netvars::m_angEyeAnglesY, float)
+    OFFSET(C4Blow, (), Offset::netvars::m_flC4Blow, float)
+
+    Vector eyeAngles() noexcept {
+        return { this->eyeAngleX(), this->eyeAngleY(), 0.f};
+    }
 
     OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
 
