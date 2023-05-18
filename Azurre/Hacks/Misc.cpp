@@ -123,7 +123,6 @@ void Misc::modifyConVars(bool reset) noexcept { //dont really work F
 	ConVar grenade{ IClient.address + Offset::cvars::cl_grenadepreview};
 	ConVar skyname{ IClient.address + Offset::cvars::sv_skyname };
 	ConVar particles{ IClient.address + Offset::cvars::r_drawparticles };
-	ConVar gravity{ IClient.address + Offset::cvars::cl_ragdoll_gravity };
 	const static int skynameFlags = skyname.getFlags();
 
 	if (reset) {

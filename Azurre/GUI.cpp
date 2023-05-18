@@ -633,7 +633,6 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::SameLine();
 			ImGui::hotkey("", cfg->v.thirdPersonKey);
 			ImGui::PopID();
-			ImGui::SliderInt("##ragdoll", &cfg->v.ragdollGravity, -1000, 1000, "Ragdoll Gravity: %i");
 			ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
 			ImGui::Checkbox("No Shadows", &cfg->v.noShadows);
 			ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);

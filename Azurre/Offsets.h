@@ -175,7 +175,6 @@ namespace Offset {
 	namespace cvars{ //hardcoded!  use IDA to get them //Example: https://media.discordapp.net/attachments/856920214805807154/1094994748164554863/image.png
 		constexpr ::std::ptrdiff_t r_3dsky = 0xDF4640;
 		constexpr ::std::ptrdiff_t cl_csm_enabled = 0xDE5940;
-		constexpr ::std::ptrdiff_t cl_ragdoll_gravity = 0xDF0A18;
 		constexpr ::std::ptrdiff_t cl_grenadepreview = 0xE05BF8;
 		constexpr ::std::ptrdiff_t sv_skyname = 0xDEFB50;
 		constexpr ::std::ptrdiff_t r_drawparticles = 0xDF05E0;
