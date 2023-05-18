@@ -965,11 +965,12 @@ void GUI::overlay() noexcept {
 
 	watermark();
 
-	//ImGui::GetBackgroundDrawList()->AddRect( //Draws Rectangle around csgo window
-	//	gameScreenPos,
-	//	gameScreenPosEnd,
-	//	ImGui::GetColorU32({ 0.f, 0.4f, 1.f, 0.5f }),
-	//	0, 0, 2.5f);
-
+#if  defined(_DEBUG)
+	ImGui::GetBackgroundDrawList()->AddRect( //Draws Rectangle around csgo window
+		gameScreenPos,
+		gameScreenPosEnd,
+		ImGui::GetColorU32({ 0.f, 0.4f, 1.f, 0.5f }),
+		0, 0, 2.5f);
+#endif
 	ESP::render();
 }
