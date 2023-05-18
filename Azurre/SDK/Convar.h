@@ -78,7 +78,7 @@ public:
 	}
 
 	void setValue(float value) {
-		csgo.Write<float>(offset + 0x2C, value);
+		csgo.Write<int32_t>(offset + 0x2C, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
 	}
 
 	int getIntValue() {
@@ -86,7 +86,11 @@ public:
 	}
 
 	void setValue(int value) {
-		csgo.Write<BYTE>(offset + 0x30, value);
+		csgo.Write<int32_t>(offset + 0x30, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
+	}
+
+	void setValue(bool value) {
+		csgo.Write<int32_t>(offset + 0x30, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
 	}
 
 	bool hasMin() {

@@ -11,6 +11,8 @@ void Chams::run() noexcept {
 
 	if (!localPlayer) return;
 
+	if (cfg->restrictions) return; //RPM ONLY
+
 	const auto enemyColor = Helpers::ConvertColors3ToUint8_t(cfg->c.enemy.color);
 	const auto allyColor = Helpers::ConvertColors3ToUint8_t(cfg->c.ally.color);
 

@@ -105,6 +105,8 @@ void Clan::update(bool reset, bool update) noexcept
 {
     if (!localPlayer) return;
 
+    if (cfg->restrictions) return; //RPM ONLY
+
     static float prevTime = 0.f;
     static float timeToUpdate = 0.f;
     float realTime = globalVars->realTime;

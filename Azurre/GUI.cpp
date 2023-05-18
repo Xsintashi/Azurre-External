@@ -508,13 +508,6 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::SameLine();
 			ImGui::hotkey("", cfg->t.hotkey);
 			ImGui::PopID();
-			ImGui::Checkbox("Safe", &cfg->t.safe);
-			ImGui::PushID("safe");
-			ImGui::SameLine();
-			ImGui::TextDisabled("?");
-			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Uses Non WPM Method");
-			ImGui::PopID();
 			ImGui::Checkbox("Friendly Fire", &cfg->t.friendlyFire);
 			ImGui::SetNextItemWidth(200.0f);
 			ImGui::SliderInt("Between Shots Delay", &cfg->t.delay, 0, 1000);
@@ -574,6 +567,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Misc")) {
+			ImGui::Combo("Restrictions", &cfg->restrictions, "None\0Read Only");
 			ImGui::PushID("menu");
 			ImGui::Text("Bring Menu");
 			ImGui::SameLine();
@@ -639,6 +633,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::SameLine();
 			ImGui::hotkey("", cfg->v.thirdPersonKey);
 			ImGui::PopID();
+			ImGui::SliderInt("##ragdoll", &cfg->v.ragdollGravity, -1000, 1000, "Ragdoll Gravity: %i");
 			ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
 			ImGui::Checkbox("No Shadows", &cfg->v.noShadows);
 			ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
@@ -947,7 +942,10 @@ void watermark() {
 	constexpr const char* builtTime = __TIME__;
 	const std::string watermark = std::string("Azurre 0.1 | Built: ").append(builtDate).append(" ").append(builtTime).append(" | Hello xs9 :)");
 #else
-	const std::string watermark = std::string("Azurre 0.1 | FPS: ").append(builtDate).append(" ").append(builtTime).append(" | Hello xs9 :)");
+	static auto frameRate = 1.0f;
+	frameRate = 0.9f * frameRate + 0.1f * globalVars->absoluteFrameTime;
+	const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
+	const std::string watermark = std::string("Azurre 0.1 | FPS: ").append(std::to_string(framePerSecond)).append(" | Hello xs9 :)");
 #endif
 	for (unsigned int i = 0; i < watermark.size(); i++) {
 

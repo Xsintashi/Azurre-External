@@ -16,6 +16,8 @@ void Visuals::thirdperson() //shitty method
 {
     static bool once = false;
 
+    if (cfg->restrictions) return; //RPM ONLY
+
     if (!cfg->v.thirdPerson) return;
 
     if (!localPlayer) return;
@@ -37,6 +39,8 @@ void Visuals::noFlash() {
 
     if (!cfg->v.flashReduction) return;
 
+    if (cfg->restrictions) return; //RPM ONLY
+
     const float reducedFlash = 255.0f - cfg->v.flashReduction * 2.55f;
 
     csgo.Write<float>(localPlayer.get() + Offset::netvars::m_flFlashMaxAlpha, reducedFlash);
@@ -44,7 +48,7 @@ void Visuals::noFlash() {
 
 void Visuals::doNotRenderTeammates() {
     while (GUI::isRunning){
-        if (!cfg->v.noAllies || !localPlayer) {
+        if (!cfg->v.noAllies || !localPlayer || cfg->restrictions) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             continue;
         }
@@ -70,6 +74,8 @@ void Visuals::doNotRenderTeammates() {
 void Visuals::fov() noexcept {
 
     if (!localPlayer) return;
+
+    if (cfg->restrictions) return; //RPM ONLY
 
     if (cfg->v.fov == 90) return;
 

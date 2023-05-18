@@ -22,11 +22,18 @@ void Misc::bunnyHop() noexcept {
 
 	const auto flags = localPlayer->flags();
 
-	if (GetAsyncKeyState(VK_SPACE))
+	if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions){
 		(flags & (1 << 0)) ?
 		csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
 		csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
+		return;
+	}
 
+	if (cfg->restrictions && GetAsyncKeyState(VK_SPACE)) {
+		(flags & (1 << 0)) ?
+			usr0::SendConsoleCommand("+jump") :
+			usr0::SendConsoleCommand("-jump");
+	}
 }
 
 void Misc::fakeLag() noexcept {
@@ -34,30 +41,32 @@ void Misc::fakeLag() noexcept {
 
 	if (localPlayer->isDead()) return;
 
+	if (cfg->restrictions) return; //RPM ONLY
+
 	const auto& sendPacket = csgo.Read<BYTE>(IEngine.address + Offset::signatures::dwbSendPackets);
 	const auto& chokedPackets = csgo.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
 	int choke = 0;
 
-	if (cfg->m.fakeLag.enabled)	{
-		const float speed = localPlayer->velocity().length2D() >= 15.0f ? localPlayer->velocity().length2D() : 0.0f;
+	if (!cfg->m.fakeLag.enabled)return;
 
-		switch (cfg->m.fakeLag.type) {
-		case 0: //Static
-			choke = cfg->m.fakeLag.limit;
-			break;
-		case 1: //Adaptive
-			//choke = std::clamp(static_cast<int>(std::ceilf(64 / (speed * globalVars->intervalPerTick))), 1, cfg->m.fakeLag.limit);
-			break;
-		case 2: // Random
-			srand(static_cast<unsigned int>(time(NULL)));
-			choke = rand() % cfg->m.fakeLag.limit + 1;
-			break;
-		}
+	const float speed = localPlayer->velocity().length2D() >= 15.0f ? localPlayer->velocity().length2D() : 0.0f;
+
+	switch (cfg->m.fakeLag.type) {
+	case 0: //Static
+		choke = cfg->m.fakeLag.limit;
+		break;
+	case 1: //Adaptive
+		//choke = std::clamp(static_cast<int>(std::ceilf(64 / (speed * globalVars->intervalPerTick))), 1, cfg->m.fakeLag.limit);
+		break;
+	case 2: // Random
+		srand(static_cast<unsigned int>(time(NULL)));
+		choke = rand() % cfg->m.fakeLag.limit + 1;
+		break;
 	}
 
 	choke = std::clamp(choke, 0, 16);
-
 	csgo.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, chokedPackets >= choke);
+
 }
 
 void Misc::changeWindowTitle(bool restore) noexcept {
@@ -80,12 +89,7 @@ void Misc::changeWindowTitle(bool restore) noexcept {
 
 void Misc::forceReload(bool onKey) noexcept {
 
-	if (!onKey) {
-		csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
-		changeWindowTitle();
-		return;
-	}
-	if (GetAsyncKeyState(VK_END)) {
+	if (!onKey || GetAsyncKeyState(VK_END) && !cfg->restrictions) {
 		csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
 		changeWindowTitle();
 	}
@@ -101,28 +105,32 @@ void Misc::entityLoop() noexcept {
 
 		if (entity->isSameTeam() || entity == (Entity*)localPlayer.get()) continue;
 
-		if(cfg->m.radarHack)
+		if(cfg->m.radarHack && !cfg->restrictions)
 			csgo.Write<bool>((uintptr_t)entity + Offset::netvars::m_bSpotted, true);
 	}
 }
 
-void Misc::modifyConVars(bool reset) noexcept {
+void Misc::modifyConVars(bool reset) noexcept { //dont really work F
 
 	if (!localPlayer) return;
 
 	if (gameState != 6) return;
 
+	if (cfg->restrictions) return; //RPM ONLY
+
 	ConVar sky{ IClient.address + Offset::cvars::r_3dsky };
 	ConVar shadow{ IClient.address + Offset::cvars::cl_csm_enabled };
-	ConVar grenade{ IClient.address + Offset::cvars::cl_grenadepreview };
+	ConVar grenade{ IClient.address + Offset::cvars::cl_grenadepreview};
 	ConVar skyname{ IClient.address + Offset::cvars::sv_skyname };
 	ConVar particles{ IClient.address + Offset::cvars::r_drawparticles };
+	ConVar gravity{ IClient.address + Offset::cvars::cl_ragdoll_gravity };
 	const static int skynameFlags = skyname.getFlags();
 
 	if (reset) {
-		sky.setValue(41);
-		shadow.setValue(41);
+		sky.setValue(1);
+		shadow.setValue(1);
 		grenade.setValue(0);
+		particles.setValue(1);
 		return;
 	}
 
@@ -135,25 +143,10 @@ void Misc::modifyConVars(bool reset) noexcept {
 		doOnce = false;
 	}
 
-	if (sky.getIntValue() == 0x29 && cfg->v.no3DSky)
-		sky.setValue(sky.getIntValue() - 1);
-	else if (sky.getIntValue() == 0x28 && !cfg->v.no3DSky)
-		sky.setValue(sky.getIntValue() + 1);
-
-	if (shadow.getIntValue() == 0x29 && cfg->v.noShadows)
-		shadow.setValue(shadow.getIntValue() - 1);
-	else if (shadow.getIntValue() == 0x28 && !cfg->v.noShadows)
-		shadow.setValue(shadow.getIntValue() + 1);
-
-	if (!grenade.getIntValue() && cfg->m.grenadeTrajectory)
-		grenade.setValue(grenade.getIntValue() - 1);
-	else if (grenade.getIntValue() && !cfg->m.grenadeTrajectory)
-		grenade.setValue(grenade.getIntValue() + 1);
-
-	if (particles.getIntValue() == 0xC9 && cfg->v.noParticles)
-		particles.setValue(particles.getIntValue() - 1);
-	else if (particles.getIntValue() == 0xC8 && !cfg->v.noParticles)
-		particles.setValue(particles.getIntValue() + 1);
+	sky.setValue(cfg->v.no3DSky);
+	shadow.setValue(!cfg->v.noShadows);
+	grenade.setValue(cfg->m.grenadeTrajectory);
+	particles.setValue(!cfg->v.noParticles);
 
 	static int tempSkybox = 0;
 
@@ -173,6 +166,8 @@ void Misc::modifyConVars(bool reset) noexcept {
 void Misc::modifyClasses() noexcept {
 
 	if (!localPlayer) return;
+
+	if (cfg->restrictions) return;
 
 	for (int i = 0; i < 512; i++)
 	{
@@ -202,6 +197,8 @@ void Misc::fastStop() noexcept	{
 	if (!localPlayer) return;
 
 	if (localPlayer->isDead()) return;
+
+	if (cfg->restrictions) return;
 
 	auto wKey = GetAsyncKeyState(0x57);
 	auto aKey = GetAsyncKeyState(0x41);

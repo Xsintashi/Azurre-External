@@ -36,8 +36,8 @@ void TriggerBot::run() noexcept{
 
 	if (cfg->t.hotkey.isActive()) {
 		static DWORD time = GetTickCount();
-		if (GetTickCount() - time >= cfg->t.delay) {
-			if (cfg->t.safe) {
+		if (GetTickCount() - time >= static_cast<unsigned int>(cfg->t.delay)) {
+			if (cfg->restrictions) {
 				mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
 				std::this_thread::sleep_for(std::chrono::milliseconds(2));
 				mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);

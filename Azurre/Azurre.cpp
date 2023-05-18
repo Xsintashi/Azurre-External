@@ -100,6 +100,7 @@ int __stdcall wWinMain(
 		GUI::BeginRender();
 		if (showMenu) GUI::RenderMainMenu();
 		if (cfg->m.playerList) GUI::RenderPlayerList();
+		Core::entityDataUpdate();
 		GUI::overlay();
 #if defined(_DEBUG)
 		if (showMenu) GUI::RenderDebugWindow();
@@ -107,7 +108,6 @@ int __stdcall wWinMain(
 #endif
 		GUI::EndRender();
 	}
-	csgo.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, true);
 
 	Misc::forceReload();
 	Misc::changeWindowTitle(true);

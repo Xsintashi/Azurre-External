@@ -35,8 +35,6 @@ void Core::update() {
 	localPlayer.init(csgo.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 	globalVars = csgo.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
 	gameState = csgo.Read<int>(IClientState.address + 0x108);
-	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
-
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
 	RECT rct;
 	if (GetWindowRect(IConsole, &rct)) {
@@ -50,6 +48,10 @@ void Core::update() {
 	cfg->v.thirdPersonKey.handleToggle();
 
 	Discord::Update();
+};
+
+void Core::entityDataUpdate() noexcept {
+	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
 
 	entityData.clear();
 	for (int unsigned idx = 0; idx <= 32; idx++) {
@@ -76,7 +78,7 @@ void Core::update() {
 
 		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename });
 	}
-};
+}
 
 void Core::_() noexcept {
 	while (GUI::isRunning) {

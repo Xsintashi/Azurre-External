@@ -116,7 +116,6 @@ public:
 
 	struct TriggerBotConfig {
 		bool enabled = false;
-		bool safe = false;
 		bool friendlyFire = false;
 		int delay = 0;
 		KeyBind hotkey = "trigger";
@@ -171,6 +170,12 @@ public:
 	struct Debug {
 		bool boolDebug0 = false;
 	} debug;
+
+#if defined(_DEBUG)
+	int restrictions = 0;
+#else
+	int restrictions = 1;
+#endif
 
 private:
     std::vector<std::string> scheduledFonts{ "Default" };

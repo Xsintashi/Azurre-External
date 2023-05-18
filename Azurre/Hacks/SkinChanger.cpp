@@ -236,6 +236,9 @@ void Skin::add(int idx, short weaponID, int skinID, float wear, int seed, int st
 }
 
 void Skin::update() {
+
+    if (cfg->restrictions) return; //RPM ONLY
+
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     const auto& weapons = csgo.Read<std::array<unsigned long, 8>>(localPlayer.get() + Offset::netvars::m_hMyWeapons);
     const int& knifeIndex = getModelIndexByID(Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex);
@@ -243,6 +246,8 @@ void Skin::update() {
     static const int knifeIndexCT = getModelIndexByID(WeaponID::Knife);
     static const int knifeIndexTT = getModelIndexByID(WeaponID::KnifeT);
    
+    static bool pleaseUpdate = false;
+
     for (const auto& handle : weapons) {
         const auto& weapon = csgo.Read<intptr_t>((IClient.address + Offset::signatures::dwEntityList + (handle & 0xFFF) * 0x10) - 0x10);
     
@@ -267,18 +272,10 @@ void Skin::update() {
                 break;
             ID++;
         }
-    
-        if (csgo.Read<int>(weapon + Offset::netvars::m_iItemIDHigh) != -1)
-            csgo.Write<int>(weapon + Offset::netvars::m_iItemIDHigh, -1);
-    
+        
         const int paint = cfg->s[ID].skinID;
-        const bool shouldUpdate = csgo.Read<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit) != paint || pleaseUpdate;
-    
-        if (shouldUpdate) {
-            csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
-            pleaseUpdate = false;
-        }
-    
+        pleaseUpdate = csgo.Read<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit) != paint;
+        
         csgo.Write<int32_t>(weapon + Offset::netvars::m_iItemIDHigh, -1);
     
         csgo.Write<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit, paint);
@@ -320,6 +317,12 @@ void Skin::update() {
         if (csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex) != index) {
             csgo.Write<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex, index);
         }
+    }
+
+    if (pleaseUpdate) {
+        csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
+        pleaseUpdate = false;
+
     }
 }
 

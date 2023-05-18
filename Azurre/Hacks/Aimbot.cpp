@@ -18,6 +18,8 @@ void Aimbot::run() noexcept {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (!cfg->a.enabled) continue;
 
+		if (cfg->restrictions) continue; //RPM ONLY
+
 		if (!localPlayer || localPlayer->isDead() || localPlayer->isDefusing() || localPlayer->waitForNoAttack()) continue;
 
 		const auto eyePosition = localPlayer->origin() + localPlayer->viewOffset();

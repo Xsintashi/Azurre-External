@@ -14,6 +14,8 @@ void Glow::run() noexcept {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (!localPlayer) continue;
 
+		if (cfg->restrictions) continue; //RPM ONLY
+
 		if (!cfg->g.enabled) continue;
 
 		const auto glowObjectManager = csgo.Read<std::uintptr_t>(IClient.address + Offset::signatures::dwGlowObjectManager);
