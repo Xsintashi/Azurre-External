@@ -48,11 +48,15 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Output\$(Configuration)\</OutDir>
     <IntDir>Intermediate\$(Configuration)\</IntDir>
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Windows Kits\10\Include\10.0.22000.0\shared;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)Output\$(Configuration)\</OutDir>
     <IntDir>Intermediate\$(Configuration)\</IntDir>
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Windows Kits\10\Include\10.0.22000.0\shared;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -142,6 +146,7 @@
     <ClInclude Include="Azurre\Hacks\Aimbot.h" />
     <ClInclude Include="Azurre\Hacks\Chams.h" />
     <ClInclude Include="Azurre\Hacks\Glow.h" />
+    <ClInclude Include="Azurre\Hacks\Minimap.h" />
     <ClInclude Include="Azurre\Hacks\Misc.h" />
     <ClInclude Include="Azurre\Hacks\SkinChanger.h" />
     <ClInclude Include="Azurre\Hacks\Visuals.h" />
@@ -149,6 +154,7 @@
     <ClInclude Include="Azurre\InputUtil.h" />
     <ClInclude Include="Azurre\Memory.h" />
     <ClInclude Include="Azurre\Offsets.h" />
+    <ClInclude Include="Azurre\resources.h" />
     <ClInclude Include="Azurre\SDK\ClientState.h" />
     <ClInclude Include="Azurre\SDK\Convar.h" />
     <ClInclude Include="Azurre\SDK\Entity.h" />
@@ -165,6 +171,7 @@
     <ClInclude Include="Azurre\SDK\ViewMatrix.h" />
     <ClInclude Include="Azurre\SDK\WeaponID.h" />
     <ClInclude Include="Azurre\stb_image.h" />
+    <ClInclude Include="Azurre\Texture.h" />
     <ClInclude Include="Lib\imgui\imconfig.h" />
     <ClInclude Include="Lib\imgui\imgui.h" />
     <ClInclude Include="Lib\imgui\ImGuiCustom.h" />
@@ -177,6 +184,7 @@
     <ClInclude Include="Lib\imgui\imstb_truetype.h" />
     <ClInclude Include="Lib\nlohmann\json.hpp" />
     <ClInclude Include="Lib\nlohmann\JsonForward.h" />
+    <ClInclude Include="Lib\stb\stb_image.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +203,7 @@
     <ClCompile Include="Azurre\Hacks\Chams.cpp" />
     <ClCompile Include="Azurre\Hacks\Clantag.cpp" />
     <ClCompile Include="Azurre\Hacks\Glow.cpp" />
+    <ClCompile Include="Azurre\Hacks\Minimap.cpp" />
     <ClCompile Include="Azurre\Hacks\Misc.cpp" />
     <ClCompile Include="Azurre\Hacks\SkinChanger.cpp" />
     <ClCompile Include="Azurre\Hacks\TriggerBot.cpp" />
@@ -203,6 +212,7 @@
     <ClCompile Include="Azurre\InputUtil.cpp" />
     <ClCompile Include="Azurre\Memory.cpp" />
     <ClCompile Include="Azurre\SDK\UserInterface.cpp" />
+    <ClCompile Include="Azurre\Texture.cpp" />
     <ClCompile Include="Lib\imgui\imgui.cpp" />
     <ClCompile Include="Lib\imgui\ImGuiCustom.cpp" />
     <ClCompile Include="Lib\imgui\imgui_demo.cpp" />
@@ -221,6 +231,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="bitmap1.bmp" />
     <Image Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>

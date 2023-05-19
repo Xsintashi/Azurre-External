@@ -129,7 +129,7 @@ constexpr const char* models[]{
 	"models/player/custom_player/legacy/ctm_fbi_variante.mdl"
 };
 
-int getModelIndex(const char* modelName)
+int Skin::getModelIndex(const char* modelName)
 {
     int modelPrecacheTable = csgo.Read<int>(IClientState.address + Offset::signatures::dwModelPrecacheTable);
     int offset = csgo.Read<int>(modelPrecacheTable + 0x40);
@@ -156,67 +156,67 @@ int getModelIndexByID(const short knifeID)
     switch (knifeID)
     {
     case WeaponID::Knife:
-        return getModelIndex("models/weapons/v_knife_default_ct.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_default_ct.mdl");
         
     case WeaponID::KnifeT:
-        return getModelIndex("models/weapons/v_knife_default_t.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_default_t.mdl");
         
     case WeaponID::Bayonet:
-        return getModelIndex("models/weapons/v_knife_bayonet.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_bayonet.mdl");
         
     case WeaponID::Butterfly:
-        return getModelIndex("models/weapons/v_knife_butterfly.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_butterfly.mdl");
         
     case WeaponID::SurvivalKnife:
-        return getModelIndex("models/weapons/v_knife_canis.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_canis.mdl");
         
     case WeaponID::Paracord:
-        return getModelIndex("models/weapons/v_knife_cord.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_cord.mdl");
         
     case WeaponID::ClassicKnife:
-        return getModelIndex("models/weapons/v_knife_css.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_css.mdl");
         
     case WeaponID::Falchion:
-        return getModelIndex("models/weapons/v_knife_falchion_advanced.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_falchion_advanced.mdl");
         
     case WeaponID::Flip:
-        return getModelIndex("models/weapons/v_knife_flip.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_flip.mdl");
         
     case WeaponID::Gut:
-        return getModelIndex("models/weapons/v_knife_gut.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_gut.mdl");
         
     case WeaponID::Navaja:
-        return getModelIndex("models/weapons/v_knife_gypsy_jackknife.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_gypsy_jackknife.mdl");
         
     case WeaponID::Karambit:
-        return getModelIndex("models/weapons/v_knife_karam.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_karam.mdl");
         
     case WeaponID::M9Bayonet:
-        return getModelIndex("models/weapons/v_knife_m9_bay.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_m9_bay.mdl");
         
     case WeaponID::NomadKnife:
-        return getModelIndex("models/weapons/v_knife_outdoor.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_outdoor.mdl");
         
     case WeaponID::Daggers:
-        return getModelIndex("models/weapons/v_knife_push.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_push.mdl");
         
     case WeaponID::SkeletonKnife:
-        return getModelIndex("models/weapons/v_knife_skeleton.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_skeleton.mdl");
         
     case WeaponID::Stiletto:
-        return getModelIndex("models/weapons/v_knife_stiletto.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_stiletto.mdl");
         
     case WeaponID::Bowie:
-        return getModelIndex("models/weapons/v_knife_survival_bowie.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_survival_bowie.mdl");
 
     case WeaponID::Huntsman:
-        return getModelIndex("models/weapons/v_knife_tactical.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_tactical.mdl");
 
     case WeaponID::Ursus:
-        return getModelIndex("models/weapons/v_knife_ursus.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_ursus.mdl");
 
     case WeaponID::Talon:
-        return getModelIndex("models/weapons/v_knife_widowmaker.mdl");
+        return Skin::getModelIndex("models/weapons/v_knife_widowmaker.mdl");
 
     default:
         return 0;
@@ -312,7 +312,7 @@ void Skin::update() {
     if (cfg->ch.TTAgent || cfg->ch.CTAgent) {
         if (localPlayer->teamNumber() == Team::Spectators) return;
         int modelIndex = localPlayer->teamNumber() == Team::TT ? cfg->ch.TTAgent : cfg->ch.CTAgent;
-        int index = getModelIndex(models[modelIndex - 1]);
+        int index = Skin::getModelIndex(models[modelIndex - 1]);
         if (!index) return;
         if (csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex) != index) {
             csgo.Write<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex, index);

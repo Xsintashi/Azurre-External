@@ -106,6 +106,10 @@ public:
 		bool radarHack = false;
 		bool autoStop = false;
 		bool playerList = false;
+		struct Minimap {
+			bool enabled = false;
+			bool showNames = false;
+		} minimap;
 		bool grenadeTrajectory = false;
 		struct FakeLag {
 			bool enabled = false;

@@ -579,3 +579,8 @@ static void ImGui_ImplDX9_InvalidateDeviceObjectsForPlatformWindows()
         if (platform_io.Viewports[i]->RendererUserData)
             ImGui_ImplDX9_DestroyWindow(platform_io.Viewports[i]);
 }
+
+void ImGui_DestroyTexture(void* texture)
+{
+    reinterpret_cast<IDirect3DTexture9*>(texture)->Release();
+}

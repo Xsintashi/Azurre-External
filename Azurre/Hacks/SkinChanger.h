@@ -98,6 +98,7 @@ namespace Skin {
     });
 
     void add(int idx, short weaponID, int skinID, float wear, int seed, int statTrak, int quality, char nameTag[161]);
+    int getModelIndex(const char* modelName);
     void update();
     const char* getWeaponIDName(short ID) noexcept;
 

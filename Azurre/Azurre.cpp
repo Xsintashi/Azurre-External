@@ -5,6 +5,7 @@
 #include "Hacks/Aimbot.h"
 #include "Hacks/Clantag.h"
 #include "Hacks/Glow.h"
+#include "Hacks/Minimap.h"
 #include "Hacks/Misc.h"
 #include "Hacks/SkinChanger.h"
 #include "Hacks/Visuals.h"
@@ -95,16 +96,19 @@ int __stdcall wWinMain(
 		Misc::forceReload(true);
 		Misc::modifyClasses();
 		Misc::modifyConVars();
+		Minimap::_();
 		Skin::update();
 		GUI::update();
 		GUI::BeginRender();
 		if (showMenu) GUI::RenderMainMenu();
 		if (cfg->m.playerList) GUI::RenderPlayerList();
+		if (cfg->m.minimap.enabled) Minimap::Render();
 		Core::entityDataUpdate();
 		GUI::overlay();
+		Minimap::Render();
 #if defined(_DEBUG)
-		if (showMenu) GUI::RenderDebugWindow();
-		// if (showMenu) ImGui::ShowDemoWindow();
+		// if (showMenu) GUI::RenderDebugWindow();
+		 if (showMenu) ImGui::ShowDemoWindow();
 #endif
 		GUI::EndRender();
 	}
