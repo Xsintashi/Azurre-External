@@ -107,8 +107,13 @@ public:
 		bool autoStop = false;
 		bool playerList = false;
 		struct Minimap {
-			bool enabled = false;
-			bool showNames = false;
+			bool enabled = true;
+			bool showPlayers = true;
+			bool showWeapons = false;
+			bool showGrenades = false;
+			bool noWindowTitle = false;
+			bool noWindowBackground = false;
+			float scale = 1.f;
 		} minimap;
 		bool grenadeTrajectory = false;
 		struct FakeLag {

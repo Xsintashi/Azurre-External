@@ -105,10 +105,9 @@ int __stdcall wWinMain(
 		if (cfg->m.minimap.enabled) Minimap::Render();
 		Core::entityDataUpdate();
 		GUI::overlay();
-		Minimap::Render();
 #if defined(_DEBUG)
 		// if (showMenu) GUI::RenderDebugWindow();
-		 if (showMenu) ImGui::ShowDemoWindow();
+		// if (showMenu) ImGui::ShowDemoWindow();
 #endif
 		GUI::EndRender();
 	}

@@ -68,7 +68,7 @@ void Core::entityDataUpdate() noexcept {
 		const auto& hasDefuser = entity->hasDefuser();
 		const auto& teamNumber = static_cast<int>(entity->teamNumber());
 		const auto& money = entity->money();
-		const auto& weaponID = entity->getWeaponID();
+		const auto& weaponID = entity->getWeaponIDFromPlayer();
 		const std::string name = playerInfo.name;
 		const bool bot = playerInfo.fakeplayer;
 		const char* steamID = playerInfo.szSteamID;
@@ -84,7 +84,7 @@ void Core::_() noexcept {
 	while (GUI::isRunning) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5)); // ~ 30 loops per second
 		update();
-		Misc::fakeLag(); // disable while shotting
+		Misc::fakeLag();
 		Aimbot::recoilSystem();
 		TriggerBot::run();
 		Chams::run();

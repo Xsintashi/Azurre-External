@@ -578,6 +578,24 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
 			ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
 			ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
+
+			ImGui::PushID("Minimap");
+			ImGui::Checkbox("Minimap", &cfg->m.minimap.enabled);
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+					ImGui::Checkbox("No Title", &cfg->m.minimap.noWindowTitle);
+					ImGui::Checkbox("No Background", &cfg->m.minimap.noWindowBackground);
+					ImGui::Checkbox("Show Players", &cfg->m.minimap.showPlayers);
+					ImGui::Checkbox("Show Weapons", &cfg->m.minimap.showWeapons);
+					ImGui::Checkbox("Show Grenades", &cfg->m.minimap.showGrenades);
+					ImGui::SliderFloat("##scale", &cfg->m.minimap.scale, 0.25f, 2.f, "Scale: %.2f");
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+
 			ImGui::Checkbox("Player List", &cfg->m.playerList);
 			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled)) {
 				ImGui::PushItemWidth(220.0f);
@@ -956,15 +974,14 @@ void watermark() {
 		const auto color = ImGui::GetColorU32(ImVec4{ r, g, b, 1.f });
 
 		std::string sym(1, watermark[i]);
-		ImGui::GetBackgroundDrawList()->AddText({ i * 8.f, 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) }, color, sym.c_str());
-		ImGui::GetBackgroundDrawList()->AddText({ i * 8.f + 1.f , 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) + 1.f }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), sym.c_str());
+		ImGui::GetForegroundDrawList()->AddText({ i * 8.f, 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) }, color, sym.c_str());
+		ImGui::GetForegroundDrawList()->AddText({ i * 8.f + 1.f , 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) + 1.f }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), sym.c_str());
 	}
 }
 
 void GUI::overlay() noexcept {
-
+	ESP::render();
 	watermark();
-
 #if defined(_DEBUG)
 	//ImGui::GetBackgroundDrawList()->AddRect( //Draws Rectangle around csgo window
 	//	gameScreenPos,
@@ -972,5 +989,4 @@ void GUI::overlay() noexcept {
 	//	ImGui::GetColorU32({ 0.f, 0.4f, 1.f, 0.5f }),
 	//	0, 0, 2.5f);
 #endif
-	ESP::render();
 }

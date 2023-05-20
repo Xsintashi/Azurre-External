@@ -17,6 +17,7 @@ enum class Team {
 };
 
 enum class ClassID {
+    Ak47 = 1,
     BaseCSGrenadeProjectile = 9,
     BreachChargeProjectile = 29,
     BumpMineProjectile = 33,
@@ -33,6 +34,7 @@ enum class ClassID {
     EconEntity = 53,
     EconWearable,
     ToneMapController = 69,
+    Flashbang = 77,
     Hostage = 97,
     Inferno = 100,
     Healthshot = 104,
@@ -52,18 +54,52 @@ enum class ClassID {
     SnowballProjectile,
     Tablet = 172,
     Aug = 232,
-    Awp,
-    Elite = 239,
-    FiveSeven = 241,
-    G3sg1,
-    Glock = 245,
+    AWP,
+    BaseItem,
+    Bizon,
+    CSBase,
+    CSBaseGun,
+    CZ75,
+    Elite,
+    Famas,
+    FiveSeven,
+    G3SG1,
+    Galil,
+    GalilAR,
+    Glock,
     P2000,
-    P250 = 258,
-    Scar20 = 261,
-    Sg553 = 265,
-    Ssg08 = 267,
-    Tec9 = 269
+    M249,
+    M4A4,
+    M4A1,
+    MAC10,
+    Mag7,
+    MP5,
+    MP7,
+    MP9,
+    Negev,
+    NOVA,
+    P228,
+    P250,
+    P90,
+    Sawedoff,
+    SCAR20,
+    Scout,
+    SG550,
+    SG552,
+    SG556,
+    Shield,
+    SSG08,
+    Taser,
+    Tec9,
+    TMP,
+    UMP45,
+    USP,
+    XM1014,
 };
+
+static ClassID GetClassId(int entity) {
+    return (ClassID)csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(entity + 8) + 2 * 4) + 1) + 20);
+}
 
 class Entity {
 public:
@@ -115,7 +151,12 @@ public:
         return !this->isDead();
     }
 
-    short getWeaponID() noexcept {
+    bool isWeapon() noexcept {
+        const ClassID classID = GetClassId((uintptr_t)this);
+        return (classID == ClassID::Ak47 || classID == ClassID::Deagle || (classID > ClassID::Aug && classID < ClassID::XM1014));
+    }
+
+    short getWeaponIDFromPlayer() noexcept {
         int weaponIndex = csgo.Read<int>((uintptr_t)this + Offset::netvars::m_hActiveWeapon) & 0xFFF;
         if (!weaponIndex)
             return 0;
@@ -127,16 +168,16 @@ public:
         return csgo.Read<short>((uintptr_t)activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
     }
 
+    short getWeaponID() noexcept {
+        return csgo.Read<short>((uintptr_t)this + Offset::netvars::m_iItemDefinitionIndex);
+    }
+
 };
 
 static Entity* getEntity(int idx) {
-	const auto& entity = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + idx * 0x10);
-	if (!entity) return 0;
-	return entity;
-}
-
-static ClassID GetClassId(int entity) {
-	return (ClassID)csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(entity + 8) + 2 * 4) + 1) + 20);
+    const auto& entity = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + idx * 0x10);
+    if (!entity) return 0;
+    return entity;
 }
 
 struct PlayerData {

@@ -82,6 +82,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_iItemIDHigh = 0x2FD0;
 		constexpr ::std::ptrdiff_t m_iMostRecentModelBoneCounter = 0x2690;
 		constexpr ::std::ptrdiff_t m_iObserverMode = 0x3388;
+		constexpr ::std::ptrdiff_t m_iPlayerC4 = 0x165C;
 		constexpr ::std::ptrdiff_t m_iShotsFired = 0x103E0;
 		constexpr ::std::ptrdiff_t m_iState = 0x3268;
 		constexpr ::std::ptrdiff_t m_iTeamNum = 0xF4;

@@ -110,9 +110,10 @@ std::string parseString(const std::string& szBefore, const std::string& szSource
 
 std::string map = "de_inferno"; // DEBUG
 Vector mapOrigin;
+ImVec2 windowOffset;
 float mapScale;
 std::string mapRadar;
-
+#define config cfg->m.minimap
 constexpr float iconSize = 8.f;
 
 struct TextureInfo {
@@ -131,13 +132,48 @@ static const PNGTexture flash{ resource::flash };
 static const PNGTexture molotov{ resource::molotov };
 static const PNGTexture smoke{ resource::smoke };
 
+static const PNGTexture ak47Texture{ resource::ak47 };
+static const PNGTexture augTexture{ resource::aug };
+static const PNGTexture awpTexture{ resource::awp };
+static const PNGTexture bizonTexture{ resource::bizon };
+static const PNGTexture cz75aTexture{ resource::cz75a };
+static const PNGTexture deagleTexture{ resource::deagle };
+static const PNGTexture eliteTexture{ resource::elite };
+static const PNGTexture famasTexture{ resource::famas };
+static const PNGTexture fivesevenTexture{ resource::fiveseven };
+static const PNGTexture g3sg1Texture{ resource::g3sg1 };
+static const PNGTexture galilarTexture{ resource::galilar };
+static const PNGTexture glockTexture{ resource::glock };
+static const PNGTexture m249Texture{ resource::m249 };
+static const PNGTexture m4a1Texture{ resource::m4a1 };
+static const PNGTexture m4a4Texture{ resource::m4a4 };
+static const PNGTexture mac10Texture{ resource::mac10 };
+static const PNGTexture mag7Texture{ resource::mag7 };
+static const PNGTexture mp5sdTexture{ resource::mp5sd };
+static const PNGTexture mp7Texture{ resource::mp7 };
+static const PNGTexture mp9Texture{ resource::mp9 };
+static const PNGTexture negevTexture{ resource::negev };
+static const PNGTexture novaTexture{ resource::nova };
+static const PNGTexture p2000Texture{ resource::p2000 };
+static const PNGTexture p250Texture{ resource::p250 };
+static const PNGTexture p90Texture{ resource::p90 };
+static const PNGTexture revolverTexture{ resource::revolver };
+static const PNGTexture sawedoffTexture{ resource::sawedoff };
+static const PNGTexture scar20Texture{ resource::scar20 };
+static const PNGTexture sg556Texture{ resource::sg556 };
+static const PNGTexture ssg08Texture{ resource::ssg08 };
+static const PNGTexture tec9Texture{ resource::tec9 };
+static const PNGTexture ump45Texture{ resource::ump45 };
+static const PNGTexture usp_silencerTexture{ resource::usp_silencer };
+static const PNGTexture xm1014Texture{ resource::xm1014 };
+
 const char* mapName() {
-	static auto map = csgo.Read<std::array<char, 0x80>>(IClientState.address + Offset::signatures::dwClientState_Map);
+	static auto map = csgo.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
 	return map.data();
 }
 
 const char* gameDir() {
-	static auto map = csgo.Read<std::array<char, 0x80>>(IEngine.address + Offset::signatures::dwGameDir);
+	static auto map = csgo.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
 	return map.data();
 }
 
@@ -170,6 +206,9 @@ void Minimap::_() {
 	mapOrigin.y = std::stof(parseString(("\"pos_y\""), szInfo));
 	mapScale = std::stof(parseString(("\"scale\""), szInfo));
 
+	windowOffset = { 8.f, 8.f };
+	if (!config.noWindowTitle)
+		windowOffset.y += 19.f;
 }
 
 void drawAngles(ImDrawList* drawList, const ImVec2& center, const ImVec2& pos, unsigned color, bool outline) noexcept
@@ -181,9 +220,9 @@ void drawAngles(ImDrawList* drawList, const ImVec2& center, const ImVec2& pos, u
 	constexpr int bigMulti = 15;
 
 	const ImVec2 trianglePoints[] = {
-		center + ImVec2{-0.25f * posNormalized.y, 0.25f * posNormalized.x} * bigMulti,
-		center + ImVec2{0.25f * posNormalized.y, -0.25f * posNormalized.x} * bigMulti,
-		center + ImVec2{0.5f * posNormalized.x, 0.5f * posNormalized.y} * bigMulti
+		center + ImVec2{-0.25f * posNormalized.y * config.scale, 0.25f * posNormalized.x * config.scale} * bigMulti * config.scale,
+		center + ImVec2{0.25f * posNormalized.y * config.scale, -0.25f * posNormalized.x * config.scale} * bigMulti * config.scale,
+		center + ImVec2{0.5f * posNormalized.x * config.scale, 0.5f * posNormalized.y * config.scale} * bigMulti * config.scale
 	};
 
 	drawList->AddConvexPolyFilled(trianglePoints, 3, color);
@@ -192,11 +231,11 @@ void drawAngles(ImDrawList* drawList, const ImVec2& center, const ImVec2& pos, u
 }
 
 void renderBomb(Entity* C4, ImVec2 windowPos, unsigned int color) {
-	const float originX = C4->origin().x / 2.f / mapScale;
-	const float originY = C4->origin().y / 2.f / mapScale;
+	const float originX = C4->origin().x / 2.f / mapScale * config.scale;
+	const float originY = C4->origin().y / 2.f / mapScale * config.scale;
 
-	float xOnTheMap = (originX + windowPos.x + 8.f + fabs(mapOrigin.x) / mapScale / 2);
-	float yOnTheMap = (-originY + windowPos.y + 27.f + fabs(mapOrigin.y) / mapScale / 2);
+	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOrigin.x) / mapScale / 2 * config.scale);
+	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOrigin.y) / mapScale / 2 * config.scale);
 
 	std::ostringstream ss;
 
@@ -205,34 +244,34 @@ void renderBomb(Entity* C4, ImVec2 windowPos, unsigned int color) {
 
 	if (GetClassId((uintptr_t)C4) == ClassID::PlantedC4 && (C4->C4Blow() - globalVars->currentTime) < 0.f) return;
 
-	ImGui::GetForegroundDrawList()->AddImage(GetClassId((uintptr_t)C4) == ClassID::PlantedC4 ? c4PlantedTexture.getTexture() : c4Texture.getTexture(), { xOnTheMap - iconSize,  yOnTheMap - iconSize }, { xOnTheMap + iconSize,  yOnTheMap + iconSize }, { 0, 0 }, { 1, 1 }, color); // 2 times smaller
+	ImGui::GetForegroundDrawList()->AddImage(GetClassId((uintptr_t)C4) == ClassID::PlantedC4 ? c4PlantedTexture.getTexture() : c4Texture.getTexture(), { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale }, { 0, 0 }, { 1, 1 }, color); // 2 times smaller
 
 	const auto centerText = ImGui::CalcTextSize(ss.str().c_str());
 	ImGui::GetForegroundDrawList()->AddText({ xOnTheMap - centerText.x / 2, yOnTheMap }, IM_COL32(255, 255, 255, 255), ss.str().c_str());
 }
 
-void renderItem(Entity* item, ImVec2 windowPos, ImTextureID texture) {
-	const float originX = item->origin().x / 2.f / mapScale;
-	const float originY = item->origin().y / 2.f / mapScale;
+void renderItem(Entity* item, ImVec2 windowPos, ImTextureID texture, float scaleForWeapons = 1.f) {
+	const float originX = item->origin().x / 2.f / mapScale * config.scale;
+	const float originY = item->origin().y / 2.f / mapScale * config.scale;
 
-	float xOnTheMap = (originX + windowPos.x + 8.f + fabs(mapOrigin.x) / mapScale / 2);
-	float yOnTheMap = (-originY + windowPos.y + 27.f + fabs(mapOrigin.y) / mapScale / 2);
+	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOrigin.x) / mapScale / 2 * config.scale);
+	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOrigin.y) / mapScale / 2 * config.scale);
 
-	ImGui::GetForegroundDrawList()->AddImage(texture, { xOnTheMap - iconSize,  yOnTheMap - iconSize }, { xOnTheMap + iconSize,  yOnTheMap + iconSize });
+	ImGui::GetForegroundDrawList()->AddImage(texture, { xOnTheMap - iconSize * config.scale * scaleForWeapons,  yOnTheMap - iconSize * config.scale * scaleForWeapons }, { xOnTheMap + iconSize * config.scale * scaleForWeapons,  yOnTheMap + iconSize * config.scale * scaleForWeapons });
 
 }
 
 void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int index) {
 
-	const float originX = entity->origin().x / 2.f / mapScale;
-	const float originY = entity->origin().y / 2.f / mapScale;
+	if (!config.showPlayers) return;
 
-	float xOnTheMap = (originX + windowPos.x + 8.f + fabs(mapOrigin.x) / mapScale / 2);
-	float yOnTheMap = (-originY + windowPos.y + 27.f + fabs(mapOrigin.y) / mapScale / 2);
+	const float originX = entity->origin().x / 2.f / mapScale * config.scale;
+	const float originY = entity->origin().y / 2.f / mapScale * config.scale;
 
-	ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 4.f, color, 0);
-	//const auto centerText = ImGui::CalcTextSize(entityData[index].name.c_str()); //OUT OF VECTOR
-	//ImGui::GetForegroundDrawList()->AddText({ xOnTheMap - centerText.x / 2, yOnTheMap + 4.f }, color, entityData[index].name.c_str());
+	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOrigin.x) / mapScale / 2 * config.scale);
+	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOrigin.y) / mapScale / 2 * config.scale);
+
+	ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 4.f * config.scale, color, 0);
 
 	const auto eyeAngles = entity->eyeAngleY();
 	const auto yaw = Helpers::deg2rad(-eyeAngles - 45.f);
@@ -243,15 +282,21 @@ void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int inde
 		y /= len;
 	}
 	drawAngles(ImGui::GetForegroundDrawList(), { xOnTheMap, yOnTheMap }, { x, y }, color, false);
+
+	const int& bombCarrier = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iPlayerC4);
+
+	if(bombCarrier == index)
+		ImGui::GetForegroundDrawList()->AddImage(c4Texture.getTexture(), { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale }, { 0, 0 }, { 1, 1 }, color); // 2 times smaller
+
 }
 
 void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 
-	const float originX = entity->origin().x / 2.f / mapScale;
-	const float originY = entity->origin().y / 2.f / mapScale;
+	const float originX = entity->origin().x / 2.f / mapScale * config.scale;
+	const float originY = entity->origin().y / 2.f / mapScale * config.scale;
 
-	const float xOnTheMap = (originX + windowPos.x + 8.f + fabs(mapOrigin.x) / mapScale / 2);
-	const float yOnTheMap = (-originY + windowPos.y + 27.f + fabs(mapOrigin.y) / mapScale / 2);
+	const float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOrigin.x) / mapScale / 2 * config.scale);
+	const float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOrigin.y) / mapScale / 2 * config.scale);
 		  
 	if(entity->velocity().length2D() < 1.f)
 		ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 16.f, color, 0);
@@ -259,6 +304,9 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 	ImTextureID texture;
 	switch (GetClassId((uintptr_t)entity)) {
 		default:
+		case ClassID::Flashbang:
+			texture = flash.getTexture();
+		break;
 		case ClassID::DecoyProjectile:
 			texture = decoy.getTexture();
 			break;
@@ -266,15 +314,14 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 		case ClassID::Inferno:
 			texture = molotov.getTexture();
 			break;
-		case ClassID::BaseCSGrenadeProjectile: { //flash needed to fix
+		case ClassID::BaseCSGrenadeProjectile:
 			texture = he.getTexture();
 			break;
-		}
 		case ClassID::SmokeGrenadeProjectile:
 			texture = smoke.getTexture();
 			break;
 	}
-	ImGui::GetForegroundDrawList()->AddImage(texture, { xOnTheMap - iconSize,  yOnTheMap - iconSize }, { xOnTheMap + iconSize,  yOnTheMap + iconSize });
+	ImGui::GetForegroundDrawList()->AddImage(texture, { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale });
 }
 
 void Minimap::Render() {
@@ -283,19 +330,102 @@ void Minimap::Render() {
 	constexpr auto ttColor = IM_COL32(255, 200, 0, 255);
 	constexpr auto lpColor = IM_COL32(203, 223, 223, 255);
 
-	ImGui::Begin( "Minimap", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize );
+	int windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize;
+
+	if (config.noWindowTitle)
+		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+	if (config.noWindowBackground)
+		windowFlags |= ImGuiWindowFlags_NoBackground;
+
+
+	ImGui::Begin( "Minimap", nullptr, windowFlags);
 	
 	ImVec2 windowPos = ImGui::GetWindowPos();
-	ImGui::Image(mapTexture.data, {512.f, 512.f}); // 2 times smaller
+	ImGui::Image(mapTexture.data, {512.f * config.scale, 512.f * config.scale }); // 2 times smaller
 
-	renderPlayer((Entity*)localPlayer.get(), windowPos, lpColor, 0);
-	for (int unsigned idx = 1; idx <= 512; idx++) {
+	for (int unsigned idx = 1; idx <= 1024; idx++) {
 		const auto& entity = getEntity(idx);
 		if (!entity) continue;
 
 		if (entity->origin() == Vector{ 0.f, 0.f, 0.f }) continue;
 
-		switch (GetClassId((uintptr_t)entity)) {
+		const short& weaponID = entity->getWeaponID();
+
+		if (entity->isWeapon() && config.showWeapons) {
+
+			switch (weaponID) {
+			default: break;
+			case WeaponID::Glock:
+				renderItem(entity, windowPos, glockTexture.getTexture(), 1.5f); break;
+			case WeaponID::Usp_s:
+				renderItem(entity, windowPos, usp_silencerTexture.getTexture(), 1.5f); break;
+			case WeaponID::Hkp2000:
+				renderItem(entity, windowPos, p2000Texture.getTexture(), 1.5f); break;
+			case WeaponID::Elite:
+				renderItem(entity, windowPos, eliteTexture.getTexture(), 1.5f); break;
+			case WeaponID::P250:
+				renderItem(entity, windowPos, p250Texture.getTexture(), 1.5f); break;
+			case WeaponID::Tec9:
+				renderItem(entity, windowPos, tec9Texture.getTexture(), 1.5f); break;
+			case WeaponID::Cz75a:
+				renderItem(entity, windowPos, cz75aTexture.getTexture(), 1.5f); break;
+			case WeaponID::Fiveseven:
+				renderItem(entity, windowPos, fivesevenTexture.getTexture(), 1.5f); break;
+			case WeaponID::Deagle:
+				renderItem(entity, windowPos, deagleTexture.getTexture(), 1.5f); break;
+			case WeaponID::Revolver:
+				renderItem(entity, windowPos, revolverTexture.getTexture(), 1.5f); break;
+			case WeaponID::Mac10:
+				renderItem(entity, windowPos, mac10Texture.getTexture(), 1.5f); break;
+			case WeaponID::Mp9:
+				renderItem(entity, windowPos, mp9Texture.getTexture(), 1.5f); break;
+			case WeaponID::Mp7:
+				renderItem(entity, windowPos, mp7Texture.getTexture(), 1.5f); break;
+			case WeaponID::Mp5sd:
+				renderItem(entity, windowPos, mp5sdTexture.getTexture(), 1.5f); break;
+			case WeaponID::Ump45:
+				renderItem(entity, windowPos, ump45Texture.getTexture(), 1.5f); break;
+			case WeaponID::P90:
+				renderItem(entity, windowPos, p90Texture.getTexture(), 1.5f); break;
+			case WeaponID::Bizon:
+				renderItem(entity, windowPos, bizonTexture.getTexture(), 1.5f); break;
+			case WeaponID::Famas:
+				renderItem(entity, windowPos, famasTexture.getTexture(), 1.5f); break;
+			case WeaponID::GalilAr:
+				renderItem(entity, windowPos, galilarTexture.getTexture(), 1.5f); break;
+			case WeaponID::Ak47:
+				renderItem(entity, windowPos, ak47Texture.getTexture(), 1.5f); break;
+			case WeaponID::M4A1:
+				renderItem(entity, windowPos, m4a1Texture.getTexture(), 1.5f); break;
+			case WeaponID::M4a1_s:
+				renderItem(entity, windowPos, m4a4Texture.getTexture(), 1.5f); break;
+			case WeaponID::Ssg08:
+				renderItem(entity, windowPos, ssg08Texture.getTexture(), 1.5f); break;
+			case WeaponID::Sg553:
+				renderItem(entity, windowPos, sg556Texture.getTexture(), 1.5f); break;
+			case WeaponID::Aug:
+				renderItem(entity, windowPos, augTexture.getTexture(), 1.5f); break;
+			case WeaponID::Awp:
+				renderItem(entity, windowPos, awpTexture.getTexture(), 1.5f); break;
+			case WeaponID::Scar20:
+				renderItem(entity, windowPos, scar20Texture.getTexture(), 1.5f); break;
+			case WeaponID::G3SG1:
+				renderItem(entity, windowPos, g3sg1Texture.getTexture(), 1.5f); break;
+			case WeaponID::Nova:
+				renderItem(entity, windowPos, novaTexture.getTexture(), 1.5f); break;
+			case WeaponID::Xm1014:
+				renderItem(entity, windowPos, xm1014Texture.getTexture(), 1.5f); break;
+			case WeaponID::Sawedoff:
+				renderItem(entity, windowPos, sawedoffTexture.getTexture(), 1.5f); break;
+			case WeaponID::Mag7:
+				renderItem(entity, windowPos, mag7Texture.getTexture(), 1.5f); break;
+			case WeaponID::M249:
+				renderItem(entity, windowPos, m249Texture.getTexture(), 1.5f); break;
+			case WeaponID::Negev:
+				renderItem(entity, windowPos, negevTexture.getTexture(), 1.5f); break;
+			}
+		}
+		switch(GetClassId((uintptr_t)entity)) {
 			case ClassID::CSPlayer: {
 				if (entity->isDead() || entity->dormant())
 					continue;
@@ -311,8 +441,8 @@ void Minimap::Render() {
 				renderItem(entity, windowPos, defuserTexture.getTexture());
 				break;
 			}
-			case ClassID::DecoyProjectile: 
-			case ClassID::MolotovProjectile: 
+			case ClassID::DecoyProjectile:
+			case ClassID::MolotovProjectile:
 			case ClassID::BaseCSGrenadeProjectile: {
 				renderNades(entity, windowPos, 0);
 				break;
@@ -327,6 +457,6 @@ void Minimap::Render() {
 			}
 		}
 	}
-
+	renderPlayer((Entity*)localPlayer.get(), windowPos, lpColor, 0);
 	ImGui::End();
 }
