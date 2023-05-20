@@ -96,7 +96,6 @@ int __stdcall wWinMain(
 		Misc::forceReload(true);
 		Misc::modifyClasses();
 		Misc::modifyConVars();
-		Minimap::_();
 		Skin::update();
 		GUI::update();
 		GUI::BeginRender();

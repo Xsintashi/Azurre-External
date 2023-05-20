@@ -6,6 +6,7 @@
 #include "Hacks/Aimbot.h"
 #include "Hacks/Chams.h"
 #include "Hacks/Clantag.h"
+#include "Hacks/Minimap.h"
 #include "Hacks/Misc.h"
 #include "Hacks/TriggerBot.h"
 #include "Hacks/Visuals.h"
@@ -84,6 +85,7 @@ void Core::_() noexcept {
 	while (GUI::isRunning) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5)); // ~ 30 loops per second
 		update();
+		Minimap::_();
 		Misc::fakeLag();
 		Aimbot::recoilSystem();
 		TriggerBot::run();

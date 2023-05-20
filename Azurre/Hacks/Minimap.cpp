@@ -282,12 +282,6 @@ void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int inde
 		y /= len;
 	}
 	drawAngles(ImGui::GetForegroundDrawList(), { xOnTheMap, yOnTheMap }, { x, y }, color, false);
-
-	const int& bombCarrier = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iPlayerC4);
-
-	if(bombCarrier == index)
-		ImGui::GetForegroundDrawList()->AddImage(c4Texture.getTexture(), { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale }, { 0, 0 }, { 1, 1 }, color); // 2 times smaller
-
 }
 
 void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
