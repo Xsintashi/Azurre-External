@@ -6,18 +6,18 @@
 
 void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const ImVec2& size) noexcept
 {
-    const auto id = ImGui::GetID(label);
+    static bool waiting = true;
 
     ImGui::PushID(label);
 
-    if (ImGui::GetActiveID() == id)
+    if (!waiting)
     {
         PushStyleColor(ImGuiCol_Button, GetColorU32(ImGuiCol_ButtonActive));
         Button("Press a key...", size);
         PopStyleColor();
         GetCurrentContext()->ActiveIdAllowOverlap = true;
         if ((!IsItemHovered() && GetIO().MouseClicked[0]) || key.setToPressedKey())
-            ClearActiveID();
+            waiting = true;
     }
     else
     {
@@ -36,12 +36,12 @@ void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const 
         else if (key.isSet())
         {
             if (ImGui::Button(key.toString(), size))
-                ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+                waiting = false;
         }
         else
         {
             if (ImGui::Button("Bind"))
-                ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+                waiting = false;
         }
 
         if (ImGui::BeginPopup("##mode", ImGuiWindowFlags_AlwaysUseWindowPadding))
@@ -90,23 +90,23 @@ void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const 
 
 void ImGuiCustom::classicHotkey(const char* label, KeyBind& key, float samelineOffset, const ImVec2& size) noexcept
 {
-    const auto id = ImGui::GetID(label);
+    static bool waiting = true;
     ImGui::PushID(label);
 
     ImGui::TextUnformatted(label);
     ImGui::SameLine(samelineOffset);
 
-    if (ImGui::GetActiveID() == id) {
+    if (!waiting) {
         ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_ButtonActive));
         ImGui::Button("Press a key...", size);
         ImGui::PopStyleColor();
 
         ImGui::GetCurrentContext()->ActiveIdAllowOverlap = true;
         if ((!ImGui::IsItemHovered() && ImGui::GetIO().MouseClicked[0]) || key.setToPressedKey())
-            ImGui::ClearActiveID();
+            waiting = true;
     }
     else if (ImGui::Button(key.toString(), size)) {
-        ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+        waiting = false;
     }
 
     ImGui::PopID();
