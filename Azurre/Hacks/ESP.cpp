@@ -95,7 +95,7 @@ void renderPlayer(Entity* player, int index, Matrix4x4 m) {
 	const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
 	PlayerInfo pInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (index * 0x34)));
 	std::string name = pInfo.name;
-	std::string weapon = Skin::getWeaponIDName(player->getWeaponID());
+	std::string weapon = Skin::getWeaponIDName(player->getWeaponIDFromPlayer());
 
 #pragma endregion Player Name
 	const auto colorLines = ImGui::GetColorU32({ config.other.lines.color[0], config.other.lines.color[1], config.other.lines.color[2], 1.f });

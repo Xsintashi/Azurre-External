@@ -127,7 +127,11 @@ public:
     OFFSET(activeWeapon, (), Offset::netvars::m_hActiveWeapon, int)
     OFFSET(eyeAngleX, (), Offset::netvars::m_angEyeAnglesX, float)
     OFFSET(eyeAngleY, (), Offset::netvars::m_angEyeAnglesY, float)
+
+    //Planted C4
     OFFSET(C4Blow, (), Offset::netvars::m_flC4Blow, float)
+    OFFSET(BombTicking, (), Offset::netvars::m_bBombTicking, bool)
+    OFFSET(BombDefused, (), Offset::netvars::m_bBombDefused, bool)
 
     Vector eyeAngles() noexcept {
         return { this->eyeAngleX(), this->eyeAngleY(), 0.f};

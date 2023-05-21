@@ -50,6 +50,12 @@ void removeEmptyObjects(json& j) noexcept
 
 #pragma region Read
 
+static void from_json(const json& j, ImVec2& v)
+{
+    read(j, "X", v.x);
+    read(j, "Y", v.y);
+}
+
 static void from_json(const json& j, ColorToggle& ct)
 {
     from_json(j, static_cast<Color4&>(ct));
@@ -184,6 +190,18 @@ static void from_json(const json& j, Config::GuiConfig& c) {
     read(j, "Menu Colors", c.menuColors);
 }
 
+static void from_json(const json& j, Config::MiscConfig::Minimap& c) {
+    read(j, "Enabled", c.enabled);
+    read(j, "Show Players", c.showPlayers);
+    read(j, "Show Dormant", c.showDormant);
+    read(j, "Show Weapons", c.showWeapons);
+    read(j, "Show Grenades", c.showGrenades);
+    read(j, "No Title", c.noWindowTitle);
+    read(j, "No Background", c.noWindowBackground);
+    read(j, "Scale", c.scale);
+    read<value_t::object>(j, "Pos", c.pos);
+}
+
 static void from_json(const json& j, Config::MiscConfig::FakeLag& c)
 {
     read(j, "Enabled", c.enabled);
@@ -191,13 +209,20 @@ static void from_json(const json& j, Config::MiscConfig::FakeLag& c)
     read(j, "Type", c.type);
 }
 
+static void from_json(const json& j, Config::MiscConfig::PlayerList& c)
+{
+    read(j, "Enabled", c.enabled);
+    read<value_t::object>(j, "Pos", c.pos);
+}
+
 static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Bunny Hop", c.bhop);
     read(j, "Auto Stop", c.autoStop);
     read(j, "Fix Tablet Signal", c.fixTablet);
     read(j, "Engine Radar", c.radarHack);
-    read(j, "Player List", c.playerList);
     read(j, "Grenade Trajectory", c.grenadeTrajectory);
+    read<value_t::object>(j, "Player List", c.playerList);
+    read<value_t::object>(j, "Minimap", c.minimap);
     read<value_t::object>(j, "Fake Lag", c.fakeLag);
 }
 
@@ -282,6 +307,13 @@ void Config::load(const char8_t* name, bool incremental) noexcept
 #pragma endregion
 
 #pragma region Write
+
+static void to_json(json& j, const ImVec2& o, const ImVec2& dummy = {})
+{
+    WRITE("X", x);
+    WRITE("Y", y);
+}
+
 static void to_json(json& j, const ColorToggle& o, const ColorToggle& dummy = {})
 {
     to_json(j, static_cast<const Color4&>(o), dummy);
@@ -425,11 +457,35 @@ static void to_json(json& j, const Config::GuiConfig& o) {
     WRITE("Menu Colors", menuColors);
 }
 
+static void to_json(json& j, const Config::MiscConfig::Minimap& o, const Config::MiscConfig::Minimap& dummy) {
+    WRITE("Enabled", enabled);
+    WRITE("Show Players", showPlayers);
+    WRITE("Show Dormant", showDormant);
+    WRITE("Show Weapons", showWeapons);
+    WRITE("Show Grenades", showGrenades);
+    WRITE("No Title", noWindowTitle);
+    WRITE("No Background", noWindowBackground);
+    WRITE("Scale", scale);
+
+    if (const auto window = ImGui::FindWindowByName("Minimap")) {
+        j["Pos"] = window->Pos;
+    }
+}
+
 static void to_json(json& j, const Config::MiscConfig::FakeLag& o, const Config::MiscConfig::FakeLag& dummy){
 
     WRITE("Enabled", enabled);
     WRITE("Limit", limit);
     WRITE("Type", type);
+}
+
+static void to_json(json& j, const Config::MiscConfig::PlayerList& o, const Config::MiscConfig::PlayerList& dummy) {
+
+    WRITE("Enabled", enabled);
+    
+    if (const auto window = ImGui::FindWindowByName("Player List")) {
+        j["Pos"] = window->Pos;
+    }
 }
 
 static void to_json(json& j, const Config::MiscConfig& o) {
@@ -439,6 +495,7 @@ static void to_json(json& j, const Config::MiscConfig& o) {
     WRITE("Auto Stop", autoStop);
     WRITE("Fix Tablet Signal", fixTablet);
     WRITE("Engine Radar", radarHack);
+    WRITE("Minimap", minimap);
     WRITE("Fake Lag", fakeLag);
     WRITE("Grenade Trajectory", grenadeTrajectory);
     WRITE("Player List", playerList);

@@ -168,7 +168,7 @@ static const PNGTexture usp_silencerTexture{ resource::usp_silencer };
 static const PNGTexture xm1014Texture{ resource::xm1014 };
 
 const char* mapName() {
-	static auto map = csgo.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
+	auto map = csgo.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
 	return map.data();
 }
 
@@ -240,9 +240,9 @@ void renderBomb(Entity* C4, ImVec2 windowPos, unsigned int color) {
 	std::ostringstream ss;
 
 	if (GetClassId((uintptr_t)C4) == ClassID::PlantedC4)
-		ss << std::setprecision(3) << (C4->C4Blow() - globalVars->currentTime) << "sec";
+		ss << std::fixed << std::setprecision(2) << (C4->C4Blow() - globalVars->currentTime) << "sec";
 
-	if (GetClassId((uintptr_t)C4) == ClassID::PlantedC4 && (C4->C4Blow() - globalVars->currentTime) < 0.f) return;
+	if (GetClassId((uintptr_t)C4) == ClassID::PlantedC4 && (C4->C4Blow() - globalVars->currentTime) < 0.f || C4->BombDefused()) return;
 
 	ImGui::GetForegroundDrawList()->AddImage(GetClassId((uintptr_t)C4) == ClassID::PlantedC4 ? c4PlantedTexture.getTexture() : c4Texture.getTexture(), { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale }, { 0, 0 }, { 1, 1 }, color); // 2 times smaller
 
@@ -263,7 +263,16 @@ void renderItem(Entity* item, ImVec2 windowPos, ImTextureID texture, float scale
 
 void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int index) {
 
-	if (!config.showPlayers) return;
+	if (!config.showPlayers)
+		return;
+
+	if (entity->isDead())
+		return;
+
+	if (entity->dormant() && config.showDormant)
+		color -= IM_COL32(0, 0, 0, 196);
+	else if (entity->dormant())
+		return;
 
 	const float originX = entity->origin().x / 2.f / mapScale * config.scale;
 	const float originY = entity->origin().y / 2.f / mapScale * config.scale;
@@ -324,14 +333,17 @@ void Minimap::Render() {
 	constexpr auto ttColor = IM_COL32(255, 200, 0, 255);
 	constexpr auto lpColor = IM_COL32(203, 223, 223, 255);
 
-	int windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize;
+	int windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
 
 	if (config.noWindowTitle)
 		windowFlags |= ImGuiWindowFlags_NoTitleBar;
 	if (config.noWindowBackground)
 		windowFlags |= ImGuiWindowFlags_NoBackground;
 
-
+	if (cfg->m.minimap.pos != ImVec2{}) {
+		ImGui::SetNextWindowPos(cfg->m.minimap.pos);
+		cfg->m.minimap.pos = {};
+	}
 	ImGui::Begin( "Minimap", nullptr, windowFlags);
 	
 	ImVec2 windowPos = ImGui::GetWindowPos();
@@ -421,8 +433,6 @@ void Minimap::Render() {
 		}
 		switch(GetClassId((uintptr_t)entity)) {
 			case ClassID::CSPlayer: {
-				if (entity->isDead() || entity->dormant())
-					continue;
 				renderPlayer(entity, windowPos, entity->teamNumber() == Team::TT ? ttColor : ctColor, idx);
 				break;
 			}

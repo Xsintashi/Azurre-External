@@ -105,15 +105,22 @@ public:
 		bool bhop = false;
 		bool radarHack = false;
 		bool autoStop = false;
-		bool playerList = false;
+		struct PlayerList {
+			bool enabled = false;
+			ImVec2 pos;
+		} playerList;
+
 		struct Minimap {
-			bool enabled = true;
+			bool enabled = false;
 			bool showPlayers = true;
+			bool showDormant = false;
 			bool showWeapons = false;
 			bool showGrenades = false;
 			bool noWindowTitle = false;
 			bool noWindowBackground = false;
 			float scale = 1.f;
+
+			ImVec2 pos;
 		} minimap;
 		bool grenadeTrajectory = false;
 		struct FakeLag {

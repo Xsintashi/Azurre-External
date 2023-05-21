@@ -429,10 +429,13 @@ void GUI::RenderDebugWindow() noexcept {
 void GUI::RenderPlayerList() noexcept {
 	ImGui::Begin(
 		"Player List",
-		&cfg->m.playerList,
+		&cfg->m.playerList.enabled,
 		ImGuiWindowFlags_AlwaysAutoResize
 	);
-
+	if (cfg->m.playerList.pos != ImVec2{}) {
+		ImGui::SetNextWindowPos(cfg->m.playerList.pos);
+		cfg->m.playerList.pos = {};
+	}
 	ImGui::SetNextWindowSize({ -1, -1 });
 	if (ImGui::BeginTable("Players List", 7))
 	{
@@ -589,6 +592,7 @@ void GUI::RenderMainMenu() noexcept {
 					ImGui::Checkbox("No Title", &cfg->m.minimap.noWindowTitle);
 					ImGui::Checkbox("No Background", &cfg->m.minimap.noWindowBackground);
 					ImGui::Checkbox("Show Players", &cfg->m.minimap.showPlayers);
+					ImGui::Checkbox("Show Dormant", &cfg->m.minimap.showDormant);
 					ImGui::Checkbox("Show Weapons", &cfg->m.minimap.showWeapons);
 					ImGui::Checkbox("Show Grenades", &cfg->m.minimap.showGrenades);
 					ImGui::SliderFloat("##scale", &cfg->m.minimap.scale, 0.25f, 2.f, "Scale: %.2f");
@@ -596,7 +600,7 @@ void GUI::RenderMainMenu() noexcept {
 			}
 			ImGui::PopID();
 
-			ImGui::Checkbox("Player List", &cfg->m.playerList);
+			ImGui::Checkbox("Player List", &cfg->m.playerList.enabled);
 			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled)) {
 				ImGui::PushItemWidth(220.0f);
 				ImGui::Combo("Mode", &cfg->m.fakeLag.type, "Static\0Adaptative\0Random\0");
