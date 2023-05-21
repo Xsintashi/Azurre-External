@@ -173,7 +173,7 @@ const char* mapName() {
 }
 
 const char* gameDir() {
-	static auto map = csgo.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
+	auto map = csgo.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
 	return map.data();
 }
 
@@ -332,6 +332,9 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 
 void Minimap::Render() { //Render Thread
 	
+	if (!showMenu && !cfg->m.minimap.hotkey.isActive())
+		return;
+
 	constexpr auto ctColor = IM_COL32(100, 200, 255, 255);
 	constexpr auto ttColor = IM_COL32(255, 200, 0, 255);
 	constexpr auto lpColor = IM_COL32(203, 223, 223, 255);
@@ -342,6 +345,8 @@ void Minimap::Render() { //Render Thread
 		windowFlags |= ImGuiWindowFlags_NoTitleBar;
 	if (config.noWindowBackground)
 		windowFlags |= ImGuiWindowFlags_NoBackground;
+	if(!showMenu)
+		windowFlags |= ImGuiWindowFlags_NoInputs;
 
 	if (cfg->m.minimap.pos != ImVec2{}) {
 		ImGui::SetNextWindowPos(cfg->m.minimap.pos);

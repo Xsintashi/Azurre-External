@@ -589,13 +589,27 @@ void GUI::RenderMainMenu() noexcept {
 				ImGui::OpenPopup("");
 
 			if (ImGui::BeginPopup("")) {
-					ImGui::Checkbox("No Title", &cfg->m.minimap.noWindowTitle);
-					ImGui::Checkbox("No Background", &cfg->m.minimap.noWindowBackground);
-					ImGui::Checkbox("Show Players", &cfg->m.minimap.showPlayers);
-					ImGui::Checkbox("Show Dormant", &cfg->m.minimap.showDormant);
-					ImGui::Checkbox("Show Weapons", &cfg->m.minimap.showWeapons);
-					ImGui::Checkbox("Show Grenades", &cfg->m.minimap.showGrenades);
-					ImGui::SliderFloat("##scale", &cfg->m.minimap.scale, 0.25f, 2.f, "Scale: %.2f");
+				ImGui::hotkey("On Key", cfg->m.minimap.hotkey);
+				ImGui::Checkbox("No Title", &cfg->m.minimap.noWindowTitle);
+				ImGui::Checkbox("No Background", &cfg->m.minimap.noWindowBackground);
+				ImGui::Checkbox("Show Players", &cfg->m.minimap.showPlayers);
+				ImGui::Checkbox("Show Dormant", &cfg->m.minimap.showDormant);
+				ImGui::Checkbox("Show Weapons", &cfg->m.minimap.showWeapons);
+				ImGui::Checkbox("Show Grenades", &cfg->m.minimap.showGrenades);
+				ImGui::SliderFloat("##scale", &cfg->m.minimap.scale, 0.25f, 2.f, "Scale: %.2f");
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+
+			ImGui::PushID("Keybinds");
+			ImGui::Checkbox("Keybind List", &cfg->m.keybinds.enabled);
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				ImGui::Checkbox("No Title", &cfg->m.keybinds.noTitleBar);
+				ImGui::Checkbox("No Background", &cfg->m.keybinds.noBackground);
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();
@@ -961,12 +975,12 @@ void watermark() {
 #if _DEBUG
 	constexpr const char* builtDate = __DATE__;
 	constexpr const char* builtTime = __TIME__;
-	const std::string watermark = std::string("Azurre 0.1 | Built: ").append(builtDate).append(" ").append(builtTime).append(" | Hello xs9 :)");
+	const std::string watermark = std::string("Azurre | Built: ").append(builtDate).append(" ").append(builtTime).append(" | Hello xs9 :)");
 #else
 	static auto frameRate = 1.0f;
 	frameRate = 0.9f * frameRate + 0.1f * globalVars->absoluteFrameTime;
 	const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
-	const std::string watermark = std::string("Azurre 0.1 | FPS: ").append(std::to_string(framePerSecond)).append(" | Hello xs9 :)");
+	const std::string watermark = std::string("Azurre | FPS: ").append(std::to_string(framePerSecond)).append(" | Hello xs9 :)");
 #endif
 	for (unsigned int i = 0; i < watermark.size(); i++) {
 

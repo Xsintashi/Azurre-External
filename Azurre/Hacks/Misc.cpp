@@ -70,6 +70,9 @@ void Misc::fakeLag() noexcept {
 }
 
 void Misc::changeWindowTitle(bool restore) noexcept {
+	
+	if (cfg->restrictions) return;
+	
 	if (restore) {
 		SetWindowTextA(IConsole, "Counter-Strike: Global Offensive - Direct3D 9");
 		return;
@@ -110,6 +113,40 @@ void Misc::entityLoop() noexcept {
 	}
 }
 
+void Misc::showKeybinds() noexcept
+{
+	if (!cfg->m.keybinds.enabled)
+		return;
+
+	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabled && cfg->a.hotkey.canShowKeybind());
+
+	if (!anyActive)
+		return;
+
+	if (cfg->m.keybinds.pos != ImVec2{}) {
+		ImGui::SetNextWindowPos(cfg->m.keybinds.pos);
+		cfg->m.keybinds.pos = {};
+	}
+
+	ImGui::SetNextWindowSize({ 250.f, 0.f }, ImGuiCond_Once);
+	ImGui::SetNextWindowSizeConstraints({ 250.f, 0.f }, { 250.f, FLT_MAX });
+
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+	if (!showMenu)
+		windowFlags |= ImGuiWindowFlags_NoInputs;
+
+	if (cfg->m.keybinds.noTitleBar)
+		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+
+	if (cfg->m.keybinds.noBackground)
+		windowFlags |= ImGuiWindowFlags_NoBackground;
+	ImGui::Begin("Keybind list", nullptr, windowFlags);
+	cfg->t.hotkey.showKeybind();
+	cfg->a.hotkey.showKeybind();
+	cfg->v.thirdPersonKey.showKeybind();
+	ImGui::End();
+}
+
 void Misc::modifyConVars(bool reset) noexcept { //dont really work F
 
 	if (!localPlayer) return;
@@ -142,7 +179,7 @@ void Misc::modifyConVars(bool reset) noexcept { //dont really work F
 		doOnce = false;
 	}
 
-	sky.setValue(cfg->v.no3DSky);
+	sky.setValue(!cfg->v.no3DSky);
 	shadow.setValue(!cfg->v.noShadows);
 	grenade.setValue(cfg->m.grenadeTrajectory);
 	particles.setValue(!cfg->v.noParticles);

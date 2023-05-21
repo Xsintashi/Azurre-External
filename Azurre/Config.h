@@ -32,7 +32,7 @@ public:
 
 	struct AimbotConfig {
 		bool enabled = false;
-		KeyBind hotkey = "aimbot";
+		KeyBind hotkey = std::string("Aimbot");
 		bool friendlyFire = false;
 		bool autoShot = false;
 		bool autoStop = false;
@@ -105,6 +105,12 @@ public:
 		bool bhop = false;
 		bool radarHack = false;
 		bool autoStop = false;
+		struct KeyBindsList {
+			bool enabled = false;
+			bool noTitleBar = false;
+			bool noBackground = false;
+			ImVec2 pos;
+		}keybinds;
 		struct PlayerList {
 			bool enabled = false;
 			ImVec2 pos;
@@ -119,7 +125,7 @@ public:
 			bool noWindowTitle = false;
 			bool noWindowBackground = false;
 			float scale = 1.f;
-
+			KeyBind hotkey = std::string("Minimap");
 			ImVec2 pos;
 		} minimap;
 		bool grenadeTrajectory = false;
@@ -134,7 +140,7 @@ public:
 		bool enabled = false;
 		bool friendlyFire = false;
 		int delay = 0;
-		KeyBind hotkey = "trigger";
+		KeyBind hotkey = std::string("Triggerbot");
 	} t;
 
 	struct GuiConfig {
@@ -149,7 +155,7 @@ public:
 
 	struct VisualsConfig {
 		bool thirdPerson = false;
-		KeyBind thirdPersonKey = "thirdperson";
+		KeyBind thirdPersonKey = std::string("Thirdperson");
 		bool noParticles = false;
 		bool noAllies = false;
 		bool no3DSky = false;
@@ -194,8 +200,6 @@ public:
 #endif
 
 private:
-    std::vector<std::string> scheduledFonts{ "Default" };
-    std::vector<std::string> systemFonts{ "Default" };
     std::filesystem::path path;
     std::vector<std::string> configs;
 };

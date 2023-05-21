@@ -64,7 +64,7 @@ int __stdcall wWinMain(
 	//}
 	//SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
 	Core::init();
-	if (!cfg->restrictions)
+
 	Misc::changeWindowTitle();
 
 	std::thread noTeammatesThread = std::thread(Visuals::doNotRenderTeammates);
@@ -104,6 +104,7 @@ int __stdcall wWinMain(
 		if (showMenu) GUI::RenderMainMenu();
 		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();
 		if (cfg->m.minimap.enabled) Minimap::Render();
+		if (cfg->m.keybinds.enabled) Misc::showKeybinds();
 		GUI::overlay();
 #if defined(_DEBUG)
 		// if (showMenu) GUI::RenderDebugWindow();
@@ -111,12 +112,10 @@ int __stdcall wWinMain(
 #endif
 		GUI::EndRender();
 	}
-	if (!cfg->restrictions) {
-		Misc::forceReload();
-		Misc::changeWindowTitle(true);
-		Misc::modifyConVars(true);
-		Clan::setClanTag("", "");
-	}
+	Misc::forceReload();
+	Misc::changeWindowTitle(true);
+	Misc::modifyConVars(true);
+	Clan::setClanTag("", "");
 
 	glowThread.join();
 	noTeammatesThread.join();

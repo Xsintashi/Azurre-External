@@ -13,6 +13,9 @@
 #include <vector>
 
 void Clan::setClanTag(const char* name, const char* team) {
+
+    if (cfg->restrictions) return;
+
 	unsigned char shellcode[] =
 		"\x51"                    //push ecx 
 		"\x52"                    //push edx 

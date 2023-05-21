@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <string_view>
 
+#include "Config.h"
+
 class Memory
 {
 private:
@@ -104,7 +106,8 @@ public:
 	template <typename T>
 	constexpr void Write(const std::uintptr_t& address, const T& value) const noexcept
 	{
-		::WriteProcessMemory(processHandle, reinterpret_cast<void*>(address), &value, sizeof(T), NULL);
+		if(!cfg->restrictions)
+			::WriteProcessMemory(processHandle, reinterpret_cast<void*>(address), &value, sizeof(T), NULL);
 	}
 	DWORD grabSig(DWORD base, DWORD size, BYTE* sign, char* mask);
 };

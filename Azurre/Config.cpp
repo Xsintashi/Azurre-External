@@ -31,8 +31,6 @@ Config::Config() noexcept
     logfont.lfCharSet = ANSI_CHARSET;
     logfont.lfPitchAndFamily = DEFAULT_PITCH;
     logfont.lfFaceName[0] = L'\0';
-
-    std::sort(std::next(systemFonts.begin()), systemFonts.end());
 }
 
 void removeEmptyObjects(json& j) noexcept
@@ -173,6 +171,7 @@ static void from_json(const json& j, Config::ESPConfig::Player& c) {
 
 static void from_json(const json& j, Config::ESPConfig& c) {
     read(j, "Enabled", c.enabled);
+    read<value_t::array>(j, "Players", c.players);
 }
 
 static void from_json(const json& j, Config::GlowConfig& c) {
@@ -215,6 +214,14 @@ static void from_json(const json& j, Config::MiscConfig::PlayerList& c)
     read<value_t::object>(j, "Pos", c.pos);
 }
 
+static void from_json(const json& j, Config::MiscConfig::KeyBindsList& c)
+{
+    read(j, "Enabled", c.enabled);
+    read(j, "No Title Bar", c.noTitleBar);
+    read(j, "No Background", c.noBackground);
+    read<value_t::object>(j, "Pos", c.pos);
+}
+
 static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Bunny Hop", c.bhop);
     read(j, "Auto Stop", c.autoStop);
@@ -222,6 +229,7 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Engine Radar", c.radarHack);
     read(j, "Grenade Trajectory", c.grenadeTrajectory);
     read<value_t::object>(j, "Player List", c.playerList);
+    read<value_t::object>(j, "Keybinds List", c.keybinds);
     read<value_t::object>(j, "Minimap", c.minimap);
     read<value_t::object>(j, "Fake Lag", c.fakeLag);
 }
@@ -430,7 +438,7 @@ static void to_json(json& j, const Config::ESPConfig::Player::Other& o) {
 
 static void to_json(json& j, const Config::ESPConfig::Player& o) {
     const Config::ESPConfig::Player dummy;
-    // SAVE 
+    j["Players"] = o;
 }
 
 static void to_json(json& j, const Config::ESPConfig& o) {
@@ -479,6 +487,17 @@ static void to_json(json& j, const Config::MiscConfig::FakeLag& o, const Config:
     WRITE("Type", type);
 }
 
+static void to_json(json& j, const Config::MiscConfig::KeyBindsList& o, const Config::MiscConfig::KeyBindsList& dummy) {
+
+    WRITE("Enabled", enabled);
+    WRITE("No Title Bar", noTitleBar);
+    WRITE("No Background", noBackground);
+
+    if (const auto window = ImGui::FindWindowByName("Keybind list")) {
+        j["Pos"] = window->Pos;
+    }
+}
+
 static void to_json(json& j, const Config::MiscConfig::PlayerList& o, const Config::MiscConfig::PlayerList& dummy) {
 
     WRITE("Enabled", enabled);
@@ -498,6 +517,7 @@ static void to_json(json& j, const Config::MiscConfig& o) {
     WRITE("Minimap", minimap);
     WRITE("Fake Lag", fakeLag);
     WRITE("Grenade Trajectory", grenadeTrajectory);
+    WRITE("Keybinds List", keybinds);
     WRITE("Player List", playerList);
 }
 

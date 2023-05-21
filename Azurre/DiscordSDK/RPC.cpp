@@ -37,8 +37,8 @@ void Discord::Update(){
 
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
-	discordPresence.state = "Azurre External 0.1";
-	discordPresence.details = "Soon I Guess";
+	discordPresence.state = "Azurre External";
+	discordPresence.details = "Only for Choosen!";
 	discordPresence.endTimestamp = NULL;
 	discordPresence.smallImageKey = "azurre";
 	discordPresence.largeImageKey = "azurre";

@@ -102,7 +102,7 @@ void renderPlayer(Entity* player, int index, Matrix4x4 m) {
 #pragma region Skeleton
 #pragma endregion Skeleton
 
-	if (posScreen.z >= 0.01f) {
+	if (posScreen.z >= 0.01f && !player->dormant()) {
 		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, colorFinal, colorFinal_);
 		if (config.healthBar.enabled) drawHealthBar({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
 		if (config.other.names.enabled) drawPlayerName({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, colorNames);
