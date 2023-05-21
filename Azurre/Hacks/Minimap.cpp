@@ -108,8 +108,8 @@ std::string parseString(const std::string& szBefore, const std::string& szSource
 		return "";
 }
 
-std::string map = "de_inferno"; // DEBUG
-Vector mapOrigin;
+Vector mapOriginStart;
+Vector mapOriginEnd;
 ImVec2 windowOffset;
 float mapScale;
 std::string mapRadar;
@@ -202,9 +202,12 @@ void Minimap::_() {
 	if (szInfo.empty())
 		return;
 
-	mapOrigin.x = std::stof(parseString(("\"pos_x\""), szInfo));
-	mapOrigin.y = std::stof(parseString(("\"pos_y\""), szInfo));
+	mapOriginStart.x = std::stof(parseString(("\"pos_x\""), szInfo));
+	mapOriginStart.y = std::stof(parseString(("\"pos_y\""), szInfo));
 	mapScale = std::stof(parseString(("\"scale\""), szInfo));
+
+	mapOriginEnd.x = 1024 * mapScale + mapOriginStart.x;
+	mapOriginEnd.y = 1024 * mapScale + mapOriginStart.y;
 
 	windowOffset = { 8.f, 8.f };
 	if (!config.noWindowTitle)
@@ -234,8 +237,8 @@ void renderBomb(Entity* C4, ImVec2 windowPos, unsigned int color) {
 	const float originX = C4->origin().x / 2.f / mapScale * config.scale;
 	const float originY = C4->origin().y / 2.f / mapScale * config.scale;
 
-	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOrigin.x) / mapScale / 2 * config.scale);
-	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOrigin.y) / mapScale / 2 * config.scale);
+	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOriginStart.x) / mapScale / 2 * config.scale);
+	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOriginStart.y) / mapScale / 2 * config.scale);
 
 	std::ostringstream ss;
 
@@ -254,8 +257,8 @@ void renderItem(Entity* item, ImVec2 windowPos, ImTextureID texture, float scale
 	const float originX = item->origin().x / 2.f / mapScale * config.scale;
 	const float originY = item->origin().y / 2.f / mapScale * config.scale;
 
-	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOrigin.x) / mapScale / 2 * config.scale);
-	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOrigin.y) / mapScale / 2 * config.scale);
+	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOriginStart.x) / mapScale / 2 * config.scale);
+	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOriginStart.y) / mapScale / 2 * config.scale);
 
 	ImGui::GetForegroundDrawList()->AddImage(texture, { xOnTheMap - iconSize * config.scale * scaleForWeapons,  yOnTheMap - iconSize * config.scale * scaleForWeapons }, { xOnTheMap + iconSize * config.scale * scaleForWeapons,  yOnTheMap + iconSize * config.scale * scaleForWeapons });
 
@@ -277,8 +280,8 @@ void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int inde
 	const float originX = entity->origin().x / 2.f / mapScale * config.scale;
 	const float originY = entity->origin().y / 2.f / mapScale * config.scale;
 
-	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOrigin.x) / mapScale / 2 * config.scale);
-	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOrigin.y) / mapScale / 2 * config.scale);
+	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOriginStart.x) / mapScale / 2 * config.scale);
+	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOriginStart.y) / mapScale / 2 * config.scale);
 
 	ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 4.f * config.scale, color, 0);
 
@@ -298,8 +301,8 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 	const float originX = entity->origin().x / 2.f / mapScale * config.scale;
 	const float originY = entity->origin().y / 2.f / mapScale * config.scale;
 
-	const float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOrigin.x) / mapScale / 2 * config.scale);
-	const float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOrigin.y) / mapScale / 2 * config.scale);
+	const float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOriginStart.x) / mapScale / 2 * config.scale);
+	const float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOriginStart.y) / mapScale / 2 * config.scale);
 		  
 	if(entity->velocity().length2D() < 1.f)
 		ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 16.f, color, 0);
@@ -327,7 +330,7 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 	ImGui::GetForegroundDrawList()->AddImage(texture, { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale });
 }
 
-void Minimap::Render() {
+void Minimap::Render() { //Render Thread
 	
 	constexpr auto ctColor = IM_COL32(100, 200, 255, 255);
 	constexpr auto ttColor = IM_COL32(255, 200, 0, 255);
@@ -344,7 +347,7 @@ void Minimap::Render() {
 		ImGui::SetNextWindowPos(cfg->m.minimap.pos);
 		cfg->m.minimap.pos = {};
 	}
-	ImGui::Begin( "Minimap", nullptr, windowFlags);
+	ImGui::Begin("Minimap", nullptr, windowFlags);
 	
 	ImVec2 windowPos = ImGui::GetWindowPos();
 	ImGui::Image(mapTexture.data, {512.f * config.scale, 512.f * config.scale }); // 2 times smaller
