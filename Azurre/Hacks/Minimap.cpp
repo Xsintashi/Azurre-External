@@ -15,115 +15,16 @@
 #include "../../Lib/imgui/imgui_stdlib.h"
 #include "../../Lib/imgui/imgui_impl_dx9.h"
 #include "../../Lib/imgui/imgui_impl_win32.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "../../Lib/stb/stb_image.h"
+
+#include "../TextureManager.h"
+#include "../PNGTexture.h"
+
 #include "../SDK/Vector.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/WeaponID.h"
 
-#include <d3dx9tex.h>
-#include <d3dx9.h>
-
-#pragma comment(lib, "d3dx9")
-
-struct PNGTexture {
-	template <std::size_t N>
-	PNGTexture(const std::array<char, N>& png) noexcept : pngData{ png.data() }, pngDataSize{ png.size() } {}
-
-	ImTextureID getTexture() const noexcept
-	{
-		if (!texture.get()) {
-			int width, height;
-			stbi_set_flip_vertically_on_load_thread(false);
-
-			if (const auto data = stbi_load_from_memory((const stbi_uc*)pngData, pngDataSize, &width, &height, nullptr, STBI_rgb_alpha)) {
-				texture.init(width, height, data);
-				stbi_image_free(data);
-			}
-			else {
-				assert(false);
-			}
-		}
-
-		return texture.get();
-	}
-
-	void clearTexture() const noexcept { texture.clear(); }
-
-private:
-	const char* pngData;
-	std::size_t pngDataSize;
-
-	mutable Texture texture;
-};
-
-// Simple helper function to load an image into a DX9 texture with common settings
-bool LoadTextureFromFile(const char* filename, PDIRECT3DTEXTURE9* out_texture, int* out_width, int* out_height)
-{
-	// Load texture from disk
-	PDIRECT3DTEXTURE9 texture;
-	HRESULT hr = D3DXCreateTextureFromFileA(GUI::device, filename, &texture);
-	if (hr != S_OK)
-		return false;
-
-	// Retrieve description of the texture surface so we can access its size
-	D3DSURFACE_DESC my_image_desc;
-	texture->GetLevelDesc(0, &my_image_desc);
-	*out_texture = texture;
-	*out_width = (int)my_image_desc.Width;
-	*out_height = (int)my_image_desc.Height;
-	return true;
-}
-
-bool LoadTextureFromMemory(const char* memory, PDIRECT3DTEXTURE9* out_texture, int* out_width, int* out_height)
-{
-	// Load texture from disk
-	PDIRECT3DTEXTURE9 texture;
-	HRESULT hr = D3DXCreateTextureFromFileInMemory(GUI::device, memory, sizeof(memory), &texture);
-	if (hr != S_OK)
-		return false;
-
-	// Retrieve description of the texture surface so we can access its size
-	D3DSURFACE_DESC my_image_desc;
-	texture->GetLevelDesc(0, &my_image_desc);
-	*out_texture = texture;
-	*out_width = (int)my_image_desc.Width;
-	*out_height = (int)my_image_desc.Height;
-	return true;
-}
-
-std::string parseString(const std::string& szBefore, const std::string& szSource) noexcept
-{
-	if (!szBefore.empty() && !szSource.empty() && (szSource.find(szBefore) != std::string::npos))
-	{
-		std::string t = strstr(szSource.c_str(), szBefore.c_str()); //-V522
-		t.erase(0, szBefore.length());
-		size_t firstLoc = t.find('\"', 0);
-		size_t secondLoc = t.find('\"', firstLoc + 1);
-		t = t.substr(firstLoc + 1, secondLoc - 3);
-		return t;
-	}
-	else
-		return "";
-}
-
-Vector mapOriginStart;
-Vector mapOriginEnd;
-ImVec2 windowOffset;
-float mapScale;
-std::string mapRadar;
-#define config cfg->m.minimap
-constexpr float iconSize = 8.f;
-
-struct TextureInfo {
-	int width;
-	int height;
-	PDIRECT3DTEXTURE9 data;
-};
-
-TextureInfo mapTexture;
 static const PNGTexture c4Texture{ resource::C4 };
 static const PNGTexture c4PlantedTexture{ resource::plantedC4 };
 static const PNGTexture defuserTexture{ resource::defuser };
@@ -168,6 +69,37 @@ static const PNGTexture ump45Texture{ resource::ump45 };
 static const PNGTexture usp_silencerTexture{ resource::usp_silencer };
 static const PNGTexture xm1014Texture{ resource::xm1014 };
 
+std::string parseString(const std::string& szBefore, const std::string& szSource) noexcept
+{
+	if (!szBefore.empty() && !szSource.empty() && (szSource.find(szBefore) != std::string::npos))
+	{
+		std::string t = strstr(szSource.c_str(), szBefore.c_str()); //-V522
+		t.erase(0, szBefore.length());
+		size_t firstLoc = t.find('\"', 0);
+		size_t secondLoc = t.find('\"', firstLoc + 1);
+		t = t.substr(firstLoc + 1, secondLoc - 3);
+		return t;
+	}
+	else
+		return "";
+}
+
+Vector mapOriginStart;
+Vector mapOriginEnd;
+ImVec2 windowOffset;
+float mapScale;
+std::string mapRadar;
+#define config cfg->m.minimap
+constexpr float iconSize = 8.f;
+
+struct TextureInfo {
+	int width;
+	int height;
+	PDIRECT3DTEXTURE9 data;
+};
+
+TextureInfo mapTexture;
+
 void Minimap::_() {
 	
 	mapRadar = std::string(gameDir).append("\\resource\\overviews\\").append(mapName).append("_radar.dds");
@@ -179,7 +111,7 @@ void Minimap::_() {
 		return;
 
 	isMapExist.close();
-	LoadTextureFromFile(mapRadar.c_str(), &mapTexture.data, &mapTexture.width, &mapTexture.height);
+	TextureManager::LoadTextureFromFile(mapRadar.c_str(), &mapTexture.data, &mapTexture.width, &mapTexture.height);
 
 	std::string mapNameFata;
 	mapNameFata = std::string(gameDir).append("\\resource\\overviews\\").append(mapName).append(".txt");

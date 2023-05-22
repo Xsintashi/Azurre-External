@@ -158,6 +158,7 @@
     <ClInclude Include="Azurre\InputUtil.h" />
     <ClInclude Include="Azurre\Memory.h" />
     <ClInclude Include="Azurre\Offsets.h" />
+    <ClInclude Include="Azurre\PNGTexture.h" />
     <ClInclude Include="Azurre\resources.h" />
     <ClInclude Include="Azurre\SDK\ClientState.h" />
     <ClInclude Include="Azurre\SDK\Convar.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Azurre\SDK\WeaponID.h" />
     <ClInclude Include="Azurre\stb_image.h" />
     <ClInclude Include="Azurre\Texture.h" />
+    <ClInclude Include="Azurre\TextureManager.h" />
     <ClInclude Include="Lib\imgui\imconfig.h" />
     <ClInclude Include="Lib\imgui\imgui.h" />
     <ClInclude Include="Lib\imgui\ImGuiCustom.h" />
@@ -210,6 +212,7 @@
     <ClCompile Include="Azurre\Hacks\Minimap.cpp" />
     <ClCompile Include="Azurre\Hacks\Misc.cpp" />
     <ClCompile Include="Azurre\Hacks\SkinChanger.cpp" />
+    <ClCompile Include="Azurre\TextureManager.cpp" />
     <ClCompile Include="Azurre\Hacks\TriggerBot.cpp" />
     <ClCompile Include="Azurre\Hacks\Visuals.cpp" />
     <ClCompile Include="Azurre\Helpers.cpp" />
