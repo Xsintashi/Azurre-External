@@ -76,7 +76,7 @@ int __stdcall wWinMain(
 #endif
 	while (GUI::isRunning){
 		std::this_thread::sleep_for(std::chrono::milliseconds(8)); // cap to 128tps
-		if (GetAsyncKeyState(VK_INSERT) & 1) {
+		if (cfg->m.menuKey.isPressed()) {
 
 			ImGuiIO& io = ImGui::GetIO(); (void)io;
 			showMenu = !showMenu;
@@ -107,7 +107,7 @@ int __stdcall wWinMain(
 		if (cfg->m.keybinds.enabled) Misc::showKeybinds();
 		GUI::overlay();
 #if defined(_DEBUG)
-		// if (showMenu) GUI::RenderDebugWindow();
+		 if (showMenu) GUI::RenderDebugWindow();
 		// if (showMenu) ImGui::ShowDemoWindow();
 #endif
 		GUI::EndRender();

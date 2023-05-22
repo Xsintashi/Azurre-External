@@ -25,6 +25,8 @@ false;
 #else
 true;
 #endif;
+inline std::string mapName = "";
+inline std::string gameDir = "";
 inline int gameState = 0;
 inline ImVec2 screenSize;
 inline ImVec2 gameScreenSize = {};

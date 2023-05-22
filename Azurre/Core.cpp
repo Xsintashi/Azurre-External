@@ -37,6 +37,10 @@ void Core::update() {
 	globalVars = csgo.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
 	gameState = csgo.Read<int>(IClientState.address + 0x108);
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
+	const auto map = csgo.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
+	const auto dir = csgo.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
+	gameDir = dir.data();
+	mapName = map.data();
 	RECT rct;
 	if (GetWindowRect(IConsole, &rct)) {
 		gameScreenPos = { static_cast<float>(rct.left) , static_cast<float>(rct.top) };
@@ -94,6 +98,7 @@ void Core::_() noexcept {
 		TriggerBot::run();
 		Chams::run();
 		Clan::update();
+		Misc::HitNKillSound();
 		Misc::bunnyHop();
 		Misc::fastStop();
 		Visuals::noFlash();

@@ -168,19 +168,9 @@ static const PNGTexture ump45Texture{ resource::ump45 };
 static const PNGTexture usp_silencerTexture{ resource::usp_silencer };
 static const PNGTexture xm1014Texture{ resource::xm1014 };
 
-const char* mapName() {
-	auto map = csgo.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
-	return map.data();
-}
-
-const char* gameDir() {
-	auto map = csgo.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
-	return map.data();
-}
-
 void Minimap::_() {
 	
-	mapRadar = std::string(gameDir()).append("\\resource\\overviews\\").append(mapName()).append("_radar.dds");
+	mapRadar = std::string(gameDir).append("\\resource\\overviews\\").append(mapName).append("_radar.dds");
 
 	std::ifstream isMapExist;
 	isMapExist.open(mapRadar);
@@ -192,7 +182,7 @@ void Minimap::_() {
 	LoadTextureFromFile(mapRadar.c_str(), &mapTexture.data, &mapTexture.width, &mapTexture.height);
 
 	std::string mapNameFata;
-	mapNameFata = std::string(gameDir()).append("\\resource\\overviews\\").append(mapName()).append(".txt");
+	mapNameFata = std::string(gameDir).append("\\resource\\overviews\\").append(mapName).append(".txt");
 	std::ifstream ifs(mapNameFata.c_str());
 
 	if (ifs.bad())

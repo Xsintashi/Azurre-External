@@ -579,12 +579,13 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::PushID("menu");
 			ImGui::Text("Bring Menu");
 			ImGui::SameLine();
-			ImGuiCustom::classicHotkey("", cfg->m.bringMenu);
+			ImGuiCustom::classicHotkey("", cfg->m.menuKey);
 			ImGui::PopID();
 			ImGui::Checkbox("Bunny Hop", &cfg->m.bhop);
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
 			ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
+			ImGui::InputText("Hit Sound", &cfg->m.hitSound);
 			ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
 
 			ImGui::PushID("Minimap");

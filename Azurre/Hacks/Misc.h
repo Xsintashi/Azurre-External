@@ -7,6 +7,7 @@ inline constexpr std::array skyboxList{ "Default", "cs_baggage_skybox_", "cs_tib
 namespace Misc {
 	void bunnyHop() noexcept;
 	void fakeLag() noexcept;
+	void HitNKillSound() noexcept;
 	void changeWindowTitle(bool restore = false) noexcept;
 	void forceReload(bool onKey = false) noexcept;
 	void entityLoop() noexcept;

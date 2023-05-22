@@ -100,7 +100,7 @@ public:
 	} g;
 
 	struct MiscConfig {
-		KeyBind bringMenu = "Bring Menu";
+		KeyBind menuKey = KeyBind::INSERT;
 		bool fixTablet = false;
 		bool bhop = false;
 		bool radarHack = false;
@@ -134,6 +134,7 @@ public:
 			int limit = 0;
 			int type = 0;
 		} fakeLag;
+		std::string hitSound = "sound\\";
 	} m;
 
 	struct TriggerBotConfig {

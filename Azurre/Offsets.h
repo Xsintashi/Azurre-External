@@ -101,6 +101,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_szCustomName = 0x304C;
 		constexpr ::std::ptrdiff_t m_szLastPlaceName = 0x35C4;
 		constexpr ::std::ptrdiff_t m_thirdPersonViewAngles = 0x31E8;
+		constexpr ::std::ptrdiff_t m_totalHitsOnServer = 0x103F8;
 		constexpr ::std::ptrdiff_t m_vecColor = 0xB00;
 		constexpr ::std::ptrdiff_t m_vecOrigin = 0x138;
 		constexpr ::std::ptrdiff_t m_vecVelocity = 0x114;

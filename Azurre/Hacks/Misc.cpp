@@ -69,6 +69,21 @@ void Misc::fakeLag() noexcept {
 
 }
 
+void Misc::HitNKillSound() noexcept
+{
+	if (!localPlayer)
+		return;
+
+	static int currentHitsCounter = localPlayer->totalHits();
+
+	if (currentHitsCounter != localPlayer->totalHits() && localPlayer->totalHits() != 0){
+		std::string out = std::string(gameDir).append("\\").append(cfg->m.hitSound);
+		PlaySound(out.c_str(), NULL, SND_ASYNC);
+		currentHitsCounter = localPlayer->totalHits();
+	}
+
+}
+
 void Misc::changeWindowTitle(bool restore) noexcept {
 	
 	if (cfg->restrictions) return;

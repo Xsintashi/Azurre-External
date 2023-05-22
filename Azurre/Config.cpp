@@ -223,11 +223,13 @@ static void from_json(const json& j, Config::MiscConfig::KeyBindsList& c)
 }
 
 static void from_json(const json& j, Config::MiscConfig& c) {
+    read(j, "Menu Key", c.menuKey);
     read(j, "Bunny Hop", c.bhop);
     read(j, "Auto Stop", c.autoStop);
     read(j, "Fix Tablet Signal", c.fixTablet);
     read(j, "Engine Radar", c.radarHack);
     read(j, "Grenade Trajectory", c.grenadeTrajectory);
+    read<value_t::string>(j, "Hit Sound", c.hitSound);
     read<value_t::object>(j, "Player List", c.playerList);
     read<value_t::object>(j, "Keybinds List", c.keybinds);
     read<value_t::object>(j, "Minimap", c.minimap);
@@ -510,13 +512,15 @@ static void to_json(json& j, const Config::MiscConfig::PlayerList& o, const Conf
 static void to_json(json& j, const Config::MiscConfig& o) {
     const Config::MiscConfig dummy;
 
+    WRITE("Menu Key", menuKey);
     WRITE("Bunny Hop", bhop);
     WRITE("Auto Stop", autoStop);
     WRITE("Fix Tablet Signal", fixTablet);
     WRITE("Engine Radar", radarHack);
-    WRITE("Minimap", minimap);
     WRITE("Fake Lag", fakeLag);
     WRITE("Grenade Trajectory", grenadeTrajectory);
+    WRITE("Hit Sound", hitSound);
+    WRITE("Minimap", minimap);
     WRITE("Keybinds List", keybinds);
     WRITE("Player List", playerList);
 }
