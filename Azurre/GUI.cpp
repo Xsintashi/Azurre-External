@@ -483,16 +483,15 @@ void GUI::RenderPlayerList() noexcept {
 	ImGui::End();
 }
 
-
 void GUI::RenderMainMenu() noexcept {
 	ImGui::SetNextWindowSize({ 640, 480 });
 	ImGui::Begin(
-		"Azurre External 0.1",
+		"Azurre External",
 		&isRunning,
 		ImGuiWindowFlags_AlwaysAutoResize
 	);
 
-	ImGui::Text("Hello xs9 :) Hello Jarek");
+	ImGui::Text("Hello xs9 :)");
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 		if (ImGui::BeginTabItem("Aimbot")) {
 			ImGui::PushID("aimbot");
