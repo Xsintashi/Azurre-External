@@ -19,6 +19,8 @@ namespace Helpers {
 	std::array<uint8_t, 4> ConvertColors4ToUint8_t(std::array<float, 4> in);
 	Vector calculateRealAngles();
 	Vector calculateRelativeAngle(const Vector& source, const Vector& destination, const Vector& viewAngles) noexcept;
+	Vector lerp(float percent, Vector a, Vector b) noexcept;
+	float lerp(float percent, float a, float b) noexcept;
 
 	Vector world2Screen(const ImVec2& screenSize, const Vector& pos, Matrix4x4 matrix);
 

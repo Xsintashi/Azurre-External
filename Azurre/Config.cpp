@@ -205,6 +205,12 @@ static void from_json(const json& j, Config::MiscConfig::KeyBindsList& c) {
     read<value_t::object>(j, "Pos", c.pos);
 }
 
+static void from_json(const json& j, Config::MiscConfig::HitMarker& c) {
+    read(j, "Type", c.type);
+    read(j, "Time", c.time);
+    read<value_t::object>(j, "Color", c.color);
+}
+
 static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Menu Key", c.menuKey);
     read(j, "Bunny Hop", c.bhop);
@@ -213,6 +219,7 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Engine Radar", c.radarHack);
     read(j, "Grenade Trajectory", c.grenadeTrajectory);
     read<value_t::string>(j, "Hit Sound", c.hitSound);
+    read<value_t::object>(j, "Hit Marker", c.hitMarker);
     read<value_t::object>(j, "Player List", c.playerList);
     read<value_t::object>(j, "Keybinds List", c.keybinds);
     read<value_t::object>(j, "Minimap", c.minimap);
@@ -470,6 +477,13 @@ static void to_json(json& j, const Config::MiscConfig::PlayerList& o, const Conf
     }
 }
 
+static void to_json(json& j, const Config::MiscConfig::HitMarker& o, const Config::MiscConfig::HitMarker& dummy) {
+
+    WRITE("Type", type);
+    WRITE("Time", time);
+    WRITE("Color", color);
+}
+
 static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConfig dummy = {} ) {
     WRITE("Menu Key", menuKey);
     WRITE("Bunny Hop", bhop);
@@ -479,6 +493,7 @@ static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConf
     WRITE("Fake Lag", fakeLag);
     WRITE("Grenade Trajectory", grenadeTrajectory);
     WRITE("Hit Sound", hitSound);
+    WRITE("Hit Marker", hitMarker);
     WRITE("Minimap", minimap);
     WRITE("Keybinds List", keybinds);
     WRITE("Player List", playerList);

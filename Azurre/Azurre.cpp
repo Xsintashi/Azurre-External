@@ -101,6 +101,7 @@ int __stdcall wWinMain(
 		GUI::update();
 		GUI::BeginRender();
 		Core::entityDataUpdate();
+		Misc::HitNKillSound();
 		if (showMenu) GUI::RenderMainMenu();
 		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();
 		if (cfg->m.minimap.enabled) Minimap::Render();

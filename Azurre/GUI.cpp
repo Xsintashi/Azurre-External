@@ -590,6 +590,15 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::InputText("Hit Sound", &cfg->m.hitSound);
 			ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
 
+			ImGui::PushID("hitmarker");
+			ImGui::SetNextItemWidth(80.F);
+			ImGui::Combo("Type", &cfg->m.hitMarker.type, "None\0Cross\0Cross Fading\0"); ImGui::SameLine(); ImGuiCustom::colorPicker("Hit Marker", cfg->m.hitMarker.color.color.data());
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(80.F);
+			ImGui::SliderFloat("##as", &cfg->m.hitMarker.time, 0.1f, 1.5f, "Time: %.2fs");
+
+			ImGui::PopID();
+
 			ImGui::PushID("Minimap");
 			ImGui::Checkbox("Minimap", &cfg->m.minimap.enabled);
 			ImGui::SameLine();

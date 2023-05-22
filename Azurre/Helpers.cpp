@@ -61,3 +61,13 @@ Vector Helpers::world2Screen(const ImVec2& screenSize, const Vector& pos, Matrix
 
 	return { x,y,w };
 }
+
+Vector Helpers::lerp(float percent, Vector a, Vector b) noexcept
+{
+	return a + (b - a) * percent;
+}
+
+float Helpers::lerp(float percent, float a, float b) noexcept
+{
+	return a + (b - a) * percent;
+}

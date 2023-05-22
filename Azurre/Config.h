@@ -112,6 +112,11 @@ public:
 			int limit = 0;
 			int type = 0;
 		} fakeLag;
+		struct HitMarker{
+			int type = 0;
+			float time = 0.5f;
+			Color3 color{ 1.f, 1.f, 1.f };
+		} hitMarker;
 		std::string hitSound = "sound\\";
 	} m;
 

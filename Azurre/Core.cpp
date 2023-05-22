@@ -98,7 +98,6 @@ void Core::_() noexcept {
 		TriggerBot::run();
 		Chams::run();
 		Clan::update();
-		Misc::HitNKillSound();
 		Misc::bunnyHop();
 		Misc::fastStop();
 		Visuals::noFlash();

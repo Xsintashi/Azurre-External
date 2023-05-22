@@ -14,13 +14,13 @@ enum class WeaponId : short;
 #pragma pack(push, 1)
 struct Color4 {
     std::array<float, 4> color{ 1.0f, 1.0f, 1.0f, 1.0f };
-    float rainbowSpeed = 0.6f;
+    float rainbowSpeed = 1.f;
     bool rainbow = false;
 };
 
 struct Color3 {
     std::array<float, 3> color{ 1.0f, 1.0f, 1.0f };
-    float rainbowSpeed = 0.6f;
+    float rainbowSpeed = 1.f;
     bool rainbow = false;
 };
 #pragma pack(pop)
