@@ -10,6 +10,7 @@
 #include "../SDK/Vector.h"
 
 #include <chrono>
+#include <fstream>
 #include <algorithm>
 #include "../SDK/UserInterface.h"
 
@@ -71,15 +72,26 @@ void Misc::fakeLag() noexcept {
 
 void Misc::HitNKillSound() noexcept
 {
-	if (!localPlayer)
+	if (!localPlayer || gameState != 6)
 		return;
 
 	static int currentHitsCounter = localPlayer->totalHits();
 
 	if (currentHitsCounter != localPlayer->totalHits() && localPlayer->totalHits() != 0){
+
 		std::string out = std::string(gameDir).append("\\").append(cfg->m.hitSound);
-		PlaySound(out.c_str(), NULL, SND_ASYNC);
+
+		std::ifstream isFileExist;
+		isFileExist.open(out);
+
 		currentHitsCounter = localPlayer->totalHits();
+
+		if (!isFileExist.is_open())
+			return;
+
+		isFileExist.close();
+		
+		PlaySound(out.c_str(), NULL, SND_ASYNC);
 	}
 
 }
