@@ -36,3 +36,4 @@ bool TextureManager::LoadTextureFromMemory(const char* memory, PDIRECT3DTEXTURE9
 	*height = (int)my_image_desc.Height;
 	return true;
 }
+

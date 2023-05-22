@@ -428,6 +428,31 @@ void GUI::RenderDebugWindow() noexcept {
 
 constexpr const char* ranks[] = { "Unranked", "Silver I", "Silver II", "Silver III", "Silver IV", "Silver Elite", "Silver Elite Master", "Gold Nova I", "Gold Nova II", "Gold Nova III", "Gold Nova Elite", "Master Guardian I", "Master Guardian II", "Master Guardian Elite", "Distinguished Master Guardian", "Legendary Eagle", "Legendary Eagle Master", "Supreme Master First Class", "The Global Elite" };
 
+#include "TextureManager.h"
+#include "PNGTexture.h"
+#include "resources.h"
+
+std::array<PNGTexture, 19> ranksTextures{
+	resource::skillgroup0,
+	resource::skillgroup1,
+	resource::skillgroup2,
+	resource::skillgroup3,
+	resource::skillgroup4,
+	resource::skillgroup5,
+	resource::skillgroup6,
+	resource::skillgroup7,
+	resource::skillgroup8,
+	resource::skillgroup9,
+	resource::skillgroup10,
+	resource::skillgroup11,
+	resource::skillgroup12,
+	resource::skillgroup13,
+	resource::skillgroup14,
+	resource::skillgroup15,
+	resource::skillgroup16,
+	resource::skillgroup17,
+	resource::skillgroup18
+};
 
 void GUI::RenderPlayerList() noexcept {
 	ImGui::Begin(
@@ -474,7 +499,14 @@ void GUI::RenderPlayerList() noexcept {
 			ImGui::TableNextColumn();
 			ImGui::Text("%s", Skin::getWeaponIDName(entityData[row].weaponID));
 			ImGui::TableNextColumn();
-			ImGui::Text("%s (%d)", ranks[entityData[row].rank], entityData[row].wins);
+			ImGui::Image(ranksTextures[entityData[row].rank].getTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
+			if (ImGui::IsItemHovered()) {
+				ImGui::BeginTooltip();
+				ImGui::PushFont(nullptr);
+				ImGui::TextUnformatted(std::to_string(entityData[row].wins).c_str());
+				ImGui::PopFont();
+				ImGui::EndTooltip();
+			}
 			ImGui::TableNextColumn();
 			ImGui::Text("%s", entityData[row].placename.c_str());
 		}
