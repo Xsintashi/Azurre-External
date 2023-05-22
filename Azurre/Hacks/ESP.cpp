@@ -14,6 +14,7 @@
 #include "../../Lib/imgui/imgui_stdlib.h"
 #include "../../Lib/imgui/imgui_impl_dx9.h"
 #include "../../Lib/imgui/imgui_impl_win32.h"
+#include <array>
 #include <string>
 #include "../SDK/PlayerInfo.h"
 #include "SkinChanger.h"
@@ -46,12 +47,17 @@ void drawPlayerName(ImVec2 pos, float width, float height, std::string name, ImU
 }
 
 void renderPlayer(Entity* player, int index, Matrix4x4 m) {
+	constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
 	int tab = 1;
-	if (player->isSameTeam()) tab = 0;
+	int spotted = 0;
+	spotted = csgo.Read<int>((uintptr_t)player + Offset::netvars::m_bSpotted);
 
-	int spotted = csgo.Read<int>((uintptr_t)player + Offset::netvars::m_bSpotted);
+	if (player->isSameTeam()){
+		tab = 0;
+		spotted = 0;
+	}
 
-	auto& config = cfg->esp.players[tab][spotted];
+	auto& config = cfg->esp.players[categories[tab + spotted]];
 
 #pragma region Box
 	Vector pos = player->origin();

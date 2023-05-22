@@ -68,29 +68,7 @@ public:
 
 	struct ESPConfig {
 		bool enabled = false;
-		struct Player{
-
-			struct Other {
-				ColorToggle3 names = { 1.f, 1.f, 1.f };
-				ColorToggle3 weapons = { 1.f, 1.f, 1.f };
-				ColorToggle3 lines = { 1.f, 1.f, 1.f };
-			} other;
-
-			struct Box {
-				bool enabled = false;
-				bool gradientColor = false;
-				Color3 solid = { 1.f, 1.f, 1.f };
-				Color3 grandientTop = { 1.f, 1.f, 1.f };
-				Color3 grandientBottom = { 1.f, 1.f, 1.f };
-			} box;
-
-			struct HealthBar {
-				bool enabled = false;
-				ColorToggle3 solidColor = { 0.f, 1.f, 0.f };
-				ColorToggle3 showHealthNumber = { 1.f, 1.f, 1.f };
-			} healthBar;
-		};
-		std::array< std::array< Player, 2>, 2> players;
+		std::unordered_map<std::string, Player> players;
 	} esp;
 
 	struct GlowConfig {

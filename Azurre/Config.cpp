@@ -138,40 +138,35 @@ static void from_json(const json& j, Config::DiscordConfig& c) {
     read(j, "Enabled", c.enabled);
 }
 
-static void from_json(const json& j, Config::ESPConfig::Player::Box &c) {
-
-    read(j, "Enabled", c.enabled);
-    read(j, "Enabled Gradient Color", c.gradientColor);
-    read<value_t::object>(j, "Solid Color", c.solid);
-    read<value_t::object>(j, "Gradient Top Color", c.grandientTop);
-    read<value_t::object>(j, "Gradient Bottom Color", c.grandientBottom);
+static void from_json(const json& j, Other& o) {
+    read<value_t::object>(j, "Names", o.names);
+    read<value_t::object>(j, "Weapons", o.weapons);
+    read<value_t::object>(j, "Lines", o.lines);
 }
 
-static void from_json(const json& j, Config::ESPConfig::Player::HealthBar& c) {
-
-    read(j, "Enabled", c.enabled);
-    read<value_t::object>(j, "Solid Color", c.solidColor);
-    read<value_t::object>(j, "Show Health Number", c.showHealthNumber);
+static void from_json(const json& j, Box& b) {
+    read(j, "Enabled", b.enabled);
+    read(j, "Gradient Color", b.gradientColor);
+    read<value_t::object>(j, "Solid Color", b.solid);
+    read<value_t::object>(j, "Top Color", b.grandientTop);
+    read<value_t::object>(j, "Bottom Color", b.grandientBottom);
 }
 
-static void from_json(const json& j, Config::ESPConfig::Player::Other& c) {
-
-    read<value_t::object>(j, "Names", c.names);
-    read<value_t::object>(j, "Weapons", c.weapons);
-    read<value_t::object>(j, "Snapline", c.lines);
+static void from_json(const json& j, HealthBar& o) {
+    read(j, "Enabled", o.enabled);
+    read<value_t::object>(j, "Solid Color", o.solidColor);
+    read<value_t::object>(j, "Health Number", o.showHealthNumber);
 }
 
-
-static void from_json(const json& j, Config::ESPConfig::Player& c) {
-
-   read<value_t::object>(j, "Box", c.box);
-   read<value_t::object>(j, "Healthbar", c.healthBar);
-   read<value_t::object>(j, "Other", c.other);
+static void from_json(const json& j, Player& p) {
+    read<value_t::object>(j, "Other", p.other);
+    read<value_t::object>(j, "Box", p.box);
+    read<value_t::object>(j, "HealthBar", p.healthBar);
 }
 
-static void from_json(const json& j, Config::ESPConfig& c) {
-    read(j, "Enabled", c.enabled);
-    read<value_t::array>(j, "Players", c.players);
+static void from_json(const json& j, Config::ESPConfig& e) {
+    read(j, "Enabled", e.enabled);
+    read(j, "Players", e.players);
 }
 
 static void from_json(const json& j, Config::GlowConfig& c) {
@@ -301,7 +296,7 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read<value_t::object>(j, "Chams", c);
     read<value_t::object>(j, "ClanTag", clanTag);
     read<value_t::object>(j, "Discord", d);
-    read<value_t::array>(j, "ESP", esp);
+    read<value_t::object>(j, "ESP", esp);
     read<value_t::object>(j, "Glow", g);
     read<value_t::object>(j, "Misc", m);
     read<value_t::array> (j, "Skins", s);
@@ -411,42 +406,37 @@ static void to_json(json& j, const Config::DiscordConfig& o) {
     WRITE("Enabled", enabled);
 }
 
-
-static void to_json(json& j, const Config::ESPConfig::Player::Box& o) {
-    const Config::ESPConfig::Player::Box dummy;
-
-    WRITE("Enabled", enabled);
-    WRITE("Enabled Gradient Color", gradientColor);
-    WRITE("Solid Color", solid);
-    WRITE("Gradient Top Color",  grandientTop);
-    WRITE("Gradient Bottom Color",  grandientBottom);
-}
-
-static void to_json(json& j, const Config::ESPConfig::Player::HealthBar& o) {
-    const Config::ESPConfig::Player::HealthBar dummy;
-
-    WRITE("Enabled", enabled);
-    WRITE("Solid Color", solidColor);
-    WRITE("Show Health Number", showHealthNumber);
-}
-
-static void to_json(json& j, const Config::ESPConfig::Player::Other& o) {
-    const Config::ESPConfig::Player::Other dummy;
-
+static void to_json(json& j, const Other& o, const Other& dummy = {}) {
     WRITE("Names", names);
     WRITE("Weapons", weapons);
-    WRITE("Snapline", lines);
+    WRITE("Lines", lines);
 }
 
-static void to_json(json& j, const Config::ESPConfig::Player& o) {
-    const Config::ESPConfig::Player dummy;
-    j["Players"] = o;
+static void to_json(json& j, const Box& o, const Box& dummy = {}) {
+    WRITE("Enabled", enabled);
+    WRITE("Gradient Color", gradientColor);
+    WRITE("Solid Color", solid);
+    WRITE("Top Color", grandientTop);
+    WRITE("Bottom Color", grandientBottom);
+}
+
+static void to_json(json& j, const HealthBar& o, const HealthBar& dummy = {}) {
+    WRITE("Enabled", enabled);
+    WRITE("Solid Color", solidColor);
+    WRITE("Health Number", showHealthNumber);
+}
+
+static void to_json(json& j, const Player& o, const Player& dummy = {}) {
+    WRITE("Other", other);
+    WRITE("Box", box);
+    WRITE("HealthBar", healthBar);
 }
 
 static void to_json(json& j, const Config::ESPConfig& o) {
     const Config::ESPConfig dummy;
-
     WRITE("Enabled", enabled);
+    j["Players"] = o.players;
+
 }
 
 static void to_json(json& j, const Config::GlowConfig& o) {

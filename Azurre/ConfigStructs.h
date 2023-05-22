@@ -51,6 +51,32 @@ struct ColorToggleThicknessRounding : ColorToggleRounding {
     float thickness = 1.0f;
 };
 
+struct Other {
+    ColorToggle3 names = { 1.f, 1.f, 1.f };
+    ColorToggle3 weapons = { 1.f, 1.f, 1.f };
+    ColorToggle3 lines = { 1.f, 1.f, 1.f };
+};
+
+struct Box {
+    bool enabled = false;
+    bool gradientColor = false;
+    Color3 solid = { 1.f, 1.f, 1.f };
+    Color3 grandientTop = { 1.f, 1.f, 1.f };
+    Color3 grandientBottom = { 1.f, 1.f, 1.f };
+};
+
+struct HealthBar {
+    bool enabled = false;
+    ColorToggle3 solidColor = { 0.f, 1.f, 0.f };
+    ColorToggle3 showHealthNumber = { 1.f, 1.f, 1.f };
+};
+
+struct Player {
+    Other other;
+    Box box;
+    HealthBar healthBar;
+};
+
 using json = nlohmann::basic_json<std::map, std::vector, std::string, bool, std::int64_t, std::uint64_t, float>;
 using value_t = json::value_t;
 

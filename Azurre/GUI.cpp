@@ -536,42 +536,44 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("ESP")) {
-			static int team = 0;
+			static int list = 0;
 			static int spotted = 0;
+			constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
 			ImGui::Checkbox("Enabled", &cfg->esp.enabled);
-			ImGui::Combo("##player", &team, "Allies\0Enemies\0");
-			if (team) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
-			ImGuiCustom::colorPicker("Name", cfg->esp.players[team][spotted].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].other.names.enabled);
-			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[team][spotted].other.weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].other.weapons.enabled);
-			ImGui::Checkbox("Boxes", &cfg->esp.players[team][spotted].box.enabled);
+			ImGui::Combo("##player", &list, "Allies\0Enemies\0");
+			if (list) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
+			else spotted = 0;
+			ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.names.enabled);
+			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].other.weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.weapons.enabled);
+			ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled);
 			ImGui::PushID("boxes");
 			ImGui::SameLine();
 			if (ImGui::Button("..."))
 				ImGui::OpenPopup("");
 
 			if (ImGui::BeginPopup("")) {
-				if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[team][spotted].box.gradientColor)) {
-					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[team][spotted].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
-					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[team][spotted].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+				if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[categories[list + spotted]].box.gradientColor)) {
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
 				}
 				else
-					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[team][spotted].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();
-			ImGui::Checkbox("Health Bar", &cfg->esp.players[team][spotted].healthBar.enabled);
+			ImGui::Checkbox("Health Bar", &cfg->esp.players[categories[list + spotted]].healthBar.enabled);
 			ImGui::PushID("healbar");
 			ImGui::SameLine();
 			if (ImGui::Button("..."))
 				ImGui::OpenPopup("");
 
 			if (ImGui::BeginPopup("")) {
-				ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[team][spotted].healthBar.solidColor.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].healthBar.solidColor.enabled);
-				ImGuiCustom::colorPicker("Health Number", cfg->esp.players[team][spotted].healthBar.showHealthNumber.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].healthBar.showHealthNumber.enabled);
+				ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].healthBar.solidColor.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.solidColor.enabled);
+				ImGuiCustom::colorPicker("Health Number", cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.enabled);
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();
-			ImGuiCustom::colorPicker("Lines", cfg->esp.players[team][spotted].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[team][spotted].other.lines.enabled);
+			ImGuiCustom::colorPicker("Lines", cfg->esp.players[categories[list + spotted]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.lines.enabled);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Misc")) {
