@@ -55,7 +55,7 @@ void Core::entityDataUpdate() noexcept {
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
 
 	entityData.clear();
-	for (int unsigned idx = 0; idx <= 32; idx++) {
+	for (int unsigned idx = 1; idx <= 32; idx++) {
 		const auto& entity = getEntity(idx);
 		if (!entity) continue;
 
@@ -77,7 +77,10 @@ void Core::entityDataUpdate() noexcept {
 		ReadProcessMemory(csgo.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
 		std::string placename = (temp + '\0');
 
-		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename });
+		const auto& rank = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + (idx * 4));
+		const auto& wins = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + (idx * 4));
+
+		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename, rank, wins });
 	}
 }
 

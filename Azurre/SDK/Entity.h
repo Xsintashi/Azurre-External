@@ -198,6 +198,8 @@ struct PlayerData {
 	int money;
 	int weaponID;
     std::string placename;
+    int rank;
+    int wins;
 };
 
 inline std::vector<PlayerData> entityData;

@@ -426,6 +426,9 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::End();
 }
 
+constexpr const char* ranks[] = { "Unranked", "Silver I", "Silver II", "Silver III", "Silver IV", "Silver Elite", "Silver Elite Master", "Gold Nova I", "Gold Nova II", "Gold Nova III", "Gold Nova Elite", "Master Guardian I", "Master Guardian II", "Master Guardian Elite", "Distinguished Master Guardian", "Legendary Eagle", "Legendary Eagle Master", "Supreme Master First Class", "The Global Elite" };
+
+
 void GUI::RenderPlayerList() noexcept {
 	ImGui::Begin(
 		"Player List",
@@ -437,7 +440,7 @@ void GUI::RenderPlayerList() noexcept {
 		cfg->m.playerList.pos = {};
 	}
 	ImGui::SetNextWindowSize({ -1, -1 });
-	if (ImGui::BeginTable("Players List", 7))
+	if (ImGui::BeginTable("Players List", 8))
 	{
 		ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
@@ -445,6 +448,7 @@ void GUI::RenderPlayerList() noexcept {
 		ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Weapon", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableHeadersRow();
 		for (unsigned int row = 0; row < entityData.size(); row++)
@@ -469,6 +473,8 @@ void GUI::RenderPlayerList() noexcept {
 			ImGui::Text("$%i", entityData[row].money);
 			ImGui::TableNextColumn();
 			ImGui::Text("%s", Skin::getWeaponIDName(entityData[row].weaponID));
+			ImGui::TableNextColumn();
+			ImGui::Text("%s (%d)", ranks[entityData[row].rank], entityData[row].wins);
 			ImGui::TableNextColumn();
 			ImGui::Text("%s", entityData[row].placename.c_str());
 		}

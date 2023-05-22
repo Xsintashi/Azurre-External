@@ -1,5 +1,5 @@
 #include "Minimap.h"
-#include "SkinChanger.h"
+
 #include <string>
 #include <fstream>
 #include <windows.h>
@@ -21,6 +21,7 @@
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
 #include "../SDK/LocalPlayer.h"
+#include "../SDK/WeaponID.h"
 
 #include <d3dx9tex.h>
 #include <d3dx9.h>
