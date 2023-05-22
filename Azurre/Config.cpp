@@ -15,8 +15,7 @@
 #include "Hacks/Misc.h"
 #include "Hacks/Clantag.h"
 
-Config::Config() noexcept
-{
+Config::Config() noexcept {
     if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
         path = pathToDocuments;
         CoTaskMemFree(pathToDocuments);
@@ -33,8 +32,7 @@ Config::Config() noexcept
     logfont.lfFaceName[0] = L'\0';
 }
 
-void removeEmptyObjects(json& j) noexcept
-{
+void removeEmptyObjects(json& j) noexcept {
     for (auto it = j.begin(); it != j.end();) {
         auto& val = it.value();
         if (val.is_object() || val.is_array())
@@ -48,47 +46,40 @@ void removeEmptyObjects(json& j) noexcept
 
 #pragma region Read
 
-static void from_json(const json& j, ImVec2& v)
-{
+static void from_json(const json& j, ImVec2& v) {
     read(j, "X", v.x);
     read(j, "Y", v.y);
 }
 
-static void from_json(const json& j, ColorToggle& ct)
-{
+static void from_json(const json& j, ColorToggle& ct) {
     from_json(j, static_cast<Color4&>(ct));
     read(j, "Enabled", ct.enabled);
 }
 
-static void from_json(const json& j, Color3& c)
-{
+static void from_json(const json& j, Color3& c) {
     read(j, "Color", c.color);
     read(j, "Rainbow", c.rainbow);
     read(j, "Rainbow Speed", c.rainbowSpeed);
 }
 
-static void from_json(const json& j, ColorToggle3& ct)
-{
+static void from_json(const json& j, ColorToggle3& ct) {
     from_json(j, static_cast<Color3&>(ct));
     read(j, "Enabled", ct.enabled);
 }
 
-static void from_json(const json& j, ColorToggleRounding& ctr)
-{
+static void from_json(const json& j, ColorToggleRounding& ctr) {
     from_json(j, static_cast<ColorToggle&>(ctr));
 
     read(j, "Rounding", ctr.rounding);
 }
 
-static void from_json(const json& j, ColorToggleOutline& cto)
-{
+static void from_json(const json& j, ColorToggleOutline& cto) {
     from_json(j, static_cast<ColorToggle&>(cto));
 
     read(j, "Outline", cto.outline);
 }
 
-static void from_json(const json& j, ColorToggleThickness& ctt)
-{
+static void from_json(const json& j, ColorToggleThickness& ctt) {
     from_json(j, static_cast<ColorToggle&>(ctt));
 
     read(j, "Thickness", ctt.thickness);
@@ -196,21 +187,18 @@ static void from_json(const json& j, Config::MiscConfig::Minimap& c) {
     read<value_t::object>(j, "Pos", c.pos);
 }
 
-static void from_json(const json& j, Config::MiscConfig::FakeLag& c)
-{
+static void from_json(const json& j, Config::MiscConfig::FakeLag& c) {
     read(j, "Enabled", c.enabled);
     read(j, "Limit", c.limit);
     read(j, "Type", c.type);
 }
 
-static void from_json(const json& j, Config::MiscConfig::PlayerList& c)
-{
+static void from_json(const json& j, Config::MiscConfig::PlayerList& c) {
     read(j, "Enabled", c.enabled);
     read<value_t::object>(j, "Pos", c.pos);
 }
 
-static void from_json(const json& j, Config::MiscConfig::KeyBindsList& c)
-{
+static void from_json(const json& j, Config::MiscConfig::KeyBindsList& c) {
     read(j, "Enabled", c.enabled);
     read(j, "No Title Bar", c.noTitleBar);
     read(j, "No Background", c.noBackground);
@@ -313,57 +301,48 @@ void Config::load(const char8_t* name, bool incremental) noexcept
 
 #pragma region Write
 
-static void to_json(json& j, const ImVec2& o, const ImVec2& dummy = {})
-{
+static void to_json(json& j, const ImVec2& o, const ImVec2& dummy = {}) {
     WRITE("X", x);
     WRITE("Y", y);
 }
 
-static void to_json(json& j, const ColorToggle& o, const ColorToggle& dummy = {})
-{
+static void to_json(json& j, const ColorToggle& o, const ColorToggle& dummy = {}) {
     to_json(j, static_cast<const Color4&>(o), dummy);
     WRITE("Enabled", enabled);
 }
 
-static void to_json(json& j, const Color3& o, const Color3& dummy = {})
-{
+static void to_json(json& j, const Color3& o, const Color3& dummy = {}) {
     WRITE("Color", color);
     WRITE("Rainbow", rainbow);
     WRITE("Rainbow Speed", rainbowSpeed);
 }
 
-static void to_json(json& j, const ColorToggle3& o, const ColorToggle3& dummy = {})
-{
+static void to_json(json& j, const ColorToggle3& o, const ColorToggle3& dummy = {}) {
     to_json(j, static_cast<const Color3&>(o), dummy);
     WRITE("Enabled", enabled);
 }
 
-static void to_json(json& j, const ColorToggleRounding& o, const ColorToggleRounding& dummy = {})
-{
+static void to_json(json& j, const ColorToggleRounding& o, const ColorToggleRounding& dummy = {}) {
     to_json(j, static_cast<const ColorToggle&>(o), dummy);
     WRITE("Rounding", rounding);
 }
 
-static void to_json(json& j, const ColorToggleThickness& o, const ColorToggleThickness& dummy = {})
-{
+static void to_json(json& j, const ColorToggleThickness& o, const ColorToggleThickness& dummy = {}) {
     to_json(j, static_cast<const ColorToggle&>(o), dummy);
     WRITE("Thickness", thickness);
 }
 
-static void to_json(json& j, const ColorToggleOutline& o, const ColorToggleOutline& dummy = {})
-{
+static void to_json(json& j, const ColorToggleOutline& o, const ColorToggleOutline& dummy = {}) {
     to_json(j, static_cast<const ColorToggle&>(o), dummy);
     WRITE("Outline", outline);
 }
 
-static void to_json(json& j, const ColorToggleThicknessRounding& o, const ColorToggleThicknessRounding& dummy = {})
-{
+static void to_json(json& j, const ColorToggleThicknessRounding& o, const ColorToggleThicknessRounding& dummy = {}) {
     to_json(j, static_cast<const ColorToggleRounding&>(o), dummy);
     WRITE("Thickness", thickness);
 }
 
-static void to_json(json& j, const Config::AimbotConfig& o){
-    const Config::AimbotConfig dummy;
+static void to_json(json& j, const Config::AimbotConfig& o, const Config::AimbotConfig dummy = {}) {
     WRITE("Enabled", enabled);
     WRITE("Hotkey", hotkey);
     WRITE("Auto Shot", autoShot);
@@ -384,25 +363,21 @@ static void to_json(json& j, const Config::ClanTagConfig::CustomClanTag& o, cons
     WRITE("Speed", speed);
 }
 
-static void to_json(json& j, const Config::ClanTagConfig& o){
-    const Config::ClanTagConfig dummy;
-
+static void to_json(json& j, const Config::ClanTagConfig& o, const Config::ClanTagConfig dummy = {}){
     WRITE("Mode", mode);
     WRITE("Custom", custom);
 }
 
-static void to_json(json& j, const Config::ChamsConfig& o) {
-    const Config::ChamsConfig dummy;
-
+static void to_json(json& j, const Config::ChamsConfig& o, const Config::ChamsConfig dummy = {} ) {
+    
     WRITE("Enabled", enabled);
     WRITE("Brightness", brightness);
     WRITE("Ally", ally);
     WRITE("Enemy", enemy);
 }
 
-static void to_json(json& j, const Config::DiscordConfig& o) {
-    const Config::DiscordConfig dummy;
-
+static void to_json(json& j, const Config::DiscordConfig& o, const Config::DiscordConfig dummy = {} ) {
+    
     WRITE("Enabled", enabled);
 }
 
@@ -439,16 +414,13 @@ static void to_json(json& j, const Config::ESPConfig& o) {
 
 }
 
-static void to_json(json& j, const Config::GlowConfig& o) {
-    const Config::GlowConfig dummy;
+static void to_json(json& j, const Config::GlowConfig& o, const Config::GlowConfig dummy = {} ) {
     WRITE("Enabled", enabled);
     WRITE("Ally", ally);
     WRITE("Enemy", enemy);
 }
 
-static void to_json(json& j, const Config::GuiConfig& o) {
-    const Config::GuiConfig dummy;
-
+static void to_json(json& j, const Config::GuiConfig& o, const Config::GuiConfig dummy = {} ) {
     WRITE("AntiAliasing", antiAliasing);
     WRITE("Window Border", windowBorder);
     WRITE("Center Title", centerTitle);
@@ -480,7 +452,6 @@ static void to_json(json& j, const Config::MiscConfig::FakeLag& o, const Config:
 }
 
 static void to_json(json& j, const Config::MiscConfig::KeyBindsList& o, const Config::MiscConfig::KeyBindsList& dummy) {
-
     WRITE("Enabled", enabled);
     WRITE("No Title Bar", noTitleBar);
     WRITE("No Background", noBackground);
@@ -499,9 +470,7 @@ static void to_json(json& j, const Config::MiscConfig::PlayerList& o, const Conf
     }
 }
 
-static void to_json(json& j, const Config::MiscConfig& o) {
-    const Config::MiscConfig dummy;
-
+static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConfig dummy = {} ) {
     WRITE("Menu Key", menuKey);
     WRITE("Bunny Hop", bhop);
     WRITE("Auto Stop", autoStop);
@@ -515,10 +484,7 @@ static void to_json(json& j, const Config::MiscConfig& o) {
     WRITE("Player List", playerList);
 }
 
-static void to_json(json& j, const Config::SkinChangerConfig& o)
-{
-    const Config::SkinChangerConfig dummy;
-
+static void to_json(json& j, const Config::SkinChangerConfig& o, const Config::SkinChangerConfig dummy = {} ) {
     WRITE("Definition index", skinID);
     WRITE("Quality", quality);
     WRITE("Paint Kit", skinID);
@@ -529,18 +495,14 @@ static void to_json(json& j, const Config::SkinChangerConfig& o)
         j["Custom name"] = o.nameTag;
 }
 
-static void to_json(json& j, const Config::ChangerConfig& o)
-{
-    const Config::ChangerConfig dummy;
-
+static void to_json(json& j, const Config::ChangerConfig& o, const Config::ChangerConfig dummy = {} ) {
     WRITE("CT Knife", CTKnife);
     WRITE("T Knife", TTKnife);
     WRITE("CT Agent", CTAgent);
     WRITE("T Agent", TTAgent);
 }
 
-static void to_json(json& j, const Config::TriggerBotConfig& o) {
-    const Config::TriggerBotConfig dummy;
+static void to_json(json& j, const Config::TriggerBotConfig& o, const Config::TriggerBotConfig dummy = {} ) {
     WRITE("Enabled", enabled);
     WRITE("Hotkey", hotkey);
 }
@@ -551,9 +513,7 @@ static void to_json(json& j, const Config::VisualsConfig::CustomPostProcessing& 
     WRITE("World Exposures", worldExposure);
 }
 
-static void to_json(json& j, const Config::VisualsConfig& o) {
-    const Config::VisualsConfig dummy;
-
+static void to_json(json& j, const Config::VisualsConfig& o, const Config::VisualsConfig dummy = {} ) {
     WRITE("No Allies", noAllies);
     WRITE("No Particles", noParticles);
     WRITE("No Shadows", noShadows);
@@ -568,8 +528,7 @@ static void to_json(json& j, const Config::VisualsConfig& o) {
 
 #pragma endregion
 
-void Config::save(size_t id) const noexcept
-{
+void Config::save(size_t id) const noexcept {
     createConfigDir();
 
     if (std::ofstream out{ path / (const char8_t*)configs[id].c_str() }; out.good()) {
@@ -593,30 +552,26 @@ void Config::save(size_t id) const noexcept
     }
 }
 
-void Config::add(const char* name) noexcept
-{
+void Config::add(const char* name) noexcept {
     if (*name && std::find(configs.cbegin(), configs.cend(), name) == configs.cend()) {
         configs.emplace_back(name);
         save(configs.size() - 1);
     }
 }
 
-void Config::remove(size_t id) noexcept
-{
+void Config::remove(size_t id) noexcept {
     std::error_code ec;
     std::filesystem::remove(path / (const char8_t*)configs[id].c_str(), ec);
     configs.erase(configs.cbegin() + id);
 }
 
-void Config::rename(size_t item, const char* newName) noexcept
-{
+void Config::rename(size_t item, const char* newName) noexcept {
     std::error_code ec;
     std::filesystem::rename(path / (const char8_t*)configs[item].c_str(), path / (const char8_t*)newName, ec);
     configs[item] = newName;
 }
 
-void Config::reset() noexcept
-{
+void Config::reset() noexcept {
     a = {};
     c = {};
     clanTag = {};
@@ -633,8 +588,7 @@ void Config::reset() noexcept
     Clan::setClanTag("", "");
 }
 
-void Config::listConfigs() noexcept
-{
+void Config::listConfigs() noexcept {
     configs.clear();
 
     std::error_code ec;
@@ -644,19 +598,16 @@ void Config::listConfigs() noexcept
         [](const auto& entry) { return std::string{ (const char*)entry.path().filename().u8string().c_str() }; });
 }
 
-void Config::createConfigDir() const noexcept
-{
+void Config::createConfigDir() const noexcept {
     std::error_code ec; std::filesystem::create_directory(path, ec);
 }
 
-void Config::openConfigDir() const noexcept
-{
+void Config::openConfigDir() const noexcept {
     createConfigDir();
     ShellExecuteW(nullptr, L"open", path.wstring().c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 }
 
-static auto getFontData(const std::string& fontName) noexcept
-{
+static auto getFontData(const std::string& fontName) noexcept {
     HFONT font = CreateFontA(0, 0, 0, 0,
         FW_NORMAL, FALSE, FALSE, FALSE,
         ANSI_CHARSET, OUT_DEFAULT_PRECIS,
