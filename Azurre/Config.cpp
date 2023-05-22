@@ -184,6 +184,7 @@ static void from_json(const json& j, Config::MiscConfig::Minimap& c) {
     read(j, "No Title", c.noWindowTitle);
     read(j, "No Background", c.noWindowBackground);
     read(j, "Scale", c.scale);
+    read(j, "Hotkey", c.hotkey);
     read<value_t::object>(j, "Pos", c.pos);
 }
 
@@ -445,6 +446,7 @@ static void to_json(json& j, const Config::MiscConfig::Minimap& o, const Config:
     WRITE("No Title", noWindowTitle);
     WRITE("No Background", noWindowBackground);
     WRITE("Scale", scale);
+    WRITE("Hotkey", hotkey);
 
     if (const auto window = ImGui::FindWindowByName("Minimap")) {
         j["Pos"] = window->Pos;
