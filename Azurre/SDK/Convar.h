@@ -89,10 +89,6 @@ public:
 		csgo.Write<int32_t>(offset + 0x30, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
 	}
 
-	void setValue(bool value) {
-		csgo.Write<int32_t>(offset + 0x30, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
-	}
-
 	bool hasMin() {
 		return csgo.Read<int>(offset + 0x34);
 	}

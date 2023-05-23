@@ -660,9 +660,8 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
 			ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
-			ImGui::InputText("Hit Sound", &cfg->m.hitSound);
 			ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
-
+			ImGui::InputText("Hit Sound", &cfg->m.hitSound);
 			ImGui::PushID("hitmarker");
 			ImGui::SetNextItemWidth(80.F);
 			ImGui::Combo("Type", &cfg->m.hitMarker.type, "None\0Cross\0Cross Fading\0"); ImGui::SameLine(); ImGuiCustom::colorPicker("Hit Marker", cfg->m.hitMarker.color.color.data());

@@ -256,7 +256,7 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 
 void Minimap::Render() { //Render Thread
 	
-	if (!showMenu && cfg->m.minimap.hotkey.isActive())
+	if (!showMenu && !cfg->m.minimap.hotkey.isActive() && cfg->m.minimap.hotkey.isSet())
 		return;
 
 	constexpr auto ctColor = IM_COL32(100, 200, 255, 255);

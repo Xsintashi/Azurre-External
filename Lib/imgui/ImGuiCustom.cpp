@@ -48,8 +48,10 @@ void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const 
         {
             bool selected = key.keyMode == KeyMode::Off;
             ImGui::Selectable("Off", &selected);
-            if (selected)
+            if (selected) {
                 key.keyMode = KeyMode::Off;
+                key.reset();
+            }
 
             selected = key.keyMode == KeyMode::Always;
             ImGui::Selectable("Always", &selected);
@@ -65,9 +67,6 @@ void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const 
             ImGui::Selectable("Toggle", &selected);
             if (selected)
                 key.keyMode = KeyMode::Toggle;
-
-            if (ImGui::Selectable("Unset"))
-                key.reset();
 
             ImGui::EndPopup();
         }

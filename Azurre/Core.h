@@ -19,12 +19,7 @@ namespace Core {
 
 #include "Memory.h"
 
-inline bool showMenu =
-#if _DEBUG
-false;
-#else
-true;
-#endif;
+inline bool showMenu = false;
 inline std::string mapName = "";
 inline std::string gameDir = "";
 inline int gameState = 0;
