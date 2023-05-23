@@ -403,6 +403,7 @@ void GUI::loadWindow() noexcept {
 }
 
 void GUI::RenderDebugWindow() noexcept {
+	ImGui::SetNextWindowCollapsed(true, ImGuiCond_FirstUseEver);
 	ImGui::Begin(
 		"Debug",
 		nullptr,
@@ -555,6 +556,7 @@ void GUI::RenderPlayerList() noexcept {
 }
 
 void GUI::RenderMainMenu() noexcept {
+	ImGui::SetNextWindowPos({ screenSize.x / 2 - 320, screenSize.y / 2 - 240 }, ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize({ 640, 480 });
 	ImGui::Begin(
 		"Azurre External",
@@ -1073,9 +1075,9 @@ void watermark() {
 	for (unsigned int i = 0; i < watermark.size(); i++) {
 
 		constexpr float pi = std::numbers::pi_v<float>;
-		const float r = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime) * 0.5f + 0.5f);
-		const float g = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime + 2 * pi / 3) * 0.5f + 0.5f);
-		const float b = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime + 4 * pi / 3) * 0.5f + 0.5f);
+		const float r = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime / 2.f) * 0.5f + 0.5f);
+		const float g = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime / 2.f + 2 * pi / 3) * 0.5f + 0.5f);
+		const float b = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime / 2.f + 4 * pi / 3) * 0.5f + 0.5f);
 
 		const auto color = ImGui::GetColorU32(ImVec4{ r, g, b, 1.f });
 
