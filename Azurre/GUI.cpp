@@ -19,6 +19,9 @@
 #include "../Lib/imgui/imgui_impl_dx9.h"
 #include "../Lib/imgui/imgui_impl_win32.h"
 
+#include "PNGTexture.h"
+#include "resources.h"
+
 #include <string>
 #include <dwmapi.h>
 #include <d3d9.h>
@@ -425,12 +428,6 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::PopID();
 	ImGui::End();
 }
-
-constexpr const char* ranks[] = { "Unranked", "Silver I", "Silver II", "Silver III", "Silver IV", "Silver Elite", "Silver Elite Master", "Gold Nova I", "Gold Nova II", "Gold Nova III", "Gold Nova Elite", "Master Guardian I", "Master Guardian II", "Master Guardian Elite", "Distinguished Master Guardian", "Legendary Eagle", "Legendary Eagle Master", "Supreme Master First Class", "The Global Elite" };
-
-#include "TextureManager.h"
-#include "PNGTexture.h"
-#include "resources.h"
 
 std::array<PNGTexture, 19> ranksTextures{
 	resource::skillgroup0,

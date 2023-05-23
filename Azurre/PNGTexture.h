@@ -1,11 +1,9 @@
 #pragma once
 
-#define STB_IMAGE_IMPLEMENTATION
 #include "../Lib/stb/stb_image.h"
-
-#include <windows.h>
 #include <array>
 #include "Texture.h"
+#include <cassert>
 
 struct PNGTexture {
 	template <std::size_t N>

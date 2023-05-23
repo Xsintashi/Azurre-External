@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Texture.h"
+
 typedef struct IDirect3DTexture9* LPDIRECT3DTEXTURE9, * PDIRECT3DTEXTURE9;
 
 namespace TextureManager {

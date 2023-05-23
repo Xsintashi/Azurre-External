@@ -2,7 +2,6 @@
 
 #include "GUI.h"
 #include "resources.h"
-#include "Texture.h"
 
 #include <d3dx9tex.h>
 #include <d3dx9.h>

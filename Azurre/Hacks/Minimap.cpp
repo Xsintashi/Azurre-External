@@ -6,9 +6,7 @@
 #include <psapi.h>
 
 #define IMGUI_DEFINE_MATH_OPERATORS
-#include "../GUI.h"
-#include "../resources.h"
-#include "../Texture.h"
+
 #include "../../Lib/imgui/imgui.h"
 #include "../../Lib/imgui/imgui_internal.h"
 #include "../../Lib/imgui/ImGuiCustom.h"
@@ -16,8 +14,10 @@
 #include "../../Lib/imgui/imgui_impl_dx9.h"
 #include "../../Lib/imgui/imgui_impl_win32.h"
 
-#include "../TextureManager.h"
+#define STB_IMAGE_IMPLEMENTATION
 #include "../PNGTexture.h"
+#include "../TextureManager.h"
+#include "../resources.h"
 
 #include "../SDK/Vector.h"
 #include "../SDK/GlobalVars.h"
@@ -68,6 +68,7 @@ const PNGTexture tec9Texture{ resource::tec9 };
 const PNGTexture ump45Texture{ resource::ump45 };
 const PNGTexture usp_silencerTexture{ resource::usp_silencer };
 const PNGTexture xm1014Texture{ resource::xm1014 };
+
 
 std::string parseString(const std::string& szBefore, const std::string& szSource) noexcept
 {
