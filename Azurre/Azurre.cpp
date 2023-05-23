@@ -1,3 +1,4 @@
+#pragma warning(disable : 4828)
 #include "GUI.h"
 #include "Core.h"
 #include "Config.h"
@@ -49,12 +50,15 @@ int __stdcall wWinMain(
 	globalVars.emplace(GlobalVars{});
 	interfaces.emplace(Interfaces{});
 
+	Core::init();
+	Discord::Run();
+	Misc::changeWindowTitle();
+
 	// create gui
 	GUI::CreateHWindow("Azurre External");
 	GUI::CreateDevice();
 	GUI::CreateImGui();
 
-	Discord::Run();
 	//SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT); //Soon
 	//while (!IConsole && GUI::isRunning) {
 	//	IConsole = FindWindowA("Valve001", NULL);
@@ -63,9 +67,6 @@ int __stdcall wWinMain(
 	//	GUI::EndRender();
 	//}
 	//SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
-	Core::init();
-
-	Misc::changeWindowTitle();
 
 	std::thread noTeammatesThread = std::thread(Visuals::doNotRenderTeammates);
 	std::thread glowThread = std::thread(Glow::run);

@@ -2,6 +2,12 @@
 
 #include <numbers>
 #include <array>
+#include <vector>
+#include <string>
+
+#include "../lib/imgui/imgui.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "../lib/imgui/imgui_internal.h"
 
 using uint8_tColor3 = std::array<uint8_t, 3>;
 using uint8_tColor4 = std::array<uint8_t, 4>;
@@ -22,7 +28,12 @@ namespace Helpers {
 	Vector lerp(float percent, Vector a, Vector b) noexcept;
 	float lerp(float percent, float a, float b) noexcept;
 
+	ImWchar* getFontGlyphRanges() noexcept;
+
 	Vector world2Screen(const ImVec2& screenSize, const Vector& pos, Matrix4x4 matrix);
+
+	bool decodeVFONT(std::vector<char>& buffer) noexcept;
+	std::vector<char> loadBinaryFile(const std::string& path) noexcept;
 
 	constexpr std::uint8_t utf8SeqLen(char firstByte) noexcept
 	{

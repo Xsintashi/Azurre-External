@@ -1,6 +1,7 @@
-#include "GUI.h"
+﻿#include "GUI.h"
 #include "Config.h"
 #include "Core.h"
+#include "Helpers.h"
 
 #include "SDK/Entity.h"
 #include "SDK/GlobalVars.h"
@@ -25,6 +26,11 @@
 #include <string>
 #include <dwmapi.h>
 #include <d3d9.h>
+#include <strsafe.h>
+#include <shlobj_core.h>
+#include <KnownFolders.h>
+
+#pragma execution_character_set("utf-8")
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -207,6 +213,23 @@ void GUI::DestroyDevice() noexcept
 	}
 }
 
+static ImFont* addFontFromVFONT(const std::string& path, float size, const ImWchar* glyphRanges, bool merge) noexcept
+{
+	auto file = Helpers::loadBinaryFile(path);
+	if (!Helpers::decodeVFONT(file))
+		return nullptr;
+
+	ImFontConfig cfg;
+	cfg.FontData = file.data();
+	cfg.FontDataSize = file.size();
+	cfg.FontDataOwnedByAtlas = false;
+	cfg.MergeMode = merge;
+	cfg.GlyphRanges = glyphRanges;
+	cfg.SizePixels = size;
+
+	return ImGui::GetIO().Fonts->AddFont(&cfg);
+}
+
 void GUI::CreateImGui() noexcept
 {
 	IMGUI_CHECKVERSION();
@@ -214,6 +237,18 @@ void GUI::CreateImGui() noexcept
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+
+	ImFontConfig cfgFont;
+	cfgFont.SizePixels = 15.0f;
+
+	ImFont* font;
+	if (PWSTR pathToFonts; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Fonts, 0, nullptr, &pathToFonts))) {
+		const std::filesystem::path path{ pathToFonts };
+		CoTaskMemFree(pathToFonts);
+		font = io.Fonts->AddFontFromMemoryTTF((void*)resource::ubuntuFont, sizeof(resource::ubuntuFont), 15.0f, &cfgFont, Helpers::getFontGlyphRanges());
+		if (!font)
+			io.Fonts->AddFontDefault(&cfgFont);
+	}
 
 	io.IniFilename = NULL;
 
@@ -405,27 +440,34 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("IntervalPerTick: %.2f", globalVars->intervalPerTick);
 	ImGui::Text("InterpolationAmount: %.2f", globalVars->interpolationAmount);
 	ImGui::Text("GameState: %i", gameState);
-
 	ImGui::Text("Choked Packets: %i", chokedPackets);
-
+	ImGui::SeparatorText("Font Test");
+	ImGui::Text("Latin: "); ImGui::SameLine();	ImGui::Text((const char*)u8"Hello. Test");
+	ImGui::Text("Slavonic: "); ImGui::SameLine();	ImGui::Text((const char*)u8"Cześć. Test");
+	ImGui::Text("Japanese: "); ImGui::SameLine();	ImGui::Text((const char*)u8"こんにちは。 テスト");
+	ImGui::Text("Chinese: "); ImGui::SameLine();	ImGui::Text((const char*)u8"你好。 測試");
+	ImGui::Text("Korean: "); ImGui::SameLine();	ImGui::Text((const char*)u8"안녕하세요. 테스트");
+	ImGui::Text("Cyrillic: "); ImGui::SameLine();	ImGui::Text((const char*)u8"Привет. Тест");
+	ImGui::Text("Greek: "); ImGui::SameLine();	ImGui::Text((const char*)u8"Γεια. Δοκιμή");
+	ImGui::Separator();
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 
-	ImGui::PushID("Roll");
-	static float roll = 0.f;
-	static float tempRoll = 0.f;
-	ImGui::SetNextItemWidth(128);
-	ImGui::SliderFloat("", &roll, -45.f, 45.f, "Roll: %.1f");
-	if (roll != tempRoll) {
-		tempRoll = roll;
-		const auto& viewAngles = csgo.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
-		csgo.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
-	}
+	//ImGui::PushID("Roll");
+	//static float roll = 0.f;
+	//static float tempRoll = 0.f;
+	//ImGui::SetNextItemWidth(128);
+	//ImGui::SliderFloat("", &roll, -45.f, 45.f, "Roll: %.1f");
+	//if (roll != tempRoll) {
+	//	tempRoll = roll;
+	//	const auto& viewAngles = csgo.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
+	//	csgo.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
+	//}
+	//ImGui::PopID();
 	static std::string cmd = "";
 	ImGui::InputText("convar", &cmd);
 	ImGui::SameLine();
 	if (ImGui::Button("Send"))
 		usr0::SendConsoleCommand(cmd);
-	ImGui::PopID();
 	ImGui::End();
 }
 
