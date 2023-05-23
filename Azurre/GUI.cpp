@@ -503,7 +503,7 @@ void GUI::RenderPlayerList() noexcept {
 			if (ImGui::IsItemHovered()) {
 				ImGui::BeginTooltip();
 				ImGui::PushFont(nullptr);
-				ImGui::TextUnformatted(std::to_string(entityData[row].wins).c_str());
+				ImGui::TextUnformatted(std::to_string(entityData[row].wins).append(" wins").c_str());
 				ImGui::PopFont();
 				ImGui::EndTooltip();
 			}
