@@ -74,7 +74,7 @@ std::string parseString(const std::string& szBefore, const std::string& szSource
 {
 	if (!szBefore.empty() && !szSource.empty() && (szSource.find(szBefore) != std::string::npos))
 	{
-		std::string t = strstr(szSource.c_str(), szBefore.c_str()); //-V522
+		std::string t = strstr(szSource.c_str(), szBefore.c_str());
 		t.erase(0, szBefore.length());
 		size_t firstLoc = t.find('\"', 0);
 		size_t secondLoc = t.find('\"', firstLoc + 1);
@@ -256,7 +256,7 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 
 void Minimap::Render() { //Render Thread
 	
-	if (!showMenu && !cfg->m.minimap.hotkey.isActive() && cfg->m.minimap.hotkey.isSet())
+	if (!showMenu && cfg->m.minimap.hotkey.isActive())
 		return;
 
 	constexpr auto ctColor = IM_COL32(100, 200, 255, 255);
