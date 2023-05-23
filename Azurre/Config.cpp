@@ -288,6 +288,8 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     if (!incremental)
         reset();
 
+    read(j, "Restrictions", restrictions);
+
     read<value_t::object>(j, "Aimbot", a);
     read<value_t::object>(j, "Chams", c);
     read<value_t::object>(j, "ClanTag", clanTag);
@@ -550,6 +552,8 @@ void Config::save(size_t id) const noexcept {
 
     if (std::ofstream out{ path / (const char8_t*)configs[id].c_str() }; out.good()) {
         json j;
+
+        j["Restrictions"] = restrictions;
 
         j["Aimbot"] = a;
         j["Chams"] = c;
