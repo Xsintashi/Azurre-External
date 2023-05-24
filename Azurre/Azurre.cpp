@@ -47,6 +47,12 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	GUI::CreateDevice();
 	GUI::CreateImGui();
 
+#ifdef _DEBUG
+	cfg->load(u8"debug", false);
+#else
+	cfg->load(u8"default", false); cfg->load(currentConfig, incrementalLoad);
+#endif 
+
 	//SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT); //Soon
 	//while (!IConsole && GUI::isRunning) {
 	//	IConsole = FindWindowA("Valve001", NULL);

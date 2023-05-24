@@ -23,9 +23,7 @@ Config::Config() noexcept {
 
     path /= "Azurre External";
     listConfigs();
-
-    load(u8"default", false);
-
+    
     LOGFONTW logfont;
     logfont.lfCharSet = ANSI_CHARSET;
     logfont.lfPitchAndFamily = DEFAULT_PITCH;
