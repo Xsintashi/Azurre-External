@@ -13,6 +13,7 @@ namespace Misc {
 	void entityLoop() noexcept;
 	void showKeybinds() noexcept;
 	void modifyConVars(bool reset = false) noexcept;
+	void bombTimer() noexcept;
 	void modifyClasses() noexcept;
 	void fastStop() noexcept;
 }

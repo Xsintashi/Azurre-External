@@ -104,6 +104,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 #if defined(_DEBUG)
 		 GUI::RenderDebugWindow();
 		 if (showMenu) ImGui::ShowDemoWindow();
+		 Misc::bombTimer();
 #endif
 		GUI::EndRender();
 	}

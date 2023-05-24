@@ -13,6 +13,7 @@
 #include <fstream>
 #include <algorithm>
 #include "../SDK/UserInterface.h"
+#include "../../Lib/imgui/ImGuiCustom.h"
 
 void Misc::bunnyHop() noexcept {
 	if (!cfg->m.bhop) return;
@@ -264,11 +265,11 @@ void Misc::modifyClasses() noexcept {
 
 	if (!localPlayer) return;
 
-	if (cfg->restrictions) return;
+	plantedC4 = nullptr;
 
 	for (int i = 0; i < 512; i++)
 	{
-		int entity = csgo.Read<int>(IClient.address + Offset::signatures::dwEntityList + i * 0x10);
+		uintptr_t entity = csgo.Read<int>(IClient.address + Offset::signatures::dwEntityList + i * 0x10);
 		if (!entity) continue;
 		if (cfg->m.fixTablet && GetClassId(entity) == ClassID::Tablet)
 			csgo.Write<bool>(entity + Offset::netvars::m_bTabletReceptionIsBlocked, false);
@@ -284,7 +285,41 @@ void Misc::modifyClasses() noexcept {
 			csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMax, worldExposure);
 			csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMin, worldExposure);
 		}
+		if (cfg->m.bombTimer.enabled && GetClassId(entity) == ClassID::PlantedC4)
+			plantedC4 = (Entity*)entity;
 	}
+}
+
+void Misc::bombTimer() noexcept {
+
+	if (!cfg->m.bombTimer.enabled)
+		return;
+
+	if (!showMenu) {
+		ImGui::SetNextWindowBgAlpha(0.3f);
+	}
+
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+	if (!showMenu)
+		windowFlags |= ImGuiWindowFlags_NoInputs;
+
+	if (cfg->m.keybinds.noTitleBar)
+		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+
+	constexpr float windowWidth = 200.0f;
+	ImGui::SetNextWindowPos({ (ImGui::GetIO().DisplaySize.x - 200.0f) / 2.0f, 60.0f }, ImGuiCond_Once);
+	ImGui::SetNextWindowSize({ windowWidth, 0 }, ImGuiCond_Once);
+
+	if (!showMenu)
+		ImGui::SetNextWindowSize({ windowWidth, 0 });
+
+	ImGui::Begin("Bomb Timer", nullptr, windowFlags);
+
+	if (plantedC4 != nullptr){
+		std::ostringstream ss; ss << "Bomb on " << (!plantedC4->bombSite() ? 'A' : 'B') << " : " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4->C4Blow() - globalVars->currentTime, 0.0f) << " s";
+		ImGui::textUnformattedCentered(ss.str().c_str());
+	}
+	ImGui::End();
 }
 
 void Misc::fastStop() noexcept	{
@@ -314,3 +349,4 @@ void Misc::fastStop() noexcept	{
 			csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6);;
 	}
 }
+

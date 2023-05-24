@@ -722,6 +722,18 @@ void GUI::RenderMainMenu() noexcept {
 			}
 			ImGui::PopID();
 
+			ImGui::PushID("BombTimer");
+			ImGui::Checkbox("Bomb Timer", &cfg->m.bombTimer.enabled);
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				ImGui::Checkbox("No Title", &cfg->m.bombTimer.noTitleBar);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+
 			ImGui::PushID("PlayerList");
 			ImGui::Checkbox("Player List", &cfg->m.playerList.enabled);
 			ImGui::SameLine();

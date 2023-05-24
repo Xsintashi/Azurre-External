@@ -95,7 +95,11 @@ public:
 			KeyBind hotkey = std::string("Player List");
 			ImVec2 pos;
 		} playerList;
-
+		struct BombTimer {
+			bool enabled = false;
+			bool noTitleBar = false;
+			ImVec2 pos;
+		} bombTimer;
 		struct Minimap {
 			bool enabled = false;
 			bool showPlayers = true;
