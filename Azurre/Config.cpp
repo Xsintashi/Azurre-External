@@ -181,8 +181,8 @@ static void from_json(const json& j, Config::MiscConfig::Minimap& c) {
     read(j, "Show Dormant", c.showDormant);
     read(j, "Show Weapons", c.showWeapons);
     read(j, "Show Grenades", c.showGrenades);
-    read(j, "No Title", c.noWindowTitle);
-    read(j, "No Background", c.noWindowBackground);
+    read(j, "No Title", c.noTitleBar);
+    read(j, "No Background", c.noBackground);
     read(j, "Scale", c.scale);
     read(j, "Hotkey", c.hotkey);
     read<value_t::object>(j, "Pos", c.pos);
@@ -445,8 +445,8 @@ static void to_json(json& j, const Config::MiscConfig::Minimap& o, const Config:
     WRITE("Show Dormant", showDormant);
     WRITE("Show Weapons", showWeapons);
     WRITE("Show Grenades", showGrenades);
-    WRITE("No Title", noWindowTitle);
-    WRITE("No Background", noWindowBackground);
+    WRITE("No Title", noTitleBar);
+    WRITE("No Background", noBackground);
     WRITE("Scale", scale);
     WRITE("Hotkey", hotkey);
 

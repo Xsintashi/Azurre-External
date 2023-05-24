@@ -495,10 +495,19 @@ std::array<PNGTexture, 19> ranksTextures{
 };
 
 void GUI::RenderPlayerList() noexcept {
+
+	if (!showMenu && !cfg->m.playerList.hotkey.isActive() && cfg->m.playerList.hotkey.isSet())
+		return;
+
+	int windowFlags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing;
+
+	if (cfg->m.playerList.noTitleBar)
+		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+
 	ImGui::Begin(
 		"Player List",
 		&cfg->m.playerList.enabled,
-		ImGuiWindowFlags_AlwaysAutoResize
+		windowFlags
 	);
 	if (cfg->m.playerList.pos != ImVec2{}) {
 		ImGui::SetNextWindowPos(cfg->m.playerList.pos);
@@ -568,7 +577,9 @@ void GUI::RenderMainMenu() noexcept {
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 		if (ImGui::BeginTabItem("Aimbot")) {
 			ImGui::PushID("aimbot");
+			ImGui::BeginDisabled(cfg->restrictions);
 			ImGui::Checkbox("Enabled", &cfg->a.enabled);
+			ImGui::EndDisabled();
 			ImGui::SameLine();
 			ImGui::hotkey("", cfg->a.hotkey);
 			ImGui::PopID();
@@ -595,18 +606,28 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Glow")) {
+			ImGui::BeginDisabled(cfg->restrictions);
 			ImGui::Checkbox("Enabled", &cfg->g.enabled);
+			ImGui::SameLine();
+			ImGui::PushID("warning-1");
+			ImGui::TextDisabled("?");
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Glow causes instant red trustfactor! Use at your own risk!");
+			ImGui::PopID();
 			ImGuiCustom::colorPicker("Enemies", cfg->g.enemy.color.data(), &cfg->g.enemy.color[3], nullptr, nullptr, &cfg->g.enemy.enabled);
 			ImGuiCustom::colorPicker("Allies", cfg->g.ally.color.data(), &cfg->g.ally.color[3], nullptr, nullptr, &cfg->g.ally.enabled);
 			ImGui::EndTabItem();
+			ImGui::EndDisabled();
 		}
 		if (ImGui::BeginTabItem("Chams")) {
+			ImGui::BeginDisabled(cfg->restrictions);
 			ImGui::Checkbox("Enabled", &cfg->c.enabled);
 			ImGuiCustom::colorPicker("Enemies", cfg->c.enemy);
 			ImGuiCustom::colorPicker("Allies", cfg->c.ally);
 			ImGui::SetNextItemWidth(200.0f);
 			ImGui::SliderFloat("Brightness", &cfg->c.brightness, 0.1f, 1.f);
 			ImGui::EndTabItem();
+			ImGui::EndDisabled();
 		}
 		if (ImGui::BeginTabItem("ESP")) {
 			static int list = 0;
@@ -650,23 +671,20 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Misc")) {
+			ImGui::PushItemWidth(96.f);
 			ImGui::Combo("Restrictions", &cfg->restrictions, "None\0Read Only");
-			ImGui::PushID("menu");
-			ImGui::Text("Bring Menu");
-			ImGui::SameLine();
-			ImGuiCustom::classicHotkey("", cfg->m.menuKey);
-			ImGui::PopID();
+			ImGuiCustom::classicHotkey("Menu Key", cfg->m.menuKey);
 			ImGui::Checkbox("Bunny Hop", &cfg->m.bhop);
+			ImGui::BeginDisabled(cfg->restrictions);
 			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
 			ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
 			ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
+			ImGui::EndDisabled();
 			ImGui::InputText("Hit Sound", &cfg->m.hitSound);
 			ImGui::PushID("hitmarker");
-			ImGui::SetNextItemWidth(80.F);
 			ImGui::Combo("Type", &cfg->m.hitMarker.type, "None\0Cross\0Cross Fading\0"); ImGui::SameLine(); ImGuiCustom::colorPicker("Hit Marker", cfg->m.hitMarker.color.color.data());
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(80.F);
 			ImGui::SliderFloat("##as", &cfg->m.hitMarker.time, 0.1f, 1.5f, "Time: %.2fs");
 
 			ImGui::PopID();
@@ -679,8 +697,8 @@ void GUI::RenderMainMenu() noexcept {
 
 			if (ImGui::BeginPopup("")) {
 				ImGui::hotkey("On Key", cfg->m.minimap.hotkey);
-				ImGui::Checkbox("No Title", &cfg->m.minimap.noWindowTitle);
-				ImGui::Checkbox("No Background", &cfg->m.minimap.noWindowBackground);
+				ImGui::Checkbox("No Title", &cfg->m.minimap.noTitleBar);
+				ImGui::Checkbox("No Background", &cfg->m.minimap.noBackground);
 				ImGui::Checkbox("Show Players", &cfg->m.minimap.showPlayers);
 				ImGui::Checkbox("Show Dormant", &cfg->m.minimap.showDormant);
 				ImGui::Checkbox("Show Weapons", &cfg->m.minimap.showWeapons);
@@ -703,14 +721,31 @@ void GUI::RenderMainMenu() noexcept {
 			}
 			ImGui::PopID();
 
+			ImGui::PushID("PlayerList");
 			ImGui::Checkbox("Player List", &cfg->m.playerList.enabled);
-			if (ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled)) {
-				ImGui::PushItemWidth(220.0f);
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				ImGui::Checkbox("No Title", &cfg->m.playerList.noTitleBar);
+				ImGui::hotkey("On Key", cfg->m.playerList.hotkey);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+			ImGui::PushID("FakeLag");
+			ImGui::BeginDisabled(cfg->restrictions);
+			ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled);
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
 				ImGui::Combo("Mode", &cfg->m.fakeLag.type, "Static\0Adaptative\0Random\0");
 				ImGui::SliderInt("##limit", &cfg->m.fakeLag.limit, 1, 16, "Limit: %d");
-				ImGui::PopItemWidth();
+				ImGui::EndPopup();
 			}
-			ImGui::PushItemWidth(220.0f);
+			ImGui::PopID();
 			ImGui::Combo("ClanTag", &cfg->clanTag.mode, "None\0Azurre\0Clock\0Reverse\0Velocity\0Position\0HP\0\\n Overflow\0Custom\0");
 			if (cfg->clanTag.mode == 8) {
 				ImGui::PushID("ClanTagCustom");
@@ -737,10 +772,12 @@ void GUI::RenderMainMenu() noexcept {
 				}
 				ImGui::PopID();
 			}
+			ImGui::EndDisabled();
 			ImGui::PopItemWidth();
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Visuals")) {
+			ImGui::BeginDisabled(cfg->restrictions);
 			ImGui::PushID("PostProcessingPopup");
 			ImGui::Checkbox("Custom post-processing", &cfg->v.customPostProcessing.enabled);
 			ImGui::SameLine();
@@ -762,17 +799,19 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::Checkbox("No Shadows", &cfg->v.noShadows);
 			ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
 			ImGui::Checkbox("No Particles", &cfg->v.noParticles);
-			ImGui::PushItemWidth(200.0f);
+			ImGui::PushItemWidth(96.f);
 			ImGui::Combo("Skybox", &cfg->v.skybox, skyboxList.data(), skyboxList.size());
 			ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");
 			ImGui::SliderInt("##fov", &cfg->v.fov, 30, 150, "Fov: %d");
 			ImGui::PopItemWidth();
+			ImGui::EndDisabled();
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Changer")) {
+			ImGui::BeginDisabled(cfg->restrictions);
 			static int itemIndex = 0;
 			static int itemIndexTemp = 0;
-			ImGui::PushItemWidth(200.0f);
+			ImGui::PushItemWidth(96.f);
 			ImGui::Combo("##1", &itemIndex, [](void* data, int idx, const char** out_text) {
 				*out_text = Skin::weaponNames[idx].name;
 					return true;
@@ -923,6 +962,7 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::Combo("T Player Model", &cfg->ch.TTAgent, modelsGUI, IM_ARRAYSIZE(modelsGUI));
 			ImGui::Combo("CT Player Model", &cfg->ch.CTAgent, modelsGUI, IM_ARRAYSIZE(modelsGUI));
 			ImGui::PopItemWidth();
+			ImGui::EndDisabled();
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Discord")) {

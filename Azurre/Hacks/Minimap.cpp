@@ -134,7 +134,7 @@ void Minimap::_() {
 	mapOriginEnd.y = 1024 * mapScale + mapOriginStart.y;
 
 	windowOffset = { 8.f, 8.f };
-	if (!config.noWindowTitle)
+	if (!config.noTitleBar)
 		windowOffset.y += 19.f;
 }
 
@@ -263,14 +263,12 @@ void Minimap::Render() { //Render Thread
 	constexpr auto ttColor = IM_COL32(255, 200, 0, 255);
 	constexpr auto lpColor = IM_COL32(203, 223, 223, 255);
 
-	int windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
+	int windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing;
 
-	if (config.noWindowTitle)
+	if (config.noTitleBar)
 		windowFlags |= ImGuiWindowFlags_NoTitleBar;
-	if (config.noWindowBackground)
+	if (config.noBackground)
 		windowFlags |= ImGuiWindowFlags_NoBackground;
-	if(!showMenu)
-		windowFlags |= ImGuiWindowFlags_NoInputs;
 
 	if (cfg->m.minimap.pos != ImVec2{}) {
 		ImGui::SetNextWindowPos(cfg->m.minimap.pos);

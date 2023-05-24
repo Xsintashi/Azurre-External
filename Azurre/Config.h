@@ -91,6 +91,8 @@ public:
 		}keybinds;
 		struct PlayerList {
 			bool enabled = false;
+			bool noTitleBar = false;
+			KeyBind hotkey = std::string("Player List");
 			ImVec2 pos;
 		} playerList;
 
@@ -100,8 +102,8 @@ public:
 			bool showDormant = false;
 			bool showWeapons = false;
 			bool showGrenades = false;
-			bool noWindowTitle = false;
-			bool noWindowBackground = false;
+			bool noTitleBar = false;
+			bool noBackground = false;
 			float scale = 1.f;
 			KeyBind hotkey = std::string("Minimap");
 			ImVec2 pos;
