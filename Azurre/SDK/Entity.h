@@ -149,8 +149,8 @@ public:
     OFFSET(defuseLength, (), Offset::netvars::m_flDefuseLength, float)
     OFFSET(bombSite, (), Offset::netvars::m_nBombSite, int)
     OFFSET(bombDefuser, (), Offset::netvars::m_hBombDefuser, int)
-    OFFSET(BombTicking, (), Offset::netvars::m_bBombTicking, bool)
-    OFFSET(BombDefused, (), Offset::netvars::m_bBombDefused, bool)
+    OFFSET(bombTicking, (), Offset::netvars::m_bBombTicking, bool)
+    OFFSET(bombDefused, (), Offset::netvars::m_bBombDefused, bool)
 
     Vector eyeAngles() noexcept {
         return { this->eyeAngleX(), this->eyeAngleY(), 0.f};

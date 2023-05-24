@@ -171,7 +171,7 @@ void renderBomb(Entity* C4, ImVec2 windowPos, unsigned int color) {
 	if (GetClassId(C4) == ClassID::PlantedC4)
 		ss << std::fixed << std::setprecision(2) << (C4->C4Blow() - globalVars->currentTime) << "sec";
 
-	if (GetClassId(C4) == ClassID::PlantedC4 && (C4->C4Blow() - globalVars->currentTime) < 0.f || C4->BombDefused()) return;
+	if (GetClassId(C4) == ClassID::PlantedC4 && (C4->C4Blow() - globalVars->currentTime) < 0.f || C4->bombDefused()) return;
 
 	ImGui::GetForegroundDrawList()->AddImage(GetClassId(C4) == ClassID::PlantedC4 ? c4PlantedTexture.getTexture() : c4Texture.getTexture(), { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale }, { 0, 0 }, { 1, 1 }, color); // 2 times smaller
 
@@ -281,6 +281,8 @@ void Minimap::Render() { //Render Thread
 
 	int windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing;
 
+	if (!showMenu)
+		windowFlags |= ImGuiWindowFlags_NoInputs;
 	if (config.noTitleBar)
 		windowFlags |= ImGuiWindowFlags_NoTitleBar;
 	if (config.noBackground)
