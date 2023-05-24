@@ -127,6 +127,8 @@ public:
     OFFSET(activeWeapon, (), Offset::netvars::m_hActiveWeapon, int)
     OFFSET(eyeAngleX, (), Offset::netvars::m_angEyeAnglesX, float)
     OFFSET(eyeAngleY, (), Offset::netvars::m_angEyeAnglesY, float)
+    OFFSET(duckAmount, (), Offset::netvars::m_flDuckAmount, float)
+    OFFSET(duckSpeed, (), Offset::netvars::m_flDuckSpeed, float)
     OFFSET(totalHits, (), Offset::netvars::m_totalHitsOnServer, int)
 
     //Planted C4

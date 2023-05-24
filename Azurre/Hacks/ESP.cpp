@@ -21,18 +21,21 @@
 
 #define drawList ImGui::GetBackgroundDrawList()
 
-void drawBorderBox(ImVec2 pos, float width, float height, ImU32 color, ImU32 color_) {
-	drawList->AddRectFilled({ pos.x - width, pos.y - .5f }, { pos.x + width, pos.y + .5f }, color); //TOP
-	drawList->AddRectFilledMultiColor({ pos.x - width + .5f, pos.y }, { pos.x - width - .5f, pos.y - height }, color, color, color_, color_); //LEFT
-	drawList->AddRectFilledMultiColor({ pos.x + width + .5f, pos.y }, { pos.x + width - .5f, pos.y - height }, color, color, color_, color_); //RIGHT
-	drawList->AddRectFilled({ pos.x - width, pos.y - height - .5f }, { pos.x + width, pos.y - height + .5f }, color_); //BOTTOM
+void drawBorderBox(Entity* entity, ImVec2 pos, float width, float height, ImU32 color, ImU32 color_) {
+	float duckHeight = 0.f;
+	if (entity->duckAmount() > .25f)
+		duckHeight += 32.f;
+	drawList->AddRectFilled({ pos.x - width, pos.y - .5f + duckHeight }, { pos.x + width, pos.y + .5f + duckHeight }, color); //TOP
+	drawList->AddRectFilledMultiColor({ pos.x - width + .5f, pos.y + duckHeight }, { pos.x - width - .5f, pos.y - height }, color, color, color_, color_); //LEFT
+	drawList->AddRectFilledMultiColor({ pos.x + width + .5f, pos.y + duckHeight }, { pos.x + width - .5f, pos.y - height }, color, color, color_, color_); //RIGHT
+	drawList->AddRectFilled({ pos.x - width, pos.y - height - .5f}, { pos.x + width, pos.y - height + .5f}, color_); //BOTTOM
 }
 
-void drawLines(ImVec2 pos, ImVec2 pos_, ImU32 color) {
+void drawLines(Entity* entity, ImVec2 pos, ImVec2 pos_, ImU32 color) {
 	drawList->AddLine(pos, pos_, color); //TOP
 }
 
-void drawHealthBar(ImVec2 pos, float width, float height, int health, ImU32 color, ImU32 colorNumber, ColorToggle3 showHealthNumber) {
+void drawHealthBar(Entity* entity, ImVec2 pos, float width, float height, int health, ImU32 color, ImU32 colorNumber, ColorToggle3 showHealthNumber) {
 	const auto centerText = ImGui::CalcTextSize(std::to_string(health).c_str());
 	drawList->AddLine({ pos.x + width + (width * .1f), pos.y - (100 - health) / 100.0f * height }, { pos.x + width + (width * .1f), pos.y - height }, color, 4.f);
 	if (showHealthNumber.enabled) { // text
@@ -41,18 +44,18 @@ void drawHealthBar(ImVec2 pos, float width, float height, int health, ImU32 colo
 	}
 }
 
-void drawPlayerName(ImVec2 pos, float width, float height, std::string name, ImU32 color) {
+void drawPlayerName(Entity* entity, ImVec2 pos, float width, float height, std::string name, ImU32 color) {
 	const auto centerText = ImGui::CalcTextSize(name.c_str());
 	drawList->AddText({pos.x - centerText.x / 2, pos.y - 4.f + (height * .1f)}, color, name.c_str());
 }
 
-void renderPlayer(Entity* player, int index, Matrix4x4 m) {
+void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
 	constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
 	int tab = 1;
 	int spotted = 0;
-	spotted = csgo.Read<int>((uintptr_t)player + Offset::netvars::m_bSpotted);
+	spotted = csgo.Read<int>((uintptr_t)entity + Offset::netvars::m_bSpotted);
 
-	if (player->isSameTeam()){
+	if (entity->isSameTeam()){
 		tab = 0;
 		spotted = 0;
 	}
@@ -60,9 +63,9 @@ void renderPlayer(Entity* player, int index, Matrix4x4 m) {
 	auto& config = cfg->esp.players[categories[tab + spotted]];
 
 #pragma region Box
-	Vector pos = player->origin();
+	Vector pos = entity->origin();
 	Vector head;
-	pos.z -= 16.f + ((localPlayer->origin().z - player->origin().z) / 2.f * 0.1f - 8.f); //fixes a bit height of the box
+	pos.z -= 16.f + ((localPlayer->origin().z - entity->origin().z) / 2.f * 0.1f - 8.f); //fixes a bit height of the box
 	head.x = pos.x;
 	head.y = pos.y;
 	head.z = pos.z + 75.f;
@@ -73,7 +76,7 @@ void renderPlayer(Entity* player, int index, Matrix4x4 m) {
 	ImVec2 pos2D = { posScreen.x, posScreen.y };
 	ImVec2 head2D = { headScreen.x, headScreen.y };
 
-	const float height = headScreen.y - posScreen.y;
+	float height = headScreen.y - posScreen.y;
 	const float width = height / 4;
 
 	const auto colorBox = config.box.gradientColor ? config.box.grandientTop.color : config.box.solid.color;
@@ -84,7 +87,7 @@ void renderPlayer(Entity* player, int index, Matrix4x4 m) {
 
 #pragma endregion Box
 #pragma region Health Bar
-	int health = player->health();
+	int health = entity->health();
 
 	const auto colorNumberHealth = ImGui::GetColorU32({ config.healthBar.showHealthNumber.color[0], config.healthBar.showHealthNumber.color[1], config.healthBar.showHealthNumber.color[2], 1.f });
 
@@ -101,19 +104,19 @@ void renderPlayer(Entity* player, int index, Matrix4x4 m) {
 	const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
 	PlayerInfo pInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (index * 0x34)));
 	std::string name = pInfo.name;
-	std::string weapon = Skin::getWeaponIDName(player->getWeaponIDFromPlayer());
+	std::string weapon = Skin::getWeaponIDName(entity->getWeaponIDFromPlayer());
 
 #pragma endregion Player Name
 	const auto colorLines = ImGui::GetColorU32({ config.other.lines.color[0], config.other.lines.color[1], config.other.lines.color[2], 1.f });
 #pragma region Skeleton
 #pragma endregion Skeleton
 
-	if (posScreen.z >= 0.01f && !player->dormant()) {
-		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, colorFinal, colorFinal_);
-		if (config.healthBar.enabled) drawHealthBar({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
-		if (config.other.names.enabled) drawPlayerName({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, colorNames);
-		if (config.other.weapons.enabled) drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y}, width, height, weapon, colorWeapon);
-		if (config.other.lines.enabled) drawLines({ gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, colorLines);
+	if (posScreen.z >= 0.01f && !entity->dormant()) {
+		if (config.box.enabled) drawBorderBox(entity, { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, colorFinal, colorFinal_);
+		if (config.healthBar.enabled) drawHealthBar(entity, { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
+		if (config.other.names.enabled) drawPlayerName(entity, { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, colorNames);
+		if (config.other.weapons.enabled) drawPlayerName(entity, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y}, width, height, weapon, colorWeapon);
+		if (config.other.lines.enabled) drawLines(entity, { gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, colorLines);
 	}
 }
 

@@ -49,6 +49,8 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_flCustomBloomScale = 0x9E4;
 		constexpr ::std::ptrdiff_t m_flDefuseCountDown = 0x29BC;
 		constexpr ::std::ptrdiff_t m_flDefuseLength = 0x29B8;
+		constexpr ::std::ptrdiff_t m_flDuckAmount = 0x2FBC;
+		constexpr ::std::ptrdiff_t m_flDuckSpeed = 0x2FC0;
 		constexpr ::std::ptrdiff_t m_flFallbackWear = 0x31E0;
 		constexpr ::std::ptrdiff_t m_flFlashDuration = 0x10470;
 		constexpr ::std::ptrdiff_t m_flFlashMaxAlpha = 0x1046C;
