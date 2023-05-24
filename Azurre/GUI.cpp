@@ -472,7 +472,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::End();
 }
 
-std::array<PNGTexture, 19> ranksTextures{
+const static std::array<PNGTexture, 19> ranksTextures{
 	resource::skillgroup0,
 	resource::skillgroup1,
 	resource::skillgroup2,
