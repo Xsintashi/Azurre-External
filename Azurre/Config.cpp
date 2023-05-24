@@ -194,6 +194,8 @@ static void from_json(const json& j, Config::MiscConfig::FakeLag& c) {
 
 static void from_json(const json& j, Config::MiscConfig::PlayerList& c) {
     read(j, "Enabled", c.enabled);
+    read(j, "No Title Bar", c.noTitleBar);
+    read(j, "Hotkey", c.hotkey);
     read<value_t::object>(j, "Pos", c.pos);
 }
 
@@ -473,7 +475,9 @@ static void to_json(json& j, const Config::MiscConfig::KeyBindsList& o, const Co
 static void to_json(json& j, const Config::MiscConfig::PlayerList& o, const Config::MiscConfig::PlayerList& dummy) {
 
     WRITE("Enabled", enabled);
-    
+    WRITE("No Title Bar", noTitleBar);
+    WRITE("Hotkey", hotkey);
+
     if (const auto window = ImGui::FindWindowByName("Player List")) {
         j["Pos"] = window->Pos;
     }

@@ -504,15 +504,16 @@ void GUI::RenderPlayerList() noexcept {
 	if (cfg->m.playerList.noTitleBar)
 		windowFlags |= ImGuiWindowFlags_NoTitleBar;
 
+	if (cfg->m.playerList.pos != ImVec2{}) {
+		ImGui::SetNextWindowPos(cfg->m.playerList.pos);
+		cfg->m.playerList.pos = {};
+	}
+
 	ImGui::Begin(
 		"Player List",
 		&cfg->m.playerList.enabled,
 		windowFlags
 	);
-	if (cfg->m.playerList.pos != ImVec2{}) {
-		ImGui::SetNextWindowPos(cfg->m.playerList.pos);
-		cfg->m.playerList.pos = {};
-	}
 	ImGui::SetNextWindowSize({ -1, -1 });
 	if (ImGui::BeginTable("Players List", 8))
 	{
