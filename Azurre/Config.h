@@ -83,23 +83,29 @@ public:
 		bool bhop = false;
 		bool radarHack = false;
 		bool autoStop = false;
+		bool grenadeTrajectory = false;
+
 		struct KeyBindsList {
 			bool enabled = false;
 			bool noTitleBar = false;
 			bool noBackground = false;
 			ImVec2 pos;
 		}keybinds;
+
 		struct PlayerList {
 			bool enabled = false;
 			bool noTitleBar = false;
 			KeyBind hotkey = std::string("Player List");
 			ImVec2 pos;
 		} playerList;
+
 		struct BombTimer {
 			bool enabled = false;
 			bool noTitleBar = false;
+			Color3 barColor{ 0.f, 1.f, 0.f };
 			ImVec2 pos;
 		} bombTimer;
+
 		struct Minimap {
 			bool enabled = false;
 			bool showPlayers = true;
@@ -112,17 +118,19 @@ public:
 			KeyBind hotkey = std::string("Minimap");
 			ImVec2 pos;
 		} minimap;
-		bool grenadeTrajectory = false;
+
 		struct FakeLag {
 			bool enabled = false;
 			int limit = 0;
 			int type = 0;
 		} fakeLag;
+
 		struct HitMarker{
 			int type = 0;
 			float time = 0.5f;
 			Color3 color{ 1.f, 1.f, 1.f };
 		} hitMarker;
+
 		std::string hitSound = "sound\\";
 	} m;
 

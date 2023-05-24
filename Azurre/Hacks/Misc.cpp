@@ -257,27 +257,64 @@ void Misc::bombTimer() noexcept {
 
 	const auto& plantedC4 = gameData.plantedC4;
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoFocusOnAppearing;
 	if (!showMenu)
 		windowFlags |= ImGuiWindowFlags_NoInputs;
 
-	if (cfg->m.keybinds.noTitleBar)
+	if (cfg->m.bombTimer.noTitleBar)
 		windowFlags |= ImGuiWindowFlags_NoTitleBar;
 
 	constexpr float windowWidth = 200.0f;
-	ImGui::SetNextWindowPos({ (ImGui::GetIO().DisplaySize.x - 200.0f) / 2.0f, 60.0f }, ImGuiCond_Once);
-	ImGui::SetNextWindowSize({ windowWidth, 0 }, ImGuiCond_Once);
+	if (cfg->m.bombTimer.pos == ImVec2{})
+		ImGui::SetNextWindowPos({ (ImGui::GetIO().DisplaySize.x - 200.0f) / 2.0f, 60.0f }, ImGuiCond_Once);
+	else {
+		ImGui::SetNextWindowPos(cfg->m.bombTimer.pos);
+		cfg->m.bombTimer.pos = {};
+	}
+	
+	if (gameData.plantedC4->bombDefused())
+		gameData.plantedC4 = nullptr;
 
-	if (!showMenu)
-		ImGui::SetNextWindowSize({ windowWidth, 0 });
+	Color3 color{ 1.f, 1.f, 1.f };
 
-	ImGui::Begin("Bomb Timer", nullptr, windowFlags);
-
-	if (gameData.plantedC4 != nullptr){
+	if (gameData.plantedC4 != nullptr || showMenu){
+		ImGui::Begin("Bomb Timer", nullptr, windowFlags);
 		std::ostringstream ss; ss << "Bomb on " << (!plantedC4->bombSite() ? 'A' : 'B') << " : " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4->C4Blow() - globalVars->currentTime, 0.0f) << " s";
 		ImGui::textUnformattedCentered(ss.str().c_str());
+
+		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, Helpers::calculateColor(cfg->m.bombTimer.barColor));
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f });
+		ImGui::progressBarFullWidth((plantedC4->C4Blow() - globalVars->currentTime) / plantedC4->timerLength(), 5.0f);
+
+		int bombDefuseris = plantedC4->bombDefuser();
+
+		if (bombDefuseris != -1) {
+			const bool canDefuse = plantedC4->C4Blow() >= plantedC4->defuseCountDown();
+
+			if (localPlayer->isDefusing()) {
+				if (canDefuse) {
+					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+					ImGui::textUnformattedCentered("You can defuse!");
+				}
+				else {
+					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
+					ImGui::textUnformattedCentered("You can not defuse!");
+				}
+				ImGui::PopStyleColor();
+			}
+			else {
+				std::ostringstream ss; ss << (gameData.defusingPlayerName.empty() ? "Player" : gameData.defusingPlayerName) << " is defusing: " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4->defuseCountDown() - globalVars->currentTime, 0.0f) << " s";
+				ImGui::textUnformattedCentered(ss.str().c_str());
+
+				ImGui::PushStyleColor(ImGuiCol_PlotHistogram, canDefuse ? IM_COL32(0, 255, 0, 255) : IM_COL32(255, 0, 0, 255));
+				ImGui::progressBarFullWidth((plantedC4->defuseCountDown() - globalVars->currentTime) / plantedC4->defuseLength(), 5.0f);
+				ImGui::PopStyleColor();
+			}
+		}
+
+		ImGui::PopStyleColor(2);
+		ImGui::End();
 	}
-	ImGui::End();
 }
 
 void Misc::fastStop() noexcept	{

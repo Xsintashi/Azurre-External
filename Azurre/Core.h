@@ -44,6 +44,7 @@ struct GameData {
 	Entity* tablet;
 	Entity* toneMapController;
 	Entity* plantedC4;
+	std::string defusingPlayerName;
 };
 
 #include "Memory.h"

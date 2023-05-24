@@ -192,6 +192,13 @@ static void from_json(const json& j, Config::MiscConfig::FakeLag& c) {
     read(j, "Type", c.type);
 }
 
+static void from_json(const json& j, Config::MiscConfig::BombTimer& c) {
+    read(j, "Enabled", c.enabled);
+    read(j, "No Title Bar", c.noTitleBar);
+    read<value_t::object>(j, "Color", c.barColor);
+    read<value_t::object>(j, "Pos", c.pos);
+}
+
 static void from_json(const json& j, Config::MiscConfig::PlayerList& c) {
     read(j, "Enabled", c.enabled);
     read(j, "No Title Bar", c.noTitleBar);
@@ -468,6 +475,17 @@ static void to_json(json& j, const Config::MiscConfig::KeyBindsList& o, const Co
     WRITE("No Background", noBackground);
 
     if (const auto window = ImGui::FindWindowByName("Keybind list")) {
+        j["Pos"] = window->Pos;
+    }
+}
+
+static void to_json(json& j, const Config::MiscConfig::BombTimer& o, const Config::MiscConfig::BombTimer& dummy) {
+
+    WRITE("Enabled", enabled);
+    WRITE("No Title Bar", noTitleBar);
+    WRITE("Color", barColor);
+
+    if (const auto window = ImGui::FindWindowByName("Bomb Timer")) {
         j["Pos"] = window->Pos;
     }
 }

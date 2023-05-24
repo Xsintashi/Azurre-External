@@ -96,6 +96,11 @@ void Core::gameDataUpdate() noexcept {
 				int clampedRank = std::clamp(rank, 0, 18);
 
 				gameData.playerData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename, clampedRank , wins });
+				
+				if (entity->isDefusing() && (uintptr_t)entity != localPlayer.get())
+					gameData.defusingPlayerName = name;
+
+				
 				break;
 			}
 			case ClassID::Tablet: {
