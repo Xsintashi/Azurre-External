@@ -50,7 +50,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 #ifdef _DEBUG
 	cfg->load(u8"debug", false);
 #else
-	cfg->load(u8"default", false); cfg->load(currentConfig, incrementalLoad);
+	cfg->load(u8"default", false);
 #endif 
 
 	//SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT); //Soon
