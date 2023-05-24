@@ -87,6 +87,12 @@ void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const 
     ImGui::PopID();
 }
 
+void ImGui::textUnformattedCentered(const char* text) noexcept
+{
+    ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(text).x) / 2.0f);
+    ImGui::TextUnformatted(text);
+}
+
 void ImGuiCustom::classicHotkey(const char* label, KeyBind& key, float samelineOffset, const ImVec2& size) noexcept
 {
     static bool waiting = true;
