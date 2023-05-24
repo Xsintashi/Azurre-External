@@ -68,6 +68,10 @@ void Core::gameDataUpdate() noexcept {
 			default:
 				break;
 			case ClassID::CSPlayer: {
+
+				if (cfg->m.radarHack && !cfg->restrictions && !entity->isSameTeam())
+					csgo.Write<bool>(entity + Offset::netvars::m_bSpotted, true);
+
 				// Player Info
 				const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
 				PlayerInfo playerInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));

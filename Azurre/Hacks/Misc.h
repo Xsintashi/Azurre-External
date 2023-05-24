@@ -10,7 +10,6 @@ namespace Misc {
 	void HitNKillSound() noexcept;
 	void changeWindowTitle(bool restore = false) noexcept;
 	void forceReload(bool onKey = false) noexcept;
-	void entityLoop() noexcept;
 	void showKeybinds() noexcept;
 	void modifyConVars(bool reset = false) noexcept;
 	void bombTimer() noexcept;

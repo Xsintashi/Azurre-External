@@ -160,21 +160,6 @@ void Misc::forceReload(bool onKey) noexcept {
 	}
 }
 
-void Misc::entityLoop() noexcept {
-
-	if (!localPlayer) return;
-
-	for (unsigned int i = 1; i <= 32; i++) {
-		const auto& entity = getEntity(i);
-		if (!entity) continue;
-
-		if (entity->isSameTeam() || entity == (Entity*)localPlayer.get()) continue;
-
-		if(cfg->m.radarHack && !cfg->restrictions)
-			csgo.Write<bool>((uintptr_t)entity + Offset::netvars::m_bSpotted, true);
-	}
-}
-
 void Misc::showKeybinds() noexcept
 {
 	if (!cfg->m.keybinds.enabled)

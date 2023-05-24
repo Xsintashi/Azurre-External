@@ -87,7 +87,6 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 				io.WantCaptureKeyboard = false;
 			}
 		}
-		Misc::entityLoop();
 		Misc::forceReload(true);
 		Misc::modifyConVars();
 		Skin::update();
