@@ -1,9 +1,10 @@
 #pragma once
 
-#include <numbers>
 #include <array>
-#include <vector>
+#include <numbers>
 #include <string>
+#include <vector>
+
 
 #include "../lib/imgui/imgui.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -34,6 +35,16 @@ namespace Helpers {
 
 	bool decodeVFONT(std::vector<char>& buffer) noexcept;
 	std::vector<char> loadBinaryFile(const std::string& path) noexcept;
+
+	std::array<float, 3U> rgbToHsv(float r, float g, float b) noexcept;
+	std::array<float, 3U> hsvToRgb(float h, float s, float v) noexcept;
+
+	std::array<float, 3U> rainbowColor(float speed) noexcept;
+	std::array<float, 4U> rainbowColor(float speed, float alpha) noexcept;
+
+	unsigned int calculateColor(Color4 color) noexcept;
+	unsigned int calculateColor(Color3 color) noexcept;
+	unsigned int calculateColor(int r, int g, int b, int a) noexcept;
 
 	constexpr std::uint8_t utf8SeqLen(char firstByte) noexcept
 	{
