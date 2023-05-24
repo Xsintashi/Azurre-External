@@ -102,7 +102,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		if (cfg->m.keybinds.enabled) Misc::showKeybinds();
 		GUI::overlay();
 #if defined(_DEBUG)
-		 if (showMenu) GUI::RenderDebugWindow();
+		 GUI::RenderDebugWindow();
 		 if (showMenu) ImGui::ShowDemoWindow();
 #endif
 		GUI::EndRender();
