@@ -34,9 +34,9 @@ void Chams::run() noexcept {
 				continue;
 
 			if (entity->isSameTeam())
-				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, allyColor);
+				csgo.Write<uint8_tColor3>(entity + Offset::netvars::m_clrRender, allyColor);
 			else
-				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, enemyColor);
+				csgo.Write<uint8_tColor3>(entity + Offset::netvars::m_clrRender, enemyColor);
 
 			float brightness = cfg->c.brightness * 10.f;
 			const auto _this = static_cast<uintptr_t>(IEngine.address + Offset::signatures::model_ambient_min - 0x2c);
@@ -45,9 +45,9 @@ void Chams::run() noexcept {
 		} else if(toggle){
 
 			if (entity->isSameTeam())
-				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
+				csgo.Write<uint8_tColor3>(entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
 			else
-				csgo.Write<uint8_tColor3>((uintptr_t)entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
+				csgo.Write<uint8_tColor3>(entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
 
 			float brightness = 0;
 			const auto _this = static_cast<uintptr_t>(IEngine.address + Offset::signatures::model_ambient_min - 0x2c);

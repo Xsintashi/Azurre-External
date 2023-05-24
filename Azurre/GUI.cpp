@@ -526,39 +526,39 @@ void GUI::RenderPlayerList() noexcept {
 		ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableHeadersRow();
-		for (unsigned int row = 0; row < entityData.size(); row++)
+		for (unsigned int row = 0; row < gameData.playerData.size(); row++)
 		{
-			auto teamColor = localPlayer.get() == (uintptr_t)entityData[row].entity ? ImVec4{ 1.0f, 0.25f, 1.0f, 1.f } : entityData[row].teamNumber == 2 ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{ 0.26f, 0.59f, 0.98f, 1.f };
-			auto hpColor = entityData[row].health < 50 ? entityData[row].health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f };
+			auto teamColor = localPlayer.get() == (uintptr_t)gameData.playerData[row].entity ? ImVec4{ 1.0f, 0.25f, 1.0f, 1.f } : gameData.playerData[row].teamNumber == 2 ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{ 0.26f, 0.59f, 0.98f, 1.f };
+			auto hpColor = gameData.playerData[row].health < 50 ? gameData.playerData[row].health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f };
 
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			ImGui::Text("%i", entityData[row].idx);
+			ImGui::Text("%i", gameData.playerData[row].idx);
 			ImGui::TableNextColumn();
 			ImGui::PushID(row);
-			ImGui::TextColored(teamColor, "%s", entityData[row].name.c_str());
+			ImGui::TextColored(teamColor, "%s", gameData.playerData[row].name.c_str());
 			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("%s", entityData[row].steamID);
+				ImGui::SetTooltip("%s", gameData.playerData[row].steamID);
 			ImGui::PopID();
 			ImGui::TableNextColumn();
-			ImGui::TextColored(hpColor, "%s", entityData[row].health < 1 ? "DEAD" : std::to_string(entityData[row].health).c_str());
+			ImGui::TextColored(hpColor, "%s", gameData.playerData[row].health < 1 ? "DEAD" : std::to_string(gameData.playerData[row].health).c_str());
 			ImGui::TableNextColumn();
-			ImGui::Text("%i%s", entityData[row].armor, entityData[row].hasHelmet ? "+H" : "");
+			ImGui::Text("%i%s", gameData.playerData[row].armor, gameData.playerData[row].hasHelmet ? "+H" : "");
 			ImGui::TableNextColumn();
-			ImGui::Text("$%i", entityData[row].money);
+			ImGui::Text("$%i", gameData.playerData[row].money);
 			ImGui::TableNextColumn();
-			ImGui::Text("%s", Skin::getWeaponIDName(entityData[row].weaponID));
+			ImGui::Text("%s", Skin::getWeaponIDName(gameData.playerData[row].weaponID));
 			ImGui::TableNextColumn();
-			ImGui::Image(ranksTextures[entityData[row].rank].getTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
+			ImGui::Image(ranksTextures[gameData.playerData[row].rank].getTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
 			if (ImGui::IsItemHovered()) {
 				ImGui::BeginTooltip();
 				ImGui::PushFont(nullptr);
-				ImGui::TextUnformatted(std::to_string(entityData[row].wins).append(" wins").c_str());
+				ImGui::TextUnformatted(std::to_string(gameData.playerData[row].wins).append(" wins").c_str());
 				ImGui::PopFont();
 				ImGui::EndTooltip();
 			}
 			ImGui::TableNextColumn();
-			ImGui::Text("%s", entityData[row].placename.c_str());
+			ImGui::Text("%s", gameData.playerData[row].placename.c_str());
 		}
 		ImGui::EndTable();
 	}

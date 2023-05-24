@@ -238,29 +238,30 @@ void Skin::add(int idx, short weaponID, int skinID, float wear, int seed, int st
 void Skin::update() {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    if (cfg->restrictions) return; //RPM ONLY
+    if (cfg->restrictions) return; //RPM ONLY 
 
-    const auto& weapons = csgo.Read<std::array<unsigned long, 8>>(localPlayer.get() + Offset::netvars::m_hMyWeapons);
+    //return; // Broken Skin changer anyway xd. will fix soon. but need to find better skin updating than cl_update
+
     const int& knifeIndex = getModelIndexByID(Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex);
     
     static const int knifeIndexCT = getModelIndexByID(WeaponID::Knife);
     static const int knifeIndexTT = getModelIndexByID(WeaponID::KnifeT);
    
-    static bool pleaseUpdate = false;
+    for (int i = 0; i < 8; i++) {
+        const auto& weapons = csgo.Read<uintptr_t>(localPlayer.get() + Offset::netvars::m_hMyWeapons + i * 0x4) & 0xfff;
+        const auto& weapon = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weapons - 1) * 0x10);
 
-    for (const auto& handle : weapons) {
-        const auto& weapon = csgo.Read<intptr_t>((IClient.address + Offset::signatures::dwEntityList + (handle & 0xFFF) * 0x10) - 0x10);
-    
+        int accountID = csgo.Read<int>(weapon + Offset::netvars::m_OriginalOwnerXuidLow);
+        if (accountID == 0) { continue; }
         if (!weapon) continue;
-    
-        short weaponIndex = csgo.Read<short>(weapon + Offset::netvars::m_iItemDefinitionIndex);
+
+        const short& weaponIndex = weapon->getWeaponID();
     
         if (weaponIndex == WeaponID::Knife || weaponIndex == WeaponID::KnifeT) {
             int defIndex = Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex;
     
             csgo.Write<short>(weapon + Offset::netvars::m_iItemDefinitionIndex, defIndex);
             csgo.Write<int>(weapon + Offset::netvars::m_nModelIndex, knifeIndex);
-            weaponIndex = csgo.Read<short>(weapon + Offset::netvars::m_iItemDefinitionIndex);
         }
     
         if (weaponIndex > WeaponID::Flashbang && weaponIndex < WeaponID::IncGrenade)
@@ -294,7 +295,7 @@ void Skin::update() {
         csgo.Write<int32_t>(weapon + Offset::netvars::m_iAccountID, csgo.Read<int32_t>(weapon + Offset::netvars::m_OriginalOwnerXuidLow));
     
         if ((localPlayer->teamNumber() == Team::CT && cfg->ch.CTKnife != 0) || (localPlayer->teamNumber() == Team::TT && cfg->ch.TTKnife != 1)) {
-            DWORD knifeViewModel = csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_hViewModel) & 0xfff;
+            DWORD knifeViewModel = csgo.Read<DWORD>(localPlayer + Offset::netvars::m_hViewModel) & 0xfff;
             knifeViewModel = csgo.Read<DWORD>(IClient.address + Offset::signatures::dwEntityList + (knifeViewModel - 1) * 0x10);
     
             if (knifeViewModel == 0) { continue; }
@@ -307,23 +308,22 @@ void Skin::update() {
                 csgo.Write<DWORD>(knifeViewModel + Offset::netvars::m_nModelIndex, knifeIndex);
             }
         }
+        if (pleaseUpdate) {
+            csgo.Write<std::int32_t>(IClientState.address + Offset::signatures::clientstate_delta_ticks, -1);
+        }
     }
-    const auto localPlayerModel = csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex);
+    const auto localPlayerModel = csgo.Read<DWORD>(localPlayer + Offset::netvars::m_nModelIndex);
     if (cfg->ch.TTAgent || cfg->ch.CTAgent) {
         if (localPlayer->teamNumber() == Team::Spectators) return;
         int modelIndex = localPlayer->teamNumber() == Team::TT ? cfg->ch.TTAgent : cfg->ch.CTAgent;
         int index = Skin::getModelIndex(models[modelIndex - 1]);
         if (!index) return;
-        if (csgo.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex) != index) {
-            csgo.Write<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex, index);
+        if (csgo.Read<DWORD>(localPlayer + Offset::netvars::m_nModelIndex) != index) {
+            csgo.Write<DWORD>(localPlayer + Offset::netvars::m_nModelIndex, index);
         }
     }
 
-    if (pleaseUpdate) {
-        csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
-        pleaseUpdate = false;
 
-    }
 }
 
 const char* Skin::getWeaponIDName(short ID) noexcept {

@@ -50,7 +50,7 @@ void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
 	constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
 	int tab = 1;
 	int spotted = 0;
-	spotted = csgo.Read<int>((uintptr_t)entity + Offset::netvars::m_bSpotted);
+	spotted = csgo.Read<int>(entity + Offset::netvars::m_bSpotted);
 
 	if (entity->isSameTeam()){
 		tab = 0;

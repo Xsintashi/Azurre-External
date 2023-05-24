@@ -261,35 +261,6 @@ void Misc::modifyConVars(bool reset) noexcept { //dont really work F
 
 }
 
-void Misc::modifyClasses() noexcept {
-
-	if (!localPlayer) return;
-
-	plantedC4 = nullptr;
-
-	for (int i = 0; i < 512; i++)
-	{
-		uintptr_t entity = csgo.Read<int>(IClient.address + Offset::signatures::dwEntityList + i * 0x10);
-		if (!entity) continue;
-		if (cfg->m.fixTablet && GetClassId(entity) == ClassID::Tablet)
-			csgo.Write<bool>(entity + Offset::netvars::m_bTabletReceptionIsBlocked, false);
-		if (cfg->v.customPostProcessing.enabled && GetClassId((int)entity) == ClassID::ToneMapController) {
-			csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomBloomScale, cfg->v.customPostProcessing.enabled);
-			csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMax, cfg->v.customPostProcessing.enabled);
-			csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMin, cfg->v.customPostProcessing.enabled);
-
-			float bloomScale = cfg->v.customPostProcessing.bloomScale * 0.01f;
-			float worldExposure = cfg->v.customPostProcessing.worldExposure * 0.001f;
-
-			csgo.Write<float>(entity + Offset::netvars::m_flCustomBloomScale, bloomScale);
-			csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMax, worldExposure);
-			csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMin, worldExposure);
-		}
-		if (cfg->m.bombTimer.enabled && GetClassId(entity) == ClassID::PlantedC4)
-			plantedC4 = (Entity*)entity;
-	}
-}
-
 void Misc::bombTimer() noexcept {
 
 	if (!cfg->m.bombTimer.enabled)
@@ -298,6 +269,8 @@ void Misc::bombTimer() noexcept {
 	if (!showMenu) {
 		ImGui::SetNextWindowBgAlpha(0.3f);
 	}
+
+	const auto& plantedC4 = gameData.plantedC4;
 
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 	if (!showMenu)
@@ -315,7 +288,7 @@ void Misc::bombTimer() noexcept {
 
 	ImGui::Begin("Bomb Timer", nullptr, windowFlags);
 
-	if (plantedC4 != nullptr){
+	if (gameData.plantedC4 != nullptr){
 		std::ostringstream ss; ss << "Bomb on " << (!plantedC4->bombSite() ? 'A' : 'B') << " : " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4->C4Blow() - globalVars->currentTime, 0.0f) << " s";
 		ImGui::textUnformattedCentered(ss.str().c_str());
 	}

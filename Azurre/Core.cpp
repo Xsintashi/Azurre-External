@@ -55,38 +55,72 @@ void Core::update() {
 	Discord::Update();
 };
 
-void Core::entityDataUpdate() noexcept {
+void Core::gameDataUpdate() noexcept {
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
 
-	entityData.clear();
-	for (int unsigned idx = 0; idx <= 32; idx++) {
+	gameData = {}; // reset GameData
+	for (int unsigned idx = 0; idx <= 1024; idx++) {
+
 		const auto& entity = getEntity(idx);
 		if (!entity) continue;
 
-		// Player Info
-		const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
-		PlayerInfo playerInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
+		switch (GetClassId(entity)){
+			default:
+				break;
+			case ClassID::CSPlayer: {
+				// Player Info
+				const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
+				PlayerInfo playerInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
 
-		const auto& health = entity->health();
-		const auto& armor = entity->armor();
-		const auto& hasHelmet = entity->hasHelmet();
-		const auto& hasDefuser = entity->hasDefuser();
-		const auto& teamNumber = static_cast<int>(entity->teamNumber());
-		const auto& money = entity->money();
-		const auto& weaponID = entity->getWeaponIDFromPlayer();
-		const std::string name = playerInfo.name;
-		const bool bot = playerInfo.fakeplayer;
-		const char* steamID = playerInfo.szSteamID;
-		char temp[18];
-		ReadProcessMemory(csgo.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
-		std::string placename = (temp + '\0');
+				const auto& health = entity->health();
+				const auto& armor = entity->armor();
+				const auto& hasHelmet = entity->hasHelmet();
+				const auto& hasDefuser = entity->hasDefuser();
+				const auto& teamNumber = static_cast<int>(entity->teamNumber());
+				const auto& money = entity->money();
+				const auto& weaponID = entity->getWeaponIDFromPlayer();
+				const std::string name = playerInfo.name;
+				const bool bot = playerInfo.fakeplayer;
+				const char* steamID = playerInfo.szSteamID;
+				char temp[18];
+				ReadProcessMemory(csgo.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
+				std::string placename = (temp + '\0');
 
-		const auto& rank = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + idx * 4);
-		const auto& wins = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + idx * 4);
+				const auto& rank = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + idx * 4);
+				const auto& wins = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + idx * 4);
 
-		int clampedRank = std::clamp(rank, 0 ,18);
+				int clampedRank = std::clamp(rank, 0, 18);
 
-		entityData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename, clampedRank , wins });
+				gameData.playerData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename, clampedRank , wins });
+				break;
+			}
+			case ClassID::Tablet: {
+				gameData.tablet = entity;
+				if (cfg->m.fixTablet)
+					csgo.Write<bool>(gameData.tablet + Offset::netvars::m_bTabletReceptionIsBlocked, false);
+				break;
+			}
+			case ClassID::ToneMapController: {
+				gameData.toneMapController = entity;
+				if (cfg->v.customPostProcessing.enabled) {
+					csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomBloomScale, cfg->v.customPostProcessing.enabled);
+					csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMax, cfg->v.customPostProcessing.enabled);
+					csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMin, cfg->v.customPostProcessing.enabled);
+
+					float bloomScale = cfg->v.customPostProcessing.bloomScale * 0.01f;
+					float worldExposure = cfg->v.customPostProcessing.worldExposure * 0.001f;
+
+					csgo.Write<float>(entity + Offset::netvars::m_flCustomBloomScale, bloomScale);
+					csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMax, worldExposure);
+					csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMin, worldExposure);
+				}
+				break;
+			}
+			case ClassID::PlantedC4: {
+				gameData.plantedC4 = entity;
+				break;
+			}
+		}
 	}
 }
 

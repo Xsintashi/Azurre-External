@@ -66,7 +66,7 @@ void Visuals::doNotRenderTeammates() {
             }
 
             if (entity->isSameTeam())
-                csgo.Write<bool>((uintptr_t)entity + Offset::netvars::m_bReadyToDraw, false);
+                csgo.Write<bool>(entity + Offset::netvars::m_bReadyToDraw, false);
         }
     }
 }

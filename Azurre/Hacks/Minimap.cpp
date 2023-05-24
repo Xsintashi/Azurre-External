@@ -168,12 +168,12 @@ void renderBomb(Entity* C4, ImVec2 windowPos, unsigned int color) {
 
 	std::ostringstream ss;
 
-	if (GetClassId((uintptr_t)C4) == ClassID::PlantedC4)
+	if (GetClassId(C4) == ClassID::PlantedC4)
 		ss << std::fixed << std::setprecision(2) << (C4->C4Blow() - globalVars->currentTime) << "sec";
 
-	if (GetClassId((uintptr_t)C4) == ClassID::PlantedC4 && (C4->C4Blow() - globalVars->currentTime) < 0.f || C4->BombDefused()) return;
+	if (GetClassId(C4) == ClassID::PlantedC4 && (C4->C4Blow() - globalVars->currentTime) < 0.f || C4->BombDefused()) return;
 
-	ImGui::GetForegroundDrawList()->AddImage(GetClassId((uintptr_t)C4) == ClassID::PlantedC4 ? c4PlantedTexture.getTexture() : c4Texture.getTexture(), { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale }, { 0, 0 }, { 1, 1 }, color); // 2 times smaller
+	ImGui::GetForegroundDrawList()->AddImage(GetClassId(C4) == ClassID::PlantedC4 ? c4PlantedTexture.getTexture() : c4Texture.getTexture(), { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale }, { 0, 0 }, { 1, 1 }, color); // 2 times smaller
 
 	const auto centerText = ImGui::CalcTextSize(ss.str().c_str());
 	ImGui::GetForegroundDrawList()->AddText({ xOnTheMap - centerText.x / 2, yOnTheMap }, IM_COL32(255, 255, 255, 255), ss.str().c_str());
@@ -248,7 +248,7 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 		ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 16.f, color, 0);
 
 	ImTextureID texture;
-	switch (GetClassId((uintptr_t)entity)) {
+	switch (GetClassId(entity)) {
 		default:
 		case ClassID::Flashbang:
 			texture = flash.getTexture();
@@ -377,7 +377,7 @@ void Minimap::Render() { //Render Thread
 				renderItem(entity, windowPos, negevTexture.getTexture(), 1.5f); break;
 			}
 		}
-		switch(GetClassId((uintptr_t)entity)) {
+		switch(GetClassId(entity)) {
 			case ClassID::CSPlayer: {
 				renderPlayer(entity, windowPos, entity->teamNumber() == Team::TT ? ttColor : ctColor, idx);
 				break;

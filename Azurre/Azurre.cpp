@@ -89,12 +89,11 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		}
 		Misc::entityLoop();
 		Misc::forceReload(true);
-		Misc::modifyClasses();
 		Misc::modifyConVars();
 		Skin::update();
 		GUI::update();
 		GUI::BeginRender();
-		Core::entityDataUpdate();
+		Core::gameDataUpdate();
 		Misc::HitNKillSound();
 		if (showMenu) GUI::RenderMainMenu();
 		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();

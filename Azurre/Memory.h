@@ -8,6 +8,8 @@
 
 #include "Config.h"
 
+class Entity;
+
 class Memory
 {
 private:
@@ -101,6 +103,13 @@ public:
 		::ReadProcessMemory(processHandle, reinterpret_cast<const void*>(address), &value, sizeof(T), NULL);
 		return value;
 	}
+	template <typename T>
+	constexpr const T Read(const Entity* address) const noexcept
+	{
+		T value = { };
+		::ReadProcessMemory(processHandle, reinterpret_cast<const void*>((uintptr_t)address), &value, sizeof(T), NULL);
+		return value;
+	}
 
 	// Write process memory
 	template <typename T>
@@ -108,6 +117,12 @@ public:
 	{
 		if(!cfg->restrictions)
 			::WriteProcessMemory(processHandle, reinterpret_cast<void*>(address), &value, sizeof(T), NULL);
+	}
+	template <typename T>
+	void Write(const Entity* address, const T& value) const noexcept
+	{
+		if (!cfg->restrictions)
+			::WriteProcessMemory(processHandle, reinterpret_cast<void*>((uintptr_t)address), &value, sizeof(T), NULL);
 	}
 	DWORD grabSig(DWORD base, DWORD size, BYTE* sign, char* mask);
 };

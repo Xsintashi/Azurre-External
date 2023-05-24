@@ -105,8 +105,8 @@ enum class ClassID {
     XM1014,
 };
 
-static ClassID GetClassId(int entity) {
-    return (ClassID)csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(entity + 8) + 2 * 4) + 1) + 20);
+static ClassID GetClassId(Entity* entity) {
+    return (ClassID)csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(csgo.Read<int>((uintptr_t)entity + 8) + 2 * 4) + 1) + 20);
 }
 
 class Entity {
@@ -173,12 +173,12 @@ public:
     }
 
     bool isWeapon() noexcept {
-        const ClassID classID = GetClassId((uintptr_t)this);
+        const ClassID classID = GetClassId(this);
         return (classID == ClassID::Ak47 || classID == ClassID::Deagle || (classID > ClassID::Aug && classID < ClassID::XM1014));
     }
 
     short getWeaponIDFromPlayer() noexcept {
-        int weaponIndex = csgo.Read<int>((uintptr_t)this + Offset::netvars::m_hActiveWeapon) & 0xFFF;
+        int weaponIndex = csgo.Read<int>(this + Offset::netvars::m_hActiveWeapon) & 0xFFF;
         if (!weaponIndex)
             return 0;
 
@@ -186,11 +186,11 @@ public:
         if (!activeWeapon)
             return 0;
 
-        return csgo.Read<short>((uintptr_t)activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
+        return csgo.Read<short>(activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
     }
 
     short getWeaponID() noexcept {
-        return csgo.Read<short>((uintptr_t)this + Offset::netvars::m_iItemDefinitionIndex);
+        return csgo.Read<short>(this + Offset::netvars::m_iItemDefinitionIndex);
     }
 
 };
@@ -200,23 +200,3 @@ static Entity* getEntity(int idx) {
     if (!entity) return 0;
     return entity;
 }
-
-struct PlayerData {
-	Entity* entity;
-	int unsigned idx;
-    const char* steamID;
-	bool isBot;
-	std::string name;
-	int health;
-	int armor;
-    bool hasHelmet;
-    bool hasDefuser;
-	int teamNumber;
-	int money;
-	int weaponID;
-    std::string placename;
-    int rank;
-    int wins;
-};
-
-inline std::vector<PlayerData> entityData;

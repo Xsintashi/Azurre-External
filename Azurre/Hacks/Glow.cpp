@@ -39,7 +39,7 @@ void Glow::run() noexcept {
 			else
 				color = Helpers::ConvertColors4ToUint8_t(cfg->g.enemy.color);;
 
-			const auto glowIndex = csgo.Read<std::int32_t>((uintptr_t)entity + Offset::netvars::m_iGlowIndex);
+			const auto glowIndex = csgo.Read<std::int32_t>(entity + Offset::netvars::m_iGlowIndex);
 
 			csgo.Write<uint8_t>(IClient.address + Offset::signatures::force_update_spectator_glow, 235); //Fix Flickering
 
