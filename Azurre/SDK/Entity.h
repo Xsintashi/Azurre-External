@@ -16,6 +16,14 @@ enum class Team {
     CT
 };
 
+enum LifeState {
+    LIFE_ALIVE,         // alive
+    LIFE_DYING,         // playing death animation or still falling off of a ledge waiting to hit ground
+    LIFE_DEAD,          // dead. lying still.
+    LIFE_RESPAWNABLE,
+    LIFE_DISCARDBODY,
+};
+
 enum class ClassID {
     Ak47 = 1,
     BaseCSGrenadeProjectile = 9,
@@ -130,9 +138,17 @@ public:
     OFFSET(duckAmount, (), Offset::netvars::m_flDuckAmount, float)
     OFFSET(duckSpeed, (), Offset::netvars::m_flDuckSpeed, float)
     OFFSET(totalHits, (), Offset::netvars::m_totalHitsOnServer, int)
+    OFFSET(lifeState, (), Offset::netvars::m_lifeState, bool)
+
+    OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
 
     //Planted C4
     OFFSET(C4Blow, (), Offset::netvars::m_flC4Blow, float)
+    OFFSET(timerLength, (), Offset::netvars::m_flTimerLength, float)
+    OFFSET(defuseCountDown, (), Offset::netvars::m_flDefuseCountDown, float)
+    OFFSET(defuseLength, (), Offset::netvars::m_flDefuseLength, float)
+    OFFSET(bombSite, (), Offset::netvars::m_nBombSite, int)
+    OFFSET(bombDefuser, (), Offset::netvars::m_hBombDefuser, int)
     OFFSET(BombTicking, (), Offset::netvars::m_bBombTicking, bool)
     OFFSET(BombDefused, (), Offset::netvars::m_bBombDefused, bool)
 
@@ -140,14 +156,12 @@ public:
         return { this->eyeAngleX(), this->eyeAngleY(), 0.f};
     }
 
-    OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
-
     //Weapon
     OFFSET(clip, (), Offset::netvars::m_iClip1, int)
     OFFSET(isInReload, (), Offset::netvars::m_bInReload, bool)
 
     bool isDead() noexcept {
-        return this->health() < 1;
+        return this->lifeState() == LifeState::LIFE_DEAD;
     }
 
     bool isSameTeam() noexcept {
