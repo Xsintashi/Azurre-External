@@ -68,6 +68,8 @@ const PNGTexture tec9Texture{ resource::tec9 };
 const PNGTexture ump45Texture{ resource::ump45 };
 const PNGTexture usp_silencerTexture{ resource::usp_silencer };
 const PNGTexture xm1014Texture{ resource::xm1014 };
+const PNGTexture ctDeathTexture{ resource::ctDeath };
+const PNGTexture tDeathTexture{ resource::tDeath };
 
 
 std::string parseString(const std::string& szBefore, const std::string& szSource) noexcept
@@ -193,9 +195,6 @@ void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int inde
 	if (!config.showPlayers)
 		return;
 
-	if (entity->isDead())
-		return;
-
 	if (entity->dormant() && config.showDormant)
 		color -= IM_COL32(0, 0, 0, 196);
 	else if (entity->dormant())
@@ -206,6 +205,23 @@ void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int inde
 
 	float xOnTheMap = (originX + windowPos.x + windowOffset.x + fabs(mapOriginStart.x) / mapScale / 2 * config.scale);
 	float yOnTheMap = (-originY + windowPos.y + windowOffset.y + fabs(mapOriginStart.y) / mapScale / 2 * config.scale);
+
+	if (entity->lifeState() == LifeState::LIFE_DYING) {
+		ImTextureID texture;
+		switch (entity->teamNumber()) {
+		default:
+		case Team::TT:
+			texture = tDeathTexture.getTexture();
+			break;
+		case Team::CT:
+			texture = ctDeathTexture.getTexture();
+			break;
+		}
+		ImGui::GetForegroundDrawList()->AddImage(texture, { xOnTheMap - iconSize * config.scale * 1.5f ,  yOnTheMap - iconSize * config.scale * 1.5f }, { xOnTheMap + iconSize * config.scale * 1.5f,  yOnTheMap + iconSize * config.scale * 1.5f });
+	}
+
+	if (entity->isDead())
+		return;
 
 	ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 4.f * config.scale, color, 0);
 

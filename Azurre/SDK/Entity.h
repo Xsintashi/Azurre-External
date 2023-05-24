@@ -161,7 +161,7 @@ public:
     OFFSET(isInReload, (), Offset::netvars::m_bInReload, bool)
 
     bool isDead() noexcept {
-        return this->lifeState() == LifeState::LIFE_DEAD;
+        return this->health() < 1;
     }
 
     bool isSameTeam() noexcept {

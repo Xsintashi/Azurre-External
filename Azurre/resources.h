@@ -586,6 +586,24 @@ namespace resource {
         "p,e4->k2uo($l9[]mfA9<agajdpm[/&tA$RGb*d.mJ2N:asA$RGb*d.wRhX)kbYo[=0nM/(8>&#mb:J:T%f#[HVq0#"
 	    );
 
+	inline constexpr auto ctDeath = decodeBase85(
+		"=pxq9_8v7&0C/2'K(HH=dfES7dfES715###SG=IGW%###1EHr9809Gf)9+##%>a$8]=%##mTU#u43###:nq::E*'##Jq)##i)ZucJ&c-#P`5Y:vv8]IU8I<;4H>N)pE47%K%e*1]'TUS"
+		"p]8fPMZ85W*e:5<Bi>#,fFj2$O5-_LBdvEFH58^H1,Z?S1M,u8jhhhuR[s.tm@hWJ_u?6+/^l,#/^l,#/^l,#/^l,#/^l,#/^l,#/^l,#/^l,#Ue=g&=H=toWpgW`/mUSb/fkHd_WWdC"
+		"M-0kkVZ0)fQ<X,c4Vfl@@$v%W,V`.oSvB=5h5Rr,B2VVWlVwQAlYHR0eYgjEm6Wvt.wkoT4S2O$]u=-pQo7g(Ca'6b'bCWhO^=vioj=0B9kno%q$Xd>lP#<X;[Q('lZhgL49Q+U'4P^9"
+		"0-T0I^Mlub;fc8^KNsc#BG;KcHgK5LW)Tqp?*eohEN$,&<cJhLR1Wu9;3*n0iFt&E<J:%#oRq2'WnY46=XX$2YvKt6,)Z3vL$+G8,$Et(e_LGuc=*2@g/nj'lha@tY6I^[(Lx6(-dTF%"
+		"VHjl&<Agv5PYgc34CR,;+GTMDQYn,V-pV0jCG1#H@kxxi*K4G#uf#43_^G0T56ST#UfK'=ZC_iB1fFE83B,J_?/YF?CaMPRrl8x@b;X#qxqe:@bY3[Y93ZAsEhtal%aksOxg0[Ygo49["
+		"IhNfO71J2Dv?_8eAsC*=]E%r^]hOXaoR11:<9]MQS:e%XO[oUCwu$HBt#]g>N:]L$QD[Nn,$0eq:Kl%;o6sm/Pg)B;LwH@3;NXa#,aFFQ)Y9OsLbMNIoJP:XAB_vfEjG@fgh)[]&h]fn"
+		"wR,s+Eu^VRIS,89f@wa>@`Rts+Dh_udnuxCS%oxCS%oxCS%oxCS%oxCS%oxCS%oxCS%oxCS%oxC3Y]`93wJE<-d3StpQ8$#mb:J:T%f#[HVq0#");
+
+	inline constexpr auto tDeath = decodeBase85(
+		"=pxq9_8v7&0C/2'K(HH=dfES7dfES715###SG=IGW%###1EHr9809Gf)9+##%>a$8]=%##mTU#u43###:nq::E*'##Jq)##i)ZucJ&c-#MMpX:vv8]IK39*8+a$6(TOlS#0F`DF.IJsi"
+		"ca_3#@jn>1;rST[tG,E4Uh[P/7N+T#NLf`#QOI7(%pgH],?k]So1K@>[*a/F/qqo^uFTse]Qf?1b[44*N8FE1$Njh?%$[W]&o]uC*eAre0D*ST=YPl3X:)`D5D6s$-evhK7/4w+k']@H"
+		"QQ4>of1k0@]3+P*gBm?[fxa@1[/Gdg)00>t5Dt+'E(7TE8OCW82rkA]o<gRj4_&`jm1LLc(jAJ*fQQ1(p?iv]IWC$Pm`j@MXslr6Vu1b?s.31-SHNDl[`-*63bMJo_wtSN$4XOeoQ-_n"
+		"$]v7ivjnbij-:3Z(t=cLNKp3>u<+I19pZDjL>7#=tph+&8.uMLk+v^8;Kr@lfE*B1Pg>cLQg*2_ZLOUFl:*t2p%tQn9L[ue2@5SRjBEwtD%Y#92Q7FA*B_&#I,4]&eKP4o^Y5G/m3h+o"
+		"@l:I65Gq>>L_9v(HoiZY`lsh?+9vapARw`9weJe$m`Tpglpal)x^g_30<&5)Up`LT=P_f%tqTM`n=:sDrgO?k]sM&Y?K6/tQ,:eO-0qEDT_YBLpK;[)D?ZiloHLK)P?M]J,%(nU_;@vc"
+		"?Pl+/Qq&F*P4d2MG<,gV//)de=$8D$FeUK)_0/<`5j:E(BGAada:ev]5=odLB-&1&k5JqaE1DDSJFQ`W:7NLEj-E,C))vY8/w_rQ,etHFE;EI_-wb4%)W9W2(,3'fhfxRY92H7^%#O2?"
+		"i$@S(E>Ze*Rm`W#A+F'Et:M.vfAkh?%$[W]&o]uC*eAre0D*ST=YPl3X:)`D8R/FgLvZQWvg]i9/$Vr$CmTJB]e20r#####D2&u8LsapL");
+
     inline constexpr auto skillgroup0 = decodeBase85(
         "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.$%###*/s*>v,h`Ih$h_@4E5G>SE7qC)3#g=Yx-JG2,mhFd/^KFe%]A@vID.GAD.*?,?Pc>VQR6D5+CPD<Fik;'m-&@I^ODHe,h+>"
         ";^v]JgMo_>(9Pc>8KQAJMv9&I`N=.=u&5G>_8iu5^lGc4<nq02XlSK+s:aWB^)J6:B'aw8Z9d31fXa>A;w4F5gq*^6W;gF478USDwNwe)Cee]6D^3i2wCgk;#L+#-.('u.vpJD?''Gc>"
