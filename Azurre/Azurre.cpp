@@ -23,25 +23,14 @@
 
 #include <thread>
 
-int __stdcall wWinMain(
-	HINSTANCE instance,
-	HINSTANCE previousInstance,
-	PWSTR arguments,
-	int commandShow) {
+int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR arguments, int commandShow) {
 
-	// Try to open the mutex.
 	HANDLE mutex = OpenMutex(
 		MUTEX_ALL_ACCESS, 0, "azurreX");
 
 	if (!mutex)
-		// Mutex doesn’t exist. This is
-		// the first instance so create
-		// the mutex.
-		mutex =
-		CreateMutex(0, 0, "azurreX");
+		mutex = CreateMutex(0, 0, "azurreX");
 	else {
-		// The mutex exists so this is the
-		// the second instance so return.
 		MessageBoxA(nullptr, "Only one instance of the software can be running at one time.", "Azurre External", MB_OK | MB_ICONINFORMATION);
 		return 0;
 	}
@@ -54,7 +43,6 @@ int __stdcall wWinMain(
 	Discord::Run();
 	Misc::changeWindowTitle();
 
-	// create gui
 	GUI::CreateHWindow("Azurre External");
 	GUI::CreateDevice();
 	GUI::CreateImGui();
@@ -78,7 +66,6 @@ int __stdcall wWinMain(
 	while (GUI::isRunning){
 		std::this_thread::sleep_for(std::chrono::milliseconds(8)); // cap to 128tps
 		if (cfg->m.menuKey.isPressed()) {
-
 			ImGuiIO& io = ImGui::GetIO(); (void)io;
 			showMenu = !showMenu;
 			if (showMenu) {
@@ -110,7 +97,7 @@ int __stdcall wWinMain(
 		GUI::overlay();
 #if defined(_DEBUG)
 		 if (showMenu) GUI::RenderDebugWindow();
-		// if (showMenu) ImGui::ShowDemoWindow();
+		 if (showMenu) ImGui::ShowDemoWindow();
 #endif
 		GUI::EndRender();
 	}
