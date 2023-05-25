@@ -392,7 +392,7 @@ const char* Skin::getWeaponIDName(short ID) noexcept {
 
     case WeaponID::Molotov: return "Molotov";
     case WeaponID::IncGrenade: return "Incendiary Grenade";
-    case WeaponID::HeGrenade: return "Explosiveu Grenade";
+    case WeaponID::HeGrenade: return "Explosive Grenade";
     case WeaponID::SmokeGrenade: return "Smoke Grenade";
     case WeaponID::Decoy: return "Decoy";
     case WeaponID::Flashbang: return "Flashbang";
