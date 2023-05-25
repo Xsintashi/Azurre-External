@@ -30,7 +30,7 @@ void Aimbot::run() noexcept {
 		float bestFov = cfg->a.fov;
 		Vector bestAngle = {};
 
-		int weaponIndex = csgo.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & 0xFFF;
+		int weaponIndex = csgo.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
 
 		if (!weaponIndex) continue;
 

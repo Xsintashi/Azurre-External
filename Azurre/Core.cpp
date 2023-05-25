@@ -29,13 +29,16 @@ void Core::init() {
 	IClientState.address = csgo.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
 	IPlayerResource.address = csgo.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
 	localPlayer.init(csgo.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
-	gameState = csgo.Read<int>(IClientState.address + 0x108);
+	gameState = csgo.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
 	const auto dir = csgo.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
 	gameDir = dir.data();
 };
 
 void Core::update() {
 	IConsole = FindWindowA("Valve001", NULL);
+	gameState = csgo.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
+	IClientState.address = csgo.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
+	IPlayerResource.address = csgo.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
 	localPlayer.init(csgo.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 	globalVars = csgo.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
@@ -57,8 +60,9 @@ void Core::update() {
 
 void Core::gameDataUpdate() noexcept {
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
-
 	gameData = {}; // reset GameData
+	const int obsTarget = (localPlayer->observerTarget() & ENT_ENTRY_MASK);
+
 	for (int unsigned idx = 0; idx <= 1024; idx++) {
 
 		const auto& entity = getEntity(idx);
@@ -71,6 +75,9 @@ void Core::gameDataUpdate() noexcept {
 
 				if (cfg->m.radarHack && !cfg->restrictions && !entity->isSameTeam())
 					csgo.Write<bool>(entity + Offset::netvars::m_bSpotted, true);
+
+				if ((uintptr_t)entity == localPlayer.get())
+					localPlayerIndex = idx;
 
 				// Player Info
 				const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
@@ -85,7 +92,7 @@ void Core::gameDataUpdate() noexcept {
 				const auto& weaponID = entity->getWeaponIDFromPlayer();
 				const std::string name = playerInfo.name;
 				const bool bot = playerInfo.fakeplayer;
-				const char* steamID = playerInfo.szSteamID;
+				std::uint64_t steamID = playerInfo.steamID64;
 				char temp[18];
 				ReadProcessMemory(csgo.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
 				std::string placename = (temp + '\0');
@@ -97,10 +104,14 @@ void Core::gameDataUpdate() noexcept {
 
 				gameData.playerData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename, clampedRank , wins });
 				
-				if (entity->isDefusing() && (uintptr_t)entity != localPlayer.get())
+				if (entity->isDefusing()) //Bomb Timer
 					gameData.defusingPlayerName = name;
 
-				
+				// Spectator List
+				const int obs = (entity->observerTarget() & ENT_ENTRY_MASK);
+				if (entity->isDead() && obs == localPlayerIndex + 1)
+					gameData.observerData.push_back({ name, entity->observerMode()});
+
 				break;
 			}
 			case ClassID::Tablet: {

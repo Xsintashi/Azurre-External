@@ -12,6 +12,7 @@ namespace Misc {
 	void forceReload(bool onKey = false) noexcept;
 	void showKeybinds() noexcept;
 	void modifyConVars(bool reset = false) noexcept;
+	void spectatorList() noexcept;
 	void bombTimer() noexcept;
 	void fastStop() noexcept;
 }

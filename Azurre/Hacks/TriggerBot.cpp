@@ -21,7 +21,7 @@ void TriggerBot::run() noexcept{
 
 	const auto& entity = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (crosshair - 1) * 0x10);
 
-	int weaponIndex = csgo.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & 0xFFF;
+	int weaponIndex = csgo.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
 
 	if (!weaponIndex) return;
 

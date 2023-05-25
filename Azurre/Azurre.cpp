@@ -98,6 +98,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();
 		if (cfg->m.minimap.enabled) Minimap::Render();
 		if (cfg->m.keybinds.enabled) Misc::showKeybinds();
+		if (cfg->m.spectatorList.enabled) Misc::spectatorList();
 		if (cfg->m.bombTimer.enabled) Misc::bombTimer();
 		GUI::overlay();
 #if defined(_DEBUG)

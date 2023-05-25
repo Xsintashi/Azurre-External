@@ -1,6 +1,6 @@
 #pragma once
 enum WeaponID{
-    None = 0,
+    NoID = 0,
     Deagle = 1,
     Elite,
     Fiveseven,

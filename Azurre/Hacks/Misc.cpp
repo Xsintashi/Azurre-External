@@ -246,6 +246,70 @@ void Misc::modifyConVars(bool reset) noexcept { //dont really work F
 
 }
 
+void Misc::spectatorList() noexcept {
+
+
+	ImGui::SetNextWindowSize({ 200.0f, 0.f });
+
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing;
+	if (!showMenu)
+		windowFlags |= ImGuiWindowFlags_NoInputs;
+	if (cfg->m.spectatorList.noTitleBar)
+		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+	if (cfg->m.spectatorList.noBackground)
+		windowFlags |= ImGuiWindowFlags_NoBackground;
+
+	if (cfg->m.spectatorList.pos != ImVec2{}) {
+		ImGui::SetNextWindowPos(cfg->m.spectatorList.pos);
+		cfg->m.spectatorList.pos = {};
+	}
+
+	if (showMenu) {
+		ImGui::Begin("Spectator List", nullptr, windowFlags);
+		ImGui::TextWrapped("VALVE | 3rd");
+		ImGui::TextWrapped("Azurre | 1rd");
+		ImGui::TextWrapped("GOTV | Freecam");
+		ImGui::End();
+		return;
+	}
+
+	if (gameState != ConnectionState::FullyConnected) return;
+
+	if (!localPlayer) return;
+
+	ImGui::Begin("Spectator List", nullptr, windowFlags);
+
+	for (auto& player : gameData.observerData) {
+		
+		const char* obsMode;
+
+		switch (player.obsMode) {
+			case ObsMode::Deathcam:
+				obsMode = "Deathcam";
+				break;
+			case ObsMode::Freezecam:
+				obsMode = "Freezecam";
+				break;
+			case ObsMode::Fixed:
+				obsMode = "Fixed";
+				break;
+			case ObsMode::InEye:
+				obsMode = "1st";
+				break;
+			case ObsMode::Chase:
+				obsMode = "3rd";
+				break;
+			case ObsMode::Roaming:
+				obsMode = "Freecam";
+				break;
+			default:
+				obsMode = "";
+		}
+		ImGui::TextWrapped("%s | %s", player.name.c_str(), obsMode);
+	}
+	ImGui::End();
+}
+
 void Misc::bombTimer() noexcept {
 
 	if (!showMenu) {

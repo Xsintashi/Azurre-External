@@ -538,7 +538,7 @@ void GUI::RenderPlayerList() noexcept {
 			ImGui::PushID(row);
 			ImGui::TextColored(teamColor, "%s", gameData.playerData[row].name.c_str());
 			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("%s", gameData.playerData[row].steamID);
+				ImGui::SetTooltip("%i", gameData.playerData[row].steamID);
 			ImGui::PopID();
 			ImGui::TableNextColumn();
 			ImGui::TextColored(hpColor, "%s", gameData.playerData[row].health < 1 ? "DEAD" : std::to_string(gameData.playerData[row].health).c_str());
@@ -730,7 +730,20 @@ void GUI::RenderMainMenu() noexcept {
 
 			if (ImGui::BeginPopup("")) {
 				ImGui::Checkbox("No Title", &cfg->m.bombTimer.noTitleBar);
-				ImGuiCustom::colorPicker("Color", cfg->m.bombTimer.barColor.color.data());
+				ImGuiCustom::colorPicker("Color", cfg->m.bombTimer.barColor.color.data(), nullptr, &cfg->m.bombTimer.barColor.rainbow, &cfg->m.bombTimer.barColor.rainbowSpeed);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+
+			ImGui::PushID("SpectatorList");
+			ImGui::Checkbox("Spectator List", &cfg->m.spectatorList.enabled);
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				ImGui::Checkbox("No Title Bar", &cfg->m.spectatorList.noTitleBar);
+				ImGui::Checkbox("No Background", &cfg->m.spectatorList.noBackground);
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();

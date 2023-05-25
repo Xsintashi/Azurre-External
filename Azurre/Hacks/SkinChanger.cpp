@@ -248,7 +248,7 @@ void Skin::update() {
     static const int knifeIndexTT = getModelIndexByID(WeaponID::KnifeT);
    
     for (int i = 0; i < 8; i++) {
-        const auto& weapons = csgo.Read<uintptr_t>(localPlayer.get() + Offset::netvars::m_hMyWeapons + i * 0x4) & 0xfff;
+        const auto& weapons = csgo.Read<uintptr_t>(localPlayer.get() + Offset::netvars::m_hMyWeapons + i * 0x4) & ENT_ENTRY_MASK;
         const auto& weapon = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weapons - 1) * 0x10);
 
         int accountID = csgo.Read<int>(weapon + Offset::netvars::m_OriginalOwnerXuidLow);
@@ -295,7 +295,7 @@ void Skin::update() {
         csgo.Write<int32_t>(weapon + Offset::netvars::m_iAccountID, csgo.Read<int32_t>(weapon + Offset::netvars::m_OriginalOwnerXuidLow));
     
         if ((localPlayer->teamNumber() == Team::CT && cfg->ch.CTKnife != 0) || (localPlayer->teamNumber() == Team::TT && cfg->ch.TTKnife != 1)) {
-            DWORD knifeViewModel = csgo.Read<DWORD>(localPlayer + Offset::netvars::m_hViewModel) & 0xfff;
+            DWORD knifeViewModel = csgo.Read<DWORD>(localPlayer + Offset::netvars::m_hViewModel) & ENT_ENTRY_MASK;
             knifeViewModel = csgo.Read<DWORD>(IClient.address + Offset::signatures::dwEntityList + (knifeViewModel - 1) * 0x10);
     
             if (knifeViewModel == 0) { continue; }

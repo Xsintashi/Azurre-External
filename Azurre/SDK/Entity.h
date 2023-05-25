@@ -24,6 +24,16 @@ enum LifeState {
     LIFE_DISCARDBODY,
 };
 
+enum class ObsMode {
+    None = 0,
+    Deathcam,
+    Freezecam,
+    Fixed,
+    InEye,
+    Chase,
+    Roaming
+};
+
 enum class ClassID {
     Ak47 = 1,
     BaseCSGrenadeProjectile = 9,
@@ -138,6 +148,8 @@ public:
     OFFSET(duckAmount, (), Offset::netvars::m_flDuckAmount, float)
     OFFSET(duckSpeed, (), Offset::netvars::m_flDuckSpeed, float)
     OFFSET(totalHits, (), Offset::netvars::m_totalHitsOnServer, int)
+    OFFSET(observerTarget, (), Offset::netvars::m_hObserverTarget, int)
+    OFFSET(observerMode, (), Offset::netvars::m_iObserverMode, ObsMode)
     OFFSET(lifeState, (), Offset::netvars::m_lifeState, bool)
 
     OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
@@ -178,7 +190,7 @@ public:
     }
 
     short getWeaponIDFromPlayer() noexcept {
-        int weaponIndex = csgo.Read<int>(this + Offset::netvars::m_hActiveWeapon) & 0xFFF;
+        int weaponIndex = csgo.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
         if (!weaponIndex)
             return 0;
 

@@ -106,6 +106,13 @@ public:
 			ImVec2 pos;
 		} bombTimer;
 
+		struct SpectatorList {
+			bool enabled = false;
+			bool noTitleBar = false;
+			bool noBackground = false;
+			ImVec2 pos;
+		} spectatorList;
+
 		struct Minimap {
 			bool enabled = false;
 			bool showPlayers = true;
