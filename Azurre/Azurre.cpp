@@ -87,22 +87,22 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 				io.WantCaptureKeyboard = false;
 			}
 		}
+		Core::gameDataUpdate();
 		Misc::forceReload(true);
 		Misc::modifyConVars();
+		Misc::hitMarkerSound();
 		Skin::update();
 		GUI::update();
 		GUI::BeginRender();
-		Core::gameDataUpdate();
-		Misc::hitMarkerSound();
 		if (showMenu) GUI::RenderMainMenu();
 		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();
 		if (cfg->m.minimap.enabled) Minimap::Render();
 		if (cfg->m.keybinds.enabled) Misc::showKeybinds();
+		if (cfg->m.bombTimer.enabled) Misc::bombTimer();
 		GUI::overlay();
 #if defined(_DEBUG)
 		 GUI::RenderDebugWindow();
 		 if (showMenu) ImGui::ShowDemoWindow();
-		 Misc::bombTimer();
 #endif
 		GUI::EndRender();
 	}

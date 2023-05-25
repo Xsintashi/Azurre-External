@@ -730,6 +730,7 @@ void GUI::RenderMainMenu() noexcept {
 
 			if (ImGui::BeginPopup("")) {
 				ImGui::Checkbox("No Title", &cfg->m.bombTimer.noTitleBar);
+				ImGuiCustom::colorPicker("Color", cfg->m.bombTimer.barColor.color.data());
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();

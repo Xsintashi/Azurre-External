@@ -248,9 +248,6 @@ void Misc::modifyConVars(bool reset) noexcept { //dont really work F
 
 void Misc::bombTimer() noexcept {
 
-	if (!cfg->m.bombTimer.enabled)
-		return;
-
 	if (!showMenu) {
 		ImGui::SetNextWindowBgAlpha(0.3f);
 	}
