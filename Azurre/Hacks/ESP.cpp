@@ -1,4 +1,5 @@
 #include "ESP.h"
+#include "SkinChanger.h"
 
 #include "../Config.h"
 #include "../Core.h"
@@ -7,6 +8,8 @@
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Interfaces.h"
 #include "../SDK/LocalPlayer.h"
+#include "../SDK/PlayerInfo.h"
+#include "../SDK/Studio.h"
 #include "../SDK/Matrix.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "../../Lib/imgui/imgui.h"
@@ -16,10 +19,13 @@
 #include "../../Lib/imgui/imgui_impl_win32.h"
 #include <array>
 #include <string>
-#include "../SDK/PlayerInfo.h"
-#include "SkinChanger.h"
 
 #define drawList ImGui::GetBackgroundDrawList()
+
+Vector getBonePos(std::array<Matrix3x4, 128> bonematrix, int idx) {
+	const auto bone = bonematrix.at(idx);
+	return Vector(bone[0][3], bone[1][3], bone[2][3]);
+}
 
 void drawBorderBox(ImVec2 pos, float width, float height, float duckHeight, ImU32 color, ImU32 color_) {
 	drawList->AddRectFilled({ pos.x - width, pos.y - .5f + duckHeight }, { pos.x + width, pos.y + .5f + duckHeight }, color); //TOP
@@ -30,6 +36,22 @@ void drawBorderBox(ImVec2 pos, float width, float height, float duckHeight, ImU3
 
 void drawLines(ImVec2 pos, ImVec2 pos_, ImU32 color) {
 	drawList->AddLine(pos, pos_, color); //TOP
+}
+
+void drawSkeleton(uintptr_t entBones, Matrix4x4 m) {
+
+	for (int skel = 0; skel < 128; skel++) {
+		const auto bonePos = Vector{
+			csgo.Read<float>(entBones + 0x30 * skel + 0x0C),
+			csgo.Read<float>(entBones + 0x30 * skel + 0x1C),
+			csgo.Read<float>(entBones + 0x30 * skel + 0x2C)
+		};
+
+		Vector vStart = Helpers::world2Screen(gameScreenSize, bonePos, m);
+		const auto centerText = ImGui::CalcTextSize(std::to_string(skel).c_str());
+		drawList->AddCircleFilled({ vStart.x, vStart.y }, 8.f, IM_COL32(255, 255, 255, 255));
+		drawList->AddText({ vStart.x - centerText.x / 2.f, vStart.y - centerText.x / 2.f },IM_COL32(255, 0, 0, 255), std::to_string(skel).c_str());
+	}	
 }
 
 void drawHealthBar(ImVec2 pos, float width, float height, float duckHeight , int health, ImU32 color, ImU32 colorNumber, ColorToggle3 showHealthNumber) {
@@ -109,10 +131,9 @@ void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
 
 #pragma endregion Player Name
 	const auto colorLines = ImGui::GetColorU32({ config.other.lines.color[0], config.other.lines.color[1], config.other.lines.color[2], 1.f });
-#pragma region Skeleton
-#pragma endregion Skeleton
 
 	if (posScreen.z >= 0.01f && !entity->dormant()) {
+		if (config.skeleton) drawSkeleton(entity->boneMatrix(), m);
 		if (config.box.enabled) drawBorderBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, colorFinal, colorFinal_);
 		if (config.healthBar.enabled) drawHealthBar( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
 		if (config.other.names.enabled) drawPlayerName( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, name, colorNames);

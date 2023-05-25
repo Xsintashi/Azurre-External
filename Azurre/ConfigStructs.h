@@ -75,6 +75,7 @@ struct Player {
     Other other;
     Box box;
     HealthBar healthBar;
+    bool skeleton;
 };
 
 using json = nlohmann::basic_json<std::map, std::vector, std::string, bool, std::int64_t, std::uint64_t, float>;

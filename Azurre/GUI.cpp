@@ -238,6 +238,8 @@ void GUI::CreateImGui() noexcept
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
+#if !defined(_DEBUG)
+
 	ImFontConfig cfgFont;
 	cfgFont.SizePixels = 15.0f;
 
@@ -249,7 +251,7 @@ void GUI::CreateImGui() noexcept
 		if (!font)
 			io.Fonts->AddFontDefault(&cfgFont);
 	}
-
+#endif
 	io.IniFilename = NULL;
 
 	ImGui::StyleColorsDark();
@@ -640,6 +642,9 @@ void GUI::RenderMainMenu() noexcept {
 			else spotted = 0;
 			ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.names.enabled);
 			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].other.weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.weapons.enabled);
+#if defined(_DEBUG)
+			ImGui::Checkbox("Skeleton", &cfg->esp.players[categories[list + spotted]].skeleton); // DEBUG bones pos
+#endif
 			ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled);
 			ImGui::PushID("boxes");
 			ImGui::SameLine();

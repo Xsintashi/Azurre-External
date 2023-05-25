@@ -1,41 +1,48 @@
 #pragma once
 #include "Pad.h"
+#include "Matrix.h"
 #include "Vector.h"
 
-struct StudioBone {
-	int nameIndex;
-	int	parent;
-	PAD(152)
-	int flags;
-	PAD(52)
+class Quaternion {};
 
-	const char* getName() const noexcept {
-		return nameIndex ? reinterpret_cast<const char*>(std::uintptr_t(this) + nameIndex) : nullptr;
-	}
+struct Studiobone
+{
+	int sznameindex;
+	int parent; // parent bone
+	int bonecontroller[6];     // bone controller index, -1 == none
+	Vector pos;
+	Quaternion quat;
+	Vector rot;
+	Vector posscale;
+	Vector rotscale;
+	Matrix3x4 poseToBone;
+	Quaternion qAlignment;
+	int flags;
+	int proctype;
+	int procindex;                   // procedural rule
+	int physicsbone;                 // index into physically simulated bone
+	int surfacepropidx;              // index into string tablefor property name
+	int contents;                    // See BSPFlags.h for the contents flags
+	int unused[8];             // remove as appropriat
 };
 
 struct StudioHdr {
-    int id;
-    int version;
-    int checksum;
-    char name[64];
-    int length;
-    Vector eyePosition;
-    Vector illumPosition;
-    Vector hullMin;
-    Vector hullMax;
-    Vector bbMin;
-    Vector bbMax;
-    int flags;
-    int numBones;
-    int boneIndex;
-    int numBoneControllers;
-    int boneControllerIndex;
-    int numHitboxSets;
-    int hitboxSetIndex;
-
-    const StudioBone* getBone(int i) const noexcept
-    {
-        return i >= 0 && i < numBones ? reinterpret_cast<StudioBone*>(std::uintptr_t(this) + boneIndex) + i : nullptr;
-    }
+	int id;
+	int version;
+	int checksum;
+	PAD(64)
+	int length;
+	Vector eyeposition;
+	Vector illumposition;
+	Vector hull_min;
+	Vector hull_max;
+	Vector view_bbmin;
+	Vector view_bbmax;
+	int flags;
+	int numbones;                // bones
+	int boneindex;
+	int numbonecontrollers;      // bone controllers
+	int bonecontrollerindex;
+	int numhitboxsets;
+	int hitboxsetindex;
 };
