@@ -61,8 +61,6 @@ void Core::update() {
 void Core::gameDataUpdate() noexcept {
 	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
 	gameData = {}; // reset GameData
-	const int obsTarget = (localPlayer->observerTarget() & ENT_ENTRY_MASK);
-
 	for (int unsigned idx = 0; idx <= 1024; idx++) {
 
 		const auto& entity = getEntity(idx);
@@ -100,7 +98,7 @@ void Core::gameDataUpdate() noexcept {
 				const auto& rank = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + idx * 4);
 				const auto& wins = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + idx * 4);
 
-				int clampedRank = std::clamp(rank, 0, 18);
+				const int clampedRank = std::clamp(rank, 0, 18);
 
 				gameData.playerData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename, clampedRank , wins });
 				
@@ -109,7 +107,7 @@ void Core::gameDataUpdate() noexcept {
 
 				// Spectator List
 				const int obs = (entity->observerTarget() & ENT_ENTRY_MASK);
-				if (entity->isDead() && obs == localPlayerIndex + 1)
+				if (entity->isDead() && obs == localPlayerIndex + 1) // Ghetto way, hope it will work (me before testing on valve servers)
 					gameData.observerData.push_back({ name, entity->observerMode()});
 
 				break;
