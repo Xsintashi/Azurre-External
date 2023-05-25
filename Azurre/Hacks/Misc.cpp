@@ -71,7 +71,7 @@ void Misc::fakeLag() noexcept {
 
 }
 
-void Misc::HitNKillSound() noexcept
+void Misc::hitMarkerSound() noexcept
 {
 	if (!localPlayer || gameState != 6)
 		return;
