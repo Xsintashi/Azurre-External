@@ -14,5 +14,6 @@ namespace Misc {
 	void modifyConVars(bool reset = false) noexcept;
 	void spectatorList() noexcept;
 	void bombTimer() noexcept;
+	void crosshairs() noexcept;
 	void fastStop() noexcept;
 }

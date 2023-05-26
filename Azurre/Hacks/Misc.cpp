@@ -6,6 +6,7 @@
 #include "../SDK/Convar.h"
 #include "../SDK/Entity.h"
 #include "../SDK/GlobalVars.h"
+#include "../SDK/Matrix.h"
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/Vector.h"
 
@@ -376,6 +377,30 @@ void Misc::bombTimer() noexcept {
 		ImGui::PopStyleColor(2);
 		ImGui::End();
 	}
+}
+
+void Misc::crosshairs() noexcept {
+
+	if (!localPlayer)
+		return;
+
+	if (gameState != ConnectionState::FullyConnected)
+		return;
+
+	if (localPlayer->isDead())
+		return;
+
+	if (cfg->m.sniperCrosshair.enabled && !localPlayer->isScoped() && localPlayer->getActiveWeapon()->isWeaponRifleSniper()) {
+		ImGui::GetBackgroundDrawList()->AddLine( { screenSize.x / 2.f - 8.f , screenSize.y / 2.f }, { screenSize.x / 2.f + 8.f , screenSize.y / 2.f }, Helpers::calculateColor(cfg->m.sniperCrosshair), 2.f);
+		ImGui::GetBackgroundDrawList()->AddLine( { screenSize.x / 2.f , screenSize.y / 2.f - 8.f }, { screenSize.x / 2.f , screenSize.y / 2.f + 8.f }, Helpers::calculateColor(cfg->m.sniperCrosshair), 2.f);
+	}
+
+	if (cfg->m.recoilCrosshair.enabled && localPlayer->shotsFired() && !localPlayer->isScoped() && !localPlayer->getActiveWeapon()->isWeaponRifleSniper()) {
+		Vector aimPunch = localPlayer->aimPunch() / 2.f;
+		ImGui::GetBackgroundDrawList()->AddLine({ screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) - 8.f , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) }, { screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) + 8.f , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) }, Helpers::calculateColor(cfg->m.recoilCrosshair), 2.f);
+		ImGui::GetBackgroundDrawList()->AddLine({ screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) - 8.f }, { screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) + 8.f }, Helpers::calculateColor(cfg->m.recoilCrosshair), 2.f);
+	}
+
 }
 
 void Misc::fastStop() noexcept	{

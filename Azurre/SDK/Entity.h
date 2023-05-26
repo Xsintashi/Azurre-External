@@ -3,8 +3,9 @@
 #include "Macros.h"
 #include "Interfaces.h"
 #include "../Core.h"
-#include "../SDK/LocalPlayer.h"
-#include "../SDK/Vector.h"
+#include "LocalPlayer.h"
+#include "Vector.h"
+#include "WeaponID.h"
 #include "../Offsets.h"
 
 #include <vector>
@@ -151,6 +152,7 @@ public:
     OFFSET(observerTarget, (), Offset::netvars::m_hObserverTarget, int)
     OFFSET(observerMode, (), Offset::netvars::m_iObserverMode, ObsMode)
     OFFSET(lifeState, (), Offset::netvars::m_lifeState, bool)
+    OFFSET(isScoped, (), Offset::netvars::m_bIsScoped, bool)
 
     OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
 
@@ -190,19 +192,33 @@ public:
     }
 
     short getWeaponIDFromPlayer() noexcept {
-        int weaponIndex = csgo.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
-        if (!weaponIndex)
+        int activeWeapon = csgo.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+        if (!activeWeapon)
             return 0;
 
-        const auto& activeWeapon = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weaponIndex - 1) * 0x10);
-        if (!activeWeapon)
+        const auto& ID = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (activeWeapon - 1) * 0x10);
+        if (!ID)
             return 0;
 
         return csgo.Read<short>(activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
     }
 
+    Entity* getActiveWeapon() noexcept {
+        int weaponIndex = csgo.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+
+        if (!weaponIndex) return 0;
+
+        const auto& activeWeapon = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weaponIndex - 1) * 0x10);
+       
+        return activeWeapon;
+    }
+
     short getWeaponID() noexcept {
         return csgo.Read<short>(this + Offset::netvars::m_iItemDefinitionIndex);
+    }
+
+    bool isWeaponRifleSniper() noexcept {
+        return this->getWeaponID() == WeaponID::Ssg08 || this->getWeaponID() == WeaponID::Awp || this->getWeaponID() == WeaponID::Scar20 || this->getWeaponID() == WeaponID::G3SG1;
     }
 
 };

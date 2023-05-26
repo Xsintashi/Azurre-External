@@ -234,6 +234,8 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Fix Tablet Signal", c.fixTablet);
     read(j, "Engine Radar", c.radarHack);
     read(j, "Grenade Trajectory", c.grenadeTrajectory);
+    read<value_t::object>(j, "Recoil Crosshair", c.recoilCrosshair);
+    read<value_t::object>(j, "Sniper Crosshaird", c.sniperCrosshair);
     read<value_t::string>(j, "Hit Sound", c.hitSound);
     read<value_t::object>(j, "Hit Marker", c.hitMarker);
     read<value_t::object>(j, "Player List", c.playerList);
@@ -535,6 +537,8 @@ static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConf
     WRITE("Engine Radar", radarHack);
     WRITE("Fake Lag", fakeLag);
     WRITE("Grenade Trajectory", grenadeTrajectory);
+    WRITE("Recoil Crosshair", recoilCrosshair);
+    WRITE("Sniper Crosshaird", sniperCrosshair);
     WRITE("Hit Sound", hitSound);
     WRITE("Hit Marker", hitMarker);
     WRITE("Minimap", minimap);

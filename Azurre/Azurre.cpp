@@ -94,17 +94,18 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		Skin::update();
 		GUI::update();
 		GUI::BeginRender();
-		if (showMenu) GUI::RenderMainMenu();
-		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();
+		GUI::overlay();
 		if (cfg->m.minimap.enabled) Minimap::Render();
+		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();
 		if (cfg->m.keybinds.enabled) Misc::showKeybinds();
 		if (cfg->m.spectatorList.enabled) Misc::spectatorList();
 		if (cfg->m.bombTimer.enabled) Misc::bombTimer();
-		GUI::overlay();
+		Misc::crosshairs();
 #if defined(_DEBUG)
 		 GUI::RenderDebugWindow();
 		 if (showMenu) ImGui::ShowDemoWindow();
 #endif
+		if (showMenu) GUI::RenderMainMenu();
 		GUI::EndRender();
 	}
 	Misc::forceReload();
