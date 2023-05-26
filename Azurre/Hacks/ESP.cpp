@@ -84,14 +84,14 @@ void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
 #pragma region Box
 	Vector pos = entity->origin();
 	Vector head;
-	pos.z -= 16.f + ((localPlayer->origin().z - entity->origin().z) / 2.f * 0.1f - 8.f); //fixes a bit height of the box
+	pos.z -= 8.f;
 	head.x = pos.x;
 	head.y = pos.y;
 	head.z = pos.z + 75.f;
 
 	float duckHeight = 0.f;
 	if (entity->duckAmount() > .25f)
-		duckHeight += 32.f + ((localPlayer->origin().z - entity->origin().z) / 2.f * 0.1f - 8.f);
+		duckHeight += (16.f * entity->duckAmount());
 
 	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, m);
 	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, m);
