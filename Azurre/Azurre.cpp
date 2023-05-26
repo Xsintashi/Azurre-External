@@ -90,11 +90,11 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		Core::gameDataUpdate();
 		Misc::forceReload(true);
 		Misc::modifyConVars();
-		Misc::hitMarkerSound();
 		Skin::update();
 		GUI::update();
 		GUI::BeginRender();
 		GUI::overlay();
+		Misc::hitMarkerSound();
 		if (cfg->m.minimap.enabled) Minimap::Render();
 		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();
 		if (cfg->m.keybinds.enabled) Misc::showKeybinds();
