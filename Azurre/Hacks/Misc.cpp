@@ -390,12 +390,12 @@ void Misc::crosshairs() noexcept {
 	if (localPlayer->isDead())
 		return;
 
-	if (cfg->m.sniperCrosshair.enabled && !localPlayer->isScoped() && localPlayer->getActiveWeapon()->isWeaponRifleSniper()) {
+	if (showMenu || (cfg->m.sniperCrosshair.enabled && !localPlayer->isScoped() && localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
 		ImGui::GetBackgroundDrawList()->AddLine( { screenSize.x / 2.f - 8.f , screenSize.y / 2.f }, { screenSize.x / 2.f + 8.f , screenSize.y / 2.f }, Helpers::calculateColor(cfg->m.sniperCrosshair), 2.f);
 		ImGui::GetBackgroundDrawList()->AddLine( { screenSize.x / 2.f , screenSize.y / 2.f - 8.f }, { screenSize.x / 2.f , screenSize.y / 2.f + 8.f }, Helpers::calculateColor(cfg->m.sniperCrosshair), 2.f);
 	}
 
-	if (cfg->m.recoilCrosshair.enabled && localPlayer->shotsFired() && !localPlayer->isScoped() && !localPlayer->getActiveWeapon()->isWeaponRifleSniper()) {
+	if (showMenu || (cfg->m.recoilCrosshair.enabled && localPlayer->shotsFired() && !localPlayer->isScoped() && !localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
 		Vector aimPunch = localPlayer->aimPunch() / 2.f;
 		ImGui::GetBackgroundDrawList()->AddLine({ screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) - 8.f , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) }, { screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) + 8.f , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) }, Helpers::calculateColor(cfg->m.recoilCrosshair), 2.f);
 		ImGui::GetBackgroundDrawList()->AddLine({ screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) - 8.f }, { screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) + 8.f }, Helpers::calculateColor(cfg->m.recoilCrosshair), 2.f);
