@@ -78,6 +78,18 @@ struct Player {
     bool skeleton;
 };
 
+struct Crosshair {
+    bool enabled = false;
+    Color3 color{1.f, 1.f, 1.f};
+    float length = 8.f;
+    float gap = 0;
+    float thickness = 2.f;
+    bool dot = false;
+    ColorToggleOutline outline{ 0.f, 0.f, 0.f, 1.f};
+    float outlineThickness = 2.f;
+    bool TStyle = false;
+};
+
 using json = nlohmann::basic_json<std::map, std::vector, std::string, bool, std::int64_t, std::uint64_t, float>;
 using value_t = json::value_t;
 

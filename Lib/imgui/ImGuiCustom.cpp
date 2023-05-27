@@ -222,9 +222,6 @@ void ImGuiCustom::colorPicker(const char* name, float color[3], float* alpha, bo
                     *thickness = std::max(*thickness, 1.0f);
                 }
 
-                if (outline)
-                    ImGui::Checkbox("Outline", outline);
-
                 ImGui::PopItemWidth();
             }
             ImGui::EndChild();

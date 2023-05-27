@@ -153,6 +153,18 @@ static void from_json(const json& j, Player& p) {
     read<value_t::object>(j, "HealthBar", p.healthBar);
 }
 
+static void from_json(const json& j, Crosshair& o) {
+    read(j, "Enabled", o.enabled);
+    read<value_t::object>(j, "Color", o.color);
+    read(j, "Length", o.length);
+    read(j, "Gap", o.gap);
+    read(j, "Thickness", o.thickness);
+    read(j, "Dot", o.dot);
+    read<value_t::object>(j, "Outline", o.outline);
+    read(j, "Outline Thickness", o.outlineThickness);
+    read(j, "TStyle", o.TStyle);
+}
+
 static void from_json(const json& j, Config::ESPConfig& e) {
     read(j, "Enabled", e.enabled);
     read(j, "Players", e.players);
@@ -433,6 +445,18 @@ static void to_json(json& j, const Player& o, const Player& dummy = {}) {
     WRITE("Other", other);
     WRITE("Box", box);
     WRITE("HealthBar", healthBar);
+}
+
+static void to_json(json& j, const Crosshair& o, const Crosshair& dummy = {}) {
+    WRITE("Enabled", enabled);
+    WRITE("Color", color);
+    WRITE("Length", length);
+    WRITE("Gap", gap);
+    WRITE("Thickness", thickness);
+    WRITE("Dot", dot);
+    WRITE("Outline", outline);
+    WRITE("Outline Thickness", outlineThickness);
+    WRITE("TStyle", TStyle);
 }
 
 static void to_json(json& j, const Config::ESPConfig& o) {

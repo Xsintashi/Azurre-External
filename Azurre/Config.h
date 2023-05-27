@@ -84,8 +84,8 @@ public:
 		bool radarHack = false;
 		bool autoStop = false;
 		bool grenadeTrajectory = false;
-		ColorToggle sniperCrosshair;
-		ColorToggle recoilCrosshair;
+		Crosshair sniperCrosshair;
+		Crosshair recoilCrosshair;
 		struct KeyBindsList {
 			bool enabled = false;
 			bool noTitleBar = false;

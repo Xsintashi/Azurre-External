@@ -379,6 +379,31 @@ void Misc::bombTimer() noexcept {
 	}
 }
 
+void drawCrosshair(ImVec2 pos, float length, float gap, float thickness, float outlineTickness, bool dot, bool outline, bool TStyle, unsigned int color, unsigned int colorOutline) {
+
+	if (outline) {
+		if (dot)
+			ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x - outlineTickness / 2.f, pos.y - outlineTickness / 2.f }, { pos.x + outlineTickness / 2.f , pos.y + outlineTickness / 2.f }, colorOutline);
+
+		if (!TStyle)
+			ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y - length - outlineTickness }, { pos.x, pos.y - gap + outlineTickness }, colorOutline, outlineTickness + thickness); //TOP
+
+		ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y + length + outlineTickness }, { pos.x, pos.y + gap - outlineTickness }, colorOutline, outlineTickness + thickness); //BOTTOM
+		ImGui::GetBackgroundDrawList()->AddLine({ pos.x - length - outlineTickness , pos.y }, { pos.x - gap + outlineTickness, pos.y }, colorOutline, outlineTickness + thickness); //LEFT
+		ImGui::GetBackgroundDrawList()->AddLine({ pos.x + length + outlineTickness, pos.y }, { pos.x + gap - outlineTickness, pos.y}, colorOutline, outlineTickness + thickness); //RIGHT
+	}
+
+	if (dot)
+		ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x - thickness / 2.f, pos.y - thickness / 2.f }, { pos.x + thickness / 2.f , pos.y + thickness / 2.f }, color);
+
+	if(!TStyle)
+		ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y - length }, { pos.x, pos.y - gap }, color, thickness); //TOP
+
+	ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y + length }, { pos.x, pos.y + gap }, color, thickness); //BOTTOM
+	ImGui::GetBackgroundDrawList()->AddLine({ pos.x - length , pos.y }, { pos.x - gap, pos.y }, color, thickness); //LEFT
+	ImGui::GetBackgroundDrawList()->AddLine({ pos.x + length, pos.y }, { pos.x + gap, pos.y }, color, thickness); //RIGHT
+}
+
 void Misc::crosshairs() noexcept {
 
 	if (!localPlayer)
@@ -390,15 +415,17 @@ void Misc::crosshairs() noexcept {
 	if (localPlayer->isDead())
 		return;
 
-	if (showMenu || (cfg->m.sniperCrosshair.enabled && !localPlayer->isScoped() && localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
-		ImGui::GetBackgroundDrawList()->AddLine( { screenSize.x / 2.f - 8.f , screenSize.y / 2.f }, { screenSize.x / 2.f + 8.f , screenSize.y / 2.f }, Helpers::calculateColor(cfg->m.sniperCrosshair), 2.f);
-		ImGui::GetBackgroundDrawList()->AddLine( { screenSize.x / 2.f , screenSize.y / 2.f - 8.f }, { screenSize.x / 2.f , screenSize.y / 2.f + 8.f }, Helpers::calculateColor(cfg->m.sniperCrosshair), 2.f);
+	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
+
+	if ((cfg->m.sniperCrosshair.enabled && showMenu) || (cfg->m.sniperCrosshair.enabled && !localPlayer->isScoped() && localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
+		auto& settings = cfg->m.sniperCrosshair;
+		drawCrosshair(mid, settings.length, settings.gap, settings.thickness, settings.outlineThickness, settings.dot, settings.outline.enabled, settings.TStyle, Helpers::calculateColor(settings.color), Helpers::calculateColor(settings.outline));
 	}
 
-	if (showMenu || (cfg->m.recoilCrosshair.enabled && localPlayer->shotsFired() && !localPlayer->isScoped() && !localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
+	if ((cfg->m.recoilCrosshair.enabled && showMenu) || (cfg->m.recoilCrosshair.enabled && localPlayer->shotsFired() > 2 && !localPlayer->isScoped() && !localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
+		auto& settings = cfg->m.recoilCrosshair;
 		Vector aimPunch = localPlayer->aimPunch() / 2.f;
-		ImGui::GetBackgroundDrawList()->AddLine({ screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) - 8.f , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) }, { screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) + 8.f , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) }, Helpers::calculateColor(cfg->m.recoilCrosshair), 2.f);
-		ImGui::GetBackgroundDrawList()->AddLine({ screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) - 8.f }, { screenSize.x / 2.f - (screenSize.x / 90.f * aimPunch.y) , screenSize.y / 2.f + (screenSize.x / 90.f * aimPunch.x) + 8.f }, Helpers::calculateColor(cfg->m.recoilCrosshair), 2.f);
+		drawCrosshair({ mid.x - (screenSize.x / 90.f * aimPunch.y), mid.y + (screenSize.x / 90.f * aimPunch.x) }, settings.length, settings.gap, settings.thickness, settings.outlineThickness, settings.dot, settings.outline.enabled, settings.TStyle, Helpers::calculateColor(settings.color), Helpers::calculateColor(settings.outline));
 	}
 
 }

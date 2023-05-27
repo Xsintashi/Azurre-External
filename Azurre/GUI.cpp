@@ -693,8 +693,47 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::SameLine();
 			ImGui::SliderFloat("##as", &cfg->m.hitMarker.time, 0.1f, 1.5f, "Time: %.2fs");
 			ImGui::PopID();
-			ImGuiCustom::colorPicker("Recoil Crosshair", cfg->m.recoilCrosshair.color.data(), nullptr, &cfg->m.recoilCrosshair.rainbow, &cfg->m.recoilCrosshair.rainbowSpeed, &cfg->m.recoilCrosshair.enabled);
-			ImGuiCustom::colorPicker("Sniper Crosshair", cfg->m.sniperCrosshair.color.data(), nullptr, &cfg->m.sniperCrosshair.rainbow, &cfg->m.sniperCrosshair.rainbowSpeed, &cfg->m.sniperCrosshair.enabled);
+
+			ImGui::PushID("RecoilCrosshair");
+			ImGuiCustom::colorPicker("Recoil Crosshair", cfg->m.recoilCrosshair.color.color.data(), nullptr, &cfg->m.recoilCrosshair.color.rainbow, &cfg->m.recoilCrosshair.color.rainbowSpeed, &cfg->m.recoilCrosshair.enabled);
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				ImGui::PushItemWidth(120.f);
+				ImGui::InputFloat("Length", &cfg->m.recoilCrosshair.length, 0.1f, 1.f);
+				ImGui::InputFloat("Gap", &cfg->m.recoilCrosshair.gap, 0.1f, 1.f);
+				ImGui::InputFloat("Thickness", &cfg->m.recoilCrosshair.thickness, 0.1f, 1.f);
+				ImGui::PopItemWidth();
+				ImGuiCustom::colorPicker("Outline", cfg->m.recoilCrosshair.outline, &cfg->m.recoilCrosshair.outline.enabled, &cfg->m.recoilCrosshair.outlineThickness);
+				ImGui::Checkbox("Dot", &cfg->m.recoilCrosshair.dot);
+				ImGui::SameLine();
+				ImGui::Checkbox("TStyle", &cfg->m.recoilCrosshair.TStyle);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+
+			ImGui::PushID("SniperCrosshair");
+			ImGuiCustom::colorPicker("Sniper Crosshair", cfg->m.sniperCrosshair.color.color.data(), nullptr, &cfg->m.sniperCrosshair.color.rainbow, &cfg->m.sniperCrosshair.color.rainbowSpeed, &cfg->m.sniperCrosshair.enabled);
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				ImGui::PushItemWidth(120.f);
+				ImGui::InputFloat("Length", &cfg->m.sniperCrosshair.length, 0.1f, 1.f);
+				ImGui::InputFloat("Gap", &cfg->m.sniperCrosshair.gap, 0.1f, 1.f);
+				ImGui::InputFloat("Thickness", &cfg->m.sniperCrosshair.thickness, 0.1f, 1.f);
+				ImGui::PopItemWidth();
+				ImGuiCustom::colorPicker("Outline", cfg->m.sniperCrosshair.outline, &cfg->m.sniperCrosshair.outline.enabled, &cfg->m.sniperCrosshair.outlineThickness);
+				ImGui::Checkbox("Dot", &cfg->m.sniperCrosshair.dot);
+				ImGui::SameLine();
+				ImGui::Checkbox("TStyle", &cfg->m.sniperCrosshair.TStyle);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+
 			ImGui::PushID("Minimap");
 			ImGui::Checkbox("Minimap", &cfg->m.minimap.enabled);
 			ImGui::SameLine();
