@@ -92,6 +92,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 			}
 		}
 		//Here funcs which dont need be updated every ms
+		Minimap::_();
 		Clan::update();
 		Core::gameDataUpdate();
 		Misc::forceReload(true);
