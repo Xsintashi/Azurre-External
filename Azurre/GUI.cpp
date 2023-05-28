@@ -1172,15 +1172,20 @@ void GUI::RenderMainMenu() noexcept {
 }
 
 void watermark() {
+	const auto time = std::time(nullptr);
+	const auto localTime = std::localtime(&time);
+	char s[21];
+	s[0] = '\0';
+	snprintf(s, sizeof(s), " | %02d:%02d:%02d | ", localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
 #if _DEBUG
 	constexpr const char* builtDate = __DATE__;
 	constexpr const char* builtTime = __TIME__;
-	const std::string watermark = std::string("Azurre | Built: ").append(builtDate).append(" ").append(builtTime).append(" | Hello xs9 :)");
+	const std::string watermark = std::string("Azurre | Built: ").append(builtDate).append(" ").append(builtTime).append(s).append("Hello xs9 :)");
 #else
 	static auto frameRate = 1.0f;
 	frameRate = 0.9f * frameRate + 0.1f * globalVars->absoluteFrameTime;
 	const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
-	const std::string watermark = std::string("Azurre | FPS: ").append(std::to_string(framePerSecond)).append(" | Hello xs9 :)");
+	const std::string watermark = std::string("Azurre | FPS: ").append(std::to_string(framePerSecond)).append(s).append("Hello xs9 :)");
 #endif
 	for (unsigned int i = 0; i < watermark.size(); i++) {
 
