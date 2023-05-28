@@ -54,8 +54,6 @@ void Core::update() {
 	cfg->a.hotkey.handleToggle();
 	cfg->t.hotkey.handleToggle();
 	cfg->v.thirdPersonKey.handleToggle();
-
-	Discord::Update();
 };
 
 void Core::gameDataUpdate() noexcept {
@@ -144,18 +142,18 @@ void Core::gameDataUpdate() noexcept {
 
 void Core::_() noexcept {
 	while (GUI::isRunning) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(5)); // ~ 30 loops per second
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		update();
-		Minimap::_();
-		Misc::fakeLag();
 		Aimbot::recoilSystem();
 		TriggerBot::run();
 		Chams::run();
-		Clan::update();
 		Misc::bunnyHop();
-		Misc::fastStop();
-		Visuals::noFlash();
-		Visuals::thirdperson();
-		Visuals::fov();
+		if (!cfg->restrictions) {
+			Misc::fakeLag();
+			Misc::fastStop();
+			Visuals::noFlash();
+			Visuals::thirdperson();
+			Visuals::fov();
+		}
 	}
 }

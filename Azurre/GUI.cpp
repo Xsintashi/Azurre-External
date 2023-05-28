@@ -1204,6 +1204,8 @@ void watermark() {
 
 void GUI::overlay() noexcept {
 	ESP::render();
+	Misc::hitMarkerSound();
+	Misc::crosshairs();
 	watermark();
 #if defined(_DEBUG)
 	//ImGui::GetBackgroundDrawList()->AddRect( //Draws Rectangle around csgo window

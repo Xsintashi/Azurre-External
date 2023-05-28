@@ -64,10 +64,12 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	//}
 	//SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
 
-	std::thread noTeammatesThread = std::thread(Visuals::doNotRenderTeammates);
-	std::thread glowThread = std::thread(Glow::run);
-	std::thread aimbotThread = std::thread(Aimbot::run);
-	std::thread coreThread = std::thread(Core::_);
+	std::thread(Visuals::doNotRenderTeammates).detach();
+	std::thread(Glow::run).detach();
+	std::thread(Aimbot::run).detach();
+	std::thread(Core::_).detach();
+	std::thread(Discord::Update).detach();
+
 #if _DEBUG
 	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW);
 #endif
@@ -89,6 +91,8 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 				io.WantCaptureKeyboard = false;
 			}
 		}
+		//Here funcs which dont need be updated every ms
+		Clan::update();
 		Core::gameDataUpdate();
 		Misc::forceReload(true);
 		Misc::modifyConVars();
@@ -96,29 +100,19 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		GUI::update();
 		GUI::BeginRender();
 		GUI::overlay();
-		Misc::hitMarkerSound();
 		if (cfg->m.minimap.enabled) Minimap::Render();
 		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();
 		if (cfg->m.keybinds.enabled) Misc::showKeybinds();
 		if (cfg->m.spectatorList.enabled) Misc::spectatorList();
 		if (cfg->m.bombTimer.enabled) Misc::bombTimer();
-		Misc::crosshairs();
-#if defined(_DEBUG)
-		 GUI::RenderDebugWindow();
-		 if (showMenu) ImGui::ShowDemoWindow();
-#endif
 		if (showMenu) GUI::RenderMainMenu();
+
 		GUI::EndRender();
 	}
 	Misc::forceReload();
 	Misc::changeWindowTitle(true);
 	Misc::modifyConVars(true);
 	Clan::setClanTag("", "");
-
-	glowThread.join();
-	noTeammatesThread.join();
-	aimbotThread.join();
-	coreThread.join();
 
 	Discord::Shutdown();
 
