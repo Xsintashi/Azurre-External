@@ -114,7 +114,12 @@ void Minimap::_() {
 		return;
 
 	isMapExist.close();
-	TextureManager::LoadTextureFromFile(mapRadar.c_str(), &mapTexture.data, &mapTexture.width, &mapTexture.height);
+
+	static std::string mapCheck = "";
+	if ( mapCheck != mapName ) { // Microsoft shit memory leaks will find better way to fix that
+		TextureManager::LoadTextureFromFile(mapRadar.c_str(), &mapTexture.data, &mapTexture.width, &mapTexture.height);
+		mapCheck = mapName;
+	}
 
 	std::string mapNameFata;
 	mapNameFata = std::string(gameDir).append("\\resource\\overviews\\").append(mapName).append(".txt");
