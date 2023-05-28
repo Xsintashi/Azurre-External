@@ -255,6 +255,7 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read<value_t::object>(j, "Minimap", c.minimap);
     read<value_t::object>(j, "Fake Lag", c.fakeLag);
     read<value_t::object>(j, "Spectator list", c.spectatorList);
+    read<value_t::object>(j, "Bomb Timer", c.bombTimer);
 }
 
 static void from_json(const json& j, Config::SkinChangerConfig& c) {
@@ -569,6 +570,7 @@ static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConf
     WRITE("Keybinds List", keybinds);
     WRITE("Player List", playerList);
     WRITE("Spectator list", spectatorList);
+    WRITE("Bomb Timer", bombTimer);
 }
 
 static void to_json(json& j, const Config::SkinChangerConfig& o, const Config::SkinChangerConfig dummy = {} ) {
