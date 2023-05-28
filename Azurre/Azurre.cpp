@@ -25,11 +25,13 @@
 
 int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR arguments, int commandShow) {
 
+	char mutexName[8] = "azurre\0";
+
 	HANDLE mutex = OpenMutex(
-		MUTEX_ALL_ACCESS, 0, "azurreX");
+		MUTEX_ALL_ACCESS, 0, mutexName);
 
 	if (!mutex)
-		mutex = CreateMutex(0, 0, "azurreX");
+		mutex = CreateMutex(0, 0, mutexName);
 	else {
 		MessageBoxA(nullptr, "Only one instance of the software can be running at one time.", "Azurre External", MB_OK | MB_ICONINFORMATION);
 		return 0;

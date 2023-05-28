@@ -117,7 +117,7 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 	windowClass.hCursor = LoadCursor(NULL, IDC_CROSS);
 	windowClass.hbrBackground = 0;
 	windowClass.lpszMenuName = 0;
-	windowClass.lpszClassName = "azurreE";
+	windowClass.lpszClassName = "azurre";
 	windowClass.hIconSm = 0;
 
 	RegisterClassEx(&windowClass);
@@ -127,7 +127,7 @@ void GUI::CreateHWindow(const char* windowName) noexcept
 
 	window = CreateWindowEx(
 		WS_EX_LAYERED | WS_EX_TRANSPARENT,
-		"azurreE",
+		"azurre",
 		windowName,
 		WS_POPUP | WS_VISIBLE,
 		0,
