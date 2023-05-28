@@ -38,7 +38,7 @@ void Clan::setClanTag(const char* name, const char* team) {
 	unsigned int DATA_SIZE = name_SIZE + team_SIZE + 2;
 
 	LPVOID pShellCodeAdress = VirtualAllocEx(
-		csgo.processHandle,
+		mem.processHandle,
 		0,
 		SHELLCODE_SIZE + DATA_SIZE,
 		MEM_COMMIT | MEM_RESERVE,
@@ -47,7 +47,7 @@ void Clan::setClanTag(const char* name, const char* team) {
 
 	DWORD nameAdress = (DWORD)pShellCodeAdress + SHELLCODE_SIZE;
 	DWORD teamAdress = (DWORD)pShellCodeAdress + SHELLCODE_SIZE + name_SIZE + 1;
-	DWORD fnSetClanAdress = csgo.grabSig(IEngine.address, IEngine.size, (PBYTE)"\x53\x56\x57\x8B\xDA\x8B\xF9\xFF\x15", (char*)"xxxxxxxxx");  //Engine.dll + 0x9AC90 
+	DWORD fnSetClanAdress = mem.grabSig(IEngine.address, IEngine.size, (PBYTE)"\x53\x56\x57\x8B\xDA\x8B\xF9\xFF\x15", (char*)"xxxxxxxxx");  //Engine.dll + 0x9AC90 
 
 	memcpy(shellcode + 0x3, &nameAdress, sizeof(DWORD));
 	memcpy(shellcode + 0x8, &teamAdress, sizeof(DWORD));
@@ -55,11 +55,11 @@ void Clan::setClanTag(const char* name, const char* team) {
 	memcpy(shellcode + SHELLCODE_SIZE, name, name_SIZE);
 	memcpy(shellcode + SHELLCODE_SIZE + name_SIZE + 1, team, team_SIZE);
 
-	WriteProcessMemory(csgo.processHandle, pShellCodeAdress, shellcode, SHELLCODE_SIZE + DATA_SIZE, 0);
+	WriteProcessMemory(mem.processHandle, pShellCodeAdress, shellcode, SHELLCODE_SIZE + DATA_SIZE, 0);
 
-	HANDLE hThread = CreateRemoteThread(csgo.processHandle, NULL, NULL, (LPTHREAD_START_ROUTINE)pShellCodeAdress, NULL, NULL, NULL);
+	HANDLE hThread = CreateRemoteThread(mem.processHandle, NULL, NULL, (LPTHREAD_START_ROUTINE)pShellCodeAdress, NULL, NULL, NULL);
 	WaitForSingleObject(hThread, INFINITE);
-	VirtualFreeEx(csgo.processHandle, pShellCodeAdress, 0, MEM_RELEASE);
+	VirtualFreeEx(mem.processHandle, pShellCodeAdress, 0, MEM_RELEASE);
 }
 
 void azurreClanTag() noexcept {
@@ -214,7 +214,7 @@ void Clan::update(bool reset, bool update) noexcept
     };
     static auto position = []() {
         char temp[18];
-        ReadProcessMemory(csgo.processHandle, (LPCVOID)(localPlayer.get() + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
+        ReadProcessMemory(mem.processHandle, (LPCVOID)(localPlayer.get() + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
         setClanTag(temp, "| azurre |");
     };
     static auto health = []() {

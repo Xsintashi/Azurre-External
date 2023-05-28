@@ -38,71 +38,71 @@ public:
 public:
 
 	bool registered() {
-		return csgo.Read<char*>(offset + 0x8);
+		return mem.Read<char*>(offset + 0x8);
 	}
 
 	char* name() {
-		return csgo.Read<char*>(offset + 0xC);
+		return mem.Read<char*>(offset + 0xC);
 	}
 
 	char* description() {
-		return csgo.Read<char*>(offset + 0x10);
+		return mem.Read<char*>(offset + 0x10);
 	}
 
 	int getFlags() {
-		return csgo.Read<int>(offset + 0x14);
+		return mem.Read<int>(offset + 0x14);
 	}
 
 	void flags(int flags) {
-		csgo.Write<int>(offset + 0x14, flags);
+		mem.Write<int>(offset + 0x14, flags);
 	}
 
 	char* defaultValue() {
-		return csgo.Read<char*>(offset + 0x20);
+		return mem.Read<char*>(offset + 0x20);
 	}
 
 	void setValue(char* value) {
-		csgo.Write<char*>(offset + 0x24, value);
+		mem.Write<char*>(offset + 0x24, value);
 	}
 
 	char* getSzValue() {
-		return csgo.Read<char*>(offset + 0x24);
+		return mem.Read<char*>(offset + 0x24);
 	}
 
 	int size() {
-		return csgo.Read<int>(offset + 0x28);
+		return mem.Read<int>(offset + 0x28);
 	}
 
 	float getFloatValue() {
-		return csgo.Read<float>(offset + 0x2C);
+		return mem.Read<float>(offset + 0x2C);
 	}
 
 	void setValue(float value) {
-		csgo.Write<int32_t>(offset + 0x2C, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
+		mem.Write<int32_t>(offset + 0x2C, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
 	}
 
 	int getIntValue() {
-		return csgo.Read<BYTE>(offset + 0x30);
+		return mem.Read<BYTE>(offset + 0x30);
 	}
 
 	void setValue(int value) {
-		csgo.Write<int32_t>(offset + 0x30, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
+		mem.Write<int32_t>(offset + 0x30, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
 	}
 
 	bool hasMin() {
-		return csgo.Read<int>(offset + 0x34);
+		return mem.Read<int>(offset + 0x34);
 	}
 
 	float minVal() {
-		return csgo.Read<float>(offset + 0x38);
+		return mem.Read<float>(offset + 0x38);
 	}
 
 	bool hasMax() {
-		return csgo.Read<bool>(offset + 0x3c);
+		return mem.Read<bool>(offset + 0x3c);
 	}
 
 	float maxVal() {
-		return csgo.Read<float>(offset + 0x40);
+		return mem.Read<float>(offset + 0x40);
 	}
 
 public:

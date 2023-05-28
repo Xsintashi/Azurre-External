@@ -225,7 +225,7 @@ void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int inde
 
 	ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 4.f * config.scale, color, 0);
 
-	const auto& bombCarrier = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iPlayerC4);
+	const auto& bombCarrier = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iPlayerC4);
 	if(index + 1 == bombCarrier) //Bro is carring bomb //Ghetto way
 		ImGui::GetForegroundDrawList()->AddImage(c4Texture.getTexture(), { xOnTheMap - iconSize * config.scale,  yOnTheMap - iconSize * config.scale }, { xOnTheMap + iconSize * config.scale,  yOnTheMap + iconSize * config.scale }, { 0, 0 }, { 1, 1 }); // 2 times smaller
 

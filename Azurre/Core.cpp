@@ -22,27 +22,27 @@
 
 void Core::init() {
 	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
-	IClient.address = csgo.GetModuleAddress("client.dll");
-	IClient.size = csgo.ModuleSize("client.dll");
-	IEngine.address = csgo.GetModuleAddress("engine.dll");
-	IEngine.size = csgo.ModuleSize("engine.dll");
-	IClientState.address = csgo.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
-	IPlayerResource.address = csgo.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
-	localPlayer.init(csgo.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
-	gameState = csgo.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
-	const auto dir = csgo.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
+	IClient.address = mem.GetModuleAddress("client.dll");
+	IClient.size = mem.ModuleSize("client.dll");
+	IEngine.address = mem.GetModuleAddress("engine.dll");
+	IEngine.size = mem.ModuleSize("engine.dll");
+	IClientState.address = mem.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
+	IPlayerResource.address = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
+	localPlayer.init(mem.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
+	gameState = mem.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
+	const auto dir = mem.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
 	gameDir = dir.data();
 };
 
 void Core::update() {
 	IConsole = FindWindowA("Valve001", NULL);
-	gameState = csgo.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
-	IClientState.address = csgo.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
-	IPlayerResource.address = csgo.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
-	localPlayer.init(csgo.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
-	globalVars = csgo.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
+	gameState = mem.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
+	IClientState.address = mem.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
+	IPlayerResource.address = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
+	localPlayer.init(mem.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
+	globalVars = mem.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
-	const auto map = csgo.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
+	const auto map = mem.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
 	mapName = map.data();
 	RECT rct;
 	if (GetWindowRect(IConsole, &rct)) {
@@ -59,7 +59,7 @@ void Core::update() {
 };
 
 void Core::gameDataUpdate() noexcept {
-	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
+	const auto& userInfoTable = mem.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
 	gameData = {}; // reset GameData
 	for (int unsigned idx = 0; idx <= 1024; idx++) {
 
@@ -72,14 +72,14 @@ void Core::gameDataUpdate() noexcept {
 			case ClassID::CSPlayer: {
 
 				if (cfg->m.radarHack && !cfg->restrictions && !entity->isSameTeam())
-					csgo.Write<bool>(entity + Offset::netvars::m_bSpotted, true);
+					mem.Write<bool>(entity + Offset::netvars::m_bSpotted, true);
 
 				if ((uintptr_t)entity == localPlayer.get())
 					localPlayerIndex = idx;
 
 				// Player Info
-				const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
-				PlayerInfo playerInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
+				const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
+				PlayerInfo playerInfo = mem.Read<PlayerInfo>(mem.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
 
 				const auto& health = entity->health();
 				const auto& armor = entity->armor();
@@ -92,11 +92,11 @@ void Core::gameDataUpdate() noexcept {
 				const bool bot = playerInfo.fakeplayer;
 				std::uint64_t steamID = playerInfo.steamID64;
 				char temp[18];
-				ReadProcessMemory(csgo.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
+				ReadProcessMemory(mem.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
 				std::string placename = (temp + '\0');
 
-				const auto& rank = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + idx * 4);
-				const auto& wins = csgo.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + idx * 4);
+				const auto& rank = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + idx * 4);
+				const auto& wins = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + idx * 4);
 
 				const int clampedRank = std::clamp(rank, 0, 18);
 
@@ -115,22 +115,22 @@ void Core::gameDataUpdate() noexcept {
 			case ClassID::Tablet: {
 				gameData.tablet = entity;
 				if (cfg->m.fixTablet)
-					csgo.Write<bool>(gameData.tablet + Offset::netvars::m_bTabletReceptionIsBlocked, false);
+					mem.Write<bool>(gameData.tablet + Offset::netvars::m_bTabletReceptionIsBlocked, false);
 				break;
 			}
 			case ClassID::ToneMapController: {
 				gameData.toneMapController = entity;
 				if (cfg->v.customPostProcessing.enabled) {
-					csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomBloomScale, cfg->v.customPostProcessing.enabled);
-					csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMax, cfg->v.customPostProcessing.enabled);
-					csgo.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMin, cfg->v.customPostProcessing.enabled);
+					mem.Write<bool>(entity + Offset::netvars::m_bUseCustomBloomScale, cfg->v.customPostProcessing.enabled);
+					mem.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMax, cfg->v.customPostProcessing.enabled);
+					mem.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMin, cfg->v.customPostProcessing.enabled);
 
 					float bloomScale = cfg->v.customPostProcessing.bloomScale * 0.01f;
 					float worldExposure = cfg->v.customPostProcessing.worldExposure * 0.001f;
 
-					csgo.Write<float>(entity + Offset::netvars::m_flCustomBloomScale, bloomScale);
-					csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMax, worldExposure);
-					csgo.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMin, worldExposure);
+					mem.Write<float>(entity + Offset::netvars::m_flCustomBloomScale, bloomScale);
+					mem.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMax, worldExposure);
+					mem.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMin, worldExposure);
 				}
 				break;
 			}

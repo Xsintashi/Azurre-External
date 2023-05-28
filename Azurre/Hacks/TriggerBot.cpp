@@ -19,9 +19,9 @@ void TriggerBot::run() noexcept{
 
 	if (!crosshair || crosshair > 64) return;
 
-	const auto& entity = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (crosshair - 1) * 0x10);
+	const auto& entity = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (crosshair - 1) * 0x10);
 
-	int weaponIndex = csgo.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+	int weaponIndex = mem.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
 
 	if (!weaponIndex) return;
 
@@ -42,7 +42,7 @@ void TriggerBot::run() noexcept{
 				std::this_thread::sleep_for(std::chrono::milliseconds(2));
 				mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
 			}
-			else csgo.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
+			else mem.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
 
 			time = GetTickCount();
 		}

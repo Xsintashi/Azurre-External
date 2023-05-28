@@ -5,5 +5,5 @@
 #define OFFSET(name, args, offsetName, returnType) \
 returnType name args noexcept \
 { \
-    return csgo.Read<returnType>((uintptr_t)this + offsetName); \
+    return mem.Read<returnType>((uintptr_t)this + offsetName); \
 }

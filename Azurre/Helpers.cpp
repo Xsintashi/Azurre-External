@@ -38,7 +38,7 @@ std::array<uint8_t, 4> Helpers::ConvertColors4ToUint8_t(std::array<float, 4> in)
 
 Vector Helpers::calculateRealAngles() {
 	Vector movementVector = localPlayer->velocity();
-	float viewAngles = csgo.Read<float>(IClientState.address + Offset::signatures::dwClientState_ViewAngles + 4);
+	float viewAngles = mem.Read<float>(IClientState.address + Offset::signatures::dwClientState_ViewAngles + 4);
 	Vector angle;
 	viewAngles = deg2rad(viewAngles);
 	angle.x = (cos(viewAngles) * movementVector.x) - (sin(viewAngles) * (-movementVector.y));

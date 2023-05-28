@@ -417,7 +417,7 @@ void GUI::RenderDebugWindow() noexcept {
 	const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
 	const int tickRate = static_cast<int>(1 / globalVars->intervalPerTick); //tps
 
-	int chokedPackets = csgo.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
+	int chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
 
 	ImGui::TextUnformatted("Build date: " __DATE__ " " __TIME__);
 
@@ -462,8 +462,8 @@ void GUI::RenderDebugWindow() noexcept {
 	//ImGui::SliderFloat("", &roll, -45.f, 45.f, "Roll: %.1f");
 	//if (roll != tempRoll) {
 	//	tempRoll = roll;
-	//	const auto& viewAngles = csgo.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
-	//	csgo.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
+	//	const auto& viewAngles = mem.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
+	//	mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
 	//}
 	//ImGui::PopID();
 	static std::string cmd = "";

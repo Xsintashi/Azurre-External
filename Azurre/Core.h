@@ -82,4 +82,5 @@ inline ImVec2 gameScreenSize = {};
 inline ImVec2 gameScreenPos = {};
 inline ImVec2 gameScreenPosEnd = {};
 inline GameData gameData;
-inline Memory csgo = Memory{ "csgo.exe" };
+#define mem azurre
+inline Memory mem = Memory{ "csgo.exe" };

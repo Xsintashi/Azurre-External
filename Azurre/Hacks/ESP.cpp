@@ -42,9 +42,9 @@ void drawSkeleton(uintptr_t entBones, Matrix4x4 m) {
 
 	for (int skel = 0; skel < 128; skel++) {
 		const auto bonePos = Vector{
-			csgo.Read<float>(entBones + 0x30 * skel + 0x0C),
-			csgo.Read<float>(entBones + 0x30 * skel + 0x1C),
-			csgo.Read<float>(entBones + 0x30 * skel + 0x2C)
+			mem.Read<float>(entBones + 0x30 * skel + 0x0C),
+			mem.Read<float>(entBones + 0x30 * skel + 0x1C),
+			mem.Read<float>(entBones + 0x30 * skel + 0x2C)
 		};
 
 		Vector vStart = Helpers::world2Screen(gameScreenSize, bonePos, m);
@@ -72,7 +72,7 @@ void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
 	constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
 	int tab = 1;
 	int spotted = 0;
-	spotted = csgo.Read<int>(entity + Offset::netvars::m_bSpotted);
+	spotted = mem.Read<int>(entity + Offset::netvars::m_bSpotted);
 
 	if (entity->isSameTeam()){
 		tab = 0;
@@ -123,9 +123,9 @@ void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
 	const auto colorNames = ImGui::GetColorU32({ config.other.names.color[0], config.other.names.color[1], config.other.names.color[2], 1.f });
 	const auto colorWeapon = ImGui::GetColorU32({ config.other.weapons.color[0], config.other.weapons.color[1], config.other.weapons.color[2], 1.f });
 
-	const auto& userInfoTable = csgo.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
-	const auto& items = csgo.Read<uintptr_t>(csgo.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
-	PlayerInfo pInfo = csgo.Read<PlayerInfo>(csgo.Read<uintptr_t>(items + 0x28 + (index * 0x34)));
+	const auto& userInfoTable = mem.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
+	const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
+	PlayerInfo pInfo = mem.Read<PlayerInfo>(mem.Read<uintptr_t>(items + 0x28 + (index * 0x34)));
 	std::string name = pInfo.name;
 	std::string weapon = Skin::getWeaponIDName(entity->getWeaponIDFromPlayer());
 
@@ -146,7 +146,7 @@ void ESP::render() noexcept {
 	if (!localPlayer) return;
 	if (!cfg->esp.enabled) return;
 
-	Matrix4x4 m = csgo.Read<Matrix4x4>(IClient.address + Offset::signatures::dwViewMatrix);
+	Matrix4x4 m = mem.Read<Matrix4x4>(IClient.address + Offset::signatures::dwViewMatrix);
 	for (int i = 1; i < 32; i++) {
 		auto entity = getEntity(i);
 

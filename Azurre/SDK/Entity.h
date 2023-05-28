@@ -117,7 +117,7 @@ enum class ClassID {
 };
 
 static ClassID GetClassId(Entity* entity) {
-    return (ClassID)csgo.Read<int>(csgo.Read<int>(csgo.Read<int>(csgo.Read<int>((uintptr_t)entity + 8) + 2 * 4) + 1) + 20);
+    return (ClassID)mem.Read<int>(mem.Read<int>(mem.Read<int>(mem.Read<int>((uintptr_t)entity + 8) + 2 * 4) + 1) + 20);
 }
 
 class Entity {
@@ -192,29 +192,29 @@ public:
     }
 
     short getWeaponIDFromPlayer() noexcept {
-        int activeWeapon = csgo.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+        int activeWeapon = mem.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
         if (!activeWeapon)
             return 0;
 
-        const auto& ID = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (activeWeapon - 1) * 0x10);
+        const auto& ID = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (activeWeapon - 1) * 0x10);
         if (!ID)
             return 0;
 
-        return csgo.Read<short>(activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
+        return mem.Read<short>(activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
     }
 
     Entity* getActiveWeapon() noexcept {
-        int weaponIndex = csgo.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+        int weaponIndex = mem.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
 
         if (!weaponIndex) return 0;
 
-        const auto& activeWeapon = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weaponIndex - 1) * 0x10);
+        const auto& activeWeapon = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weaponIndex - 1) * 0x10);
        
         return activeWeapon;
     }
 
     short getWeaponID() noexcept {
-        return csgo.Read<short>(this + Offset::netvars::m_iItemDefinitionIndex);
+        return mem.Read<short>(this + Offset::netvars::m_iItemDefinitionIndex);
     }
 
     bool isWeaponRifleSniper() noexcept {
@@ -224,7 +224,7 @@ public:
 };
 
 static Entity* getEntity(int idx) {
-    const auto& entity = csgo.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + idx * 0x10);
+    const auto& entity = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + idx * 0x10);
     if (!entity) return 0;
     return entity;
 }

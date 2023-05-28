@@ -27,8 +27,8 @@ void Misc::bunnyHop() noexcept {
 
 	if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions){
 		(flags & (1 << 0)) ?
-		csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
-		csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
+		mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
+		mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
 		return;
 	}
 
@@ -46,8 +46,8 @@ void Misc::fakeLag() noexcept {
 
 	if (cfg->restrictions) return; //RPM ONLY
 
-	const auto& sendPacket = csgo.Read<BYTE>(IEngine.address + Offset::signatures::dwbSendPackets);
-	const auto& chokedPackets = csgo.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
+	const auto& sendPacket = mem.Read<BYTE>(IEngine.address + Offset::signatures::dwbSendPackets);
+	const auto& chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
 	int choke = 0;
 
 	if (!cfg->m.fakeLag.enabled)return;
@@ -68,7 +68,7 @@ void Misc::fakeLag() noexcept {
 	}
 
 	choke = std::clamp(choke, 0, 16);
-	csgo.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, chokedPackets >= choke);
+	mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, chokedPackets >= choke);
 
 }
 
@@ -156,7 +156,7 @@ void Misc::changeWindowTitle(bool restore) noexcept {
 void Misc::forceReload(bool onKey) noexcept {
 
 	if (!onKey || GetAsyncKeyState(VK_END) && !cfg->restrictions) {
-		csgo.Write<std::int32_t>(IClientState.address + 0x174, -1);
+		mem.Write<std::int32_t>(IClientState.address + 0x174, -1);
 		changeWindowTitle();
 	}
 }
@@ -448,13 +448,13 @@ void Misc::fastStop() noexcept	{
 	Vector finalVector = Helpers::calculateRealAngles();
 	if (!wKey && !aKey && !sKey && !dKey && velocity >= 30.f && (localPlayer->flags() & 1)) {
 		if (finalVector.x >= 20) // FRONT, SO GO BACKWARDS
-			csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceBackward, 6);
+			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceBackward, 6);
 		if (finalVector.x <= -20) // BACK, SO GO FRONT
-			csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceForward, 6);
+			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceForward, 6);
 		if (finalVector.y >= 20) // RIGHT, SO GO LEFT
-			csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceLeft, 6);
+			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceLeft, 6);
 		if (finalVector.y <= -20) // LEFT, SO GO RIGHT
-			csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6);;
+			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6);;
 	}
 }
 

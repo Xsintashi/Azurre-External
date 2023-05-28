@@ -18,7 +18,7 @@ void Glow::run() noexcept {
 
 		if (!cfg->g.enabled) continue;
 
-		const auto glowObjectManager = csgo.Read<std::uintptr_t>(IClient.address + Offset::signatures::dwGlowObjectManager);
+		const auto glowObjectManager = mem.Read<std::uintptr_t>(IClient.address + Offset::signatures::dwGlowObjectManager);
 
 		for (auto i = 1; i <= 32; ++i)
 		{
@@ -39,17 +39,17 @@ void Glow::run() noexcept {
 			else
 				color = Helpers::ConvertColors4ToUint8_t(cfg->g.enemy.color);;
 
-			const auto glowIndex = csgo.Read<std::int32_t>(entity + Offset::netvars::m_iGlowIndex);
+			const auto glowIndex = mem.Read<std::int32_t>(entity + Offset::netvars::m_iGlowIndex);
 
-			csgo.Write<uint8_t>(IClient.address + Offset::signatures::force_update_spectator_glow, 235); //Fix Flickering
+			mem.Write<uint8_t>(IClient.address + Offset::signatures::force_update_spectator_glow, 235); //Fix Flickering
 
-			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x8, color[0] / 255.f); //Red
-			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0xC, color[1] / 255.f); //Green
-			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x10, color[2] / 255.f); //Blue
-			csgo.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x14, color[3] / 255.f); //Alpha
+			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x8, color[0] / 255.f); //Red
+			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0xC, color[1] / 255.f); //Green
+			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x10, color[2] / 255.f); //Blue
+			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x14, color[3] / 255.f); //Alpha
 
-			csgo.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x28, true);
-			csgo.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x29, true);
+			mem.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x28, true);
+			mem.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x29, true);
 		}
 	}
 }

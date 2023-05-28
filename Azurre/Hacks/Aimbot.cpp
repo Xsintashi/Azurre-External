@@ -23,14 +23,14 @@ void Aimbot::run() noexcept {
 		if (!localPlayer || localPlayer->isDead() || localPlayer->isDefusing() || localPlayer->waitForNoAttack()) continue;
 
 		const auto eyePosition = localPlayer->origin() + localPlayer->viewOffset();
-		const auto& viewAngles = csgo.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
+		const auto& viewAngles = mem.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
 
 		const auto& aimPunch = localPlayer->aimPunch() * 2.f;
 
 		float bestFov = cfg->a.fov;
 		Vector bestAngle = {};
 
-		int weaponIndex = csgo.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+		int weaponIndex = mem.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
 
 		if (!weaponIndex) continue;
 
@@ -56,9 +56,9 @@ void Aimbot::run() noexcept {
 				const auto bonePosition = 8 - cfg->a.bone;
 
 				const auto bonePos = Vector{
-					csgo.Read<float>(entity->boneMatrix() + 0x30 * bonePosition + 0x0C),
-					csgo.Read<float>(entity->boneMatrix() + 0x30 * bonePosition + 0x1C),
-					csgo.Read<float>(entity->boneMatrix() + 0x30 * bonePosition + 0x2C)
+					mem.Read<float>(entity->boneMatrix() + 0x30 * bonePosition + 0x0C),
+					mem.Read<float>(entity->boneMatrix() + 0x30 * bonePosition + 0x1C),
+					mem.Read<float>(entity->boneMatrix() + 0x30 * bonePosition + 0x2C)
 				};
 
 				const auto angle = Helpers::calculateRelativeAngle(eyePosition, bonePos, { viewAngles.x + aimPunch.x, viewAngles.y + aimPunch.y, 0.f });
@@ -72,23 +72,23 @@ void Aimbot::run() noexcept {
 			}
 
 			if (bestAngle.notNull() && cfg->a.hotkey.isActive()) {
-				csgo.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f } );
+				mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f } );
 				
 				if (cfg->a.autoStop) {
 					const float velocity = localPlayer->velocity().length2D();
 					Vector finalVector = Helpers::calculateRealAngles();
 					if (velocity >= 30.f && (localPlayer->flags() & 1)) {
 						if (finalVector.x >= 20) // FRONT, SO GO BACKWARDS
-							csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceBackward, 6);
+							mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceBackward, 6);
 						if (finalVector.x <= -20) // BACK, SO GO FRONT
-							csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceForward, 6);
+							mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceForward, 6);
 						if (finalVector.y >= 20) // RIGHT, SO GO LEFT
-							csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceLeft, 6);
+							mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceLeft, 6);
 						if (finalVector.y <= -20) // LEFT, SO GO RIGHT
-							csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6);;
+							mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6);;
 					}
 				} if (cfg->a.autoShot || (cfg->a.autoShot && cfg->a.autoStop && localPlayer->velocity().length2D() < 15.f)) {
-					csgo.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
+					mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
 				}
 			}
 		}
@@ -105,7 +105,7 @@ void Aimbot::recoilSystem() noexcept {
 
 	static ImVec2 oldAimPunch = {};
 
-	const auto& viewAngles = csgo.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
+	const auto& viewAngles = mem.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
 
 	if (localPlayer->shotsFired()) {
 
@@ -127,7 +127,7 @@ void Aimbot::recoilSystem() noexcept {
 		while (newAngles.y < -180.f)
 			newAngles.y += 360.f;
 
-		csgo.Write<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, newAngles);
+		mem.Write<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, newAngles);
 
 		oldAimPunch.x = localPlayer->aimPunch().x * 2.f;
 		oldAimPunch.y = localPlayer->aimPunch().y * 2.f;
