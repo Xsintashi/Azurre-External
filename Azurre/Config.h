@@ -197,6 +197,7 @@ public:
 
 	struct Debug {
 		bool boolDebug0 = false;
+		KeyBind keyDebug0 = std::string("Debug 0");
 	} debug;
 
 #if defined(_DEBUG)

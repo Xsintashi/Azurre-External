@@ -454,6 +454,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("Greek: "); ImGui::SameLine();	ImGui::Text((const char*)u8"Γεια. Δοκιμή");
 	ImGui::Separator();
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
+	ImGui::hotkey("Key Debug 0", cfg->debug.keyDebug0);
 
 	//ImGui::PushID("Roll");
 	//static float roll = 0.f;
