@@ -581,9 +581,7 @@ void GUI::RenderMainMenu() noexcept {
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 		if (ImGui::BeginTabItem("Aimbot")) {
 			ImGui::PushID("aimbot");
-			ImGui::BeginDisabled(cfg->restrictions);
 			ImGui::Checkbox("Enabled", &cfg->a.enabled);
-			ImGui::EndDisabled();
 			ImGui::SameLine();
 			ImGui::hotkey("", cfg->a.hotkey);
 			ImGui::PopID();
@@ -595,7 +593,9 @@ void GUI::RenderMainMenu() noexcept {
 			ImGui::SliderFloat("##fov", &cfg->a.fov, 0.001f, 255.000f, "Fov: %.2f");
 			ImGui::SliderFloat("##smooth", &cfg->a.smooth, 1.00f, 100.00f, "Smooth: %.2f");
 			ImGui::PopItemWidth();
+			ImGui::BeginDisabled(cfg->restrictions);
 			ImGui::Checkbox("RCS", &cfg->a.rcs);
+			ImGui::EndDisabled();
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("TriggerBot")) {

@@ -18,8 +18,6 @@ void Aimbot::run() noexcept {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (!cfg->a.enabled) continue;
 
-		if (cfg->restrictions) continue; //RPM ONLY
-
 		if (!localPlayer || localPlayer->isDead() || localPlayer->isDefusing() || localPlayer->waitForNoAttack()) continue;
 
 		const auto eyePosition = localPlayer->origin() + localPlayer->viewOffset();
@@ -71,10 +69,16 @@ void Aimbot::run() noexcept {
 				}
 			}
 
+			float x = (-bestAngle.y * 2 / (cfg->a.smooth * bestFov / 2));
+			float y = (bestAngle.x * 2 / (cfg->a.smooth * bestFov / 2));
+
 			if (bestAngle.notNull() && cfg->a.hotkey.isActive()) {
-				mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f } );
+				if (cfg->restrictions && !showMenu && bestFov > 0.2f)
+					mouse_event(MOUSEEVENTF_MOVE, static_cast<DWORD>(10 * x), static_cast<DWORD>(10 * y), NULL, NULL);
+				else if (!cfg->restrictions)
+					mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f });
 				
-				if (cfg->a.autoStop) {
+				if (cfg->a.autoStop && !cfg->restrictions) {
 					const float velocity = localPlayer->velocity().length2D();
 					Vector finalVector = Helpers::calculateRealAngles();
 					if (velocity >= 30.f && (localPlayer->flags() & 1)) {
@@ -87,8 +91,18 @@ void Aimbot::run() noexcept {
 						if (finalVector.y <= -20) // LEFT, SO GO RIGHT
 							mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6);;
 					}
-				} if (cfg->a.autoShot || (cfg->a.autoShot && cfg->a.autoStop && localPlayer->velocity().length2D() < 15.f)) {
-					mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
+				}
+
+				const auto& crosshair = localPlayer->crosshairID();
+				if (!crosshair || crosshair > 64) continue;
+				if (cfg->a.autoShot || (cfg->a.autoShot && cfg->a.autoStop && localPlayer->velocity().length2D() < 15.f)) {
+					if (cfg->restrictions) {
+						mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+						std::this_thread::sleep_for(std::chrono::milliseconds(2));
+						mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+					}
+					else
+						mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
 				}
 			}
 		}
