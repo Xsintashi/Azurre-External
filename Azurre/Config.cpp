@@ -674,9 +674,6 @@ void Config::reset() noexcept {
     ch = {};
     t = {};
     v = {};
-
-    Misc::forceReload();
-    Clan::setClanTag("", "");
 }
 
 void Config::listConfigs() noexcept {
