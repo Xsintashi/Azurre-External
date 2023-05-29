@@ -92,6 +92,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 			}
 		}
 		//Here funcs which dont need be updated every ms
+
 		Minimap::_();
 		Clan::update();
 		Core::gameDataUpdate();
@@ -107,7 +108,10 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		if (cfg->m.spectatorList.enabled) Misc::spectatorList();
 		if (cfg->m.bombTimer.enabled) Misc::bombTimer();
 		if (showMenu) GUI::RenderMainMenu();
-
+#if defined(_DEBUG)
+		GUI::RenderDebugWindow();
+		if (showMenu) ImGui::ShowDemoWindow();
+#endif
 		GUI::EndRender();
 	}
 	Misc::forceReload();
