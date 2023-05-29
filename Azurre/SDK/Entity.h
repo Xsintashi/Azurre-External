@@ -153,7 +153,7 @@ public:
     OFFSET(observerMode, (), Offset::netvars::m_iObserverMode, ObsMode)
     OFFSET(lifeState, (), Offset::netvars::m_lifeState, bool)
     OFFSET(isScoped, (), Offset::netvars::m_bIsScoped, bool)
-
+    OFFSET(lby, (), Offset::netvars::m_flLowerBodyYawTarget, float)
     OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
 
     //Planted C4
