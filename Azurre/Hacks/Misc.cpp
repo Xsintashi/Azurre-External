@@ -422,7 +422,7 @@ void Misc::crosshairs() noexcept {
 		drawCrosshair(mid, settings.length, settings.gap, settings.thickness, settings.outlineThickness, settings.dot, settings.outline.enabled, settings.TStyle, Helpers::calculateColor(settings.color), Helpers::calculateColor(settings.outline));
 	}
 
-	if ((cfg->m.recoilCrosshair.enabled && showMenu) || (cfg->m.recoilCrosshair.enabled && localPlayer->shotsFired() > 2 && !localPlayer->isScoped() && !localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
+	if ((cfg->m.recoilCrosshair.enabled && showMenu) || (cfg->m.recoilCrosshair.enabled && localPlayer->shotsFired() && !localPlayer->isScoped() && !localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
 		auto& settings = cfg->m.recoilCrosshair;
 		Vector aimPunch = localPlayer->aimPunch() / 2.f;
 		drawCrosshair({ mid.x - (screenSize.x / 90.f * aimPunch.y), mid.y + (screenSize.x / 90.f * aimPunch.x) }, settings.length, settings.gap, settings.thickness, settings.outlineThickness, settings.dot, settings.outline.enabled, settings.TStyle, Helpers::calculateColor(settings.color), Helpers::calculateColor(settings.outline));
