@@ -192,15 +192,15 @@ public:
     }
 
     short getWeaponIDFromPlayer() noexcept {
-        int activeWeapon = mem.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+        int weaponIndex = mem.Read<int>((uintptr_t)this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+        if (!weaponIndex)
+            return 0;
+
+        const auto& activeWeapon = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weaponIndex - 1) * 0x10);
         if (!activeWeapon)
             return 0;
 
-        const auto& ID = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (activeWeapon - 1) * 0x10);
-        if (!ID)
-            return 0;
-
-        return mem.Read<short>(activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
+        return mem.Read<short>((uintptr_t)activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
     }
 
     Entity* getActiveWeapon() noexcept {
