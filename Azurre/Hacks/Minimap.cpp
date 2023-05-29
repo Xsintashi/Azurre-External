@@ -25,6 +25,10 @@
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/WeaponID.h"
 
+constexpr auto ctColor = IM_COL32(100, 200, 255, 255);
+constexpr auto ttColor = IM_COL32(255, 200, 0, 255);
+constexpr auto lpColor = IM_COL32(203, 223, 223, 255);
+
 const PNGTexture c4Texture{ resource::C4 };
 const PNGTexture c4PlantedTexture{ resource::plantedC4 };
 const PNGTexture defuserTexture{ resource::defuser };
@@ -205,6 +209,8 @@ void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int inde
 	else if (entity->dormant())
 		return;
 
+	const auto color_ = localPlayer.get() == (uintptr_t)entity ? lpColor : color;
+
 	const float originX = entity->origin().x / 2.f / mapScale * config.scale;
 	const float originY = entity->origin().y / 2.f / mapScale * config.scale;
 
@@ -228,7 +234,7 @@ void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int inde
 	if (entity->isDead())
 		return;
 
-	ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 4.f * config.scale, color, 0);
+	ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 4.f * config.scale, color_, 0);
 
 	const auto& bombCarrier = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iPlayerC4);
 	if(index + 1 == bombCarrier) //Bro is carring bomb //Ghetto way
@@ -242,7 +248,7 @@ void renderPlayer(Entity* entity, ImVec2 windowPos, unsigned int color, int inde
 		x /= len;
 		y /= len;
 	}
-	drawAngles(ImGui::GetForegroundDrawList(), { xOnTheMap, yOnTheMap }, { x, y }, color, false);
+	drawAngles(ImGui::GetForegroundDrawList(), { xOnTheMap, yOnTheMap }, { x, y }, color_, false);
 }
 
 void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
@@ -284,10 +290,6 @@ void Minimap::Render() { //Render Thread
 	if (!showMenu && !cfg->m.minimap.hotkey.isActive() && cfg->m.minimap.hotkey.isSet())
 		return;
 
-	constexpr auto ctColor = IM_COL32(100, 200, 255, 255);
-	constexpr auto ttColor = IM_COL32(255, 200, 0, 255);
-	constexpr auto lpColor = IM_COL32(203, 223, 223, 255);
-
 	int windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing;
 
 	if (!showMenu)
@@ -306,7 +308,7 @@ void Minimap::Render() { //Render Thread
 	ImVec2 windowPos = ImGui::GetWindowPos();
 	ImGui::Image(mapTexture.data, {512.f * config.scale, 512.f * config.scale }); // 2 times smaller
 
-	for (int unsigned idx = 1; idx <= 1024; idx++) {
+	for (int unsigned idx = 0; idx <= 1024; idx++) {
 		const auto& entity = getEntity(idx);
 		if (!entity) continue;
 
@@ -418,6 +420,5 @@ void Minimap::Render() { //Render Thread
 			}
 		}
 	}
-	renderPlayer((Entity*)localPlayer.get(), windowPos, lpColor, 0);
 	ImGui::End();
 }
