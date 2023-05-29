@@ -2,6 +2,7 @@
 
 #include "../Lib/imgui/imgui.h"
 #include "Memory.h"
+#include "SDK/Matrix.h"
 
 #include <string>
 #include <vector>
@@ -82,5 +83,6 @@ inline ImVec2 gameScreenSize = {};
 inline ImVec2 gameScreenPos = {};
 inline ImVec2 gameScreenPosEnd = {};
 inline GameData gameData;
+inline Matrix4x4 viewMatix;
 #define mem azurre
 inline Memory mem = Memory{ "csgo.exe" };

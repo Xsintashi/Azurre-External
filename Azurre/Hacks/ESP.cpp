@@ -146,7 +146,6 @@ void ESP::render() noexcept {
 	if (!localPlayer) return;
 	if (!cfg->esp.enabled) return;
 
-	Matrix4x4 m = mem.Read<Matrix4x4>(IClient.address + Offset::signatures::dwViewMatrix);
 	for (int i = 1; i < 32; i++) {
 		auto entity = getEntity(i);
 
@@ -159,6 +158,6 @@ void ESP::render() noexcept {
 		if ((uintptr_t)entity == localPlayer.get())
 			continue;
 
-		renderPlayer(entity, i, m);
+		renderPlayer(entity, i, viewMatix);
 	}
 }

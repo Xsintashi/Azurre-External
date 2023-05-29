@@ -17,6 +17,7 @@
 #include "SDK/Entity.h"
 #include "SDK/GlobalVars.h"
 #include "SDK/PlayerInfo.h"
+#include "SDK/Matrix.h"
 #include "Config.h"
 #include "DiscordSDK/RPC.h"
 
@@ -41,6 +42,7 @@ void Core::update() {
 	IPlayerResource.address = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
 	localPlayer.init(mem.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 	globalVars = mem.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
+	viewMatix = mem.Read<Matrix4x4>(IClient.address + Offset::signatures::dwViewMatrix);
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
 	const auto map = mem.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
 	mapName = map.data();
