@@ -16,6 +16,7 @@
 #define IClient interfaces->client
 #define IEngine interfaces->engine
 #define IClientState interfaces->clientState
+#define IVstdlib interfaces->vstdlib
 #define IPlayerResource interfaces->playerResource
 #define IConsole interfaces->console
 

@@ -27,6 +27,8 @@ void Core::init() {
 	IClient.size = mem.ModuleSize("client.dll");
 	IEngine.address = mem.GetModuleAddress("engine.dll");
 	IEngine.size = mem.ModuleSize("engine.dll");
+	IVstdlib.address = mem.GetModuleAddress("vstdlib.dll");
+	IVstdlib.size = mem.ModuleSize("vstdlib.dll");
 	IClientState.address = mem.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
 	IPlayerResource.address = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
 	localPlayer.init(mem.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));

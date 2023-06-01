@@ -13,6 +13,7 @@ class Interfaces {
 public:
 	Module client;
 	Module clientState;
+	Module vstdlib;
 	Module engine;
 	Module playerResource;
 	HWND console;
