@@ -317,8 +317,6 @@ void Misc::bombTimer() noexcept {
 		ImGui::SetNextWindowBgAlpha(0.3f);
 	}
 
-	const auto& plantedC4 = gameData.plantedC4;
-
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoFocusOnAppearing;
 	if (!showMenu)
 		windowFlags |= ImGuiWindowFlags_NoInputs;
@@ -326,18 +324,15 @@ void Misc::bombTimer() noexcept {
 	if (cfg->m.bombTimer.noTitleBar)
 		windowFlags |= ImGuiWindowFlags_NoTitleBar;
 
-	constexpr float windowWidth = 200.0f;
-	if (cfg->m.bombTimer.pos == ImVec2{})
-		ImGui::SetNextWindowPos({ (ImGui::GetIO().DisplaySize.x - 200.0f) / 2.0f, 60.0f }, ImGuiCond_Once);
-	else {
+	if (cfg->m.bombTimer.pos != ImVec2{}) {
 		ImGui::SetNextWindowPos(cfg->m.bombTimer.pos);
 		cfg->m.bombTimer.pos = {};
 	}
 	
+	const auto& plantedC4 = gameData.plantedC4;
+
 	if (gameData.plantedC4->bombDefused())
 		gameData.plantedC4 = nullptr;
-
-	Color3 color{ 1.f, 1.f, 1.f };
 
 	if (gameData.plantedC4 != nullptr || showMenu){
 		ImGui::Begin("Bomb Timer", nullptr, windowFlags);
