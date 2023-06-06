@@ -186,6 +186,11 @@ public:
         return !this->isDead();
     }
 
+    bool isPlayer() noexcept {
+        const ClassID classID = GetClassId(this);
+        return classID == ClassID::CSPlayer;
+    }
+
     bool isWeapon() noexcept {
         const ClassID classID = GetClassId(this);
         return (classID == ClassID::Ak47 || classID == ClassID::Deagle || (classID > ClassID::Aug && classID < ClassID::XM1014));
