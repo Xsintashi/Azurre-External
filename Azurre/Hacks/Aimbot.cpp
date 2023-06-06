@@ -23,6 +23,9 @@ void Aimbot::run() noexcept {
 		const auto eyePosition = localPlayer->origin() + localPlayer->viewOffset();
 		const auto& viewAngles = mem.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
 
+		if (!gameData.observerData.empty() && cfg->a.disableWhileBeingSpectated)
+			continue;
+
 		const auto& aimPunch = localPlayer->aimPunch() * 2.f;
 
 		float bestFov = cfg->a.fov;
