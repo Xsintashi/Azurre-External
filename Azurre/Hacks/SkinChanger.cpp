@@ -330,6 +330,7 @@ const char* Skin::getWeaponIDName(short ID) noexcept {
 
     switch (ID) {
     default: return "?";
+    case WeaponID::C4: return "C4";
     case WeaponID::Ak47: return "AK-47";
     case WeaponID::Aug: return "AUG";
     case WeaponID::Awp: return "AWP";
