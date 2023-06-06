@@ -278,6 +278,8 @@ void Misc::spectatorList() noexcept {
 
 	if (!localPlayer) return;
 
+	if (gameData.observerData.empty()) return;
+
 	ImGui::Begin("Spectator List", nullptr, windowFlags);
 
 	for (auto& player : gameData.observerData) {
