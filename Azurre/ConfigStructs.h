@@ -53,7 +53,6 @@ struct ColorToggleThicknessRounding : ColorToggleRounding {
 
 struct Other {
     ColorToggle3 names = { 1.f, 1.f, 1.f };
-    ColorToggle3 weapons = { 1.f, 1.f, 1.f };
     ColorToggle3 lines = { 1.f, 1.f, 1.f };
 };
 
@@ -72,10 +71,18 @@ struct HealthBar {
 };
 
 struct Player {
+    bool enabled = false;
     Other other;
     Box box;
     HealthBar healthBar;
+    ColorToggle3 weapons = { 1.f, 1.f, 1.f };
     bool skeleton;
+};
+
+struct Weapons {
+    bool enabled = false;
+    Other other;
+    Box box;
 };
 
 struct Crosshair {

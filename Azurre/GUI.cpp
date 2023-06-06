@@ -639,45 +639,71 @@ void GUI::RenderMainMenu() noexcept {
 		if (ImGui::BeginTabItem("ESP")) {
 			static int list = 0;
 			static int spotted = 0;
-			constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
+			constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible", "Weapons" };
 			ImGui::Checkbox("Enabled", &cfg->esp.enabled);
-			ImGui::Combo("##player", &list, "Allies\0Enemies\0");
-			if (list) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
-			else spotted = 0;
-			ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.names.enabled);
-			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].other.weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.weapons.enabled);
+			ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons");
+			switch (list) {
+			default: case 0: case 1:
+				if (list) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
+				else spotted = 0;
+				ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.names.enabled);
+				ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].weapons.enabled);
 #if defined(_DEBUG)
-			ImGui::Checkbox("Skeleton", &cfg->esp.players[categories[list + spotted]].skeleton); // DEBUG bones pos
+				ImGui::Checkbox("Skeleton", &cfg->esp.players[categories[list + spotted]].skeleton); // DEBUG bones pos
 #endif
-			ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled);
-			ImGui::PushID("boxes");
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
+				ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled);
+				ImGui::PushID("boxes");
+				ImGui::SameLine();
+				if (ImGui::Button("..."))
+					ImGui::OpenPopup("");
 
-			if (ImGui::BeginPopup("")) {
-				if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[categories[list + spotted]].box.gradientColor)) {
-					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
-					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+				if (ImGui::BeginPopup("")) {
+					if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[categories[list + spotted]].box.gradientColor)) {
+						ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+						ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+					}
+					else
+						ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGui::EndPopup();
 				}
-				else
-					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-			ImGui::Checkbox("Health Bar", &cfg->esp.players[categories[list + spotted]].healthBar.enabled);
-			ImGui::PushID("healbar");
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
+				ImGui::PopID();
+				ImGui::Checkbox("Health Bar", &cfg->esp.players[categories[list + spotted]].healthBar.enabled);
+				ImGui::PushID("healbar");
+				ImGui::SameLine();
+				if (ImGui::Button("..."))
+					ImGui::OpenPopup("");
 
-			if (ImGui::BeginPopup("")) {
-				ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].healthBar.solidColor.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.solidColor.enabled);
-				ImGuiCustom::colorPicker("Health Number", cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.enabled);
-				ImGui::EndPopup();
+				if (ImGui::BeginPopup("")) {
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].healthBar.solidColor.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.solidColor.enabled);
+					ImGuiCustom::colorPicker("Health Number", cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.enabled);
+					ImGui::EndPopup();
+				}
+				ImGui::PopID();
+				ImGuiCustom::colorPicker("Lines", cfg->esp.players[categories[list + spotted]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.lines.enabled);
+				break;
+
+			case 2:
+				ImGuiCustom::colorPicker("Name", cfg->esp.weapons["All"].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.names.enabled);
+				ImGui::Checkbox("Boxes", &cfg->esp.weapons["All"].box.enabled);
+				ImGui::PushID("boxes weapons");
+				ImGui::SameLine();
+				if (ImGui::Button("..."))
+					ImGui::OpenPopup("");
+
+				if (ImGui::BeginPopup("")) {
+					if (ImGui::Checkbox("Gradient Color", &cfg->esp.weapons["All"].box.gradientColor)) {
+						ImGuiCustom::colorPicker("Top Color", cfg->esp.weapons["All"].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+						ImGuiCustom::colorPicker("Bottom Color", cfg->esp.weapons["All"].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+					}
+					else
+						ImGuiCustom::colorPicker("Solid Color", cfg->esp.weapons["All"].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGui::EndPopup();
+				}
+				ImGui::PopID();
+				ImGuiCustom::colorPicker("Lines", cfg->esp.weapons["All"].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.lines.enabled);
+
 			}
-			ImGui::PopID();
-			ImGuiCustom::colorPicker("Lines", cfg->esp.players[categories[list + spotted]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.lines.enabled);
+			
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Misc")) {

@@ -3,6 +3,7 @@
 
 #include "../Config.h"
 #include "../Core.h"
+#include "../Helpers.h"
 
 #include "../SDK/Entity.h"
 #include "../SDK/GlobalVars.h"
@@ -38,7 +39,7 @@ void drawLines(ImVec2 pos, ImVec2 pos_, ImU32 color) {
 	drawList->AddLine(pos, pos_, color); //TOP
 }
 
-void drawSkeleton(uintptr_t entBones, Matrix4x4 m) {
+void drawSkeleton(uintptr_t entBones) {
 
 	for (int skel = 0; skel < 128; skel++) {
 		const auto bonePos = Vector{
@@ -47,7 +48,7 @@ void drawSkeleton(uintptr_t entBones, Matrix4x4 m) {
 			mem.Read<float>(entBones + 0x30 * skel + 0x2C)
 		};
 
-		Vector vStart = Helpers::world2Screen(gameScreenSize, bonePos, m);
+		Vector vStart = Helpers::world2Screen(gameScreenSize, bonePos, viewMatix);
 		const auto centerText = ImGui::CalcTextSize(std::to_string(skel).c_str());
 		drawList->AddCircleFilled({ vStart.x, vStart.y }, 8.f, IM_COL32(255, 255, 255, 255));
 		drawList->AddText({ vStart.x - centerText.x / 2.f, vStart.y - centerText.x / 2.f },IM_COL32(255, 0, 0, 255), std::to_string(skel).c_str());
@@ -68,8 +69,37 @@ void drawPlayerName(ImVec2 pos, float width, float height, float duckHeight, std
 	drawList->AddText({pos.x - centerText.x / 2, pos.y - 4.f + (height * .1f) + duckHeight }, color, name.c_str());
 }
 
-void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
-	constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
+constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible", "Weapons" };
+
+void renderWeapon(Entity* entity, int index) {
+	auto& config = cfg->esp.weapons["All"];
+
+	Vector pos = entity->origin();
+	Vector head;
+	pos.z -= 8.f;
+	head.x = pos.x;
+	head.y = pos.y;
+	head.z = pos.z + 16.f;
+
+	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
+	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
+
+	float height = headScreen.y - posScreen.y;
+	const float width = height;
+
+	std::string name = Skin::getWeaponIDName(entity->getWeaponID());
+
+	const auto colorBox = config.box.gradientColor ? config.box.grandientTop : config.box.solid;
+	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
+
+	if (posScreen.z >= 0.01f) {
+		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, 0.f, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
+		if (config.other.names.enabled)	drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, 0.f, 0.f, 0.f, name, Helpers::calculateColor(config.other.names));
+		if (config.other.lines.enabled) drawLines({ gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, Helpers::calculateColor(config.other.lines));
+	}
+}
+
+void renderPlayer(Entity* entity, int index) {
 	int tab = 1;
 	int spotted = 0;
 	spotted = mem.Read<int>(entity + Offset::netvars::m_bSpotted);
@@ -93,20 +123,14 @@ void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
 	if (entity->duckAmount() > .25f)
 		duckHeight += (16.f * entity->duckAmount());
 
-	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, m);
-	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, m);
-
-	ImVec2 pos2D = { posScreen.x, posScreen.y };
-	ImVec2 head2D = { headScreen.x, headScreen.y };
+	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
+	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
 
 	float height = headScreen.y - posScreen.y;
 	const float width = height / 4;
 
-	const auto colorBox = config.box.gradientColor ? config.box.grandientTop.color : config.box.solid.color;
-	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom.color : config.box.solid.color;
-
-	const auto colorFinal = ImGui::GetColorU32({ colorBox[0], colorBox[1], colorBox[2], 1.f });
-	const auto colorFinal_ = ImGui::GetColorU32({ colorBox_[0], colorBox_[1], colorBox_[2], 1.f});
+	const auto colorBox = config.box.gradientColor ? config.box.grandientTop : config.box.solid;
+	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
 
 #pragma endregion Box
 #pragma region Health Bar
@@ -120,9 +144,6 @@ void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
 	const auto colorHealthBarFinal = config.healthBar.solidColor.enabled ? colorHealthBar : colorHealthBarMix;
 #pragma endregion Health Bar
 #pragma region Player Name
-	const auto colorNames = ImGui::GetColorU32({ config.other.names.color[0], config.other.names.color[1], config.other.names.color[2], 1.f });
-	const auto colorWeapon = ImGui::GetColorU32({ config.other.weapons.color[0], config.other.weapons.color[1], config.other.weapons.color[2], 1.f });
-
 	const auto& userInfoTable = mem.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
 	const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
 	PlayerInfo pInfo = mem.Read<PlayerInfo>(mem.Read<uintptr_t>(items + 0x28 + (index * 0x34)));
@@ -130,15 +151,13 @@ void renderPlayer(Entity* entity, int index, Matrix4x4 m) {
 	std::string weapon = Skin::getWeaponIDName(entity->getWeaponIDFromPlayer());
 
 #pragma endregion Player Name
-	const auto colorLines = ImGui::GetColorU32({ config.other.lines.color[0], config.other.lines.color[1], config.other.lines.color[2], 1.f });
-
 	if (posScreen.z >= 0.01f && !entity->dormant()) {
-		if (config.skeleton) drawSkeleton(entity->boneMatrix(), m);
-		if (config.box.enabled) drawBorderBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, colorFinal, colorFinal_);
+		if (config.skeleton) drawSkeleton(entity->boneMatrix());
+		if (config.box.enabled) drawBorderBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
 		if (config.healthBar.enabled) drawHealthBar( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
-		if (config.other.names.enabled) drawPlayerName( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, name, colorNames);
-		if (config.other.weapons.enabled) drawPlayerName( { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y}, width, height, duckHeight, weapon, colorWeapon);
-		if (config.other.lines.enabled) drawLines( { gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, colorLines);
+		if (config.other.names.enabled) drawPlayerName( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, name, Helpers::calculateColor(config.other.names));
+		if (config.weapons.enabled) drawPlayerName( { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y}, width, height, duckHeight, weapon, Helpers::calculateColor(config.weapons));
+		if (config.other.lines.enabled) drawLines( { gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, Helpers::calculateColor(config.other.lines));
 	}
 }
 
@@ -146,18 +165,28 @@ void ESP::render() noexcept {
 	if (!localPlayer) return;
 	if (!cfg->esp.enabled) return;
 
-	for (int i = 1; i < 32; i++) {
+	for (int i = 1; i < 1024; i++) {
 		auto entity = getEntity(i);
 
 		if (!entity)
 			continue;
 
-		if (entity->isDead())
+		if (entity->origin() == Vector{ 0.f, 0.f, 0.f })
 			continue;
 
 		if ((uintptr_t)entity == localPlayer.get())
 			continue;
 
-		renderPlayer(entity, i, viewMatix);
+		if (entity->isPlayer()) {
+			if (entity->isDead())
+				continue;
+			renderPlayer(entity, i);
+			continue;
+		}
+		if (entity->isWeapon()) {
+			renderWeapon(entity, i);
+			continue;
+		}
+
 	}
 }

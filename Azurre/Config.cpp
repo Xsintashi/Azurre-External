@@ -129,7 +129,6 @@ static void from_json(const json& j, Config::DiscordConfig& c) {
 
 static void from_json(const json& j, Other& o) {
     read<value_t::object>(j, "Names", o.names);
-    read<value_t::object>(j, "Weapons", o.weapons);
     read<value_t::object>(j, "Lines", o.lines);
 }
 
@@ -148,9 +147,17 @@ static void from_json(const json& j, HealthBar& o) {
 }
 
 static void from_json(const json& j, Player& p) {
+    read(j, "Enabled", p.enabled);
     read<value_t::object>(j, "Other", p.other);
     read<value_t::object>(j, "Box", p.box);
     read<value_t::object>(j, "HealthBar", p.healthBar);
+    read<value_t::object>(j, "Weapons", p.weapons);
+}
+
+static void from_json(const json& j, Weapons& p) {
+    read(j, "Enabled", p.enabled);
+    read<value_t::object>(j, "Other", p.other);
+    read<value_t::object>(j, "Box", p.box);
 }
 
 static void from_json(const json& j, Crosshair& o) {
@@ -168,6 +175,7 @@ static void from_json(const json& j, Crosshair& o) {
 static void from_json(const json& j, Config::ESPConfig& e) {
     read(j, "Enabled", e.enabled);
     read(j, "Players", e.players);
+    read(j, "Weapons", e.weapons);
 }
 
 static void from_json(const json& j, Config::GlowConfig& c) {
@@ -424,7 +432,6 @@ static void to_json(json& j, const Config::DiscordConfig& o, const Config::Disco
 
 static void to_json(json& j, const Other& o, const Other& dummy = {}) {
     WRITE("Names", names);
-    WRITE("Weapons", weapons);
     WRITE("Lines", lines);
 }
 
@@ -443,9 +450,17 @@ static void to_json(json& j, const HealthBar& o, const HealthBar& dummy = {}) {
 }
 
 static void to_json(json& j, const Player& o, const Player& dummy = {}) {
+    WRITE("Enabled", enabled);
     WRITE("Other", other);
     WRITE("Box", box);
     WRITE("HealthBar", healthBar);
+    WRITE("Weapons", weapons);
+}
+
+static void to_json(json& j, const Weapons& o, const Weapons& dummy = {}) {
+    WRITE("Enabled", enabled);
+    WRITE("Other", other);
+    WRITE("Box", box);
 }
 
 static void to_json(json& j, const Crosshair& o, const Crosshair& dummy = {}) {
@@ -464,6 +479,7 @@ static void to_json(json& j, const Config::ESPConfig& o) {
     const Config::ESPConfig dummy;
     WRITE("Enabled", enabled);
     j["Players"] = o.players;
+    j["Weapons"] = o.weapons;
 
 }
 
