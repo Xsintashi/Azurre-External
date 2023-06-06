@@ -71,7 +71,7 @@ void drawPlayerName(ImVec2 pos, float width, float height, float duckHeight, std
 
 constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible", "Weapons" };
 
-void renderWeapon(Entity* entity, int index) {
+void renderWeapon(Entity* entity) {
 	auto& config = cfg->esp.weapons["All"];
 
 	Vector pos = entity->origin();
@@ -163,30 +163,18 @@ void renderPlayer(Entity* entity, int index) {
 
 void ESP::render() noexcept {
 	if (!localPlayer) return;
+	if (gameData.playerData.empty() || gameData.weaponData.empty()) return;
 	if (!cfg->esp.enabled) return;
 
-	for (int i = 1; i < 1024; i++) {
-		auto entity = getEntity(i);
-
-		if (!entity)
+	for (auto& player : gameData.playerData) {
+		if (player.entity->isDead())
 			continue;
+		renderPlayer(player.entity, player.idx);
+	}
 
-		if (entity->origin() == Vector{ 0.f, 0.f, 0.f })
+	for (auto& weapon : gameData.weaponData) {
+		if (weapon->origin() == Vector{ 0.f, 0.f, 0.f })
 			continue;
-
-		if ((uintptr_t)entity == localPlayer.get())
-			continue;
-
-		if (entity->isPlayer()) {
-			if (entity->isDead())
-				continue;
-			renderPlayer(entity, i);
-			continue;
-		}
-		if (entity->isWeapon()) {
-			renderWeapon(entity, i);
-			continue;
-		}
-
+		renderWeapon(weapon);
 	}
 }

@@ -62,11 +62,16 @@ void Core::update() {
 
 void Core::gameDataUpdate() noexcept {
 	const auto& userInfoTable = mem.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
+	gameData.playerData.clear();
+	gameData.weaponData.clear();
 	gameData = {}; // reset GameData
 	for (int unsigned idx = 0; idx <= 1024; idx++) {
 
 		const auto& entity = getEntity(idx);
 		if (!entity) continue;
+
+		if (entity->isWeapon())
+			gameData.weaponData.push_back(entity);
 
 		switch (GetClassId(entity)){
 			default:

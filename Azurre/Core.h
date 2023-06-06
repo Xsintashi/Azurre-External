@@ -67,6 +67,7 @@ struct PlayerData {
 
 struct GameData {
 	std::vector<PlayerData> playerData;
+	std::vector<Entity*> weaponData;
 	std::vector<ObserverData> observerData;
 	Entity* tablet;
 	Entity* toneMapController;
