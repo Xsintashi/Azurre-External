@@ -1,15 +1,18 @@
-#include "../Lib/imgui/imgui.h"
 #include "Console.h"
 #include "Core.h"
 #include "fnv.h"
-#include "SDK/Interfaces.h"
-#include "SDK/LocalPlayer.h"
+
 #include <corecrt_malloc.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <string>
 #include <sstream>
 #include <vector>
+
+#include "../Lib/imgui/imgui.h"
+
+#include "SDK/Interfaces.h"
+#include "SDK/LocalPlayer.h"
 
 struct Console
 {
@@ -44,6 +47,8 @@ struct Console
         AddLog("$$ |  $$ | /$$$$/__ $$ \\__$$ |$$ |      $$ |      $$$$$$$$/ ");
         AddLog("$$ |  $$ |/$$      |$$    $$/ $$ |      $$ |      $$       |");
         AddLog("$$/   $$/ $$$$$$$$/  $$$$$$/  $$/       $$/        $$$$$$$/ ");
+        AddLog("\n");
+        AddLog("Console is in WIP mode and may crash. Not gonna fix that fast");
         AddLog("\n");
     }
     ~Console()
@@ -98,10 +103,9 @@ struct Console
         ImGui::SameLine();
         if (ImGui::SmallButton("Clear")) { ClearLog(); }
         ImGui::SameLine();
-        bool copy_to_clipboard = ImGui::SmallButton("Copy");
         //static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t = ImGui::GetTime(); AddLog("Spam %f", t); }
 #endif
-
+        bool copy_to_clipboard = ImGui::SmallButton("Copy");
         ImGui::Separator();
 
         // Options menu
@@ -257,50 +261,165 @@ struct Console
 
             AddLog("%s", buffer.str().c_str());
         }
-        //else if (Stricmp(command, "WRITE") == 0)
-        //{
-        //    if (args.size() != 5) {
-        //        AddLog("Syntax: write size adress offset value");
-        //        AddLog("Sizes:");
-        //        AddLog("\t- bool: 1");
-        //        AddLog("\t- int: 4");
-        //        AddLog("\t- float: 4");
-        //        AddLog("Adresses:");
-        //        AddLog("\t- engine");
-        //        AddLog("\t- client");
-        //        AddLog("\t- clientstate");
-        //        AddLog("\t- playerresource");
-        //        AddLog("\t- localplayer / lp");
-        //        return;
-        //    }
-        //    std::uintptr_t address = IPlayerResource.address;
-        //    const std::uintptr_t& offset = stoi(args[4]);
+        else if (Stricmp(command, "WRITE") == 0)
+        {
+            if (args.size() != 5) {
+                AddLog("Syntax: write size adress offset value");
+                AddLog("Sizes:");
+                AddLog("\t- bool: 1");
+                AddLog("\t- short: 2");
+                AddLog("\t- int: 4");
+                AddLog("\t- float: 4");
+                AddLog("\t- long: 4");
+                AddLog("\t- long long: 8");
+                AddLog("\t- You can also use custom size");
+                AddLog("Adresses:");
+                AddLog("\t- engine");
+                AddLog("\t- client");
+                AddLog("\t- clientstate");
+                AddLog("\t- playerresource");
+                AddLog("\t- localplayer / lp");
+                return;
+            }
+            std::uintptr_t address = NULL;
+            const std::uintptr_t offset = stoi(args[3]);
+            int size = NULL;
+            const LPCVOID value = (LPCVOID)stoi(args[4]);
 
-        //    switch (fnv::hashRuntime(args[3].c_str())) { // dsoesnt work
-        //        case fnv::hash("engine"):
-        //        case fnv::hash("e"):
-        //            address = IEngine.address;
-        //            break;
-        //        case fnv::hash("client"):
-        //        case fnv::hash("c"):
-        //            address = IClient.address;
-        //            break;
-        //        case fnv::hash("clientstate"):
-        //        case fnv::hash("cs"):
-        //            address = IClientState.address;
-        //            break;
-        //        case fnv::hash("playerresource"):
-        //        case fnv::hash("pr"):
-        //            address = IPlayerResource.address;
-        //            break;
-        //        case fnv::hash("localPlayer"):
-        //        case fnv::hash("lp"):
-        //            address = localPlayer.get();
-        //            break;
-        //    }
+            switch (fnv::hashRuntime(args[1].c_str())) { // dsoesnt work
+            case fnv::hash("bool"):
+            case fnv::hash("char"):
+                size = 1;
+                break;
+            case fnv::hash("short"):
+                size = 2;
+                break;
+            case fnv::hash("float"):
+            case fnv::hash("long"):
+            case fnv::hash("int"):
+                size = 4;
+                break;
+            case fnv::hash("ll"):
+            case fnv::hash("longlong"):
+            case fnv::hash("long long"):
+                size = 1;
+                break;
 
-        //    ::WriteProcessMemory(mem.processHandle, reinterpret_cast<void*>(address + offset), &args[4], sizeof(args[1]), NULL);
-        //}
+            default:
+                size = stoi(args[1]);
+                break;
+            }
+
+            switch (fnv::hashRuntime(args[2].c_str())) { // dsoesnt work
+                case fnv::hash("engine"):
+                case fnv::hash("e"):
+                    address = IEngine.address;
+                    break;
+                case fnv::hash("client"):
+                case fnv::hash("c"):
+                    address = IClient.address;
+                    break;
+                case fnv::hash("clientstate"):
+                case fnv::hash("cs"):
+                    address = IClientState.address;
+                    break;
+                case fnv::hash("playerresource"):
+                case fnv::hash("pr"):
+                    address = IPlayerResource.address;
+                    break;
+                case fnv::hash("localPlayer"):
+                case fnv::hash("lp"):
+                    address = localPlayer.get();
+                    break;
+                default:
+                    address = stoi(args[2]);
+                    break;
+            }
+
+            const std::uintptr_t& finalAdress = address + offset;
+
+            ::WriteProcessMemory(mem.processHandle, reinterpret_cast<void*>(finalAdress), &value, sizeof(size), NULL);
+
+        }
+        else if (Stricmp(command, "READ") == 0)
+        {
+            if (args.size() != 4) {
+                AddLog("Syntax: read size adress offset");
+                AddLog("Sizes:");
+                AddLog("\t- bool: 1");
+                AddLog("\t- short: 2");
+                AddLog("\t- int: 4");
+                AddLog("\t- float: 4");
+                AddLog("\t- long: 4");
+                AddLog("\t- long long: 8");
+                AddLog("\t- You can also use custom size");
+                AddLog("Adresses:");
+                AddLog("\t- engine");
+                AddLog("\t- client");
+                AddLog("\t- clientstate");
+                AddLog("\t- playerresource");
+                AddLog("\t- localplayer / lp");
+                return;
+            }
+            std::uintptr_t address = NULL;
+            const std::uintptr_t offset = stoi(args[3]);
+            int size = NULL;
+
+            switch (fnv::hashRuntime(args[1].c_str())) { // dsoesnt work
+            case fnv::hash("bool"):
+            case fnv::hash("char"):
+                size = 1;
+                break;
+            case fnv::hash("short"):
+                size = 2;
+                break;
+            case fnv::hash("float"):
+            case fnv::hash("long"):
+            case fnv::hash("int"):
+                size = 4;
+                break;
+            case fnv::hash("ll"):
+            case fnv::hash("longlong"):
+            case fnv::hash("long long"):
+                size = 1;
+                break;
+
+            default:
+                size = stoi(args[1]);
+                break;
+            }
+
+            switch (fnv::hashRuntime(args[2].c_str())) { // dsoesnt work
+            case fnv::hash("engine"):
+            case fnv::hash("e"):
+                address = IEngine.address;
+                break;
+            case fnv::hash("client"):
+            case fnv::hash("c"):
+                address = IClient.address;
+                break;
+            case fnv::hash("clientstate"):
+            case fnv::hash("cs"):
+                address = IClientState.address;
+                break;
+            case fnv::hash("playerresource"):
+            case fnv::hash("pr"):
+                address = IPlayerResource.address;
+                break;
+            case fnv::hash("localPlayer"):
+            case fnv::hash("lp"):
+                address = localPlayer.get();
+                break;
+            default:
+                address = stoi(args[2]);
+                break;
+            }
+
+            const std::uintptr_t& finalAdress = address + offset;
+            uintptr_t value;
+            ::ReadProcessMemory(mem.processHandle, reinterpret_cast<const void*>(finalAdress), &value, sizeof(size), NULL);
+            AddLog("Value: '%i'\n", value);
+            }
         else
         {
             AddLog("Unknown command: '%s'\n", command);
