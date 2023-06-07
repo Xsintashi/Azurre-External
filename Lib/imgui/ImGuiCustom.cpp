@@ -117,17 +117,10 @@ void ImGui::progressBarFullWidth(float fraction, float height) noexcept
     if (fraction == 0.0f)
         return;
 
-    const ImVec2 p0{ ImLerp(bb.Min.x, bb.Max.x, 0.0f), bb.Min.y };
-    const ImVec2 p1{ ImLerp(bb.Min.x, bb.Max.x, fraction), bb.Max.y };
+    const ImVec2 p{ ImLerp(bb.Min.x, bb.Max.x, fraction), bb.Max.y };
 
-    const float x0 = ImMax(p0.x, bb.Min.x);
-    const float x1 = ImMin(p1.x, bb.Max.x);
+    RenderFrame(bb.Min, p, GetColorU32(ImGuiCol_PlotHistogram), true, style.FrameRounding);
 
-    window->DrawList->PathLineTo({ x0, p1.y });
-    window->DrawList->PathLineTo({ x0, p0.y });
-    window->DrawList->PathLineTo({ x1, p0.y });
-    window->DrawList->PathLineTo({ x1, p1.y });
-    window->DrawList->PathFillConvex(GetColorU32(ImGuiCol_PlotHistogram));
 }
 
 void ImGuiCustom::classicHotkey(const char* label, KeyBind& key, float samelineOffset, const ImVec2& size) noexcept
