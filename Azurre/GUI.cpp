@@ -260,7 +260,7 @@ void GUI::CreateImGui() noexcept
 	guiSettings.WindowBorderSize = cfg->u.windowBorder ? 1.f : 0.f;
 	guiSettings.PopupBorderSize = cfg->u.windowBorder ? 1.f : 0.f;
 	guiSettings.FrameBorderSize = cfg->u.frameBorder ? 1.f : 0.f;
-
+	guiSettings.SeparatorTextAlign.x = 0.5f;
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(device);
 }
@@ -406,12 +406,7 @@ void GUI::loadWindow() noexcept {
 
 void GUI::RenderDebugWindow() noexcept {
 	ImGui::SetNextWindowCollapsed(true, ImGuiCond_FirstUseEver);
-	ImGui::Begin(
-		"Debug",
-		nullptr,
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_AlwaysAutoResize
-	);
+	ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize );
 	static auto frameRate = 1.0f;
 	frameRate = 0.9f * frameRate + 0.1f * globalVars->absoluteFrameTime;
 	const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
@@ -596,547 +591,609 @@ void GUI::RenderPlayerList() noexcept {
 	ImGui::End();
 }
 
-void GUI::RenderMainMenu() noexcept {
-	ImGui::SetNextWindowPos({ screenSize.x / 2 - 320, screenSize.y / 2 - 240 }, ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize({ 640, 480 });
-	ImGui::Begin(
-		"Azurre External",
-		&isRunning,
-		ImGuiWindowFlags_AlwaysAutoResize
-	);
+static bool toggleAimbotWindow = false;
+void renderAimbotWindow() noexcept {
 
-	ImGui::Text("Hello xs9 :)");
-	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
-		if (ImGui::BeginTabItem("Aimbot")) {
-			ImGui::PushID("aimbot");
-			ImGui::Checkbox("Enabled", &cfg->a.enabled);
-			ImGui::SameLine();
-			ImGui::hotkey("", cfg->a.hotkey);
-			ImGui::PopID();
-			ImGui::Checkbox("Auto Shot", &cfg->a.autoShot);
-			ImGui::BeginDisabled(cfg->restrictions);
-			ImGui::EndDisabled();
-			ImGui::Checkbox("Auto Stop", &cfg->a.autoStop);
-			ImGui::Checkbox("Disable While Being Spectated", &cfg->a.disableWhileBeingSpectated);
-			ImGui::Checkbox("Friendly Fire", &cfg->a.friendlyFire);
-			ImGui::PushItemWidth(220.0f);
-			ImGui::Combo("Bone", &cfg->a.bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
-			ImGui::SliderFloat("##fov", &cfg->a.fov, 0.001f, 255.000f, "Fov: %.2f");
-			ImGui::SliderFloat("##smooth", &cfg->a.smooth, 1.00f, 100.00f, "Smooth: %.2f");
-			ImGui::PopItemWidth();
-			ImGui::BeginDisabled(cfg->restrictions);
-			ImGui::Checkbox("RCS", &cfg->a.rcs);
-			ImGui::EndDisabled();
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("TriggerBot")) {
-			ImGui::PushID("triggerbot");
-			ImGui::Checkbox("Enabled", &cfg->t.enabled);
-			ImGui::SameLine();
-			ImGui::hotkey("", cfg->t.hotkey);
-			ImGui::PopID();
-			ImGui::Checkbox("Friendly Fire", &cfg->t.friendlyFire);
-			ImGui::SetNextItemWidth(200.0f);
-			ImGui::SliderInt("Between Shots Delay", &cfg->t.delay, 0, 1000);
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("Glow")) {
-			ImGui::BeginDisabled(cfg->restrictions);
-			ImGui::Checkbox("Enabled", &cfg->g.enabled);
-			ImGui::SameLine();
-			ImGui::PushID("warning-1");
-			ImGui::TextDisabled("?");
-			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Glow causes instant red trustfactor! Use at your own risk!");
-			ImGui::PopID();
-			ImGuiCustom::colorPicker("Enemies", cfg->g.enemy.color.data(), &cfg->g.enemy.color[3], nullptr, nullptr, &cfg->g.enemy.enabled);
-			ImGuiCustom::colorPicker("Allies", cfg->g.ally.color.data(), &cfg->g.ally.color[3], nullptr, nullptr, &cfg->g.ally.enabled);
-			ImGui::EndTabItem();
-			ImGui::EndDisabled();
-		}
-		if (ImGui::BeginTabItem("Chams")) {
-			ImGui::BeginDisabled(cfg->restrictions);
-			ImGui::Checkbox("Enabled", &cfg->c.enabled);
-			ImGuiCustom::colorPicker("Enemies", cfg->c.enemy);
-			ImGuiCustom::colorPicker("Allies", cfg->c.ally);
-			ImGui::SetNextItemWidth(200.0f);
-			ImGui::SliderFloat("Brightness", &cfg->c.brightness, 0.1f, 1.f);
-			ImGui::EndTabItem();
-			ImGui::EndDisabled();
-		}
-		if (ImGui::BeginTabItem("ESP")) {
-			static int list = 0;
-			static int spotted = 0;
-			constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible", "Weapons" };
-			ImGui::Checkbox("Enabled", &cfg->esp.enabled);
-			ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons");
-			switch (list) {
-			default: case 0: case 1:
-				if (list) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
-				else spotted = 0;
-				ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.names.enabled);
-				ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].weapons.enabled);
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+	ImGui::Begin( "Aimbot", &toggleAimbotWindow, flags ); 
+	{
+		ImGui::PushID("key");
+		ImGui::Checkbox("Enabled", &cfg->a.enabled);
+		ImGui::SameLine();
+		ImGui::hotkey("", cfg->a.hotkey);
+		ImGui::PopID();
+		ImGui::Checkbox("Auto Shot", &cfg->a.autoShot);
+		ImGui::BeginDisabled(cfg->restrictions);
+		ImGui::EndDisabled();
+		ImGui::Checkbox("Auto Stop", &cfg->a.autoStop);
+		ImGui::Checkbox("Disable While Being Spectated", &cfg->a.disableWhileBeingSpectated);
+		ImGui::Checkbox("Friendly Fire", &cfg->a.friendlyFire);
+		ImGui::PushItemWidth(220.0f);
+		ImGui::Combo("Bone", &cfg->a.bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
+		ImGui::SliderFloat("##fov", &cfg->a.fov, 0.001f, 255.000f, "Fov: %.2f");
+		ImGui::SliderFloat("##smooth", &cfg->a.smooth, 1.00f, 100.00f, "Smooth: %.2f");
+		ImGui::PopItemWidth();
+		ImGui::BeginDisabled(cfg->restrictions);
+		ImGui::Checkbox("RCS", &cfg->a.rcs);
+		ImGui::EndDisabled();
+	}
+	ImGui::End();
+}
+
+static bool toggleTriggerbotWindow = false;
+void renderTriggerBotWindow() noexcept {
+
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+
+	ImGui::Begin("Trigger Bot", &toggleTriggerbotWindow, flags);
+	{
+		ImGui::PushID("Key");
+		ImGui::Checkbox("Enabled", &cfg->t.enabled);
+		ImGui::SameLine();
+		ImGui::hotkey("", cfg->t.hotkey);
+		ImGui::PopID();
+		ImGui::Checkbox("Friendly Fire", &cfg->t.friendlyFire);
+		ImGui::SetNextItemWidth(200.0f);
+		ImGui::SliderInt("Delay", &cfg->t.delay, 0, 1000);
+	}
+	ImGui::End();
+}
+
+static bool toggleGlowWindow = false;
+void renderGlowWindow() noexcept {
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+
+	ImGui::Begin("Glow", &toggleGlowWindow, flags);
+	{
+		ImGui::BeginDisabled(cfg->restrictions);
+		ImGui::Checkbox("Enabled", &cfg->g.enabled);
+		ImGui::SameLine();
+		ImGui::PushID("warning-1");
+		ImGui::TextDisabled("?");
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Glow causes instant red trustfactor! Use at your own risk!");
+		ImGui::PopID();
+		ImGuiCustom::colorPicker("Enemies", cfg->g.enemy.color.data(), &cfg->g.enemy.color[3], nullptr, nullptr, &cfg->g.enemy.enabled);
+		ImGuiCustom::colorPicker("Allies", cfg->g.ally.color.data(), &cfg->g.ally.color[3], nullptr, nullptr, &cfg->g.ally.enabled);
+		ImGui::EndDisabled();
+	}
+	ImGui::End();
+}
+
+static bool toggleChamsWindow = false;
+void renderChamsWindow() noexcept {
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+
+	ImGui::Begin("Chams", &toggleChamsWindow, flags);
+	{
+		ImGui::BeginDisabled(cfg->restrictions);
+		ImGui::Checkbox("Enabled", &cfg->c.enabled);
+		ImGuiCustom::colorPicker("Enemies", cfg->c.enemy);
+		ImGuiCustom::colorPicker("Allies", cfg->c.ally);
+		ImGui::SetNextItemWidth(200.0f);
+		ImGui::SliderFloat("Brightness", &cfg->c.brightness, 0.1f, 1.f);
+		ImGui::EndDisabled();
+	}
+	ImGui::End();
+}
+
+static bool toggleESPWindow = false;
+void renderESPWindow() noexcept {
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+
+	ImGui::Begin("ESP", &toggleESPWindow, flags);
+	{
+		static int list = 0;
+		static int spotted = 0;
+		constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible", "Weapons" };
+		ImGui::Checkbox("Enabled", &cfg->esp.enabled);
+		ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons");
+		switch (list) {
+		default: case 0: case 1:
+			if (list) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
+			else spotted = 0;
+			ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.names.enabled);
+			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].weapons.enabled);
 #if defined(_DEBUG)
 				ImGui::Checkbox("Skeleton", &cfg->esp.players[categories[list + spotted]].skeleton); // DEBUG bones pos
 #endif
-				ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled);
-				ImGui::PushID("boxes");
-				ImGui::SameLine();
-				if (ImGui::Button("..."))
-					ImGui::OpenPopup("");
-
-				if (ImGui::BeginPopup("")) {
-					if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[categories[list + spotted]].box.gradientColor)) {
-						ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
-						ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
-					}
-					else
-						ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
-					ImGui::EndPopup();
-				}
-				ImGui::PopID();
-				ImGui::Checkbox("Health Bar", &cfg->esp.players[categories[list + spotted]].healthBar.enabled);
-				ImGui::PushID("healbar");
-				ImGui::SameLine();
-				if (ImGui::Button("..."))
-					ImGui::OpenPopup("");
-
-				if (ImGui::BeginPopup("")) {
-					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].healthBar.solidColor.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.solidColor.enabled);
-					ImGuiCustom::colorPicker("Health Number", cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.enabled);
-					ImGui::EndPopup();
-				}
-				ImGui::PopID();
-				ImGuiCustom::colorPicker("Lines", cfg->esp.players[categories[list + spotted]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.lines.enabled);
-				break;
-
-			case 2:
-				ImGuiCustom::colorPicker("Name", cfg->esp.weapons["All"].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.names.enabled);
-				ImGui::Checkbox("Boxes", &cfg->esp.weapons["All"].box.enabled);
-				ImGui::PushID("boxes weapons");
-				ImGui::SameLine();
-				if (ImGui::Button("..."))
-					ImGui::OpenPopup("");
-
-				if (ImGui::BeginPopup("")) {
-					if (ImGui::Checkbox("Gradient Color", &cfg->esp.weapons["All"].box.gradientColor)) {
-						ImGuiCustom::colorPicker("Top Color", cfg->esp.weapons["All"].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
-						ImGuiCustom::colorPicker("Bottom Color", cfg->esp.weapons["All"].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
-					}
-					else
-						ImGuiCustom::colorPicker("Solid Color", cfg->esp.weapons["All"].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
-					ImGui::EndPopup();
-				}
-				ImGui::PopID();
-				ImGuiCustom::colorPicker("Lines", cfg->esp.weapons["All"].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.lines.enabled);
-
-			}
-			
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("Misc")) {
-			ImGui::PushItemWidth(96.f);
-			ImGui::Combo("Restrictions", &cfg->restrictions, "None\0Read Only");
-			ImGuiCustom::classicHotkey("Menu Key", cfg->m.menuKey);
-			ImGui::Checkbox("Bunny Hop", &cfg->m.bhop);
-			ImGui::BeginDisabled(cfg->restrictions);
-			ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
-			ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
-			ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
-			ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
-			ImGui::EndDisabled();
-			ImGui::InputText("Hit Sound", &cfg->m.hitSound);
-			ImGui::PushID("hitmarker");
-			ImGui::Combo("Type", &cfg->m.hitMarker.type, "None\0Cross\0Cross Fading\0"); ImGui::SameLine(); ImGuiCustom::colorPicker("Hit Marker", cfg->m.hitMarker.color.color.data());
-			ImGui::SameLine();
-			ImGui::SliderFloat("##as", &cfg->m.hitMarker.time, 0.1f, 1.5f, "Time: %.2fs");
-			ImGui::PopID();
-
-			ImGui::PushID("RecoilCrosshair");
-			ImGuiCustom::colorPicker("Recoil Crosshair", cfg->m.recoilCrosshair.color.color.data(), nullptr, &cfg->m.recoilCrosshair.color.rainbow, &cfg->m.recoilCrosshair.color.rainbowSpeed, &cfg->m.recoilCrosshair.enabled);
+			ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled);
+			ImGui::PushID("boxes");
 			ImGui::SameLine();
 			if (ImGui::Button("..."))
 				ImGui::OpenPopup("");
 
 			if (ImGui::BeginPopup("")) {
+				if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[categories[list + spotted]].box.gradientColor)) {
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+				}
+				else
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+			ImGui::Checkbox("Health Bar", &cfg->esp.players[categories[list + spotted]].healthBar.enabled);
+			ImGui::PushID("healbar");
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].healthBar.solidColor.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.solidColor.enabled);
+				ImGuiCustom::colorPicker("Health Number", cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.enabled);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+			ImGuiCustom::colorPicker("Lines", cfg->esp.players[categories[list + spotted]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.lines.enabled);
+			break;
+
+		case 2:
+			ImGuiCustom::colorPicker("Name", cfg->esp.weapons["All"].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.names.enabled);
+			ImGui::Checkbox("Boxes", &cfg->esp.weapons["All"].box.enabled);
+			ImGui::PushID("boxes weapons");
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				if (ImGui::Checkbox("Gradient Color", &cfg->esp.weapons["All"].box.gradientColor)) {
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.weapons["All"].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.weapons["All"].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+				}
+				else
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.weapons["All"].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+			ImGuiCustom::colorPicker("Lines", cfg->esp.weapons["All"].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.lines.enabled);
+
+		}
+	}
+	ImGui::End();
+}
+
+static bool toggleMiscWindow = false;
+void renderMiscWindow() noexcept {
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+
+	ImGui::Begin("Misc", &toggleMiscWindow, flags);
+	{
+		ImGui::PushItemWidth(96.f);
+		ImGui::Combo("Restrictions", &cfg->restrictions, "None\0Read Only");
+		ImGuiCustom::classicHotkey("Menu Key", cfg->m.menuKey);
+		ImGui::Checkbox("Bunny Hop", &cfg->m.bhop);
+		ImGui::BeginDisabled(cfg->restrictions);
+		ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
+		ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
+		ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
+		ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
+		ImGui::EndDisabled();
+		ImGui::InputText("Hit Sound", &cfg->m.hitSound);
+		ImGui::PushID("hitmarker");
+		ImGui::Combo("Type", &cfg->m.hitMarker.type, "None\0Cross\0Cross Fading\0"); ImGui::SameLine(); ImGuiCustom::colorPicker("Hit Marker", cfg->m.hitMarker.color.color.data());
+		ImGui::SameLine();
+		ImGui::SliderFloat("##as", &cfg->m.hitMarker.time, 0.1f, 1.5f, "Time: %.2fs");
+		ImGui::PopID();
+		
+		ImGui::PushID("RecoilCrosshair");
+		ImGuiCustom::colorPicker("Recoil Crosshair", cfg->m.recoilCrosshair.color.color.data(), nullptr, &cfg->m.recoilCrosshair.color.rainbow, &cfg->m.recoilCrosshair.color.rainbowSpeed, &cfg->m.recoilCrosshair.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+		
+		if (ImGui::BeginPopup("")) {
+			ImGui::PushItemWidth(120.f);
+			ImGui::InputFloat("Length", &cfg->m.recoilCrosshair.length, 0.1f, 1.f);
+			ImGui::InputFloat("Gap", &cfg->m.recoilCrosshair.gap, 0.1f, 1.f);
+			ImGui::InputFloat("Thickness", &cfg->m.recoilCrosshair.thickness, 0.1f, 1.f);
+			ImGui::PopItemWidth();
+			ImGuiCustom::colorPicker("Outline", cfg->m.recoilCrosshair.outline, &cfg->m.recoilCrosshair.outline.enabled, &cfg->m.recoilCrosshair.outlineThickness);
+			ImGui::Checkbox("Dot", &cfg->m.recoilCrosshair.dot);
+			ImGui::SameLine();
+			ImGui::Checkbox("TStyle", &cfg->m.recoilCrosshair.TStyle);
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		
+		ImGui::PushID("SniperCrosshair");
+		ImGuiCustom::colorPicker("Sniper Crosshair", cfg->m.sniperCrosshair.color.color.data(), nullptr, &cfg->m.sniperCrosshair.color.rainbow, &cfg->m.sniperCrosshair.color.rainbowSpeed, &cfg->m.sniperCrosshair.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+		
+		if (ImGui::BeginPopup("")) {
+			ImGui::PushItemWidth(120.f);
+			ImGui::InputFloat("Length", &cfg->m.sniperCrosshair.length, 0.1f, 1.f);
+			ImGui::InputFloat("Gap", &cfg->m.sniperCrosshair.gap, 0.1f, 1.f);
+			ImGui::InputFloat("Thickness", &cfg->m.sniperCrosshair.thickness, 0.1f, 1.f);
+			ImGui::PopItemWidth();
+			ImGuiCustom::colorPicker("Outline", cfg->m.sniperCrosshair.outline, &cfg->m.sniperCrosshair.outline.enabled, &cfg->m.sniperCrosshair.outlineThickness);
+			ImGui::Checkbox("Dot", &cfg->m.sniperCrosshair.dot);
+			ImGui::SameLine();
+			ImGui::Checkbox("TStyle", &cfg->m.sniperCrosshair.TStyle);
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		
+		ImGui::PushID("Minimap");
+		ImGui::Checkbox("Minimap", &cfg->m.minimap.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+		
+		if (ImGui::BeginPopup("")) {
+			ImGui::hotkey("On Key", cfg->m.minimap.hotkey);
+			ImGui::Checkbox("No Title", &cfg->m.minimap.noTitleBar);
+			ImGui::Checkbox("No Background", &cfg->m.minimap.noBackground);
+			ImGui::Checkbox("Show Players", &cfg->m.minimap.showPlayers);
+			ImGui::Checkbox("Show Dormant", &cfg->m.minimap.showDormant);
+			ImGui::Checkbox("Show Weapons", &cfg->m.minimap.showWeapons);
+			ImGui::Checkbox("Show Grenades", &cfg->m.minimap.showGrenades);
+			ImGui::SliderFloat("##scale", &cfg->m.minimap.scale, 0.25f, 2.f, "Scale: %.2f");
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		
+		ImGui::PushID("Keybinds");
+		ImGui::Checkbox("Keybind List", &cfg->m.keybinds.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+		
+		if (ImGui::BeginPopup("")) {
+			ImGui::Checkbox("No Title", &cfg->m.keybinds.noTitleBar);
+			ImGui::Checkbox("No Background", &cfg->m.keybinds.noBackground);
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		
+		ImGui::PushID("BombTimer");
+		ImGui::Checkbox("Bomb Timer", &cfg->m.bombTimer.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+		
+		if (ImGui::BeginPopup("")) {
+			ImGui::Checkbox("No Title", &cfg->m.bombTimer.noTitleBar);
+			ImGuiCustom::colorPicker("Color", cfg->m.bombTimer.barColor.color.data(), nullptr, &cfg->m.bombTimer.barColor.rainbow, &cfg->m.bombTimer.barColor.rainbowSpeed);
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		
+		ImGui::PushID("SpectatorList");
+		ImGui::Checkbox("Spectator List", &cfg->m.spectatorList.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+		
+		if (ImGui::BeginPopup("")) {
+			ImGui::Checkbox("No Title Bar", &cfg->m.spectatorList.noTitleBar);
+			ImGui::Checkbox("No Background", &cfg->m.spectatorList.noBackground);
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		
+		ImGui::PushID("PlayerList");
+		ImGui::Checkbox("Player List", &cfg->m.playerList.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+		
+		if (ImGui::BeginPopup("")) {
+			ImGui::Checkbox("No Title", &cfg->m.playerList.noTitleBar);
+			ImGui::hotkey("On Key", cfg->m.playerList.hotkey);
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		ImGui::PushID("FakeLag");
+		ImGui::BeginDisabled(cfg->restrictions);
+		ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+		
+		if (ImGui::BeginPopup("")) {
+			ImGui::Combo("Mode", &cfg->m.fakeLag.type, "Static\0Adaptative\0Random\0");
+			ImGui::SliderInt("##limit", &cfg->m.fakeLag.limit, 1, 16, "Limit: %d");
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		ImGui::Combo("ClanTag", &cfg->clanTag.mode, "None\0Azurre\0Clock\0Reverse\0Velocity\0Position\0HP\0\\n Overflow\0Custom\0");
+		if (cfg->clanTag.mode == 8) {
+			ImGui::PushID("ClanTagCustom");
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("##custom");
+		
+			if (ImGui::BeginPopup("##custom")) {
 				ImGui::PushItemWidth(120.f);
-				ImGui::InputFloat("Length", &cfg->m.recoilCrosshair.length, 0.1f, 1.f);
-				ImGui::InputFloat("Gap", &cfg->m.recoilCrosshair.gap, 0.1f, 1.f);
-				ImGui::InputFloat("Thickness", &cfg->m.recoilCrosshair.thickness, 0.1f, 1.f);
+		
+				ImGui::Combo("Type", &cfg->clanTag.custom.type, "Static\0Rotate\0Rotate Backwards\0Add\0Remove\0");
+				if (ImGui::InputText("Name", &cfg->clanTag.custom.tag))
+					Clan::update(false, true);
+				if (ImGui::InputText("Team", &cfg->clanTag.custom.teamTag))
+					Clan::update(false, true);
+				if (ImGui::InputText("Prefix", &cfg->clanTag.custom.prefix))
+					Clan::update(false, true);
+				if (ImGui::InputText("Postfix", &cfg->clanTag.custom.postfix))
+					Clan::update(false, true);
+				ImGui::SliderFloat("##speed", &cfg->clanTag.custom.speed, 0.01f, 1.f, "Speed: %.2f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_Logarithmic);
+				ImGui::Checkbox("Hide Name", &cfg->clanTag.custom.hideName);
 				ImGui::PopItemWidth();
-				ImGuiCustom::colorPicker("Outline", cfg->m.recoilCrosshair.outline, &cfg->m.recoilCrosshair.outline.enabled, &cfg->m.recoilCrosshair.outlineThickness);
-				ImGui::Checkbox("Dot", &cfg->m.recoilCrosshair.dot);
-				ImGui::SameLine();
-				ImGui::Checkbox("TStyle", &cfg->m.recoilCrosshair.TStyle);
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();
-
-			ImGui::PushID("SniperCrosshair");
-			ImGuiCustom::colorPicker("Sniper Crosshair", cfg->m.sniperCrosshair.color.color.data(), nullptr, &cfg->m.sniperCrosshair.color.rainbow, &cfg->m.sniperCrosshair.color.rainbowSpeed, &cfg->m.sniperCrosshair.enabled);
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
-
-			if (ImGui::BeginPopup("")) {
-				ImGui::PushItemWidth(120.f);
-				ImGui::InputFloat("Length", &cfg->m.sniperCrosshair.length, 0.1f, 1.f);
-				ImGui::InputFloat("Gap", &cfg->m.sniperCrosshair.gap, 0.1f, 1.f);
-				ImGui::InputFloat("Thickness", &cfg->m.sniperCrosshair.thickness, 0.1f, 1.f);
-				ImGui::PopItemWidth();
-				ImGuiCustom::colorPicker("Outline", cfg->m.sniperCrosshair.outline, &cfg->m.sniperCrosshair.outline.enabled, &cfg->m.sniperCrosshair.outlineThickness);
-				ImGui::Checkbox("Dot", &cfg->m.sniperCrosshair.dot);
-				ImGui::SameLine();
-				ImGui::Checkbox("TStyle", &cfg->m.sniperCrosshair.TStyle);
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-
-			ImGui::PushID("Minimap");
-			ImGui::Checkbox("Minimap", &cfg->m.minimap.enabled);
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
-
-			if (ImGui::BeginPopup("")) {
-				ImGui::hotkey("On Key", cfg->m.minimap.hotkey);
-				ImGui::Checkbox("No Title", &cfg->m.minimap.noTitleBar);
-				ImGui::Checkbox("No Background", &cfg->m.minimap.noBackground);
-				ImGui::Checkbox("Show Players", &cfg->m.minimap.showPlayers);
-				ImGui::Checkbox("Show Dormant", &cfg->m.minimap.showDormant);
-				ImGui::Checkbox("Show Weapons", &cfg->m.minimap.showWeapons);
-				ImGui::Checkbox("Show Grenades", &cfg->m.minimap.showGrenades);
-				ImGui::SliderFloat("##scale", &cfg->m.minimap.scale, 0.25f, 2.f, "Scale: %.2f");
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-
-			ImGui::PushID("Keybinds");
-			ImGui::Checkbox("Keybind List", &cfg->m.keybinds.enabled);
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
-
-			if (ImGui::BeginPopup("")) {
-				ImGui::Checkbox("No Title", &cfg->m.keybinds.noTitleBar);
-				ImGui::Checkbox("No Background", &cfg->m.keybinds.noBackground);
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-
-			ImGui::PushID("BombTimer");
-			ImGui::Checkbox("Bomb Timer", &cfg->m.bombTimer.enabled);
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
-
-			if (ImGui::BeginPopup("")) {
-				ImGui::Checkbox("No Title", &cfg->m.bombTimer.noTitleBar);
-				ImGuiCustom::colorPicker("Color", cfg->m.bombTimer.barColor.color.data(), nullptr, &cfg->m.bombTimer.barColor.rainbow, &cfg->m.bombTimer.barColor.rainbowSpeed);
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-
-			ImGui::PushID("SpectatorList");
-			ImGui::Checkbox("Spectator List", &cfg->m.spectatorList.enabled);
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
-
-			if (ImGui::BeginPopup("")) {
-				ImGui::Checkbox("No Title Bar", &cfg->m.spectatorList.noTitleBar);
-				ImGui::Checkbox("No Background", &cfg->m.spectatorList.noBackground);
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-
-			ImGui::PushID("PlayerList");
-			ImGui::Checkbox("Player List", &cfg->m.playerList.enabled);
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
-
-			if (ImGui::BeginPopup("")) {
-				ImGui::Checkbox("No Title", &cfg->m.playerList.noTitleBar);
-				ImGui::hotkey("On Key", cfg->m.playerList.hotkey);
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-			ImGui::PushID("FakeLag");
-			ImGui::BeginDisabled(cfg->restrictions);
-			ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled);
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
-
-			if (ImGui::BeginPopup("")) {
-				ImGui::Combo("Mode", &cfg->m.fakeLag.type, "Static\0Adaptative\0Random\0");
-				ImGui::SliderInt("##limit", &cfg->m.fakeLag.limit, 1, 16, "Limit: %d");
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-			ImGui::Combo("ClanTag", &cfg->clanTag.mode, "None\0Azurre\0Clock\0Reverse\0Velocity\0Position\0HP\0\\n Overflow\0Custom\0");
-			if (cfg->clanTag.mode == 8) {
-				ImGui::PushID("ClanTagCustom");
-				ImGui::SameLine();
-				if (ImGui::Button("..."))
-					ImGui::OpenPopup("##custom");
-
-				if (ImGui::BeginPopup("##custom")) {
-					ImGui::PushItemWidth(120.f);
-
-					ImGui::Combo("Type", &cfg->clanTag.custom.type, "Static\0Rotate\0Rotate Backwards\0Add\0Remove\0");
-					if (ImGui::InputText("Name", &cfg->clanTag.custom.tag))
-						Clan::update(false, true);
-					if (ImGui::InputText("Team", &cfg->clanTag.custom.teamTag))
-						Clan::update(false, true);
-					if (ImGui::InputText("Prefix", &cfg->clanTag.custom.prefix))
-						Clan::update(false, true);
-					if (ImGui::InputText("Postfix", &cfg->clanTag.custom.postfix))
-						Clan::update(false, true);
-					ImGui::SliderFloat("##speed", &cfg->clanTag.custom.speed, 0.01f, 1.f, "Speed: %.2f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_Logarithmic);
-					ImGui::Checkbox("Hide Name", &cfg->clanTag.custom.hideName);
-					ImGui::PopItemWidth();
-					ImGui::EndPopup();
-				}
-				ImGui::PopID();
-			}
-			ImGui::EndDisabled();
-			ImGui::PopItemWidth();
-			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("Visuals")) {
-			ImGui::BeginDisabled(cfg->restrictions);
-			ImGui::PushID("PostProcessingPopup");
-			ImGui::Checkbox("Custom post-processing", &cfg->v.customPostProcessing.enabled);
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("");
+		ImGui::EndDisabled();
+		ImGui::PopItemWidth();
+	}
+	ImGui::End();
+}
 
-			if (ImGui::BeginPopup("")) {
-				ImGui::SliderFloat("Bloom", &cfg->v.customPostProcessing.bloomScale, 0.0f, 750.f, "%.3f", ImGuiSliderFlags_Logarithmic);
-				ImGui::SliderFloat("Exposure", &cfg->v.customPostProcessing.worldExposure, 0.0f, 2000.f, "%.3f", ImGuiSliderFlags_Logarithmic);
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-			ImGui::PushID("thirderson");
-			ImGui::Checkbox("Thirdperson", &cfg->v.thirdPerson);
-			ImGui::SameLine();
-			ImGui::hotkey("", cfg->v.thirdPersonKey);
-			ImGui::PopID();
-			ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
-			ImGui::Checkbox("No Shadows", &cfg->v.noShadows);
-			ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
-			ImGui::Checkbox("No Particles", &cfg->v.noParticles);
-			ImGui::PushItemWidth(96.f);
-			ImGui::Combo("Skybox", &cfg->v.skybox, skyboxList.data(), skyboxList.size());
-			ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");
-			ImGui::SliderInt("##fov", &cfg->v.fov, 30, 150, "Fov: %d");
-			ImGui::PopItemWidth();
-			ImGui::EndDisabled();
-			ImGui::EndTabItem();
+static bool toggleVisualsWindow = false;
+void renderVisualsWindow() noexcept {
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+
+	ImGui::Begin("Visuals", &toggleVisualsWindow, flags);
+	{
+		ImGui::BeginDisabled(cfg->restrictions);
+		ImGui::PushID("PostProcessingPopup");
+		ImGui::Checkbox("Custom post-processing", &cfg->v.customPostProcessing.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+	
+		if (ImGui::BeginPopup("")) {
+			ImGui::SliderFloat("Bloom", &cfg->v.customPostProcessing.bloomScale, 0.0f, 750.f, "%.3f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("Exposure", &cfg->v.customPostProcessing.worldExposure, 0.0f, 2000.f, "%.3f", ImGuiSliderFlags_Logarithmic);
+			ImGui::EndPopup();
 		}
-		if (ImGui::BeginTabItem("Changer")) {
-			ImGui::BeginDisabled(cfg->restrictions);
-			static int itemIndex = 0;
-			static int itemIndexTemp = 0;
-			ImGui::PushItemWidth(96.f);
-			ImGui::Combo("##1", &itemIndex, [](void* data, int idx, const char** out_text) {
-				*out_text = Skin::weaponNames[idx].name;
-					return true;
-				}, nullptr, Skin::weaponNames.size(), 5);
-			ImGui::SameLine();
-			if (ImGui::Button("Update")) {
-				cfg->s[itemIndex].weaponID = Skin::weaponNames[itemIndex].definitionIndex;
-				itemIndexTemp = itemIndex;
-				Misc::forceReload();
-			}
-			ImGui::InputInt("Skin ID", &cfg->s[itemIndex].skinID);
-			ImGui::InputFloat("Wear", &cfg->s[itemIndex].wear);
-			ImGui::InputInt("Seed", &cfg->s[itemIndex].seed);
-			ImGui::InputInt("StatTrak", &cfg->s[itemIndex].statTrak);
-			ImGui::Combo("Quality", &cfg->s[itemIndex].quality, "Normal\0Genuine\0Vintage\0?\0Unique\0Community\0Valve\0Protoype\0Customized\0StatTrak\0Completed\0Souvenir\0");
-			ImGui::InputText("NameTag", cfg->s[itemIndex].nameTag, sizeof(cfg->s[itemIndex].nameTag));
-			ImGui::Separator();
-			ImGui::Combo("T Knife", &cfg->ch.TTKnife, [](void* data, int idx, const char** out_text) {
-				*out_text = Skin::knifeNames[idx].name;
-			return true;
-				}, nullptr, Skin::knifeNames.size(), 5);
-			ImGui::Combo("CT Knife", &cfg->ch.CTKnife, [](void* data, int idx, const char** out_text) {
-				*out_text = Skin::knifeNames[idx].name;
-			return true;
-				}, nullptr, Skin::knifeNames.size(), 5);
-			ImGui::Separator();
+		ImGui::PopID();
+		ImGui::PushID("thirderson");
+		ImGui::Checkbox("Thirdperson", &cfg->v.thirdPerson);
+		ImGui::SameLine();
+		ImGui::hotkey("", cfg->v.thirdPersonKey);
+		ImGui::PopID();
+		ImGui::Checkbox("Don't render Teammates", &cfg->v.noAllies);
+		ImGui::Checkbox("No Shadows", &cfg->v.noShadows);
+		ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
+		ImGui::Checkbox("No Particles", &cfg->v.noParticles);
+		ImGui::PushItemWidth(96.f);
+		ImGui::Combo("Skybox", &cfg->v.skybox, skyboxList.data(), skyboxList.size());
+		ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");
+		ImGui::SliderInt("##fov", &cfg->v.fov, 30, 150, "Fov: %d");
+		ImGui::PopItemWidth();
+		ImGui::EndDisabled();
+	}
+	ImGui::End();
+}
 
-			constexpr const char* modelsGUI[]{
-				"Default",
-				"Special Agent Ava | FBI",
-				"Operator | FBI SWAT",
-				"Markus Delrow | FBI HRT",
-				"Michael Syfers | FBI Sniper",
-				"B Squadron Officer | SAS",
-				"Seal Team 6 Soldier | NSWC SEAL",
-				"Buckshot | NSWC SEAL",
-				"Lt. Commander Ricksaw | NSWC SEAL",
-				"Third Commando Company | KSK",
-				"'Two Times' McCoy | USAF TACP",
-				"Dragomir | Sabre",
-				"Rezan The Ready | Sabre",
-				"'The Doctor' Romanov | Sabre",
-				"Maximus | Sabre",
-				"Blackwolf | Sabre",
-				"The Elite Mr. Muhlik | Elite Crew",
-				"Ground Rebel | Elite Crew",
-				"Osiris | Elite Crew",
-				"Prof. Shahmat | Elite Crew",
-				"Enforcer | Phoenix",
-				"Slingshot | Phoenix",
-				"Soldier | Phoenix",
-				"Street Soldier | Phoenix",
-				"'Blueberries' Buckshot | NSWC SEAL",
-				"'Two Times' McCoy | TACP Cavalry",
-				"Rezan the Redshirt | Sabre",
-				"Dragomir | Sabre Footsoldier",
-				"Cmdr. Mae 'Dead Cold' Jamison | SWAT",
-				"001st Lieutenant Farlow | SWAT",
-				"John 'Van Healen' Kask | SWAT",
-				"Bio-Haz Specialist | SWAT",
-				"Sergeant Bombson | SWAT",
-				"Chem-Haz Specialist | SWAT",
-				"Sir Bloody Miami Darryl | The Professionals",
-				"Sir Bloody Silent Darryl | The Professionals",
-				"Sir Bloody Skullhead Darryl | The Professionals",
-				"Sir Bloody Darryl Royale | The Professionals",
-				"Sir Bloody Loudmouth Darryl | The Professionals",
-				"Safecracker Voltzmann | The Professionals",
-				"Little Kev | The Professionals",
-				"Number K | The Professionals",
-				"Getaway Sally | The Professionals",
-				"Anarchist",
-				"Anarchist (Variant A)",
-				"Anarchist (Variant B)",
-				"Anarchist (Variant C)",
-				"Anarchist (Variant D)",
-				"Pirate",
-				"Pirate (Variant A)",
-				"Pirate (Variant B)",
-				"Pirate (Variant C)",
-				"Pirate (Variant D)",
-				"Professional",
-				"Professional (Variant 1)",
-				"Professional (Variant 2)",
-				"Professional (Variant 3)",
-				"Professional (Variant 4)",
-				"Separatist",
-				"Separatist (Variant A)",
-				"Separatist (Variant B)",
-				"Separatist (Variant C)",
-				"Separatist (Variant D)",
-				"GIGN",
-				"GIGN (Variant A)",
-				"GIGN (Variant B)",
-				"GIGN (Variant C)",
-				"GIGN (Variant D)",
-				"GSG-9",
-				"GSG-9 (Variant A)",
-				"GSG-9 (Variant B)",
-				"GSG-9 (Variant C)",
-				"GSG-9 (Variant D)",
-				"IDF",
-				"IDF (Variant B)",
-				"IDF (Variant C)",
-				"IDF (Variant D)",
-				"IDF (Variant E)",
-				"IDF (Variant F)",
-				"SWAT",
-				"SWAT (Variant A)",
-				"SWAT (Variant B)",
-				"SWAT (Variant C)",
-				"SWAT (Variant D)",
-				"SAS (Variant A)",
-				"SAS (Variant B)",
-				"SAS (Variant C)",
-				"SAS (Variant D)",
-				"ST6",
-				"ST6 (Variant A)",
-				"ST6 (Variant B)",
-				"ST6 (Variant C)",
-				"ST6 (Variant D)",
-				"Balkan (Variant E)",
-				"Balkan (Variant A)",
-				"Balkan (Variant B)",
-				"Balkan (Variant C)",
-				"Balkan (Variant D)",
-				"Jumpsuit (Variant A)",
-				"Jumpsuit (Variant B)",
-				"Jumpsuit (Variant C)",
-				"Phoenix Heavy",
-				"Heavy",
-				"Leet (Variant A)",
-				"Leet (Variant B)",
-				"Leet (Variant C)",
-				"Leet (Variant D)",
-				"Leet (Variant E)",
-				"Phoenix",
-				"Phoenix (Variant A)",
-				"Phoenix (Variant B)",
-				"Phoenix (Variant C)",
-				"Phoenix (Variant D)",
-				"FBI",
-				"FBI (Variant A)",
-				"FBI (Variant C)",
-				"FBI (Variant D)",
-				"FBI (Variant E)"
-			};
-			ImGui::Combo("T Player Model", &cfg->ch.TTAgent, modelsGUI, IM_ARRAYSIZE(modelsGUI));
-			ImGui::Combo("CT Player Model", &cfg->ch.CTAgent, modelsGUI, IM_ARRAYSIZE(modelsGUI));
-			ImGui::PopItemWidth();
-			ImGui::EndDisabled();
-			ImGui::EndTabItem();
+static bool toggleChangerWindow = false;
+void renderChangerWindow() noexcept {
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+
+	ImGui::Begin("Changer", &toggleChangerWindow, flags);
+	{
+		ImGui::BeginDisabled(cfg->restrictions);
+		static int itemIndex = 0;
+		static int itemIndexTemp = 0;
+		ImGui::PushItemWidth(96.f);
+		ImGui::Combo("##1", &itemIndex, [](void* data, int idx, const char** out_text) {
+			*out_text = Skin::weaponNames[idx].name;
+				return true;
+			}, nullptr, Skin::weaponNames.size(), 5);
+		ImGui::SameLine();
+		if (ImGui::Button("Update")) {
+			cfg->s[itemIndex].weaponID = Skin::weaponNames[itemIndex].definitionIndex;
+			itemIndexTemp = itemIndex;
+			Misc::forceReload();
 		}
-		if (ImGui::BeginTabItem("Discord")) {
-			ImGui::Checkbox("Enabled", &cfg->d.enabled);
-			ImGui::EndTabItem();
+		ImGui::InputInt("Skin ID", &cfg->s[itemIndex].skinID);
+		ImGui::InputFloat("Wear", &cfg->s[itemIndex].wear);
+		ImGui::InputInt("Seed", &cfg->s[itemIndex].seed);
+		ImGui::InputInt("StatTrak", &cfg->s[itemIndex].statTrak);
+		ImGui::Combo("Quality", &cfg->s[itemIndex].quality, "Normal\0Genuine\0Vintage\0?\0Unique\0Community\0Valve\0Protoype\0Customized\0StatTrak\0Completed\0Souvenir\0");
+		ImGui::InputText("NameTag", cfg->s[itemIndex].nameTag, sizeof(cfg->s[itemIndex].nameTag));
+		ImGui::Separator();
+		ImGui::Combo("T Knife", &cfg->ch.TTKnife, [](void* data, int idx, const char** out_text) {
+			*out_text = Skin::knifeNames[idx].name;
+		return true;
+			}, nullptr, Skin::knifeNames.size(), 5);
+		ImGui::Combo("CT Knife", &cfg->ch.CTKnife, [](void* data, int idx, const char** out_text) {
+			*out_text = Skin::knifeNames[idx].name;
+		return true;
+			}, nullptr, Skin::knifeNames.size(), 5);
+		ImGui::Separator();
+
+		constexpr const char* modelsGUI[]{
+			"Default",
+			"Special Agent Ava | FBI",
+			"Operator | FBI SWAT",
+			"Markus Delrow | FBI HRT",
+			"Michael Syfers | FBI Sniper",
+			"B Squadron Officer | SAS",
+			"Seal Team 6 Soldier | NSWC SEAL",
+			"Buckshot | NSWC SEAL",
+			"Lt. Commander Ricksaw | NSWC SEAL",
+			"Third Commando Company | KSK",
+			"'Two Times' McCoy | USAF TACP",
+			"Dragomir | Sabre",
+			"Rezan The Ready | Sabre",
+			"'The Doctor' Romanov | Sabre",
+			"Maximus | Sabre",
+			"Blackwolf | Sabre",
+			"The Elite Mr. Muhlik | Elite Crew",
+			"Ground Rebel | Elite Crew",
+			"Osiris | Elite Crew",
+			"Prof. Shahmat | Elite Crew",
+			"Enforcer | Phoenix",
+			"Slingshot | Phoenix",
+			"Soldier | Phoenix",
+			"Street Soldier | Phoenix",
+			"'Blueberries' Buckshot | NSWC SEAL",
+			"'Two Times' McCoy | TACP Cavalry",
+			"Rezan the Redshirt | Sabre",
+			"Dragomir | Sabre Footsoldier",
+			"Cmdr. Mae 'Dead Cold' Jamison | SWAT",
+			"001st Lieutenant Farlow | SWAT",
+			"John 'Van Healen' Kask | SWAT",
+			"Bio-Haz Specialist | SWAT",
+			"Sergeant Bombson | SWAT",
+			"Chem-Haz Specialist | SWAT",
+			"Sir Bloody Miami Darryl | The Professionals",
+			"Sir Bloody Silent Darryl | The Professionals",
+			"Sir Bloody Skullhead Darryl | The Professionals",
+			"Sir Bloody Darryl Royale | The Professionals",
+			"Sir Bloody Loudmouth Darryl | The Professionals",
+			"Safecracker Voltzmann | The Professionals",
+			"Little Kev | The Professionals",
+			"Number K | The Professionals",
+			"Getaway Sally | The Professionals",
+			"Anarchist",
+			"Anarchist (Variant A)",
+			"Anarchist (Variant B)",
+			"Anarchist (Variant C)",
+			"Anarchist (Variant D)",
+			"Pirate",
+			"Pirate (Variant A)",
+			"Pirate (Variant B)",
+			"Pirate (Variant C)",
+			"Pirate (Variant D)",
+			"Professional",
+			"Professional (Variant 1)",
+			"Professional (Variant 2)",
+			"Professional (Variant 3)",
+			"Professional (Variant 4)",
+			"Separatist",
+			"Separatist (Variant A)",
+			"Separatist (Variant B)",
+			"Separatist (Variant C)",
+			"Separatist (Variant D)",
+			"GIGN",
+			"GIGN (Variant A)",
+			"GIGN (Variant B)",
+			"GIGN (Variant C)",
+			"GIGN (Variant D)",
+			"GSG-9",
+			"GSG-9 (Variant A)",
+			"GSG-9 (Variant B)",
+			"GSG-9 (Variant C)",
+			"GSG-9 (Variant D)",
+			"IDF",
+			"IDF (Variant B)",
+			"IDF (Variant C)",
+			"IDF (Variant D)",
+			"IDF (Variant E)",
+			"IDF (Variant F)",
+			"SWAT",
+			"SWAT (Variant A)",
+			"SWAT (Variant B)",
+			"SWAT (Variant C)",
+			"SWAT (Variant D)",
+			"SAS (Variant A)",
+			"SAS (Variant B)",
+			"SAS (Variant C)",
+			"SAS (Variant D)",
+			"ST6",
+			"ST6 (Variant A)",
+			"ST6 (Variant B)",
+			"ST6 (Variant C)",
+			"ST6 (Variant D)",
+			"Balkan (Variant E)",
+			"Balkan (Variant A)",
+			"Balkan (Variant B)",
+			"Balkan (Variant C)",
+			"Balkan (Variant D)",
+			"Jumpsuit (Variant A)",
+			"Jumpsuit (Variant B)",
+			"Jumpsuit (Variant C)",
+			"Phoenix Heavy",
+			"Heavy",
+			"Leet (Variant A)",
+			"Leet (Variant B)",
+			"Leet (Variant C)",
+			"Leet (Variant D)",
+			"Leet (Variant E)",
+			"Phoenix",
+			"Phoenix (Variant A)",
+			"Phoenix (Variant B)",
+			"Phoenix (Variant C)",
+			"Phoenix (Variant D)",
+			"FBI",
+			"FBI (Variant A)",
+			"FBI (Variant C)",
+			"FBI (Variant D)",
+			"FBI (Variant E)"
+		};
+		ImGui::Combo("T Player Model", &cfg->ch.TTAgent, modelsGUI, IM_ARRAYSIZE(modelsGUI));
+		ImGui::Combo("CT Player Model", &cfg->ch.CTAgent, modelsGUI, IM_ARRAYSIZE(modelsGUI));
+		ImGui::PopItemWidth();
+		ImGui::EndDisabled();
+	}
+	ImGui::End();
+}
+
+static bool toggleDiscordWindow = false;
+void renderDiscordWindow() noexcept {
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+
+	ImGui::Begin("Discord", &toggleDiscordWindow, flags);
+	{
+		ImGui::Checkbox("Enabled", &cfg->d.enabled);
+	}
+	ImGui::End();
+}
+
+static bool toggleGUIWindow = false;
+void renderGUIWindow() noexcept {
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+	ImGui::Begin("GUI", &toggleGUIWindow, flags);
+	{
+		if (ImGui::Combo("Menu colors", &cfg->u.menuColors, "Azurre\0Genshi\0Emerald\0Bloddy Red\0Gold Mine\0Pandora\0Holy Light\0Deep Dark\0Visual Studio\0GoldSrc\0ImGui\0Neverlose\0Aimware\0Onetap\0Custom\0"))
+			GUI::updateColors();
+		
+		ImGui::Checkbox("AntiAliasing",&cfg->u.antiAliasing);
+		ImGui::Checkbox("Center Title",&cfg->u.centerTitle);
+		ImGui::Checkbox("Frame Border",&cfg->u.frameBorder);
+		ImGui::Checkbox("Round Border",&cfg->u.roundBorder);
+		ImGui::Checkbox("Window Border",&cfg->u.windowBorder);
+	}
+	ImGui::End();
+}
+
+static bool toggleConfigWindow = false;
+void renderConfigWindow() noexcept {
+	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+	ImGui::SetNextWindowSize({320.f, 200.f});
+	ImGui::Begin("Config", &toggleConfigWindow, flags);
+	{
+		ImGui::Columns(2, nullptr, false);
+		ImGui::SetColumnOffset(1, 170.0f);
+
+		static bool incrementalLoad = false;
+		ImGui::Checkbox("Incremental Load", &incrementalLoad);
+
+		ImGui::PushItemWidth(160.0f);
+
+		auto& configItems = cfg->getConfigs();
+		static int currentConfig = -1;
+		static float timeToNextConfigRefresh = 0.1f;
+		static std::string buffer;
+
+		timeToNextConfigRefresh -= ImGui::GetIO().DeltaTime;
+		if (timeToNextConfigRefresh <= 0.0f) {
+			cfg->listConfigs();
+			if (const auto it = std::find(configItems.begin(), configItems.end(), buffer); it != configItems.end())
+				currentConfig = std::distance(configItems.begin(), it);
+			timeToNextConfigRefresh = 0.1f;
 		}
-		if (ImGui::BeginTabItem("GUI")) {
 
-			if (ImGui::Combo("Menu colors", &cfg->u.menuColors, "Azurre\0Genshi\0Emerald\0Bloddy Red\0Gold Mine\0Pandora\0Holy Light\0Deep Dark\0Visual Studio\0GoldSrc\0ImGui\0Neverlose\0Aimware\0Onetap\0Custom\0"))
-				updateColors();
+		if (static_cast<std::size_t>(currentConfig) >= configItems.size())
+			currentConfig = -1;
 
-			ImGui::Checkbox("AntiAliasing",&cfg->u.antiAliasing);
-			ImGui::Checkbox("Center Title",&cfg->u.centerTitle);
-			ImGui::Checkbox("Frame Border",&cfg->u.frameBorder);
-			ImGui::Checkbox("Round Border",&cfg->u.roundBorder);
-			ImGui::Checkbox("Window Border",&cfg->u.windowBorder);
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("Config")) {
-			ImGui::Columns(2, nullptr, false);
-			ImGui::SetColumnOffset(1, 170.0f);
-
-			static bool incrementalLoad = false;
-			ImGui::Checkbox("Incremental Load", &incrementalLoad);
-
-			ImGui::PushItemWidth(160.0f);
-
-			auto& configItems = cfg->getConfigs();
-			static int currentConfig = -1;
-			static float timeToNextConfigRefresh = 0.1f;
-			static std::string buffer;
-
-			timeToNextConfigRefresh -= ImGui::GetIO().DeltaTime;
-			if (timeToNextConfigRefresh <= 0.0f) {
-				cfg->listConfigs();
-				if (const auto it = std::find(configItems.begin(), configItems.end(), buffer); it != configItems.end())
-					currentConfig = std::distance(configItems.begin(), it);
-				timeToNextConfigRefresh = 0.1f;
-			}
-
-			if (static_cast<std::size_t>(currentConfig) >= configItems.size())
-				currentConfig = -1;
-
-			if (ImGui::ListBox("", &currentConfig, [](void* data, int idx, const char** out_text) {
-				auto& vector = *static_cast<std::vector<std::string>*>(data);
+		if (ImGui::ListBox("Configs:", &currentConfig, [](void* data, int idx, const char** out_text) {
+			auto& vector = *static_cast<std::vector<std::string>*>(data);
 			*out_text = vector[idx].c_str();
 			return true;
 			}, &configItems, configItems.size(), 5) && currentConfig != -1)
@@ -1152,7 +1209,7 @@ void GUI::RenderMainMenu() noexcept {
 
 			ImGui::PushItemWidth(100.0f);
 
-			if (ImGui::Button("Open config directory"))
+			if (ImGui::Button("Open config folder"))
 				cfg->openConfigDir();
 
 			if (ImGui::Button("Create config", { 100.0f, 25.0f }))
@@ -1162,7 +1219,7 @@ void GUI::RenderMainMenu() noexcept {
 				ImGui::OpenPopup("Config to reset");
 
 			if (ImGui::BeginPopup("Config to reset")) {
-				static constexpr const char* names[]{ "Whole", "Aimbot", "Chams", "Discord", "Glow", "Misc", "Changer", "TriggerBot", "Visuals"};
+				static constexpr const char* names[]{ "Whole", "Aimbot", "Chams", "Discord", "Glow", "Misc", "Changer", "TriggerBot", "Visuals" };
 				for (int i = 0; i < IM_ARRAYSIZE(names); i++) {
 					if (i == 1) ImGui::Separator();
 
@@ -1222,10 +1279,97 @@ void GUI::RenderMainMenu() noexcept {
 				}
 			}
 			ImGui::Columns(1);
-			ImGui::EndTabItem();
-		}
-		ImGui::EndTabBar();
 	}
+	ImGui::End();
+}
+
+//static bool toggleWindow = true; // template for newest
+//void renderWindow() noexcept {
+//	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+//
+//	ImGui::SetNextWindowPos({ screenSize.x / 2 - 320, screenSize.y / 2 - 240 }, ImGuiCond_FirstUseEver);
+//	ImGui::Begin("", &toggleWindow, flags);
+//	{
+//
+//	}
+//	ImGui::End();
+//}
+
+void sortWindows() noexcept {
+	ImGuiContext* GImGui = ImGui::GetCurrentContext();
+	ImGuiContext& g = *GImGui;
+
+	ImVector<ImGuiWindow*> windows;
+	for (ImGuiWindow* window : g.WindowsFocusOrder)
+		if (window->WasActive)
+			windows.push_back(window);
+
+	if (windows.Size > 0) {
+		for (int n = 0; n < windows.Size; n++) {
+			ImGui::SetWindowPos(windows[n], {64.f * n, 32.f * n});
+		}
+	}
+}
+
+void GUI::RenderMainMenu() noexcept {
+
+	if (toggleAimbotWindow)		renderAimbotWindow();
+	if (toggleTriggerbotWindow)	renderTriggerBotWindow();
+	if (toggleGlowWindow)		renderGlowWindow();
+	if (toggleChamsWindow)		renderChamsWindow();
+	if (toggleESPWindow)		renderESPWindow();
+	if (toggleMiscWindow)		renderMiscWindow();
+	if (toggleVisualsWindow)	renderVisualsWindow();
+	if (toggleChangerWindow)	renderChangerWindow();
+	if (toggleDiscordWindow)	renderDiscordWindow();
+	if (toggleGUIWindow)		renderGUIWindow();
+	if (toggleConfigWindow)		renderConfigWindow();
+
+	ImGui::SetNextWindowPos({ screenSize.x / 2 - 320, screenSize.y / 2 - 240 }, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize({ -1, -1 });
+	ImGui::Begin(
+		"Azurre External",
+		&isRunning,
+		ImGuiWindowFlags_AlwaysAutoResize
+	);
+	ImGui::Text("Hello xs9 :)");
+
+	if (ImGui::Button("Aimbot", {64.f, 24.f}))
+		toggleAimbotWindow = !toggleAimbotWindow;
+	ImGui::SameLine();
+	if (ImGui::Button("Trigger", { 64.f, 24.f }))
+		toggleTriggerbotWindow = !toggleTriggerbotWindow;
+	ImGui::SameLine();
+	if (ImGui::Button("Glow", { 64.f, 24.f }))
+		toggleGlowWindow = !toggleGlowWindow;
+	ImGui::SameLine();
+	if (ImGui::Button("Chams", { 64.f, 24.f }))
+		toggleChamsWindow = !toggleChamsWindow;
+	ImGui::SameLine();
+	if (ImGui::Button("ESP", { 64.f, 24.f }))
+		toggleESPWindow = !toggleESPWindow;
+	ImGui::SameLine();
+	if (ImGui::Button("Misc", { 64.f, 24.f }))
+		toggleMiscWindow = !toggleMiscWindow;
+	
+	if (ImGui::Button("Visuals", { 64.f, 24.f }))
+		toggleVisualsWindow = !toggleVisualsWindow;
+	ImGui::SameLine();
+	if (ImGui::Button("Changer", { 64.f, 24.f }))
+		toggleChangerWindow = !toggleChangerWindow;
+	ImGui::SameLine();
+	if (ImGui::Button("Discord", { 64.f, 24.f }))
+		toggleDiscordWindow = !toggleDiscordWindow;
+	ImGui::SameLine();
+	if (ImGui::Button("GUI", { 64.f, 24.f }))
+		toggleGUIWindow = !toggleGUIWindow;
+	ImGui::SameLine();
+	if (ImGui::Button("Config", { 64.f, 24.f }))
+		toggleConfigWindow = !toggleConfigWindow;
+	//ImGui::SameLine();
+	//if (ImGui::Button("Sort", { 64.f, 24.f }))
+	//	sortWindows();
+
 	ImGui::End();
 }
 
