@@ -14,6 +14,7 @@
 #include "Hacks/SkinChanger.h"
 #include "Hacks/Misc.h"
 #include "Hacks/Clantag.h"
+#include "GUI.h"
 
 Config::Config() noexcept {
     if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
@@ -342,6 +343,8 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read<value_t::object>(j, "TriggerBot", t);
     read<value_t::object>(j, "Visuals", v);
     read<value_t::object>(j, "GUI", u);
+
+    GUI::updateColors();
 
     Misc::forceReload();
     Clan::setClanTag("", "");
