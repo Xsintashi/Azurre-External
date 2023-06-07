@@ -278,7 +278,7 @@ struct Console
                 AddLog("\t- client");
                 AddLog("\t- clientstate");
                 AddLog("\t- playerresource");
-                AddLog("\t- localplayer / lp");
+                AddLog("\t- localplayer / lp\n");
                 return;
             }
             std::uintptr_t address = NULL;
@@ -358,7 +358,7 @@ struct Console
                 AddLog("\t- client");
                 AddLog("\t- clientstate");
                 AddLog("\t- playerresource");
-                AddLog("\t- localplayer / lp");
+                AddLog("\t- localplayer / lp\n");
                 return;
             }
             std::uintptr_t address = NULL;
