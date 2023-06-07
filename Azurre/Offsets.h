@@ -22,6 +22,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_bBombTicking = 0x2990;
 		constexpr ::std::ptrdiff_t m_bFreezePeriod = 0x20;
 		constexpr ::std::ptrdiff_t m_bGunGameImmunity = 0x9990;
+		constexpr ::std::ptrdiff_t m_bHasCommunicationAbuseMute = 0x51E4;
 		constexpr ::std::ptrdiff_t m_bHasDefuser = 0x117DC;
 		constexpr ::std::ptrdiff_t m_bHasHelmet = 0x117C0;
 		constexpr ::std::ptrdiff_t m_bInReload = 0x32B5;
@@ -71,6 +72,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_iAccountID = 0x2FD8;
 		constexpr ::std::ptrdiff_t m_iAssists = 0xD30;
 		constexpr ::std::ptrdiff_t m_iClip1 = 0x3274;
+		constexpr ::std::ptrdiff_t m_iCompTeammateColor = 0x1CD0;
 		constexpr ::std::ptrdiff_t m_iCompetitiveRanking = 0x1A84;
 		constexpr ::std::ptrdiff_t m_iCompetitiveWins = 0x1B88;
 		constexpr ::std::ptrdiff_t m_iCrosshairId = 0x11838;
@@ -85,10 +87,12 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_iItemDefinitionIndex = 0x2FBA;
 		constexpr ::std::ptrdiff_t m_iItemIDHigh = 0x2FD0;
 		constexpr ::std::ptrdiff_t m_iKills = 0xC2C;
+		constexpr ::std::ptrdiff_t m_iMVPs = 0x16F4;
 		constexpr ::std::ptrdiff_t m_iMostRecentModelBoneCounter = 0x2690;
 		constexpr ::std::ptrdiff_t m_iObserverMode = 0x3388;
 		constexpr ::std::ptrdiff_t m_iPing = 0xB28;
 		constexpr ::std::ptrdiff_t m_iPlayerC4 = 0x165C;
+		constexpr ::std::ptrdiff_t m_iScore = 0x1980;
 		constexpr ::std::ptrdiff_t m_iShotsFired = 0x103E0;
 		constexpr ::std::ptrdiff_t m_iState = 0x3268;
 		constexpr ::std::ptrdiff_t m_iTeamNum = 0xF4;
@@ -101,6 +105,8 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_nFallbackStatTrak = 0x31E4;
 		constexpr ::std::ptrdiff_t m_nForceBone = 0x268C;
 		constexpr ::std::ptrdiff_t m_nModelIndex = 0x258;
+		constexpr ::std::ptrdiff_t m_nMusicID = 0x4CD0;
+		constexpr ::std::ptrdiff_t m_nPersonaDataPublicLevel = 0x4DD4;
 		constexpr ::std::ptrdiff_t m_nSequence = 0x28C0;
 		constexpr ::std::ptrdiff_t m_nTickBase = 0x3440;
 		constexpr ::std::ptrdiff_t m_nViewModelIndex = 0x29D0;
