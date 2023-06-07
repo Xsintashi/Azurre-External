@@ -455,6 +455,34 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Separator();
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 	ImGui::hotkey("Key Debug 0", cfg->debug.keyDebug0);
+	ImGui::SeparatorText("PlayerResource Test");
+	const DWORD add = IPlayerResource.address;
+	const int& kills = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iKills + 0x4 + localPlayerIndex * 4);
+	const int& assists = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iAssists + 0x4 + localPlayerIndex * 4);
+	const int& deaths = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iDeaths + 0x4 + localPlayerIndex * 4);
+	const int& ping = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iPing + 0x4 + localPlayerIndex * 4);
+	const int& Coin = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iPing + 0x4 + localPlayerIndex * 4);
+	ImGui::Text("Kills: %d", kills);
+	ImGui::Text("Assists: %d", assists);
+	ImGui::Text("Deaths: %d", deaths);
+	ImGui::Text("Ping: %d", ping);
+	static bool tgl = true;
+	if (ImGui::Button("Override")) {
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + localPlayerIndex * 4, 999);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + localPlayerIndex * 4, 1);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iKills + 0x4 + localPlayerIndex * 4, 666);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iAssists + 0x4 + localPlayerIndex * 4, 888);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iDeaths + 0x4 + localPlayerIndex * 4, 777);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iPing + 0x4 + localPlayerIndex * 4, -2137);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_nPersonaDataPublicLevel + 0x4 + localPlayerIndex * 4, 40);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_nActiveCoinRank + 0x4 + localPlayerIndex * 4, 903);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iCompTeammateColor + 0x4 + localPlayerIndex * 4, -1);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_nMusicID + 0x4 + localPlayerIndex * 4, 15);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iMVPs + 0x4 + localPlayerIndex * 4, 69);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iScore + 0x4 + localPlayerIndex * 4, 420);
+		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_bHasCommunicationAbuseMute + 0x4 + localPlayerIndex * 4, tgl);
+		tgl = !tgl;
+	}
 
 	//ImGui::PushID("Roll");
 	//static float roll = 0.f;
