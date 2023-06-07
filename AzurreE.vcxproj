@@ -100,6 +100,7 @@
   <ItemGroup>
     <ClInclude Include="Azurre\Config.h" />
     <ClInclude Include="Azurre\ConfigStructs.h" />
+    <ClInclude Include="Azurre\Console.h" />
     <ClInclude Include="Azurre\Core.h" />
     <ClInclude Include="Azurre\DiscordSDK\include\discord_register.h" />
     <ClInclude Include="Azurre\DiscordSDK\include\discord_rpc.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="Azurre\DiscordSDK\src\rapidjson\writer.h" />
     <ClInclude Include="Azurre\DiscordSDK\src\rpc_connection.h" />
     <ClInclude Include="Azurre\DiscordSDK\src\serialization.h" />
+    <ClInclude Include="Azurre\fnv.h" />
     <ClInclude Include="Azurre\Hacks\ESP.h" />
     <ClInclude Include="Azurre\GUI.h" />
     <ClInclude Include="Azurre\Hacks\Aimbot.h" />
@@ -198,6 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Azurre\Config.cpp" />
+    <ClCompile Include="Azurre\Console.cpp" />
     <ClCompile Include="Azurre\Core.cpp" />
     <ClCompile Include="Azurre\DiscordSDK\RPC.cpp" />
     <ClCompile Include="Azurre\DiscordSDK\src\connection_win.cpp" />
