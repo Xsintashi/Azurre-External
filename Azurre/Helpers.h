@@ -46,6 +46,8 @@ namespace Helpers {
 	unsigned int calculateColor(Color3 color) noexcept;
 	unsigned int calculateColor(int r, int g, int b, int a) noexcept;
 
+	const char* convertRankFromNumber(bool shorten, int rank) noexcept;
+
 	constexpr std::uint8_t utf8SeqLen(char firstByte) noexcept
 	{
 		return (firstByte & 0x80) == 0x00 ? 1 :

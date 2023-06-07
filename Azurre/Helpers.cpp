@@ -232,3 +232,55 @@ unsigned int Helpers::calculateColor(int r, int g, int b, int a) noexcept
 {
 	return IM_COL32(r, g, b, a);
 }
+
+static constexpr std::array RanksShort = {
+	"Unrank",
+	"S1",
+	"S2",
+	"S3",
+	"S4",
+	"S5",
+	"S6",
+	"G1",
+	"G2",
+	"G3",
+	"G4",
+	"MG2",
+	"MG2",
+	"MGE",
+	"DMG",
+	"LE",
+	"LEM",
+	"Supreme",
+	"Global"
+};
+
+static constexpr std::array Ranks = {
+	"Not Ranked",
+	"Silver I",
+	"Silver II",
+	"Silver III",
+	"Silver IV",
+	"Silver Elite",
+	"Silver Elite Master",
+	"Gold Nova I",
+	"Gold Nova II",
+	"Gold Nova III",
+	"Gold Nova Master",
+	"Master Guardian I",
+	"Master Guardian II",
+	"Master Guardian Elite",
+	"Distinguished Master Guardian",
+	"Legendary Eagle",
+	"Legendary Eagle Master",
+	"Supreme Master First Class",
+	"The Global Elite"
+};
+
+const char* Helpers::convertRankFromNumber(bool shorten, int rank) noexcept {
+	if (rank > 18) rank = 18;
+	if (shorten)
+		return RanksShort[rank];
+	else
+		return Ranks[rank];
+}

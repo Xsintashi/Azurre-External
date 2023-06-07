@@ -1141,6 +1141,9 @@ void renderDiscordWindow() noexcept {
 	ImGui::Begin("Discord", &toggleDiscordWindow, flags);
 	{
 		ImGui::Checkbox("Enabled", &cfg->d.enabled);
+		ImGui::Checkbox("Show Map", &cfg->d.showMap);
+		ImGui::Combo("Details", &cfg->d.details, "Azurre!\0Nick\0Rank\0");
+		ImGui::Combo("State", &cfg->d.state, "Only for chosen\0Stats\0Rank\0");
 	}
 	ImGui::End();
 }

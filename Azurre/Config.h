@@ -65,6 +65,9 @@ public:
 
 	struct DiscordConfig {
 		bool enabled = true;
+		bool showMap = true;
+		int state = 0;
+		int details = 0;
 	} d;
 
 	struct ESPConfig {
