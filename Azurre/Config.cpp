@@ -128,6 +128,7 @@ static void from_json(const json& j, Config::ChamsConfig& c) {
 static void from_json(const json& j, Config::DiscordConfig& c) {
     read(j, "Enabled", c.enabled);
     read(j, "Show Map", c.showMap);
+    read(j, "Show Match Time", c.showMatchTime);
     read(j, "State", c.state);
     read(j, "Details", c.details);
 }
@@ -437,6 +438,7 @@ static void to_json(json& j, const Config::DiscordConfig& o, const Config::Disco
     
     WRITE("Enabled", enabled);
     WRITE("Show Map", showMap);
+    WRITE("Show Match Time", showMatchTime);
     WRITE("State", state);
     WRITE("Details", details);
 }

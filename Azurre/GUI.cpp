@@ -450,6 +450,15 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Separator();
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 	ImGui::hotkey("Key Debug 0", cfg->debug.keyDebug0);
+	ImGui::SeparatorText("GameRules Test");
+	const auto& m_fRoundStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fRoundStartTime);
+	const auto& m_fMatchStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fMatchStartTime);
+	const float roundTime = globalVars->currentTime - m_fRoundStartTime;
+	const float matchTime = globalVars->currentTime - m_fMatchStartTime;
+	ImGui::Text("m_fRoundStartTime: %.2f", m_fRoundStartTime);
+	ImGui::Text("m_fMatchStartTime: %.2f", m_fMatchStartTime);
+	ImGui::Text("Round Time: %.2f", roundTime);
+	ImGui::Text("Match Time: %.2f", matchTime);
 	ImGui::SeparatorText("PlayerResource Test");
 	const DWORD add = IPlayerResource.address;
 	const int& kills = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iKills + 0x4 + localPlayerIndex * 4);
@@ -1142,6 +1151,7 @@ void renderDiscordWindow() noexcept {
 	{
 		ImGui::Checkbox("Enabled", &cfg->d.enabled);
 		ImGui::Checkbox("Show Map", &cfg->d.showMap);
+		ImGui::Checkbox("Show Match Time", &cfg->d.showMatchTime);
 		ImGui::Combo("Details", &cfg->d.details, "Azurre!\0Nick\0Rank\0");
 		ImGui::Combo("State", &cfg->d.state, "Only for chosen\0Stats\0Rank\0");
 	}

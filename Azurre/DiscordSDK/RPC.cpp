@@ -91,11 +91,17 @@ void Discord::Update(){
 			map = mapName;
 		}
 
+		const auto& matchStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fMatchStartTime);
+		const int matchTimeBuff = static_cast<int>(globalVars->currentTime - matchStartTime);
+		const int64_t now = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+		const int64_t matchTime = (now - matchTimeBuff);
+
 		DiscordRichPresence discordPresence;
 		memset(&discordPresence, 0, sizeof(discordPresence));
 		discordPresence.state = state.c_str();
 		discordPresence.details = details.c_str();
-		discordPresence.endTimestamp = NULL;
+		discordPresence.startTimestamp = (config.showMatchTime && gameState == ConnectionState::FullyConnected && localPlayer.get()) ? matchTime : NULL;
 		discordPresence.smallImageKey = "azurre";
 		discordPresence.largeImageKey = map.c_str();
 		discordPresence.largeImageText = map.c_str();

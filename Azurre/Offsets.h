@@ -42,6 +42,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_dwBoneMatrix = 0x26A8;
 		constexpr ::std::ptrdiff_t m_fAccuracyPenalty = 0x3340;
 		constexpr ::std::ptrdiff_t m_fFlags = 0x104;
+		constexpr ::std::ptrdiff_t m_fRoundStartTime = 0x4C;
 		constexpr ::std::ptrdiff_t m_flBloomExponent = 0x9EC;
 		constexpr ::std::ptrdiff_t m_flBloomSaturation = 0x9F0;
 		constexpr ::std::ptrdiff_t m_flC4Blow = 0x29A0;
@@ -70,9 +71,11 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_hViewModel = 0x3308;
 		constexpr ::std::ptrdiff_t m_iAccount = 0x117B8;
 		constexpr ::std::ptrdiff_t m_iAccountID = 0x2FD8;
+		constexpr ::std::ptrdiff_t m_iAddonBits = 0x103C4;
 		constexpr ::std::ptrdiff_t m_iAssists = 0xD30;
 		constexpr ::std::ptrdiff_t m_iClip1 = 0x3274;
 		constexpr ::std::ptrdiff_t m_iCompTeammateColor = 0x1CD0;
+		constexpr ::std::ptrdiff_t m_iCompetitiveRankType = 0x1C8C;
 		constexpr ::std::ptrdiff_t m_iCompetitiveRanking = 0x1A84;
 		constexpr ::std::ptrdiff_t m_iCompetitiveWins = 0x1B88;
 		constexpr ::std::ptrdiff_t m_iCrosshairId = 0x11838;
@@ -92,6 +95,8 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_iObserverMode = 0x3388;
 		constexpr ::std::ptrdiff_t m_iPing = 0xB28;
 		constexpr ::std::ptrdiff_t m_iPlayerC4 = 0x165C;
+		constexpr ::std::ptrdiff_t m_iRoundTime = 0x44;
+		constexpr ::std::ptrdiff_t m_fMatchStartTime = 0x48;
 		constexpr ::std::ptrdiff_t m_iScore = 0x1980;
 		constexpr ::std::ptrdiff_t m_iShotsFired = 0x103E0;
 		constexpr ::std::ptrdiff_t m_iState = 0x3268;

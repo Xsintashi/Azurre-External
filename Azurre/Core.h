@@ -19,6 +19,7 @@
 #define IVstdlib interfaces->vstdlib
 #define IPlayerResource interfaces->playerResource
 #define IConsole interfaces->console
+#define IGameRules interfaces->gameRulesProxy
 
 struct ImVec2;
 class Entity;

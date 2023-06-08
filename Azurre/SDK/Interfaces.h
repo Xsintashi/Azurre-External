@@ -16,6 +16,7 @@ public:
 	Module vstdlib;
 	Module engine;
 	Module playerResource;
+	Module gameRulesProxy;
 	HWND console;
 };
 

@@ -30,6 +30,7 @@ void Core::init() {
 	IVstdlib.address = mem.GetModuleAddress("vstdlib.dll");
 	IVstdlib.size = mem.ModuleSize("vstdlib.dll");
 	IClientState.address = mem.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
+	IGameRules.address = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwGameRulesProxy);
 	IPlayerResource.address = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
 	localPlayer.init(mem.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 	gameState = mem.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
@@ -42,6 +43,7 @@ void Core::update() {
 	gameState = mem.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
 	IClientState.address = mem.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
 	IPlayerResource.address = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwPlayerResource);
+	IGameRules.address = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwGameRulesProxy);
 	localPlayer.init(mem.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 	globalVars = mem.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
 	viewMatix = mem.Read<Matrix4x4>(IClient.address + Offset::signatures::dwViewMatrix);

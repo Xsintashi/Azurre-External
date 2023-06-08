@@ -66,6 +66,7 @@ public:
 	struct DiscordConfig {
 		bool enabled = true;
 		bool showMap = true;
+		bool showMatchTime = true;
 		int state = 0;
 		int details = 0;
 	} d;
