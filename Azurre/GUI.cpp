@@ -694,9 +694,9 @@ void renderESPWindow() noexcept {
 	{
 		static int list = 0;
 		static int spotted = 0;
-		constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible", "Weapons" };
+		constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
 		ImGui::Checkbox("Enabled", &cfg->esp.enabled);
-		ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons");
+		ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons\0Projectiles");
 		switch (list) {
 		default: case 0: case 1:
 			if (list) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
@@ -756,7 +756,25 @@ void renderESPWindow() noexcept {
 			}
 			ImGui::PopID();
 			ImGuiCustom::colorPicker("Lines", cfg->esp.weapons["All"].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.lines.enabled);
+			break;
+		case 3:
+			ImGuiCustom::colorPicker("Name", cfg->esp.projectiles["All"].names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.projectiles["All"].names.enabled);
+			ImGui::Checkbox("Boxes", &cfg->esp.projectiles["All"].box.enabled);
+			ImGui::PushID("boxes projectiles");
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
 
+			if (ImGui::BeginPopup("")) {
+				if (ImGui::Checkbox("Gradient Color", &cfg->esp.projectiles["All"].box.gradientColor)) {
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.projectiles["All"].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.projectiles["All"].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+				}
+				else
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.projectiles["All"].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
 		}
 	}
 	ImGui::End();

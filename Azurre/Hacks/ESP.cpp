@@ -99,6 +99,31 @@ void renderWeapon(Entity* entity) {
 	}
 }
 
+void renderProjectile(ProjectileData* projectile) {
+	auto& config = cfg->esp.projectiles["All"];
+
+	Vector pos = projectile->entity->origin();
+	Vector head;
+	pos.z -= 8.f;
+	head.x = pos.x;
+	head.y = pos.y;
+	head.z = pos.z + 8.f;
+
+	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
+	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
+
+	float height = headScreen.y - posScreen.y;
+	const float width = height;
+
+	const auto colorBox = config.box.gradientColor ? config.box.grandientTop : config.box.solid;
+	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
+
+	if (posScreen.z >= 0.01f) {
+		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, 0.f, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
+		if (config.names.enabled)	drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, 0.f, 0.f, 0.f, projectile->name, Helpers::calculateColor(config.names));
+	}
+}
+
 void renderPlayer(Entity* entity, int index) {
 	int tab = 1;
 	int spotted = 0;
@@ -176,5 +201,11 @@ void ESP::render() noexcept {
 		if (weapon->origin() == Vector{ 0.f, 0.f, 0.f })
 			continue;
 		renderWeapon(weapon);
+	}
+
+	for (auto& projectile : gameData.projectileData) {
+		if (projectile.entity->origin() == Vector{ 0.f, 0.f, 0.f })
+			continue;
+		renderProjectile(&projectile);
 	}
 }

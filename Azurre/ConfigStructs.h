@@ -85,6 +85,12 @@ struct Weapons {
     Box box;
 };
 
+struct Projectiles {
+    bool enabled = false;
+    ColorToggle3 names = { 1.f, 1.f, 1.f };
+    Box box;
+};
+
 struct Crosshair {
     bool enabled = false;
     Color3 color{1.f, 1.f, 1.f};

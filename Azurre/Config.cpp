@@ -166,6 +166,19 @@ static void from_json(const json& j, Weapons& p) {
     read<value_t::object>(j, "Box", p.box);
 }
 
+static void from_json(const json& j, Projectiles& p) {
+    read(j, "Enabled", p.enabled);
+    read<value_t::object>(j, "Names", p.names);
+    read<value_t::object>(j, "Box", p.box);
+}
+
+static void from_json(const json& j, Config::ESPConfig& e) {
+    read(j, "Enabled", e.enabled);
+    read(j, "Players", e.players);
+    read(j, "Weapons", e.weapons);
+    read(j, "Projectiles", e.projectiles);
+}
+
 static void from_json(const json& j, Crosshair& o) {
     read(j, "Enabled", o.enabled);
     read<value_t::object>(j, "Color", o.color);
@@ -176,12 +189,6 @@ static void from_json(const json& j, Crosshair& o) {
     read<value_t::object>(j, "Outline", o.outline);
     read(j, "Outline Thickness", o.outlineThickness);
     read(j, "TStyle", o.TStyle);
-}
-
-static void from_json(const json& j, Config::ESPConfig& e) {
-    read(j, "Enabled", e.enabled);
-    read(j, "Players", e.players);
-    read(j, "Weapons", e.weapons);
 }
 
 static void from_json(const json& j, Config::GlowConfig& c) {
@@ -476,6 +483,20 @@ static void to_json(json& j, const Weapons& o, const Weapons& dummy = {}) {
     WRITE("Box", box);
 }
 
+static void to_json(json& j, const Projectiles& o, const Projectiles& dummy = {}) {
+    WRITE("Enabled", enabled);
+    WRITE("Names", names);
+    WRITE("Box", box);
+}
+
+static void to_json(json& j, const Config::ESPConfig& o) {
+    const Config::ESPConfig dummy;
+    WRITE("Enabled", enabled);
+    j["Players"] = o.players;
+    j["Weapons"] = o.weapons;
+    j["Projectiles"] = o.projectiles;
+}
+
 static void to_json(json& j, const Crosshair& o, const Crosshair& dummy = {}) {
     WRITE("Enabled", enabled);
     WRITE("Color", color);
@@ -486,14 +507,6 @@ static void to_json(json& j, const Crosshair& o, const Crosshair& dummy = {}) {
     WRITE("Outline", outline);
     WRITE("Outline Thickness", outlineThickness);
     WRITE("TStyle", TStyle);
-}
-
-static void to_json(json& j, const Config::ESPConfig& o) {
-    const Config::ESPConfig dummy;
-    WRITE("Enabled", enabled);
-    j["Players"] = o.players;
-    j["Weapons"] = o.weapons;
-
 }
 
 static void to_json(json& j, const Config::GlowConfig& o, const Config::GlowConfig dummy = {} ) {
