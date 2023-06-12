@@ -20,6 +20,7 @@
 #include "SDK/Matrix.h"
 #include "Config.h"
 #include "DiscordSDK/RPC.h"
+#include "Hacks/SkinChanger.h"
 
 void Core::init() {
 	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
@@ -149,9 +150,15 @@ void Core::gameDataUpdate() noexcept {
 			gameData.plantedC4 = entity;
 			break;
 		}
-		case ClassID::BaseCSGrenadeProjectile:
-			gameData.projectileData.push_back({entity, "HE/Flash"});
-				break;
+		case ClassID::BaseCSGrenadeProjectile: {
+			const int& modelIndex = entity->modelIndex();
+			if (Skin::getModelIndex("models/Weapons/w_eq_flashbang_dropped.mdl") == modelIndex)
+				gameData.projectileData.push_back({ entity, "Flashbang" });
+			if (Skin::getModelIndex("models/Weapons/w_eq_fraggrenade_dropped.mdl") == modelIndex)
+				gameData.projectileData.push_back({ entity, "Explosive Grenade" });
+			break;
+		}
+				
 		case ClassID::DecoyProjectile:
 			gameData.projectileData.push_back({ entity, "Decoy" });
 			break;

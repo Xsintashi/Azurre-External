@@ -24,6 +24,7 @@
 #include "../SDK/Entity.h"
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/WeaponID.h"
+#include "SkinChanger.h"
 
 constexpr auto ctColor = IM_COL32(100, 200, 255, 255);
 constexpr auto ttColor = IM_COL32(255, 200, 0, 255);
@@ -262,12 +263,8 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 	if(entity->velocity().length2D() < 1.f)
 		ImGui::GetForegroundDrawList()->AddCircleFilled({ xOnTheMap,  yOnTheMap }, 16.f, color, 0);
 
-	ImTextureID texture;
+	ImTextureID texture = he.getTexture();
 	switch (GetClassId(entity)) {
-		default:
-		case ClassID::Flashbang:
-			texture = flash.getTexture();
-		break;
 		case ClassID::DecoyProjectile:
 			texture = decoy.getTexture();
 			break;
@@ -275,9 +272,14 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 		case ClassID::Inferno:
 			texture = molotov.getTexture();
 			break;
-		case ClassID::BaseCSGrenadeProjectile:
-			texture = he.getTexture();
+		case ClassID::BaseCSGrenadeProjectile: {
+			const int& modelIndex = entity->modelIndex();
+			if (Skin::getModelIndex("models/Weapons/w_eq_flashbang_dropped.mdl") == modelIndex)
+				texture = flash.getTexture();
+			if (Skin::getModelIndex("models/Weapons/w_eq_fraggrenade_dropped.mdl") == modelIndex)
+				texture = he.getTexture();
 			break;
+		}
 		case ClassID::SmokeGrenadeProjectile:
 			texture = smoke.getTexture();
 			break;
@@ -308,7 +310,7 @@ void Minimap::Render() { //Render Thread
 	ImVec2 windowPos = ImGui::GetWindowPos();
 	ImGui::Image(mapTexture.data, {512.f * config.scale, 512.f * config.scale }); // 2 times smaller
 
-	for (int unsigned idx = 0; idx <= 1024; idx++) {
+	for (int idx = 0; idx <= highestEntityIndex; idx++) { // merge taht somehow w core entity loop bruh
 		const auto& entity = getEntity(idx);
 		if (!entity) continue;
 
