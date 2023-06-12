@@ -152,7 +152,7 @@ void Aimbot::recoilSystem() noexcept {
 }
 
 void Aimbot::drawFov() noexcept {
-	if (!cfg->a.enabled || !cfg->a.hotkey.isActive())
+	if (!cfg->a.enabled || !cfg->a.drawFov.enabled)
 		return;
 
 	if (!localPlayer || !localPlayer->isAlive())
