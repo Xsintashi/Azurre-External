@@ -50,7 +50,7 @@ struct ObserverData {
 
 struct PlayerData {
 	Entity* entity;
-	int unsigned idx;
+	int idx;
 	std::uint64_t steamID;
 	bool isBot;
 	std::string name;
