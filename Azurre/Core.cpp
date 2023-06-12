@@ -47,6 +47,8 @@ void Core::update() {
 	localPlayer.init(mem.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 	globalVars = mem.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
 	viewMatix = mem.Read<Matrix4x4>(IClient.address + Offset::signatures::dwViewMatrix);
+	maxEntity = mem.Read<int>(IClient.address + Offset::signatures::dwEntityList + 0x2001C);
+	highestEntityIndex = mem.Read<int>(IClient.address + Offset::signatures::dwEntityList + 0x20024);
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
 	const auto map = mem.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
 	mapName = map.data();
@@ -67,7 +69,7 @@ void Core::gameDataUpdate() noexcept {
 	gameData.playerData.clear();
 	gameData.weaponData.clear();
 	gameData = {}; // reset GameData
-	for (int unsigned idx = 0; idx <= 1024; idx++) {
+	for (int unsigned idx = 0; idx <= highestEntityIndex; idx++) {
 
 		const auto& entity = getEntity(idx);
 		if (!entity) continue;
@@ -75,78 +77,91 @@ void Core::gameDataUpdate() noexcept {
 		if (entity->isWeapon())
 			gameData.weaponData.push_back(entity);
 
-		switch (GetClassId(entity)){
-			default:
-				break;
-			case ClassID::CSPlayer: {
+		switch (GetClassId(entity)) {
+		default:
+			break;
+		case ClassID::CSPlayer: {
 
-				if (cfg->m.radarHack && !cfg->restrictions && !entity->isSameTeam())
-					mem.Write<bool>(entity + Offset::netvars::m_bSpotted, true);
+			if (cfg->m.radarHack && !cfg->restrictions && !entity->isSameTeam())
+				mem.Write<bool>(entity + Offset::netvars::m_bSpotted, true);
 
-				if ((uintptr_t)entity == localPlayer.get())
-					localPlayerIndex = idx;
+			if ((uintptr_t)entity == localPlayer.get())
+				localPlayerIndex = idx;
 
-				// Player Info
-				const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
-				PlayerInfo playerInfo = mem.Read<PlayerInfo>(mem.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
+			// Player Info
+			const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
+			PlayerInfo playerInfo = mem.Read<PlayerInfo>(mem.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
 
-				const auto& health = entity->health();
-				const auto& armor = entity->armor();
-				const auto& hasHelmet = entity->hasHelmet();
-				const auto& hasDefuser = entity->hasDefuser();
-				const auto& teamNumber = static_cast<int>(entity->teamNumber());
-				const auto& money = entity->money();
-				const auto& weaponID = entity->getWeaponIDFromPlayer();
-				const std::string name = playerInfo.name;
-				const bool bot = playerInfo.fakeplayer;
-				std::uint64_t steamID = playerInfo.steamID64;
-				char temp[18];
-				ReadProcessMemory(mem.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
-				std::string placename = (temp + '\0');
+			const auto& health = entity->health();
+			const auto& armor = entity->armor();
+			const auto& hasHelmet = entity->hasHelmet();
+			const auto& hasDefuser = entity->hasDefuser();
+			const auto& teamNumber = static_cast<int>(entity->teamNumber());
+			const auto& money = entity->money();
+			const auto& weaponID = entity->getWeaponIDFromPlayer();
+			const std::string name = playerInfo.name;
+			const bool bot = playerInfo.fakeplayer;
+			std::uint64_t steamID = playerInfo.steamID64;
+			char temp[18];
+			ReadProcessMemory(mem.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
+			std::string placename = (temp + '\0');
 
-				const auto& rank = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + idx * 4);
-				const auto& wins = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + idx * 4);
+			const auto& rank = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + idx * 4);
+			const auto& wins = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + idx * 4);
 
-				const int clampedRank = std::clamp(rank, 0, 18);
+			const int clampedRank = std::clamp(rank, 0, 18);
 
-				gameData.playerData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename, clampedRank , wins });
-				
-				if (entity->isDefusing()) //Bomb Timer
-					gameData.defusingPlayerName = name;
+			gameData.playerData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename, clampedRank , wins });
 
-				// Spectator List
-				const int obs = (entity->observerTarget() & ENT_ENTRY_MASK);
-				if (entity->isDead() && obs == localPlayerIndex + 1) // Ghetto way, hope it will work (me before testing on valve servers)
-					gameData.observerData.push_back({ name, entity->observerMode()});
+			if (entity->isDefusing()) //Bomb Timer
+				gameData.defusingPlayerName = name;
 
-				break;
+			// Spectator List
+			const int obs = (entity->observerTarget() & ENT_ENTRY_MASK);
+			if (entity->isDead() && obs == localPlayerIndex + 1) // Ghetto way, hope it will work (me before testing on valve servers)
+				gameData.observerData.push_back({ name, entity->observerMode() });
+
+			break;
+		}
+		case ClassID::Tablet: {
+			gameData.tablet = entity;
+			if (cfg->m.fixTablet)
+				mem.Write<bool>(gameData.tablet + Offset::netvars::m_bTabletReceptionIsBlocked, false);
+			break;
+		}
+		case ClassID::ToneMapController: {
+			gameData.toneMapController = entity;
+			if (cfg->v.customPostProcessing.enabled) {
+				mem.Write<bool>(entity + Offset::netvars::m_bUseCustomBloomScale, cfg->v.customPostProcessing.enabled);
+				mem.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMax, cfg->v.customPostProcessing.enabled);
+				mem.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMin, cfg->v.customPostProcessing.enabled);
+
+				float bloomScale = cfg->v.customPostProcessing.bloomScale * 0.01f;
+				float worldExposure = cfg->v.customPostProcessing.worldExposure * 0.001f;
+
+				mem.Write<float>(entity + Offset::netvars::m_flCustomBloomScale, bloomScale);
+				mem.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMax, worldExposure);
+				mem.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMin, worldExposure);
 			}
-			case ClassID::Tablet: {
-				gameData.tablet = entity;
-				if (cfg->m.fixTablet)
-					mem.Write<bool>(gameData.tablet + Offset::netvars::m_bTabletReceptionIsBlocked, false);
+			break;
+		}
+		case ClassID::PlantedC4: {
+			gameData.plantedC4 = entity;
+			break;
+		}
+		case ClassID::BaseCSGrenadeProjectile:
+			gameData.projectileData.push_back({entity, "HE/Flash"});
 				break;
-			}
-			case ClassID::ToneMapController: {
-				gameData.toneMapController = entity;
-				if (cfg->v.customPostProcessing.enabled) {
-					mem.Write<bool>(entity + Offset::netvars::m_bUseCustomBloomScale, cfg->v.customPostProcessing.enabled);
-					mem.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMax, cfg->v.customPostProcessing.enabled);
-					mem.Write<bool>(entity + Offset::netvars::m_bUseCustomAutoExposureMin, cfg->v.customPostProcessing.enabled);
-
-					float bloomScale = cfg->v.customPostProcessing.bloomScale * 0.01f;
-					float worldExposure = cfg->v.customPostProcessing.worldExposure * 0.001f;
-
-					mem.Write<float>(entity + Offset::netvars::m_flCustomBloomScale, bloomScale);
-					mem.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMax, worldExposure);
-					mem.Write<float>(entity + Offset::netvars::m_flCustomAutoExposureMin, worldExposure);
-				}
-				break;
-			}
-			case ClassID::PlantedC4: {
-				gameData.plantedC4 = entity;
-				break;
-			}
+		case ClassID::DecoyProjectile:
+			gameData.projectileData.push_back({ entity, "Decoy" });
+			break;
+		case ClassID::MolotovProjectile:
+			gameData.projectileData.push_back({ entity, "Molotov" });
+			break;
+		case ClassID::SmokeGrenadeProjectile:
+			gameData.projectileData.push_back({ entity, "Smoke" });
+			break;
+			
 		}
 	}
 }

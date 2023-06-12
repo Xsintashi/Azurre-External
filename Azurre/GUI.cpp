@@ -451,6 +451,8 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Separator();
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 	ImGui::hotkey("Key Debug 0", cfg->debug.keyDebug0);
+	ImGui::Text("MaxEntity: %.d", maxEntity);
+	ImGui::Text("HighestEntityIndex: %.d", highestEntityIndex);
 	ImGui::SeparatorText("GameRules Test");
 	const auto& m_fRoundStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fRoundStartTime);
 	const auto& m_fMatchStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fMatchStartTime);
