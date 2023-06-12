@@ -69,7 +69,7 @@ void Core::gameDataUpdate() noexcept {
 	gameData.playerData.clear();
 	gameData.weaponData.clear();
 	gameData = {}; // reset GameData
-	for (int unsigned idx = 0; idx <= highestEntityIndex; idx++) {
+	for (int idx = 0; idx <= highestEntityIndex; idx++) {
 
 		const auto& entity = getEntity(idx);
 		if (!entity) continue;
