@@ -93,7 +93,7 @@ inline ImVec2 gameScreenPos = {};
 inline ImVec2 gameScreenPosEnd = {};
 inline GameData gameData;
 inline Matrix4x4 viewMatix;
-inline int& maxEntity;
-inline int& highestEntityIndex;
+inline int maxEntity;
+inline int highestEntityIndex;
 #define mem azurre
 inline Memory mem = Memory{ "csgo.exe" };
