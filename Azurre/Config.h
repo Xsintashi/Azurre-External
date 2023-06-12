@@ -41,6 +41,7 @@ public:
 		float fov = 0.f;
 		float smooth = 1.f;
 		bool rcs = false;
+		ColorToggleOutline drawFov{ 1.0f, 1.0f, 1.0f, 0.25f };
 	} a;
 
 	struct ChamsConfig {

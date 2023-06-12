@@ -1,5 +1,5 @@
 #include "Aimbot.h"
-
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "../GUI.h"
 #include "../Offsets.h"
 #include "../Helpers.h"
@@ -8,8 +8,6 @@
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "../../Lib/imgui/imgui.h"
 
 #include <chrono>
 
@@ -151,4 +149,33 @@ void Aimbot::recoilSystem() noexcept {
 
 	} else oldAimPunch = {};
 
+}
+
+void Aimbot::drawFov() noexcept {
+	if (!cfg->a.enabled || !cfg->a.hotkey.isActive())
+		return;
+
+	if (!localPlayer || !localPlayer->isAlive())
+		return;
+
+	const auto activeWeapon = localPlayer->getActiveWeapon();
+	if (!activeWeapon)
+		return;
+
+	auto weaponIndex = localPlayer->getWeaponIDFromPlayer();
+	if (!weaponIndex)
+		return;
+
+	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
+	Vector aimPunch = localPlayer->aimPunch() / 2.f;
+	ImVec2 recoil = { mid.x - (screenSize.x / 90.f * aimPunch.y), mid.y + (screenSize.x / 90.f * aimPunch.x) };
+
+	const auto radius = std::tan(Helpers::deg2rad(cfg->a.fov) / (16.0f / 6.0f)) / std::tan(Helpers::deg2rad(localPlayer->isScoped() ? localPlayer->fov() : 90.0f) / 2.0f) * gameScreenSize.x;
+	if (radius > gameScreenSize.x || radius > gameScreenSize.y || !std::isfinite(radius))
+		return;
+
+	const auto color = Helpers::calculateColor(cfg->a.drawFov);
+	ImGui::GetBackgroundDrawList()->AddCircleFilled(localPlayer->shotsFired() > 1 ? recoil : mid, radius, color);
+	if (cfg->a.drawFov.outline)
+		ImGui::GetBackgroundDrawList()->AddCircle(localPlayer->shotsFired() > 1 ? recoil : mid, radius, color | IM_COL32_A_MASK, 360);
 }

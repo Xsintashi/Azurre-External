@@ -101,6 +101,7 @@ static void from_json(const json& j, Config::AimbotConfig& c) {
     read(j, "Fov", c.fov);
     read(j, "Smooth", c.smooth);
     read(j, "RCS", c.rcs);
+    read<value_t::object>(j, "Draw legitbot fov", c.drawFov);
 }
 
 static void from_json(const json& j, Config::ClanTagConfig::CustomClanTag& c) {
@@ -416,6 +417,7 @@ static void to_json(json& j, const Config::AimbotConfig& o, const Config::Aimbot
     WRITE("Fov", fov);
     WRITE("Smooth", smooth);
     WRITE("RCS", rcs);
+    WRITE("Draw legitbot fov", drawFov);
 }
 
 static void to_json(json& j, const Config::ClanTagConfig::CustomClanTag& o, const Config::ClanTagConfig::CustomClanTag& dummy) {

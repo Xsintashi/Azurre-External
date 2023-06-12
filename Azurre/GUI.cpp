@@ -29,6 +29,7 @@
 #include <strsafe.h>
 #include <shlobj_core.h>
 #include <KnownFolders.h>
+#include "Hacks/Aimbot.h"
 
 #pragma execution_character_set("utf-8")
 
@@ -625,6 +626,7 @@ void renderAimbotWindow() noexcept {
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::Checkbox("RCS", &cfg->a.rcs);
 		ImGui::EndDisabled();
+		ImGuiCustom::colorPicker("Draw fov", cfg->a.drawFov);
 	}
 	ImGui::End();
 }
@@ -1437,6 +1439,7 @@ void watermark() {
 
 void GUI::overlay() noexcept {
 	ESP::render();
+	Aimbot::drawFov();
 	Misc::hitMarkerSound();
 	Misc::crosshairs();
 	watermark();
