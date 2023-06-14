@@ -71,7 +71,6 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_hViewModel = 0x3308;
 		constexpr ::std::ptrdiff_t m_iAccount = 0x117B8;
 		constexpr ::std::ptrdiff_t m_iAccountID = 0x2FD8;
-		constexpr ::std::ptrdiff_t m_iAddonBits = 0x103C4;
 		constexpr ::std::ptrdiff_t m_iAssists = 0xD30;
 		constexpr ::std::ptrdiff_t m_iClip1 = 0x3274;
 		constexpr ::std::ptrdiff_t m_iCompTeammateColor = 0x1CD0;
