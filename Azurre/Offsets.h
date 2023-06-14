@@ -1,7 +1,7 @@
 #pragma once
 #include <cstddef>
 
-namespace hazedumper {
+namespace Offset {
 	namespace netvars {
 		constexpr ::std::ptrdiff_t cs_gamerules_data = 0x0;
 		constexpr ::std::ptrdiff_t m_ArmorValue = 0x117CC;
@@ -136,6 +136,7 @@ namespace hazedumper {
 		constexpr ::std::ptrdiff_t clientstate_last_outgoing_command = 0x4D2C;
 		constexpr ::std::ptrdiff_t clientstate_net_channel = 0x9C;
 		constexpr ::std::ptrdiff_t convar_name_hash_table = 0x301A0;
+		constexpr ::std::ptrdiff_t convar_r_drawparticles = 0xB84100;
 		constexpr ::std::ptrdiff_t dwClientState = 0x59F19C;
 		constexpr ::std::ptrdiff_t dwClientState_GetLocalPlayer = 0x180;
 		constexpr ::std::ptrdiff_t dwClientState_IsHLTV = 0x4D48;
