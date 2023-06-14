@@ -195,7 +195,7 @@ void Misc::showKeybinds() noexcept
 	ImGui::End();
 }
 
-void Misc::modifyConVars(bool reset) noexcept { //dont really work F
+void Misc::modifyConVars(bool reset) noexcept {
 
 	if (!localPlayer) return;
 
@@ -203,10 +203,11 @@ void Misc::modifyConVars(bool reset) noexcept { //dont really work F
 
 	if (cfg->restrictions) return; //RPM ONLY
 
-	ConVar sky{ IClient.address + Offset::cvars::r_3dsky };
-	ConVar shadow{ IClient.address + Offset::cvars::cl_csm_enabled };
-	ConVar grenade{ IClient.address + Offset::cvars::cl_grenadepreview};
-	ConVar skyname{ IClient.address + Offset::cvars::sv_skyname };
+	ConVar sky{ "r_3dsky"};
+	ConVar shadow{ "cl_csm_enabled"};
+	ConVar grenade{ "cl_grenadepreview"};
+	ConVar ragdoll{ "cl_ragdoll_gravity"};
+	ConVar skyname{ "sv_skyname"};
 	ConVar particles{ IClient.address + Offset::cvars::r_drawparticles };
 	const static int skynameFlags = skyname.getFlags();
 
@@ -218,7 +219,7 @@ void Misc::modifyConVars(bool reset) noexcept { //dont really work F
 		return;
 	}
 
-	static bool doOnce = true; // for tests
+	static bool doOnce = true;
 	if (doOnce) {
 		int flags = skyname.getFlags();
 		flags &= ~(CVarFlags::REPLICATED);

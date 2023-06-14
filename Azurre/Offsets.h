@@ -1,7 +1,7 @@
 #pragma once
 #include <cstddef>
 
-namespace Offset {
+namespace hazedumper {
 	namespace netvars {
 		constexpr ::std::ptrdiff_t cs_gamerules_data = 0x0;
 		constexpr ::std::ptrdiff_t m_ArmorValue = 0x117CC;
@@ -42,6 +42,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_dwBoneMatrix = 0x26A8;
 		constexpr ::std::ptrdiff_t m_fAccuracyPenalty = 0x3340;
 		constexpr ::std::ptrdiff_t m_fFlags = 0x104;
+		constexpr ::std::ptrdiff_t m_fMatchStartTime = 0x48;
 		constexpr ::std::ptrdiff_t m_fRoundStartTime = 0x4C;
 		constexpr ::std::ptrdiff_t m_flBloomExponent = 0x9EC;
 		constexpr ::std::ptrdiff_t m_flBloomSaturation = 0x9F0;
@@ -91,11 +92,11 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_iKills = 0xC2C;
 		constexpr ::std::ptrdiff_t m_iMVPs = 0x16F4;
 		constexpr ::std::ptrdiff_t m_iMostRecentModelBoneCounter = 0x2690;
+		constexpr ::std::ptrdiff_t m_iName = 0x154;
 		constexpr ::std::ptrdiff_t m_iObserverMode = 0x3388;
 		constexpr ::std::ptrdiff_t m_iPing = 0xB28;
 		constexpr ::std::ptrdiff_t m_iPlayerC4 = 0x165C;
 		constexpr ::std::ptrdiff_t m_iRoundTime = 0x44;
-		constexpr ::std::ptrdiff_t m_fMatchStartTime = 0x48;
 		constexpr ::std::ptrdiff_t m_iScore = 0x1980;
 		constexpr ::std::ptrdiff_t m_iShotsFired = 0x103E0;
 		constexpr ::std::ptrdiff_t m_iState = 0x3268;
@@ -129,7 +130,7 @@ namespace Offset {
 	} // namespace netvars
 	namespace signatures {
 		constexpr ::std::ptrdiff_t anim_overlays = 0x2990;
-		constexpr ::std::ptrdiff_t clearHudWeapon = 0xDBEFF178;
+		constexpr ::std::ptrdiff_t clearHudWeapon = 0xDB33F178;
 		constexpr ::std::ptrdiff_t clientstate_choked_commands = 0x4D30;
 		constexpr ::std::ptrdiff_t clientstate_delta_ticks = 0x174;
 		constexpr ::std::ptrdiff_t clientstate_last_outgoing_command = 0x4D2C;
@@ -175,7 +176,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t dwZoomSensitivityRatioPtr = 0xDF43A8;
 		constexpr ::std::ptrdiff_t dwbSendPackets = 0xDD2B2;
 		constexpr ::std::ptrdiff_t dwppDirect3DDevice9 = 0xA62C0;
-		constexpr ::std::ptrdiff_t find_hud_element = 0x243D02D0;
+		constexpr ::std::ptrdiff_t find_hud_element = 0x24F902D0;
 		constexpr ::std::ptrdiff_t force_update_spectator_glow = 0x3D997A;
 		constexpr ::std::ptrdiff_t hud = 0x5236A38;
 		constexpr ::std::ptrdiff_t interface_engine_cvar = 0x3FA9C;
@@ -191,11 +192,4 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t set_abs_angles = 0x1E7A10;
 		constexpr ::std::ptrdiff_t set_abs_origin = 0x1E7850;
 	} // namespace signatures
-	namespace cvars{ //hardcoded!  use IDA to get them //Example: https://media.discordapp.net/attachments/856920214805807154/1094994748164554863/image.png
-		constexpr ::std::ptrdiff_t r_3dsky = 0xDF5650;
-		constexpr ::std::ptrdiff_t cl_csm_enabled = 0xDE6950;
-		constexpr ::std::ptrdiff_t cl_grenadepreview = 0xE06C08;
-		constexpr ::std::ptrdiff_t sv_skyname = 0xDF0B60;
-		constexpr ::std::ptrdiff_t r_drawparticles = 0xB84100;
-	}
-}
+} // namespace hazedumper
