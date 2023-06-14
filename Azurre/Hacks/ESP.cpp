@@ -134,6 +134,9 @@ void renderPlayer(Entity* entity, int index) {
 		spotted = 0;
 	}
 
+	if (spotted < 1 || spotted > 0)
+		spotted = 0;
+
 	auto& config = cfg->esp.players[categories[tab + spotted]];
 
 #pragma region Box
