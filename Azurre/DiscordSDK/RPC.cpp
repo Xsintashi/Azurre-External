@@ -40,14 +40,15 @@ void Discord::Update(){
 
 		if (gameData.playerData.empty())
 			continue;
-
-		const auto& kills = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iKills + 0x4 + localPlayerIndex * 4);
-		const auto& assists = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iAssists + 0x4 + localPlayerIndex * 4);
-		const auto& deaths = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iDeaths + 0x4 + localPlayerIndex * 4);
-		const auto& score = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iScore + 0x4 + localPlayerIndex * 4);
-		const auto& rank = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + localPlayerIndex * 4);
-		const auto& wins = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + localPlayerIndex * 4);
-		const auto& mvp = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iMVPs + 0x4 + localPlayerIndex * 4);
+		constexpr int intSize = sizeof(int);
+		const auto& kills = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iKills + intSize + localPlayerIndex * 4);
+		const auto& assists = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iAssists + intSize + localPlayerIndex * 4);
+		const auto& deaths = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iDeaths + intSize + localPlayerIndex * 4);
+		const auto& score = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iScore + intSize + localPlayerIndex * 4);
+		const auto& rank = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + intSize + localPlayerIndex * 4);
+		const auto& wins = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + intSize + localPlayerIndex * 4);
+		const auto& mvp = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iMVPs + intSize + localPlayerIndex * 4);
+		const auto& rankType = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRankType + intSize + localPlayerIndex * 4);
 
 		switch (config.details) {
 			default:
@@ -81,7 +82,7 @@ void Discord::Update(){
 			break;
 		case 2: //Rank
 			if (gameState == ConnectionState::FullyConnected && localPlayer.get())
-				state = "Rank: " + std::string(Helpers::convertRankFromNumber(false, rank)) + " [" + std::to_string(wins) + "]";
+				state = "Rank: " + std::string(Helpers::convertRankFromNumber(false, rank)) + " [" + std::to_string(wins) + " wins]";
 			else
 				state = "Rank: Unknown";
 			break;
