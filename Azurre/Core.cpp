@@ -50,6 +50,7 @@ void Core::update() {
 	viewMatix = mem.Read<Matrix4x4>(IClient.address + Offset::signatures::dwViewMatrix);
 	maxEntity = mem.Read<int>(IClient.address + Offset::signatures::dwEntityList + 0x2001C);
 	highestEntityIndex = mem.Read<int>(IClient.address + Offset::signatures::dwEntityList + 0x20024);
+	localPlayerIndex = mem.Read<int>(IClientState.address + Offset::signatures::dwClientState_GetLocalPlayer);
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
 	const auto map = mem.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
 	mapName = map.data();
@@ -85,9 +86,6 @@ void Core::gameDataUpdate() noexcept {
 
 			if (cfg->m.radarHack && !cfg->restrictions && !entity->isSameTeam())
 				mem.Write<bool>(entity + Offset::netvars::m_bSpotted, true);
-
-			if ((uintptr_t)entity == localPlayer.get())
-				localPlayerIndex = idx;
 
 			// Player Info
 			const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
