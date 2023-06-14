@@ -98,7 +98,7 @@ public:
 	}
 
 	void setValue(char* value) {
-		mem.Write<char*>(offset + 0x24, value);
+		mem.Write<int32_t>(offset + 0x24, *reinterpret_cast<uintptr_t*>(&value) ^ offset);
 	}
 
 	char* getSzValue() {

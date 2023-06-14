@@ -16,7 +16,7 @@ DWORD Memory::grabSig(DWORD base, DWORD size, BYTE* sign, char* mask)
 {
 	MEMORY_BASIC_INFORMATION mbi = { 0 };
 	DWORD offset = 0;
-	while (offset < size)
+	while (offset < size && processHandle)
 	{
 		VirtualQueryEx(processHandle, (LPCVOID)(base + offset), &mbi, sizeof(MEMORY_BASIC_INFORMATION));
 		if (mbi.State != MEM_FREE)
