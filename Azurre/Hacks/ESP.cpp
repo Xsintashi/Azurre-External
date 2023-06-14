@@ -126,7 +126,7 @@ void renderProjectile(ProjectileData* projectile) {
 
 void renderPlayer(Entity* entity, int index) {
 	int tab = 1;
-	int spotted = 0;
+	unsigned int spotted = 0;
 	spotted = mem.Read<int>(entity + Offset::netvars::m_bSpotted);
 
 	if (entity->isSameTeam()){
@@ -134,8 +134,8 @@ void renderPlayer(Entity* entity, int index) {
 		spotted = 0;
 	}
 
-	if (spotted < 1 || spotted > 0)
-		spotted = 0;
+	if (spotted >= 2)
+		spotted = 1;
 
 	auto& config = cfg->esp.players[categories[tab + spotted]];
 
