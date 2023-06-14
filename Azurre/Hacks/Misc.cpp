@@ -206,9 +206,9 @@ void Misc::modifyConVars(bool reset) noexcept {
 	ConVar sky{ "r_3dsky"};
 	ConVar shadow{ "cl_csm_enabled"};
 	ConVar grenade{ "cl_grenadepreview"};
-	ConVar ragdoll{ "cl_ragdoll_gravity"};
+	ConVar panoramaBlur{ "@panorama_disable_blur"};
 	ConVar skyname{ "sv_skyname"};
-	ConVar particles{ IClient.address + Offset::cvars::r_drawparticles };
+	ConVar particles{ IClient.address + Offset::signatures::convar_r_drawparticles };
 	const static int skynameFlags = skyname.getFlags();
 
 	if (reset) {
@@ -232,6 +232,7 @@ void Misc::modifyConVars(bool reset) noexcept {
 	shadow.setValue(!cfg->v.noShadows);
 	grenade.setValue(cfg->m.grenadeTrajectory);
 	particles.setValue(!cfg->v.noParticles);
+	panoramaBlur.setValue(cfg->v.noPanoramaBlur);
 
 	static int tempSkybox = 0;
 

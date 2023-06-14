@@ -990,6 +990,7 @@ void renderVisualsWindow() noexcept {
 		ImGui::Checkbox("No Shadows", &cfg->v.noShadows);
 		ImGui::Checkbox("No 3DSky", &cfg->v.no3DSky);
 		ImGui::Checkbox("No Particles", &cfg->v.noParticles);
+		ImGui::Checkbox("Disable Panorama Blur", &cfg->v.noPanoramaBlur);
 		ImGui::PushItemWidth(96.f);
 		ImGui::Combo("Skybox", &cfg->v.skybox, skyboxList.data(), skyboxList.size());
 		ImGui::SliderInt("##flash", &cfg->v.flashReduction, 0, 100, "Flash reduction: %d%%");

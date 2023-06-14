@@ -312,6 +312,7 @@ static void from_json(const json& j, Config::VisualsConfig& c) {
     read(j, "No Particles", c.noParticles);
     read(j, "No Shadows", c.noShadows);
     read(j, "No 3DSky", c.no3DSky);
+    read(j, "No Panorama Blur", c.noPanoramaBlur);
     read(j, "Fov", c.fov);
     read(j, "Skybox", c.skybox);
     read(j, "Flash Reduction", c.flashReduction);
@@ -651,6 +652,7 @@ static void to_json(json& j, const Config::VisualsConfig& o, const Config::Visua
     WRITE("No Particles", noParticles);
     WRITE("No Shadows", noShadows);
     WRITE("No 3DSky", no3DSky);
+    WRITE("No Panorama Blur", noPanoramaBlur);
     WRITE("Fov", fov);
     WRITE("Skybox", skybox);
     WRITE("Flash Reduction", flashReduction);

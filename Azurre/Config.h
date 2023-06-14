@@ -174,6 +174,7 @@ public:
 		bool noAllies = false;
 		bool no3DSky = false;
 		bool noShadows = false;
+		bool noPanoramaBlur = false;
 		int flashReduction = 0;
 		int fov = 90;
 		int skybox = 0;
