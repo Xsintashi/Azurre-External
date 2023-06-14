@@ -16,8 +16,13 @@ DWORD Memory::grabSig(DWORD base, DWORD size, BYTE* sign, char* mask)
 {
 	MEMORY_BASIC_INFORMATION mbi = { 0 };
 	DWORD offset = 0;
-	while (offset < size && processHandle)
+	while (offset < size)
 	{
+		auto still = FindWindowA("Valve001", NULL);
+
+		if (!still)
+			return 0xcccccc;
+
 		VirtualQueryEx(processHandle, (LPCVOID)(base + offset), &mbi, sizeof(MEMORY_BASIC_INFORMATION));
 		if (mbi.State != MEM_FREE)
 		{
