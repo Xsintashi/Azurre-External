@@ -57,6 +57,10 @@ void drawSkeleton(uintptr_t entBones) {
 
 void drawHealthBar(ImVec2 pos, float width, float height, float duckHeight , int health, ImU32 color, ImU32 colorNumber, ColorToggle3 showHealthNumber) {
 	const auto centerText = ImGui::CalcTextSize(std::to_string(health).c_str());
+
+	if (health < 1)
+		return;
+
 	drawList->AddLine({ pos.x + width + (width * .1f), pos.y - (100 - health) / 100.0f * height + (duckHeight / (100 / health)) }, { pos.x + width + (width * .1f), pos.y - height }, color, 4.f);
 	if (showHealthNumber.enabled) { // text
 		drawList->AddText({ (pos.x + width + (width * .1f) - centerText.x / 2) + 1.f, (pos.y - (100 - health) / 100.0f * height + (duckHeight / (100 / health))) + 1.f }, colorNumber & IM_COL32_A_MASK, std::to_string(health).c_str());
