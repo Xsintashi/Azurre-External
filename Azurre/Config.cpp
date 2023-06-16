@@ -360,7 +360,6 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     GUI::updateColors();
 
     Misc::forceReload();
-    Clan::setClanTag("", "");
 }
 
 #pragma endregion
