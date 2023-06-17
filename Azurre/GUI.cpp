@@ -1519,6 +1519,7 @@ void renderMiscWindow() noexcept {
 			ImGui::Checkbox("Show Dormant", &cfg->m.minimap.showDormant);
 			ImGui::Checkbox("Show Weapons", &cfg->m.minimap.showWeapons);
 			ImGui::Checkbox("Show Grenades", &cfg->m.minimap.showGrenades);
+			ImGui::Combo("Color Schemes", &cfg->m.minimap.colorScheme, "CT/TT\0Engine Radar\0");
 			ImGui::SliderFloat("##scale", &cfg->m.minimap.scale, 0.25f, 2.f, "Scale: %.2f");
 			ImGui::EndPopup();
 		}

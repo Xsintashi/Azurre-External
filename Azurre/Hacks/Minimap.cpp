@@ -76,6 +76,15 @@ const PNGTexture xm1014Texture{ resource::xm1014 };
 const PNGTexture ctDeathTexture{ resource::ctDeath };
 const PNGTexture tDeathTexture{ resource::tDeath };
 
+constexpr unsigned colors[] = {
+	IM_COL32(168, 184, 184, 255),	// Gray
+	IM_COL32(255, 255, 255, 255),	// Blank
+	IM_COL32(198, 197, 34 , 255),	// Yellow
+	IM_COL32(128, 18 , 192, 255),	// Purple
+	IM_COL32(47 , 144, 87 , 255),	// Green
+	IM_COL32(70 , 131, 199, 255),	// Blue
+	IM_COL32(199, 126, 55 , 255),	// Orange
+};
 
 std::string parseString(const std::string& szBefore, const std::string& szSource) noexcept
 {
@@ -394,7 +403,18 @@ void Minimap::Render() { //Render Thread
 		}
 		switch(GetClassId(entity)) {
 			case ClassID::CSPlayer: {
-				renderPlayer(entity, windowPos, entity->teamNumber() == Team::TT ? ttColor : ctColor, idx);
+				unsigned color;
+				
+				switch (cfg->m.minimap.colorScheme) {
+					default: // CT/TT
+					case 0:
+						color = entity->teamNumber() == Team::TT ? ttColor : ctColor;
+						break;
+					case 1:
+						color = entity->isSameTeam() ? colors[gameData.playerResource.compTeammateColor[idx] + 2 ] : IM_COL32(255, 0, 0, 255);
+						break;
+				}
+				renderPlayer(entity, windowPos, color, idx);
 				break;
 			}
 			case ClassID::PlantedC4:

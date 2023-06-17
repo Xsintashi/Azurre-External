@@ -134,6 +134,7 @@ public:
 			bool showGrenades = false;
 			bool noTitleBar = false;
 			bool noBackground = false;
+			int colorScheme = 0;
 			float scale = 1.f;
 			KeyBind hotkey = std::string("Minimap");
 			ImVec2 pos;
