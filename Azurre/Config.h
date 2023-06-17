@@ -104,8 +104,12 @@ public:
 		struct PlayerList {
 			bool enabled = false;
 			bool noTitleBar = false;
+			bool hideLocalPlayer = false;
+			bool hideDormant = false;
+			int sort = 0;
 			KeyBind hotkey = std::string("Player List");
 			ImVec2 pos;
+			Color4 localPlayerColor = { 1.0f, 0.25f, 1.0f, 1.f };
 		} playerList;
 
 		struct BombTimer {

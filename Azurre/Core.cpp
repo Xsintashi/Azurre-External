@@ -98,19 +98,35 @@ void Core::gameDataUpdate() noexcept {
 			const auto& teamNumber = static_cast<int>(entity->teamNumber());
 			const auto& money = entity->money();
 			const auto& weaponID = entity->getWeaponIDFromPlayer();
+			const auto& dormant = entity->dormant();
 			const std::string name = playerInfo.name;
-			const bool bot = playerInfo.fakeplayer;
-			std::uint64_t steamID = playerInfo.steamID64;
-			char temp[18];
-			ReadProcessMemory(mem.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
-			std::string placename = (temp + '\0');
+			const bool bot = playerInfo.fakePlayer;
+			const bool hltv = playerInfo.isHLTV;
+			const std::string steamID = playerInfo.steamID;
+			char placeName[18];
+			ReadProcessMemory(mem.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), &placeName, 18, NULL);
+			gameData.playerData.push_back({ entity, idx, steamID, bot, hltv, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placeName, dormant });
 
-			const auto& rank = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + idx * 4);
-			const auto& wins = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + idx * 4);
+#pragma region Player Resource
 
-			const int clampedRank = std::clamp(rank, 0, 18);
+			const int& competitiveRanking = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + idx * 4);
+			char buff[16];
+			ReadProcessMemory(mem.processHandle, (LPCVOID)(IPlayerResource.address + Offset::netvars::m_szClan + 0x10 + (idx * 0x10)), buff, 16, NULL);
 
-			gameData.playerData.push_back({ entity, idx, steamID, bot, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placename, clampedRank , wins });
+			gameData.playerResource.competitiveRanking[idx] = std::clamp(competitiveRanking, 0, 18);
+			gameData.playerResource.competitiveWins[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + idx * 4);
+			gameData.playerResource.kills[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iKills + 0x4 + idx * 4);
+			gameData.playerResource.assists[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iAssists + 0x4 + idx * 4);
+			gameData.playerResource.deaths[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iDeaths + 0x4 + idx * 4);
+			gameData.playerResource.MVPs[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iMVPs + 0x4 + idx * 4);
+			gameData.playerResource.score[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iScore + 0x4 + idx * 4);
+			gameData.playerResource.ping[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iPing + 0x4 + idx * 4);
+			gameData.playerResource.activeCoinRank[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_nActiveCoinRank + 0x4 + idx * 4);
+			gameData.playerResource.compTeammateColor[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompTeammateColor + 0x4 + idx * 4);
+			gameData.playerResource.musicID[idx] = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_nMusicID + 0x4 + idx * 4);
+			gameData.playerResource.clanTag[idx] = buff;
+
+#pragma endregion Player Resource
 
 			if (entity->isDefusing()) //Bomb Timer
 				gameData.defusingPlayerName = name;

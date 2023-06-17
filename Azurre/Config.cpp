@@ -237,6 +237,10 @@ static void from_json(const json& j, Config::MiscConfig::PlayerList& c) {
     read(j, "Enabled", c.enabled);
     read(j, "No Title Bar", c.noTitleBar);
     read(j, "Hotkey", c.hotkey);
+    read(j, "Hide LocalPlayer", c.hideLocalPlayer);
+    read(j, "Hide Dormant", c.hideDormant);
+    read(j, "Sort", c.sort);
+    read<value_t::object>(j, "LocalPlayer Color", c.localPlayerColor);
     read<value_t::object>(j, "Pos", c.pos);
 }
 
@@ -575,6 +579,10 @@ static void to_json(json& j, const Config::MiscConfig::PlayerList& o, const Conf
     WRITE("Enabled", enabled);
     WRITE("No Title Bar", noTitleBar);
     WRITE("Hotkey", hotkey);
+    WRITE("Hide LocalPlayer", hideLocalPlayer);
+    WRITE("Hide Dormant", hideDormant);
+    WRITE("Sort", sort);
+    WRITE("LocalPlayer Color", localPlayerColor);
 
     if (const auto window = ImGui::FindWindowByName("Player List")) {
         j["Pos"] = window->Pos;

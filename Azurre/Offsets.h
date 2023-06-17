@@ -116,6 +116,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_nTickBase = 0x3440;
 		constexpr ::std::ptrdiff_t m_nViewModelIndex = 0x29D0;
 		constexpr ::std::ptrdiff_t m_rgflCoordinateFrame = 0x444;
+		constexpr ::std::ptrdiff_t m_szClan = 0x43AC;
 		constexpr ::std::ptrdiff_t m_szCustomName = 0x304C;
 		constexpr ::std::ptrdiff_t m_szLastPlaceName = 0x35C4;
 		constexpr ::std::ptrdiff_t m_thirdPersonViewAngles = 0x31E8;

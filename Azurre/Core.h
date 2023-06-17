@@ -51,8 +51,9 @@ struct ObserverData {
 struct PlayerData {
 	Entity* entity;
 	int idx;
-	std::uint64_t steamID;
+	std::string steamID;
 	bool isBot;
+	bool isHLTV;
 	std::string name;
 	int health;
 	int armor;
@@ -62,8 +63,22 @@ struct PlayerData {
 	int money;
 	int weaponID;
 	std::string placename;
-	int rank;
-	int wins;
+	bool dormant;
+};
+
+struct PlayerResource {
+	int competitiveRanking[64];
+	int competitiveWins[64];
+	int kills[64];
+	int assists[64];
+	int deaths[64];
+	int MVPs[64];
+	int score[64];
+	int ping[64];
+	int activeCoinRank[64];
+	int compTeammateColor[64];
+	int musicID[64];
+	std::string clanTag[64];
 };
 
 struct ProjectileData {
@@ -73,6 +88,7 @@ struct ProjectileData {
 
 struct GameData {
 	std::vector<PlayerData> playerData;
+	PlayerResource playerResource;
 	std::vector<Entity*> weaponData;
 	std::vector<ProjectileData> projectileData;
 	std::vector<ObserverData> observerData;

@@ -23,6 +23,7 @@
 #include "PNGTexture.h"
 #include "resources.h"
 
+#include <algorithm>
 #include <string>
 #include <dwmapi.h>
 #include <d3d9.h>
@@ -32,6 +33,554 @@
 #include "Hacks/Aimbot.h"
 
 #pragma execution_character_set("utf-8")
+
+constexpr const char* colorTeam[] = {
+	"Gray",
+	"Blank",
+	"Yellow",
+	"Purple",
+	"Green",
+	"Blue",
+	"Orange"
+};
+
+constexpr const char* ranks[] = {
+	"Hidden / Expired",
+	"Silver 1",
+	"Silver 2",
+	"Silver 3",
+	"Silver 4",
+	"Silver elite",
+	"Silver elite master",
+	"Gold nova 1",
+	"Gold nova 2",
+	"Gold nova 3",
+	"Gold nova master",
+	"Master guardian 1",
+	"Master guardian 2",
+	"Master guardian elite",
+	"Distinguished master guardian",
+	"Legendary eagle",
+	"Legendary eagle master",
+	"Supreme master first class",
+	"The global elite"
+};
+
+constexpr const char* medalNames[] = {
+	"None",
+	"5 years",
+	"DreamHack SteelSeries 2013 CS:GO Champion",
+	"DreamHack SteelSeries 2013 CS:GO Finalist",
+	"DreamHack SteelSeries 2013 CS:GO Semifinalist",
+	"DreamHack SteelSeries 2013 CS:GO Quarterfinalist",
+	"EMS One Katowice 2014 CS:GO Champion",
+	"EMS One Katowice 2014 CS:GO Finalist",
+	"EMS One Katowice 2014 CS:GO Semifinalist",
+	"EMS One Katowice 2014 CS:GO Quarterfinalist",
+	"ESL One Cologne 2014 CS:GO Champion",
+	"ESL One Cologne 2014 CS:GO Finalist",
+	"ESL One Cologne 2014 CS:GO Semifinalist",
+	"ESL One Cologne 2014 CS:GO Quarterfinalist",
+	"ESL One Cologne 2014 Pick 'Em Challenge Bronze",
+	"ESL One Cologne 2014 Pick 'Em Challenge Silver",
+	"ESL One Cologne 2014 Pick 'Em Challenge Gold",
+	"DreamHack Winter 2014 CS:GO Champion",
+	"DreamHack Winter 2014 CS:GO Finalist",
+	"DreamHack Winter 2014 CS:GO Semifinalist",
+	"DreamHack Winter 2014 CS:GO Quarterfinalist",
+	"DreamHack Winter 2014 Pick 'Em Challenge Bronze",
+	"DreamHack Winter 2014 Pick 'Em Challenge Silver",
+	"DreamHack Winter 2014 Pick 'Em Challenge Gold",
+	"ESL One Katowice 2015 CS:GO Champion",
+	"ESL One Katowice 2015 CS:GO Finalist",
+	"ESL One Katowice 2015 CS:GO Semifinalist",
+	"ESL One Katowice 2015 CS:GO Quarterfinalist",
+	"ESL One Katowice 2015 Pick 'Em Challenge Bronze",
+	"ESL One Katowice 2015 Pick 'Em Challenge Silver",
+	"ESL One Katowice 2015 Pick 'Em Challenge Gold",
+	"ESL One Cologne 2015 CS:GO Champion",
+	"ESL One Cologne 2015 CS:GO Finalist",
+	"ESL One Cologne 2015 CS:GO Semifinalist",
+	"ESL One Cologne 2015 CS:GO Quarterfinalist",
+	"ESL One Cologne 2015 Pick 'Em Challenge Bronze",
+	"ESL One Cologne 2015 Pick 'Em Challenge Silver",
+	"ESL One Cologne 2015 Pick 'Em Challenge Gold",
+	"DreamHack Cluj-Napoca 2015 Pick 'Em Challenge Bronze",
+	"DreamHack Cluj-Napoca 2015 Pick 'Em Challenge Silver",
+	"DreamHack Cluj-Napoca 2015 Pick 'Em Challenge Gold",
+	"DreamHack Cluj-Napoca 2015 Fantasy Team Bronze",
+	"DreamHack Cluj-Napoca 2015 Fantasy Team Silver",
+	"DreamHack Cluj-Napoca 2015 Fantasy Team Gold",
+	"DreamHack Cluj-Napoca 2015 CS:GO Champion",
+	"DreamHack Cluj-Napoca 2015 CS:GO Finalist",
+	"DreamHack Cluj-Napoca 2015 CS:GO Semifinalist",
+	"DreamHack Cluj-Napoca 2015 CS:GO Quarterfinalist",
+	"MLG Columbus 2016 Pick 'Em Challenge Bronze",
+	"MLG Columbus 2016 Pick 'Em Challenge Silver",
+	"MLG Columbus 2016 Pick 'Em Challenge Gold",
+	"MLG Columbus 2016 Fantasy Team Bronze",
+	"MLG Columbus 2016 Fantasy Team Silver",
+	"MLG Columbus 2016 Fantasy Team Gold",
+	"MLG Columbus 2016 CS:GO Champion",
+	"MLG Columbus 2016 CS:GO Finalist",
+	"MLG Columbus 2016 CS:GO Semifinalist",
+	"MLG Columbus 2016 CS:GO Quarterfinalist",
+	"ESL One Cologne 2016 CS:GO Champion",
+	"ESL One Cologne 2016 CS:GO Finalist",
+	"ESL One Cologne 2016 CS:GO Semifinalist",
+	"ESL One Cologne 2016 CS:GO Quarterfinalist",
+	"Cologne 2016 Pick 'Em Challenge Bronze",
+	"Cologne 2016 Pick 'Em Challenge Silver",
+	"Cologne 2016 Pick 'Em Challenge Gold",
+	"Cologne 2016 Fantasy Team Challenge Bronze",
+	"Cologne 2016 Fantasy Team Challenge Silver",
+	"Cologne 2016 Fantasy Team Challenge Gold",
+	"ELEAGUE Atlanta 2017 CS:GO Champion",
+	"ELEAGUE Atlanta 2017 CS:GO Finalist",
+	"ELEAGUE Atlanta 2017 CS:GO Semifinalist",
+	"ELEAGUE Atlanta 2017 CS:GO Quarterfinalist",
+	"Atlanta 2017 Pick 'Em Challenge Bronze",
+	"Atlanta 2017 Pick 'Em Challenge Silver",
+	"Atlanta 2017 Pick 'Em Challenge Gold",
+	"PGL Krakow 2017 CS:GO Champion",
+	"PGL Krakow 2017 CS:GO Finalist",
+	"PGL Krakow 2017 CS:GO Semifinalist",
+	"PGL Krakow 2017 CS:GO Quarterfinalist",
+	"Krakow 2017 Pick 'Em Challenge Bronze",
+	"Krakow 2017 Pick 'Em Challenge Silver",
+	"Krakow 2017 Pick 'Em Challenge Gold",
+	"ELEAGUE Boston 2018 CS:GO Champion",
+	"ELEAGUE Boston 2018 CS:GO Finalist",
+	"ELEAGUE Boston 2018 CS:GO Semifinalist",
+	"ELEAGUE Boston 2018 CS:GO Quarterfinalist",
+	"Boston 2018 Pick 'Em Challenge Bronze",
+	"Boston 2018 Pick 'Em Challenge Silver",
+	"Boston 2018 Pick 'Em Challenge Gold",
+	"FACEIT London 2018 CS:GO Champion",
+	"FACEIT London 2018 CS:GO Finalist",
+	"FACEIT London 2018 CS:GO Semifinalist",
+	"FACEIT London 2018 CS:GO Quarterfinalist",
+	"London 2018 Pick 'Em Challenge Bronze",
+	"London 2018 Pick 'Em Challenge Silver",
+	"London 2018 Pick 'Em Challenge Gold",
+	"10 years",
+	"Loyalty",
+	"IEM Katowice 2019 CS:GO Champion",
+	"IEM Katowice 2019 CS:GO Finalist",
+	"IEM Katowice 2019 CS:GO Semifinalist",
+	"IEM Katowice 2019 CS:GO Quarterfinalist",
+	"StarLadder Berlin 2019 CS:GO Champion",
+	"StarLadder Berlin 2019 CS:GO Finalist",
+	"StarLadder Berlin 2019 CS:GO Semifinalist",
+	"StarLadder Berlin 2019 CS:GO Quarterfinalist",
+	"PGL Stockholm 2021 CS:GO Champion",
+	"PGL Stockholm 2021 CS:GO Finalist",
+	"PGL Stockholm 2021 CS:GO Semifinalist",
+	"PGL Stockholm 2021 CS:GO Quarterfinalist",
+	"PGL Antwerp 2022 CS:GO Champion",
+	"PGL Antwerp 2022 CS:GO Finalist",
+	"PGL Antwerp 2022 CS:GO Semifinalist",
+	"PGL Antwerp 2022 CS:GO Quarterfinalist",
+	"10 years birthday",
+	"BLAST.tv Paris 2023 CS:GO Champion",
+	"BLAST.tv Paris 2023 CS:GO Finalist",
+	"BLAST.tv Paris 2023 CS:GO Semifinalist",
+	"BLAST.tv Paris 2023 CS:GO Quarterfinalist",
+	"Operation Payback #1",
+	"Operation Payback #2",
+	"Operation Payback #3",
+	"Operation Bravo #1",
+	"Operation Bravo #2",
+	"Operation Bravo #3",
+	"Operation Phoenix #1",
+	"Operation Phoenix #2",
+	"Operation Phoenix #3",
+	"Operation Breakout #1",
+	"Operation Breakout #2",
+	"Operation Breakout #3",
+	"Operation Vanguard #1",
+	"Operation Vanguard #2",
+	"Operation Vanguard #3",
+	"Operation Bloodhound #1",
+	"Operation Bloodhound #2",
+	"Operation Bloodhound #3",
+	"2015 Service #1",
+	"2015 Service #2",
+	"Operation Wildfire #1",
+	"Operation Wildfire #2",
+	"Operation Wildfire #3",
+	"2016 Service #1",
+	"2016 Service #2",
+	"2016 Service #3",
+	"2016 Service #4",
+	"2016 Service #5",
+	"2016 Service #6",
+	"2017 Service #1",
+	"2017 Service #2",
+	"2017 Service #3",
+	"2017 Service #4",
+	"2017 Service #5",
+	"2017 Service #6",
+	"2017 Service #7",
+	"2018 Service #1",
+	"2018 Service #2",
+	"2018 Service #3",
+	"2018 Service #4",
+	"2018 Service #5",
+	"2018 Service #6",
+	"2019 Service #1",
+	"2019 Service #2",
+	"2019 Service #3",
+	"2019 Service #4",
+	"2019 Service #5",
+	"2019 Service #6",
+	"Operation Hydra #1",
+	"Operation Hydra #2",
+	"Operation Hydra #3",
+	"Operation Hydra #3",
+	"Operation Shattered #1",
+	"Operation Shattered #2",
+	"Operation Shattered #3",
+	"Operation Shattered #4",
+	"2020 Service #1",
+	"2020 Service #2",
+	"2020 Service #3",
+	"2020 Service #4",
+	"2020 Service #5",
+	"2020 Service #6",
+	"alyx_04",
+	"alyx_07",
+	"alyx_09",
+	"alyx_05",
+	"alyx_12",
+	"alyx_01",
+	"alyx_02",
+	"alyx_03",
+	"alyx_06",
+	"alyx_08",
+	"alyx_11",
+	"Operation Broken Fang #1",
+	"Operation Broken Fang #2",
+	"Operation Broken Fang #3",
+	"Operation Broken Fang #4",
+	"2021 Service #1",
+	"2021 Service #2",
+	"2021 Service #3",
+	"2021 Service #4",
+	"2021 Service #5",
+	"2021 Service #6",
+	"Operation Riptide #1",
+	"Operation Riptide #2",
+	"Operation Riptide #3",
+	"Operation Riptide #4",
+	"2022 Service #1",
+	"2022 Service #2",
+	"2022 Service #3",
+	"2022 Service #4",
+	"2022 Service #5",
+	"2022 Service #6",
+	"2023 Service #1",
+	"2023 Service #2",
+	"2023 Service #3",
+	"2023 Service #4",
+	"2023 Service #5",
+	"2023 Service #6",
+	"BLAST.tv Paris 2023 CS:GO Bronze",
+	"BLAST.tv Paris 2023 CS:GO Silver",
+	"BLAST.tv Paris 2023 CS:GO Gold",
+	"BLAST.tv Paris 2023 CS:GO Crystal",
+	"Guardian 2",
+	"Bravo",
+	"Baggage",
+	"Phoenix",
+	"Office",
+	"Cobblestone",
+	"Overpass",
+	"Bloodhound",
+	"Cache",
+	"Valeria",
+	"Chroma",
+	"Guardian 3",
+	"Canals",
+	"Welcome to the Clutch",
+	"Death Sentence",
+	"Inferno",
+	"Hydra",
+	"Easy Peasy",
+	"Aces High",
+	"Hydra",
+	"Howl",
+	"Brigadier General",
+	"Alyx",
+	"Dust II",
+	"Guardian Elite",
+	"Mirage",
+	"Inferno",
+	"Italy",
+	"Victory",
+	"Militia",
+	"Nuke",
+	"Train",
+	"Guardian"
+};
+
+constexpr int medalIDs[] = {
+	0,
+	874,
+	875,
+	876,
+	877,
+	878,
+	879,
+	880,
+	881,
+	882,
+	883,
+	884,
+	885,
+	886,
+	887,
+	888,
+	889,
+	890,
+	891,
+	892,
+	893,
+	894,
+	895,
+	896,
+	897,
+	898,
+	899,
+	900,
+	901,
+	902,
+	903,
+	904,
+	905,
+	906,
+	907,
+	908,
+	909,
+	910,
+	911,
+	912,
+	913,
+	914,
+	915,
+	916,
+	917,
+	918,
+	919,
+	920,
+	921,
+	922,
+	923,
+	924,
+	925,
+	926,
+	927,
+	928,
+	929,
+	930,
+	931,
+	932,
+	933,
+	934,
+	935,
+	936,
+	937,
+	938,
+	939,
+	940,
+	941,
+	942,
+	943,
+	944,
+	945,
+	946,
+	947,
+	948,
+	949,
+	950,
+	951,
+	952,
+	953,
+	954,
+	955,
+	956,
+	957,
+	958,
+	959,
+	960,
+	961,
+	962,
+	963,
+	964,
+	965,
+	966,
+	967,
+	968,
+	969,
+	970,
+	971,
+	972,
+	973,
+	974,
+	975,
+	976,
+	977,
+	978,
+	979,
+	980,
+	981,
+	982,
+	983,
+	984,
+	985,
+	986,
+	987,
+	992,
+	993,
+	994,
+	995,
+	1001,
+	1002,
+	1003,
+	1013,
+	1014,
+	1015,
+	1024,
+	1025,
+	1026,
+	1028,
+	1029,
+	1030,
+	1316,
+	1317,
+	1318,
+	1327,
+	1328,
+	1329,
+	1331,
+	1332,
+	1336,
+	1337,
+	1338,
+	1339,
+	1340,
+	1341,
+	1342,
+	1343,
+	1344,
+	1357,
+	1358,
+	1359,
+	1360,
+	1361,
+	1362,
+	1363,
+	1367,
+	1368,
+	1369,
+	1370,
+	1371,
+	1372,
+	1376,
+	1377,
+	1378,
+	1379,
+	1380,
+	1381,
+	4353,
+	4354,
+	4355,
+	4356,
+	4550,
+	4551,
+	4552,
+	4553,
+	4674,
+	4675,
+	4676,
+	4677,
+	4678,
+	4679,
+	4682,
+	4683,
+	4684,
+	4685,
+	4686,
+	4687,
+	4688,
+	4689,
+	4690,
+	4691,
+	4692,
+	4700,
+	4701,
+	4702,
+	4703,
+	4737,
+	4738,
+	4739,
+	4740,
+	4741,
+	4742,
+	4759,
+	4760,
+	4761,
+	4762,
+	4819,
+	4820,
+	4821,
+	4822,
+	4823,
+	4824,
+	4873,
+	4874,
+	4875,
+	4876,
+	4877,
+	4878,
+	4884,
+	4885,
+	4886,
+	4887,
+	6012,
+	6013,
+	6014,
+	6015,
+	6016,
+	6017,
+	6018,
+	6019,
+	6020,
+	6021,
+	6022,
+	6023,
+	6024,
+	6025,
+	6026,
+	6027,
+	6028,
+	6029,
+	6030,
+	6031,
+	6032,
+	6033,
+	6034,
+	6101,
+	6102,
+	6103,
+	6104,
+	6105,
+	6106,
+	6107,
+	6108,
+	6109,
+	6110
+};
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -452,7 +1001,8 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 	ImGui::hotkey("Key Debug 0", cfg->debug.keyDebug0);
 	ImGui::Text("MaxEntity: %.d", maxEntity);
-	ImGui::Text("HighestEntityIndex: %.d", highestEntityIndex);
+	ImGui::Text("HighestEntityIndex: %d", highestEntityIndex);
+	ImGui::Text("LocalPlayerIndex: %d", localPlayerIndex);
 	ImGui::SeparatorText("GameRules Test");
 	const auto& m_fRoundStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fRoundStartTime);
 	const auto& m_fMatchStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fMatchStartTime);
@@ -553,50 +1103,158 @@ void GUI::RenderPlayerList() noexcept {
 		windowFlags
 	);
 	ImGui::SetNextWindowSize({ -1, -1 });
-	if (ImGui::BeginTable("Players List", 8))
+	constexpr int flags = ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_SizingStretchSame;
+	constexpr int flagsColumn = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize;
+	if (ImGui::BeginTable("Players List", 8, flags))
 	{
-		ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Weapon", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("ID", flagsColumn);
+		ImGui::TableSetupColumn("Name", flagsColumn);
+		ImGui::TableSetupColumn("Health", flagsColumn);
+		ImGui::TableSetupColumn("Armor", flagsColumn);
+		ImGui::TableSetupColumn("Money", flagsColumn);
+		ImGui::TableSetupColumn("Weapon", flagsColumn);
+		ImGui::TableSetupColumn("Rank", flagsColumn);
+		ImGui::TableSetupColumn("More", flagsColumn);
 		ImGui::TableHeadersRow();
-		for (unsigned int row = 0; row < gameData.playerData.size(); row++)
+
+		std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ gameData.playerData.begin(), gameData.playerData.end()};
+		std::ranges::sort(playersOrdered, [](const PlayerData& a, const PlayerData& b) {
+			switch (cfg->m.playerList.sort) {
+				default:
+				case 0: // By Index asc
+					return a.idx < b.idx;
+				case 1: // by Index desc
+					return a.idx > b.idx;
+				case 2: // by Team (Teammates First)
+					return a.teamNumber < b.teamNumber;
+				case 3: // by Team (Enemies First)
+					return a.teamNumber > b.teamNumber;
+				case 4: // by Rank asc
+					return gameData.playerResource.competitiveRanking[a.idx] < gameData.playerResource.competitiveRanking[b.idx];
+				case 5: // by Rank desc
+					return gameData.playerResource.competitiveRanking[a.idx] > gameData.playerResource.competitiveRanking[b.idx];
+			}
+		});
+
+		for (const PlayerData& player : playersOrdered)
 		{
-			auto teamColor = localPlayer.get() == (uintptr_t)gameData.playerData[row].entity ? ImVec4{ 1.0f, 0.25f, 1.0f, 1.f } : gameData.playerData[row].teamNumber == 2 ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{ 0.26f, 0.59f, 0.98f, 1.f };
-			auto hpColor = gameData.playerData[row].health < 50 ? gameData.playerData[row].health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f };
+			const auto& lpColor = cfg->m.playerList.localPlayerColor.color;
+			auto teamColor = localPlayer.get() == (uintptr_t)player.entity ? ImVec4{lpColor[0], lpColor[1], lpColor[2], lpColor[3]} : player.teamNumber == 2 ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{0.26f, 0.59f, 0.98f, 1.f};
+			const auto hpColor = player.health < 50 ? player.health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f };
+
+			if (cfg->m.playerList.hideLocalPlayer && (player.idx == localPlayerIndex))
+				continue;
+
+			if (cfg->m.playerList.hideDormant && player.dormant)
+				continue;
+
+			if (player.dormant)
+				teamColor.w = 0.5f;
+
+			if (player.isHLTV)
+				continue;
 
 			ImGui::TableNextRow();
+			ImGui::PushID(ImGui::TableGetRowIndex());
 			ImGui::TableNextColumn();
-			ImGui::Text("%i", gameData.playerData[row].idx);
+			ImGui::Text("%i", player.idx);
 			ImGui::TableNextColumn();
-			ImGui::PushID(row);
-			ImGui::TextColored(teamColor, "%s", gameData.playerData[row].name.c_str());
+			ImGui::TextColored(teamColor, "%s", player.name.c_str());
 			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("%i", gameData.playerData[row].steamID);
-			ImGui::PopID();
+				ImGui::SetTooltip("%s", player.steamID.c_str());
+			
 			ImGui::TableNextColumn();
-			ImGui::TextColored(hpColor, "%s", gameData.playerData[row].health < 1 ? "DEAD" : std::to_string(gameData.playerData[row].health).c_str());
+			ImGui::TextColored(hpColor, "%s", player.health < 1 ? "DEAD" : std::to_string(player.health).c_str());
 			ImGui::TableNextColumn();
-			ImGui::Text("%i%s", gameData.playerData[row].armor, gameData.playerData[row].hasHelmet ? "+H" : "");
+			ImGui::Text("%i%s", player.armor, player.hasHelmet ? "+H" : "");
 			ImGui::TableNextColumn();
-			ImGui::Text("$%i", gameData.playerData[row].money);
+			ImGui::Text("$%i", player.money);
 			ImGui::TableNextColumn();
-			ImGui::Text("%s", Skin::getWeaponIDName(gameData.playerData[row].weaponID));
+			ImGui::Text("%s", Skin::getWeaponIDName(player.weaponID));
 			ImGui::TableNextColumn();
-			ImGui::Image(ranksTextures[gameData.playerData[row].rank].getTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
+			ImGui::Image(ranksTextures[gameData.playerResource.competitiveRanking[player.idx]].getTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
 			if (ImGui::IsItemHovered()) {
 				ImGui::BeginTooltip();
 				ImGui::PushFont(nullptr);
-				ImGui::TextUnformatted(std::to_string(gameData.playerData[row].wins).append(" wins").c_str());
-				ImGui::PopFont();
+				ImGui::TextUnformatted(std::to_string(gameData.playerResource.competitiveWins[player.idx]).append(" wins").c_str());
+				ImGui::PopFont(); 
 				ImGui::EndTooltip();
 			}
-			ImGui::TableNextColumn();
-			ImGui::Text("%s", gameData.playerData[row].placename.c_str());
+			if (ImGui::TableNextColumn()) {
+				if (ImGui::Button("...", { 24.f, 16.f }))
+					ImGui::OpenPopup("plMore");
+			}
+			if (ImGui::BeginPopup("plMore")) {
+				ImGui::Text("Name: %s", player.name.c_str());
+				ImGui::Text("Clantag: %s", gameData.playerResource.clanTag[player.idx].c_str());
+				ImGui::Text("Ping: %d", gameData.playerResource.ping[player.idx]);
+				ImGui::Text("Kills: %d", gameData.playerResource.kills[player.idx]);
+				ImGui::Text("Assists: %d", gameData.playerResource.assists[player.idx]);
+				ImGui::Text("Deaths: %d", gameData.playerResource.deaths[player.idx]);
+				float KD = static_cast<float>(gameData.playerResource.kills[player.idx]);
+				if (gameData.playerResource.deaths[player.idx] > 1)
+					KD = static_cast<float>(gameData.playerResource.kills[player.idx]) / static_cast<float>(gameData.playerResource.deaths[player.idx]);
+				ImGui::Text("K/D: %.2f", KD);
+
+				ImGui::Text("MVP: %d", gameData.playerResource.MVPs[player.idx]);
+				ImGui::Text("Score: %d", gameData.playerResource.score[player.idx]);
+				ImGui::BeginDisabled(cfg->restrictions);
+				if (ImGui::Button("Set Resources", { 100.f, 16.f }))
+					ImGui::OpenPopup("setPlayerResources");
+				ImGui::EndDisabled();
+
+				if (ImGui::BeginPopup("setPlayerResources")) {
+					static int wins = 0;
+					static int rank = 0;
+					static int kills = 0;
+					static int assists = 0;
+					static int deaths = 0;
+					static int ping = 0;
+					static int level = 0;
+					static int coin = 0;
+					static int color = 0;
+					static int musicID = 0;
+					static int MVPs = 0;
+					static int score = 0;
+					static std::string clantag = "azurre";
+					ImGui::PushID(32);
+					ImGui::InputInt("Wins", &wins, 1, 10);
+					ImGui::Combo("Rank", &rank, ranks, ARRAYSIZE(ranks));
+					ImGui::InputInt("Kills", &kills, 1, 10);
+					ImGui::InputInt("Assists", &assists, 1, 10);
+					ImGui::InputInt("Deaths", &deaths, 1, 10);
+					ImGui::InputInt("Ping", &ping, 1, 10);
+					ImGui::InputInt("Level", &level, 1, 10);
+					ImGui::Combo("Medals", &coin, medalNames, ARRAYSIZE(medalNames));
+					ImGui::Combo("Color", &color, colorTeam, ARRAYSIZE(colorTeam));
+					ImGui::InputInt("Music", &musicID, 1, 10);
+					ImGui::InputInt("MVP", &MVPs, 1, 10);
+					ImGui::InputInt("Score", &score, 1, 10);
+					ImGui::InputText("Clantag", &clantag);
+					ImGui::PopID();
+
+					if (ImGui::Button("Override")) {
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + player.idx * 4, wins);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + player.idx * 4, rank);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iKills + 0x4 + player.idx * 4, kills);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iAssists + 0x4 + player.idx * 4, assists);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iDeaths + 0x4 + player.idx * 4, deaths);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iPing + 0x4 + player.idx * 4, ping);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_nPersonaDataPublicLevel + 0x4 + player.idx * 4, level);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_nActiveCoinRank + 0x4 + player.idx * 4, medalIDs[coin]);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iCompTeammateColor + 0x4 + player.idx * 4, color - 2);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_nMusicID + 0x4 + player.idx * 4, musicID);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iMVPs + 0x4 + player.idx * 4, MVPs);
+						mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iScore + 0x4 + player.idx * 4, score);
+						WriteProcessMemory(mem.processHandle, reinterpret_cast<void*>(IPlayerResource.address + Offset::netvars::m_szClan + 0x10 + player.idx * 0x10), clantag.c_str(), 16, NULL);
+					}
+					ImGui::EndPopup();
+				}
+				
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+
 		}
 		ImGui::EndTable();
 	}
@@ -914,6 +1572,10 @@ void renderMiscWindow() noexcept {
 		if (ImGui::BeginPopup("")) {
 			ImGui::Checkbox("No Title", &cfg->m.playerList.noTitleBar);
 			ImGui::hotkey("On Key", cfg->m.playerList.hotkey);
+			ImGuiCustom::colorPicker("LocalPlayer Color", cfg->m.playerList.localPlayerColor.color.data(), &cfg->m.playerList.localPlayerColor.color[3]);
+			ImGui::Checkbox("Hide Local Player", &cfg->m.playerList.hideLocalPlayer);
+			ImGui::Checkbox("Hide Dormant Players", &cfg->m.playerList.hideDormant);
+			ImGui::Combo("Sort", &cfg->m.playerList.sort, "By Index (Ascend)\0By Index (Descend)\0By Team (Teammates)\0By Team (Enemies)\0By Rank (Ascend)\0By Rank (Descend)\0");
 			ImGui::EndPopup();
 		}
 		ImGui::PopID();
