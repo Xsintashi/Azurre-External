@@ -998,8 +998,6 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("Cyrillic: "); ImGui::SameLine();	ImGui::Text((const char*)u8"Привет. Тест");
 	ImGui::Text("Greek: "); ImGui::SameLine();	ImGui::Text((const char*)u8"Γεια. Δοκιμή");
 	ImGui::Separator();
-	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
-	ImGui::hotkey("Key Debug 0", cfg->debug.keyDebug0);
 	ImGui::Text("MaxEntity: %.d", maxEntity);
 	ImGui::Text("HighestEntityIndex: %d", highestEntityIndex);
 	ImGui::Text("LocalPlayerIndex: %d", localPlayerIndex);
@@ -1012,46 +1010,19 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("m_fMatchStartTime: %.2f", m_fMatchStartTime);
 	ImGui::Text("Round Time: %.2f", roundTime);
 	ImGui::Text("Match Time: %.2f", matchTime);
-	ImGui::SeparatorText("PlayerResource Test");
-	const DWORD add = IPlayerResource.address;
-	const int& kills = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iKills + 0x4 + localPlayerIndex * 4);
-	const int& assists = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iAssists + 0x4 + localPlayerIndex * 4);
-	const int& deaths = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iDeaths + 0x4 + localPlayerIndex * 4);
-	const int& ping = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iPing + 0x4 + localPlayerIndex * 4);
-	const int& Coin = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iPing + 0x4 + localPlayerIndex * 4);
-	ImGui::Text("Kills: %d", kills);
-	ImGui::Text("Assists: %d", assists);
-	ImGui::Text("Deaths: %d", deaths);
-	ImGui::Text("Ping: %d", ping);
-	static bool tgl = true;
-	if (ImGui::Button("Override")) {
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + 0x4 + localPlayerIndex * 4, 999);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + 0x4 + localPlayerIndex * 4, 1);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iKills + 0x4 + localPlayerIndex * 4, 666);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iAssists + 0x4 + localPlayerIndex * 4, 888);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iDeaths + 0x4 + localPlayerIndex * 4, 777);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iPing + 0x4 + localPlayerIndex * 4, -2137);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_nPersonaDataPublicLevel + 0x4 + localPlayerIndex * 4, 40);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_nActiveCoinRank + 0x4 + localPlayerIndex * 4, 903);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iCompTeammateColor + 0x4 + localPlayerIndex * 4, -1);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_nMusicID + 0x4 + localPlayerIndex * 4, 15);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iMVPs + 0x4 + localPlayerIndex * 4, 69);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_iScore + 0x4 + localPlayerIndex * 4, 420);
-		mem.Write<int>(IPlayerResource.address + Offset::netvars::m_bHasCommunicationAbuseMute + 0x4 + localPlayerIndex * 4, tgl);
-		tgl = !tgl;
+	ImGui::PushID("Roll");
+	static float roll = 0.f;
+	static float tempRoll = 0.f;
+	ImGui::SetNextItemWidth(128);
+	ImGui::SliderFloat("", &roll, -45.f, 45.f, "Roll: %.1f");
+	if (roll != tempRoll) {
+		tempRoll = roll;
+		const auto& viewAngles = mem.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
+		mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
 	}
-
-	//ImGui::PushID("Roll");
-	//static float roll = 0.f;
-	//static float tempRoll = 0.f;
-	//ImGui::SetNextItemWidth(128);
-	//ImGui::SliderFloat("", &roll, -45.f, 45.f, "Roll: %.1f");
-	//if (roll != tempRoll) {
-	//	tempRoll = roll;
-	//	const auto& viewAngles = mem.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
-	//	mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
-	//}
-	//ImGui::PopID();
+	ImGui::PopID();
+	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
+	ImGui::hotkey("Key Debug 0", cfg->debug.keyDebug0);
 	static std::string cmd = "";
 	ImGui::InputText("convar", &cmd);
 	ImGui::SameLine();

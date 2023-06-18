@@ -65,10 +65,10 @@ void Clan::setClanTag(const char* name, const char* team) {
 void azurreClanTag() noexcept {
 
     const char* clantagAzurre[] = {
-    "rreX            ",
-    "reX             ",
-    "eX              ",
-    "X               ",
+    "rre             ",
+    "re              ",
+    "e               ",
+    "                ",
     "                ",
     "               a",
     "              az",
@@ -76,18 +76,18 @@ void azurreClanTag() noexcept {
     "            azur",
     "           azurr",
     "          azurre",
-    "         azurreX",
-    "        azurreX ",
-    "       azurreX  ",
-    "      azurreX   ",
-    "     azurreX    ",
-    "    azurreX     ",
-    "   azurreX      ",
-    "  azurreX       ",
-    " azurreX        ",
-    "azurreX         ",
-    "zurreX          ",
-    "urreX           ",
+    "         azurre ",
+    "        azurre  ",
+    "       azurre   ",
+    "      azurre    ",
+    "     azurre     ",
+    "    azurre      ",
+    "   azurre       ",
+    "  azurre        ",
+    " azurre         ",
+    "azurre          ",
+    "zurre           ",
+    "urre            ",
     };
     
     int serverTime = static_cast<int>(((globalVars->currentTime / 0.296875f) + 6.60925f - 0.07f));
@@ -213,9 +213,9 @@ void Clan::update(bool reset, bool update) noexcept
         setClanTag(velstring.c_str(), std::string(velstring).append("km/h WPIERDOL PEEK").c_str());
     };
     static auto position = []() {
-        char temp[18];
-        ReadProcessMemory(mem.processHandle, (LPCVOID)(localPlayer.get() + Offset::netvars::m_szLastPlaceName), temp, 18, NULL);
-        setClanTag(temp, "| azurre |");
+        char buff[18];
+        ReadProcessMemory(mem.processHandle, (LPCVOID)(localPlayer.get() + Offset::netvars::m_szLastPlaceName), buff, 18, NULL);
+        setClanTag(buff, "| azurre |");
     };
     static auto health = []() {
         const int hp = localPlayer->health();
