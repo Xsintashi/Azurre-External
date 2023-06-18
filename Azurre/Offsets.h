@@ -178,6 +178,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t dwZoomSensitivityRatioPtr = 0xDF43A8;
 		constexpr ::std::ptrdiff_t dwbSendPackets = 0xDD2B2;
 		constexpr ::std::ptrdiff_t dwppDirect3DDevice9 = 0xA62C0;
+		constexpr ::std::ptrdiff_t fakePrime = 0x62EDF0;
 		constexpr ::std::ptrdiff_t find_hud_element = 0x24F902D0;
 		constexpr ::std::ptrdiff_t force_update_spectator_glow = 0x3D997A;
 		constexpr ::std::ptrdiff_t hud = 0x5236A38;

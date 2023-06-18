@@ -1619,6 +1619,10 @@ void renderMiscWindow() noexcept {
 			}
 			ImGui::PopID();
 		}
+		if (ImGui::Button("Fake Prime")) {
+			constexpr uint8_t patch[]{ 0x31, 0xC0, 0x40, 0xC3 };
+			WriteProcessMemory(mem.processHandle, (LPVOID)(IClient.address + 0x62EDF0), patch, 4, 0);
+		}
 		ImGui::EndDisabled();
 		ImGui::PopItemWidth();
 	}
