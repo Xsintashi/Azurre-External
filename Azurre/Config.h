@@ -146,13 +146,11 @@ public:
 			int type = 0;
 		} fakeLag;
 
-		struct HitMarker{
-			int type = 0;
-			float time = 0.5f;
-			Color3 color{ 1.f, 1.f, 1.f };
-		} hitMarker;
+		Marker hitMarker;
+		Marker killMarker;
 
 		std::string hitSound = "sound\\";
+		std::string killSound = "sound\\";
 	} m;
 
 	struct TriggerBotConfig {

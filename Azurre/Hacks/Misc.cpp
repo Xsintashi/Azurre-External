@@ -95,42 +95,102 @@ void Misc::hitMarkerSound() noexcept
 			isFileExist.close();
 		}
 	}
-		if (!cfg->m.hitMarker.type)
-			return;
+	if (!cfg->m.hitMarker.type)
+		return;
 
-		if (lastHitTime + cfg->m.hitMarker.time < globalVars->realTime)
-			return;
+	if (lastHitTime + cfg->m.hitMarker.time < globalVars->realTime)
+		return;
 
-		ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
+	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
 
-		switch (cfg->m.hitMarker.type) {
-			case 1: {
-				auto color = IM_COL32(
-					static_cast<int>(cfg->m.hitMarker.color.color[0] * 255.f),
-					static_cast<int>(cfg->m.hitMarker.color.color[1] * 255.f),
-					static_cast<int>(cfg->m.hitMarker.color.color[2] * 255.f),
-					255);
-				ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
-				ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
-				ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
-				ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
-				break;
-			}
-			case 2: {
-				auto color = IM_COL32(
-					static_cast<int>(cfg->m.hitMarker.color.color[0] * 255.f),
-					static_cast<int>(cfg->m.hitMarker.color.color[1] * 255.f),
-					static_cast<int>(cfg->m.hitMarker.color.color[2] * 255.f),
-					static_cast<int>(Helpers::lerp(fabsf(lastHitTime + cfg->m.hitMarker.time - globalVars->realTime) / cfg->m.hitMarker.time + FLT_EPSILON, 0.0f, 255.0f)));
-				ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
-				ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
-				ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
-				ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
-				break;
-			}
+	switch (cfg->m.hitMarker.type) {
+		case 1: {
+			auto color = IM_COL32(
+				static_cast<int>(cfg->m.hitMarker.color.color[0] * 255.f),
+				static_cast<int>(cfg->m.hitMarker.color.color[1] * 255.f),
+				static_cast<int>(cfg->m.hitMarker.color.color[2] * 255.f),
+				255);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
+			break;
 		}
+		case 2: {
+			auto color = IM_COL32(
+				static_cast<int>(cfg->m.hitMarker.color.color[0] * 255.f),
+				static_cast<int>(cfg->m.hitMarker.color.color[1] * 255.f),
+				static_cast<int>(cfg->m.hitMarker.color.color[2] * 255.f),
+				static_cast<int>(Helpers::lerp(fabsf(lastHitTime + cfg->m.hitMarker.time - globalVars->realTime) / cfg->m.hitMarker.time + FLT_EPSILON, 0.0f, 255.0f)));
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
+			break;
+		}
+	}
 	
 }
+
+void Misc::killMarkerSound() noexcept {
+	if (!localPlayer || gameState != 6)
+		return;
+	const auto& kills = gameData.playerResource.kills[localPlayerIndex];
+	static int currentKillsCounter = gameData.playerResource.kills[localPlayerIndex];
+	static float lastKillTime = 0.0f;
+
+	if (currentKillsCounter != kills && kills > 0) {
+
+		std::string out = std::string(gameDir).append("\\").append(cfg->m.killSound);
+
+		std::ifstream isFileExist;
+		isFileExist.open(out);
+
+		currentKillsCounter = kills;
+		lastKillTime = globalVars->realTime;
+
+		if (isFileExist.is_open()) {
+			PlaySound(out.c_str(), NULL, SND_ASYNC);
+			isFileExist.close();
+		}
+	}
+	if (!cfg->m.killMarker.type)
+		return;
+
+	if (lastKillTime + cfg->m.killMarker.time < globalVars->realTime)
+		return;
+
+	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
+
+	switch (cfg->m.killMarker.type) {
+		case 1: {
+			auto color = IM_COL32(
+				static_cast<int>(cfg->m.killMarker.color.color[0] * 255.f),
+				static_cast<int>(cfg->m.killMarker.color.color[1] * 255.f),
+				static_cast<int>(cfg->m.killMarker.color.color[2] * 255.f),
+				255);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
+			break;
+		}
+		case 2: {
+			auto color = IM_COL32(
+				static_cast<int>(cfg->m.killMarker.color.color[0] * 255.f),
+				static_cast<int>(cfg->m.killMarker.color.color[1] * 255.f),
+				static_cast<int>(cfg->m.killMarker.color.color[2] * 255.f),
+				static_cast<int>(Helpers::lerp(fabsf(lastKillTime + cfg->m.killMarker.time - globalVars->realTime) / cfg->m.killMarker.time + FLT_EPSILON, 0.0f, 255.0f)));
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
+			break;
+		}
+	}
+
+}
+
 
 void Misc::changeWindowTitle(bool restore) noexcept {
 	

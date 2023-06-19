@@ -8,6 +8,7 @@ namespace Misc {
 	void bunnyHop() noexcept;
 	void fakeLag() noexcept;
 	void hitMarkerSound() noexcept;
+	void killMarkerSound() noexcept;
 	void changeWindowTitle(bool restore = false) noexcept;
 	void forceReload(bool onKey = false) noexcept;
 	void showKeybinds() noexcept;

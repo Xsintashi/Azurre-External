@@ -1429,11 +1429,17 @@ void renderMiscWindow() noexcept {
 		ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
 		ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
 		ImGui::EndDisabled();
+		ImGui::PushID("hit");
 		ImGui::InputText("Hit Sound", &cfg->m.hitSound);
-		ImGui::PushID("hitmarker");
 		ImGui::Combo("Type", &cfg->m.hitMarker.type, "None\0Cross\0Cross Fading\0"); ImGui::SameLine(); ImGuiCustom::colorPicker("Hit Marker", cfg->m.hitMarker.color.color.data());
 		ImGui::SameLine();
 		ImGui::SliderFloat("##as", &cfg->m.hitMarker.time, 0.1f, 1.5f, "Time: %.2fs");
+		ImGui::PopID();
+		ImGui::PushID("kill");
+		ImGui::InputText("Kill Sound", &cfg->m.killSound);
+		ImGui::Combo("Type", &cfg->m.killMarker.type, "None\0Cross\0Cross Fading\0"); ImGui::SameLine(); ImGuiCustom::colorPicker("Kill Marker", cfg->m.killMarker.color.color.data());
+		ImGui::SameLine();
+		ImGui::SliderFloat("##as", &cfg->m.killMarker.time, 0.1f, 1.5f, "Time: %.2fs");
 		ImGui::PopID();
 		
 		ImGui::PushID("RecoilCrosshair");
@@ -2082,6 +2088,7 @@ void GUI::overlay() noexcept {
 	ESP::render();
 	Aimbot::drawFov();
 	Misc::hitMarkerSound();
+	Misc::killMarkerSound();
 	Misc::crosshairs();
 	watermark();
 #if defined(_DEBUG)

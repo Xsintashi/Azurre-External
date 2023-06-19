@@ -103,6 +103,12 @@ struct Crosshair {
     bool TStyle = false;
 };
 
+struct Marker {
+    int type = 0;
+    float time = 0.5f;
+    Color3 color{ 1.f, 1.f, 1.f };
+};
+
 using json = nlohmann::basic_json<std::map, std::vector, std::string, bool, std::int64_t, std::uint64_t, float>;
 using value_t = json::value_t;
 
