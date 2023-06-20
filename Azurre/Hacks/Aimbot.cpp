@@ -45,7 +45,10 @@ void Aimbot::run() noexcept {
 			if (!entity)
 				continue;
 
-			if (entity->isDead() || entity->dormant() || !entity->spottedByMask())
+			if (entity->isDead() || entity->dormant())
+				continue;
+
+			if (cfg->a.visibleOnly && !entity->spottedByMask())
 				continue;
 
 			if (!cfg->a.friendlyFire && entity->isSameTeam())
@@ -70,12 +73,17 @@ void Aimbot::run() noexcept {
 				}
 			}
 
-			float x = (-bestAngle.y * 2 / (cfg->a.smooth * bestFov / 2));
-			float y = (bestAngle.x * 2 / (cfg->a.smooth * bestFov / 2));
-
+			float x = (-bestAngle.y * 10 / (cfg->a.smooth * bestFov / 2));
+			float y = (bestAngle.x * 10 / (cfg->a.smooth * bestFov / 2));
+			DWORD xMove = static_cast<DWORD>( fabs(5 * bestAngle.y) * (-bestAngle.y * 2 / (cfg->a.smooth * bestFov / 2)));
+			DWORD yMove = static_cast<DWORD>( fabs(5 * bestAngle.x) * (bestAngle.x * 2 / (cfg->a.smooth * bestFov / 2)));
+			if (localPlayer->isScoped()) {
+				xMove += bestAngle.y < 0.f ? 1 : -1;
+				yMove += bestAngle.x < 0.f ? -1 : 1;
+			}
 			if (bestAngle.notNull() && cfg->a.hotkey.isActive()) {
-				if (cfg->restrictions && !showMenu && bestFov > 0.2f)
-					mouse_event(MOUSEEVENTF_MOVE, static_cast<DWORD>(10 * x), static_cast<DWORD>(10 * y), NULL, NULL);
+				if (cfg->restrictions && !showMenu)
+					mouse_event(MOUSEEVENTF_MOVE, xMove, yMove, NULL, NULL);
 				else if (!cfg->restrictions)
 					mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f });
 				

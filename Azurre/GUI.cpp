@@ -965,7 +965,6 @@ void GUI::RenderDebugWindow() noexcept {
 	int chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
 
 	ImGui::TextUnformatted("Build date: " __DATE__ " " __TIME__);
-
 	ImGui::Text("Fps: %i", framePerSecond);
 	ImGui::Text("Tick: %i", tickRate);
 	ImGui::Text("Screen Size: %2.fx%2.f", screenSize.x, screenSize.y);
@@ -1001,6 +1000,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("MaxEntity: %.d", maxEntity);
 	ImGui::Text("HighestEntityIndex: %d", highestEntityIndex);
 	ImGui::Text("LocalPlayerIndex: %d", localPlayerIndex);
+	ImGui::Text("CrosshairID: %d", localPlayer->crosshairID());
 	ImGui::SeparatorText("GameRules Test");
 	const auto& m_fRoundStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fRoundStartTime);
 	const auto& m_fMatchStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fMatchStartTime);
@@ -1248,6 +1248,7 @@ void renderAimbotWindow() noexcept {
 		ImGui::EndDisabled();
 		ImGui::Checkbox("Auto Stop", &cfg->a.autoStop);
 		ImGui::Checkbox("Disable While Being Spectated", &cfg->a.disableWhileBeingSpectated);
+		ImGui::Checkbox("Visible Only", &cfg->a.visibleOnly);
 		ImGui::Checkbox("Friendly Fire", &cfg->a.friendlyFire);
 		ImGui::PushItemWidth(220.0f);
 		ImGui::Combo("Bone", &cfg->a.bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");

@@ -37,6 +37,7 @@ public:
 		bool autoShot = false;
 		bool autoStop = false;
 		bool disableWhileBeingSpectated = false;
+		bool visibleOnly = false;
 		int bone = 0;
 		float fov = 0.f;
 		float smooth = 1.f;
