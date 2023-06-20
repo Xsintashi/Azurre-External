@@ -201,7 +201,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Azurre\Config.cpp" />
-    <ClCompile Include="Azurre\Console.cpp" />
     <ClCompile Include="Azurre\Core.cpp" />
     <ClCompile Include="Azurre\DiscordSDK\RPC.cpp" />
     <ClCompile Include="Azurre\DiscordSDK\src\connection_win.cpp" />

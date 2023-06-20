@@ -110,7 +110,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		if (cfg->m.bombTimer.enabled) Misc::bombTimer();
 		if (showMenu) GUI::RenderMainMenu();
 #if defined(_DEBUG)
-		//if (showMenu) Cmd::show();
+		cmd.Draw();
 		GUI::RenderDebugWindow();
 		if (showMenu) ImGui::ShowDemoWindow();
 #endif
