@@ -177,6 +177,10 @@ public:
     OFFSET(isInReload, (), Offset::netvars::m_bInReload, bool)
     OFFSET(accuracyPenalty, (), Offset::netvars::m_fAccuracyPenalty, float)
 
+    bool isValid() {
+        return (this != nullptr || this != 0);
+    }
+
     bool isDead() noexcept {
         return this->health() < 1;
     }
