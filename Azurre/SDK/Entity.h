@@ -175,13 +175,14 @@ public:
     //Weapon
     OFFSET(clip, (), Offset::netvars::m_iClip1, int)
     OFFSET(isInReload, (), Offset::netvars::m_bInReload, bool)
+    OFFSET(accuracyPenalty, (), Offset::netvars::m_fAccuracyPenalty, float)
 
     bool isDead() noexcept {
         return this->health() < 1;
     }
 
     bool isVisible() noexcept {
-        return (localPlayer && localPlayer->isAlive()) ?  bspParser->isVisible(localPlayer->origin(), this->origin()) : false;
+        return (localPlayer && localPlayer->isAlive()) ?  (bspParser->isVisible(localPlayer->origin(), this->origin()) || this->spottedByMask()) : false;
     }
 
     bool isSameTeam() noexcept {
