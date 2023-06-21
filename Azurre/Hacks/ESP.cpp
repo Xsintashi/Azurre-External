@@ -199,7 +199,7 @@ void ESP::render() noexcept {
 	if (!cfg->esp.enabled) return;
 
 	for (auto& player : gameData.playerData) {
-		if (player.entity->isDead())
+		if (player.entity->isDead() || (uintptr_t)player.entity == localPlayer.get())
 			continue;
 		renderPlayer(player.entity, player.idx);
 	}
