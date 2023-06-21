@@ -16,7 +16,7 @@
     <ProjectGuid>{cec6ff98-5d5b-48fb-a74f-0e310502be36}</ProjectGuid>
     <RootNamespace>AzurreE</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>AzurreE CSGO</ProjectName>
+    <ProjectName>Azurre External</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
