@@ -1,4 +1,4 @@
-#pragma warning(disable : 4828)
+﻿#pragma warning(disable : 4828)
 #include "GUI.h"
 #include "Core.h"
 #include "Config.h"
@@ -37,6 +37,32 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		MessageBoxA(nullptr, "Only one instance of the software can be running at one time.", "Azurre External", MB_OK | MB_ICONINFORMATION);
 		return 0;
 	}
+
+#if !defined(_DEBUG)
+#pragma warning( push )
+#pragma warning( disable : 4566 )
+	TCHAR exeFileName[MAX_PATH];
+	GetModuleFileName(NULL, exeFileName, MAX_PATH);
+	std::string path = std::string(exeFileName);
+	std::string exe = path.substr(path.find_last_of("\\") + 1, path.size());
+
+	srand(time(NULL));
+
+	char letters[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyz_~";
+	char newName[17];
+
+	int z = rand() % 5 + 5;
+	for (int i = 0; i < z; i++)
+	{
+		char x = letters[rand() % 196];
+		newName[i] = x;
+	}
+	newName[z] = 0x0;
+	strcat_s(newName, ".exe\0");
+
+	rename(exe.c_str(), newName);
+#pragma warning( pop )
+#endif
 
 	cfg.emplace(Config{});
 	globalVars.emplace(GlobalVars{});
@@ -111,7 +137,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		if (cfg->m.bombTimer.enabled) Misc::bombTimer();
 		if (showMenu) GUI::RenderMainMenu();
 #if defined(_DEBUG)
-		cmd.Draw();
+		//cmd.Draw();
 		GUI::RenderDebugWindow();
 		if (showMenu) ImGui::ShowDemoWindow();
 #endif
