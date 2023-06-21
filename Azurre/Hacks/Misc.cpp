@@ -216,6 +216,9 @@ void Misc::changeWindowTitle(bool restore) noexcept {
 void Misc::forceReload(bool onKey) noexcept {
 
 	if (!onKey || GetAsyncKeyState(VK_END) && !cfg->restrictions) {
+		for (int i = 0; i < 8; i++) {
+			equipment[i] = 0;
+		}
 		mem.Write<std::int32_t>(IClientState.address + 0x174, -1);
 		changeWindowTitle();
 	}

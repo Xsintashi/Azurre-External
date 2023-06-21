@@ -70,6 +70,8 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	std::thread(Aimbot::run).detach();
 	std::thread(Core::_).detach();
 	std::thread(Discord::Update).detach();
+	std::thread(Skin::update).detach();
+
 
 #if _DEBUG
 	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW);
@@ -99,7 +101,6 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		Core::gameDataUpdate();
 		Misc::forceReload(true);
 		Misc::modifyConVars();
-		Skin::update();
 		GUI::update();
 		GUI::BeginRender();
 		GUI::overlay();

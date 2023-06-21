@@ -94,7 +94,8 @@ namespace Skin {
         {WeaponID::SurvivalKnife, "Survival Knife"},
         {WeaponID::Talon, "Talon Knife"},
         {WeaponID::Ursus, "Ursus Knife"},
-        {WeaponID::GoldenKnife, "Gold Knife"}
+        {WeaponID::GoldenKnife, "Gold Knife"},
+        {WeaponID::GhostKnife, "Ghost Knife"}
     });
 
     void add(int idx, short weaponID, int skinID, float wear, int seed, int statTrak, int quality, char nameTag[161]);

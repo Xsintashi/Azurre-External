@@ -231,99 +231,98 @@ void Skin::add(int idx, short weaponID, int skinID, float wear, int seed, int st
     cfg->s[idx].statTrak = statTrak;
     cfg->s[idx].quality = quality;
     std::memcpy(cfg->s[idx].nameTag, nameTag, sizeof(nameTag));
-
+    for (int i = 0; i < 8; i++) {
+        equipment[i] = 0;
+    }
 	pleaseUpdate = true;
 }
 
 void Skin::update() {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-    if (cfg->restrictions) return; //RPM ONLY 
-
-    //return; // Broken Skin changer anyway xd. will fix soon. but need to find better skin updating than cl_update
-
-    const int& knifeIndex = getModelIndexByID(Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex);
     
-    static const int knifeIndexCT = getModelIndexByID(WeaponID::Knife);
-    static const int knifeIndexTT = getModelIndexByID(WeaponID::KnifeT);
-   
-    for (int i = 0; i < 8; i++) {
-        const auto& weapons = mem.Read<uintptr_t>(localPlayer.get() + Offset::netvars::m_hMyWeapons + i * 0x4) & ENT_ENTRY_MASK;
-        const auto& weapon = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weapons - 1) * 0x10);
+    while (GUI::isRunning) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-        int accountID = mem.Read<int>(weapon + Offset::netvars::m_OriginalOwnerXuidLow);
-        if (accountID == 0) { continue; }
-        if (!weapon) continue;
+        if (cfg->restrictions) continue; //RPM ONLY 
 
-        const short& weaponIndex = weapon->getWeaponID();
-    
-        if (weaponIndex == WeaponID::Knife || weaponIndex == WeaponID::KnifeT) {
-            int defIndex = Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex;
-    
-            mem.Write<short>(weapon + Offset::netvars::m_iItemDefinitionIndex, defIndex);
-            mem.Write<int>(weapon + Offset::netvars::m_nModelIndex, knifeIndex);
+        const int& knifeIndex = getModelIndexByID(Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex);
+
+        static const int knifeIndexCT = getModelIndexByID(WeaponID::Knife);
+        static const int knifeIndexTT = getModelIndexByID(WeaponID::KnifeT);
+
+        const auto localPlayerModel = mem.Read<DWORD>(localPlayer + Offset::netvars::m_nModelIndex);
+        for (int i = 0; i < 8; i++) {
+            const auto& weapons = mem.Read<uintptr_t>(localPlayer.get() + Offset::netvars::m_hMyWeapons + i * 0x4) & ENT_ENTRY_MASK;
+            const auto& weapon = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weapons - 1) * 0x10);
+
+            int accountID = mem.Read<int>(weapon + Offset::netvars::m_OriginalOwnerXuidLow);
+            if (accountID == 0) { continue; }
+            if (!weapon) continue;
+
+            const short& weaponIndex = weapon->getWeaponID();
+
+            int ID = 0;
+            while (Skin::weaponNames[ID].definitionIndex != weaponIndex) {
+                if (ID == Skin::weaponNames.size() - 1)
+                    break;
+                ID++;
+            }
+
+            if (equipment[i] != weapons) {
+                equipment[i] = weapons;
+                if (!(weaponIndex > WeaponID::Flashbang && weaponIndex < WeaponID::IncGrenade)) //not grenade or C4
+                    pleaseUpdate = true;
+            }
+            const int paint = cfg->s[ID].skinID;
+
+            mem.Write<int32_t>(weapon + Offset::netvars::m_iItemIDHigh, -1);
+            mem.Write<int32_t>(weapon + Offset::netvars::m_OriginalOwnerXuidLow, 0);
+            mem.Write<int32_t>(weapon + Offset::netvars::m_OriginalOwnerXuidHigh, 0);
+
+            mem.Write<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit, paint);
+            mem.Write<float>(weapon + Offset::netvars::m_flFallbackWear, cfg->s[ID].wear);
+
+            mem.Write<int>(weapon + Offset::netvars::m_nFallbackSeed, cfg->s[ID].seed);
+            mem.Write<int>(weapon + Offset::netvars::m_iEntityQuality, cfg->s[ID].quality);
+
+            if (cfg->s[ID].statTrak > 1)
+                mem.Write<int32_t>(weapon + Offset::netvars::m_nFallbackStatTrak, cfg->s[ID].statTrak);
+
+            if (strcmp(cfg->s[ID].nameTag, "\0")) {
+                WriteProcessMemory(mem.processHandle, (LPVOID)(weapon + Offset::netvars::m_szCustomName), cfg->s[ID].nameTag, sizeof(char[20]), 0);
+            }
+
+            mem.Write<int32_t>(weapon + Offset::netvars::m_iAccountID, mem.Read<int32_t>(weapon + Offset::netvars::m_OriginalOwnerXuidLow));
         }
-    
-        if (weaponIndex > WeaponID::Flashbang && weaponIndex < WeaponID::IncGrenade)
-            continue;
-        int ID = 0;
-    
-        while (Skin::weaponNames[ID].definitionIndex != weaponIndex) {
-            if (ID == Skin::weaponNames.size() - 1)
-                break;
-            ID++;
+        if (cfg->ch.TTAgent || cfg->ch.CTAgent) {
+            if (localPlayer->teamNumber() == Team::Spectators) continue;
+            int modelIndex = localPlayer->teamNumber() == Team::TT ? cfg->ch.TTAgent : cfg->ch.CTAgent;
+            int index = Skin::getModelIndex(models[modelIndex - 1]);
+            if (!index) continue;
+            if (mem.Read<DWORD>(localPlayer + Offset::netvars::m_nModelIndex) != index) {
+                mem.Write<DWORD>(localPlayer + Offset::netvars::m_nModelIndex, index);
+            }
         }
-        
-        const int paint = cfg->s[ID].skinID;
-        pleaseUpdate = mem.Read<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit) != paint;
-        
-        mem.Write<int32_t>(weapon + Offset::netvars::m_iItemIDHigh, -1);
-    
-        mem.Write<int32_t>(weapon + Offset::netvars::m_nFallbackPaintKit, paint);
-        mem.Write<float>(weapon + Offset::netvars::m_flFallbackWear, cfg->s[ID].wear);
-    
-        mem.Write<int>(weapon + Offset::netvars::m_nFallbackSeed, cfg->s[ID].seed);
-        mem.Write<int>(weapon + Offset::netvars::m_iEntityQuality, cfg->s[ID].quality);
-    
-        if (cfg->s[ID].statTrak > 1)
-            mem.Write<int32_t>(weapon + Offset::netvars::m_nFallbackStatTrak, cfg->s[ID].statTrak);
-    
-        if (strcmp(cfg->s[ID].nameTag, "\0")) {
-            WriteProcessMemory(mem.processHandle, (LPVOID)(weapon + Offset::netvars::m_szCustomName), cfg->s[ID].nameTag, sizeof(char[20]), 0);
-        }
-    
-        mem.Write<int32_t>(weapon + Offset::netvars::m_iAccountID, mem.Read<int32_t>(weapon + Offset::netvars::m_OriginalOwnerXuidLow));
-    
+        short mywepID = mem.Read<short>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+        short weaponIndex = mem.Read<short>(mem.Read<DWORD>(IClient.address + Offset::signatures::dwEntityList + (mywepID - 1) * 0x10) + Offset::netvars::m_iItemDefinitionIndex);
         if ((localPlayer->teamNumber() == Team::CT && cfg->ch.CTKnife != 0) || (localPlayer->teamNumber() == Team::TT && cfg->ch.TTKnife != 1)) {
             DWORD knifeViewModel = mem.Read<DWORD>(localPlayer + Offset::netvars::m_hViewModel) & ENT_ENTRY_MASK;
             knifeViewModel = mem.Read<DWORD>(IClient.address + Offset::signatures::dwEntityList + (knifeViewModel - 1) * 0x10);
-    
+
             if (knifeViewModel == 0) { continue; }
-    
+
             const int nowModelIndex = mem.Read<DWORD>(knifeViewModel + Offset::netvars::m_nModelIndex);
             if (nowModelIndex == knifeIndexTT || nowModelIndex == knifeIndexCT)
             {
                 int defIndex = Skin::knifeNames[localPlayer->teamNumber() == Team::CT ? cfg->ch.CTKnife : cfg->ch.TTKnife].definitionIndex;
-    
+
                 mem.Write<DWORD>(knifeViewModel + Offset::netvars::m_nModelIndex, knifeIndex);
             }
         }
         if (pleaseUpdate) {
             mem.Write<std::int32_t>(IClientState.address + Offset::signatures::clientstate_delta_ticks, -1);
+            pleaseUpdate = false;
         }
     }
-    const auto localPlayerModel = mem.Read<DWORD>(localPlayer + Offset::netvars::m_nModelIndex);
-    if (cfg->ch.TTAgent || cfg->ch.CTAgent) {
-        if (localPlayer->teamNumber() == Team::Spectators) return;
-        int modelIndex = localPlayer->teamNumber() == Team::TT ? cfg->ch.TTAgent : cfg->ch.CTAgent;
-        int index = Skin::getModelIndex(models[modelIndex - 1]);
-        if (!index) return;
-        if (mem.Read<DWORD>(localPlayer + Offset::netvars::m_nModelIndex) != index) {
-            mem.Write<DWORD>(localPlayer + Offset::netvars::m_nModelIndex, index);
-        }
-    }
-
-
 }
 
 const char* Skin::getWeaponIDName(short ID) noexcept {

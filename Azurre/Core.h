@@ -99,6 +99,7 @@ struct GameData {
 	std::string defusingPlayerName;
 };
 
+inline WORD equipment[8] = { 0,0,0,0,0,0,0,0 };
 inline int localPlayerIndex;
 inline bool showMenu = false;
 inline std::string mapName = "";
