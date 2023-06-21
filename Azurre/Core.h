@@ -3,6 +3,7 @@
 #include "../Lib/imgui/imgui.h"
 #include "Memory.h"
 #include "SDK/Matrix.h"
+#include "SDK/BspParser.h"
 
 #include <string>
 #include <vector>
@@ -111,5 +112,7 @@ inline GameData gameData;
 inline Matrix4x4 viewMatix;
 inline int maxEntity;
 inline int highestEntityIndex;
+inline bool parsedMap = false;
+inline rn::bsp_parser* bspParser = new rn::bsp_parser;
 #define mem azurre
 inline Memory mem = Memory{ "csgo.exe" };

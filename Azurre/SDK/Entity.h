@@ -180,6 +180,10 @@ public:
         return this->health() < 1;
     }
 
+    bool isVisible() noexcept {
+        return (localPlayer && localPlayer->isAlive()) ?  bspParser->isVisible(localPlayer->origin(), this->origin()) : false;
+    }
+
     bool isSameTeam() noexcept {
         return this->teamNumber() == localPlayer->teamNumber();
     }

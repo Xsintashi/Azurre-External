@@ -131,7 +131,7 @@ void renderProjectile(ProjectileData* projectile) {
 void renderPlayer(Entity* entity, int index) {
 	int tab = 1;
 	unsigned int spotted = 0;
-	spotted = mem.Read<int>(entity + Offset::netvars::m_bSpotted);
+	spotted = entity->isVisible();
 
 	if (entity->isSameTeam()){
 		tab = 0;

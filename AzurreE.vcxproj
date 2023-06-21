@@ -163,6 +163,7 @@
     <ClInclude Include="Azurre\Offsets.h" />
     <ClInclude Include="Azurre\PNGTexture.h" />
     <ClInclude Include="Azurre\resources.h" />
+    <ClInclude Include="Azurre\SDK\BspParser.h" />
     <ClInclude Include="Azurre\SDK\ClientState.h" />
     <ClInclude Include="Azurre\SDK\Convar.h" />
     <ClInclude Include="Azurre\SDK\Entity.h" />

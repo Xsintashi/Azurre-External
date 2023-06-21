@@ -48,6 +48,7 @@ void Core::init() {
 };
 
 void Core::update() {
+	static std::string mapBuff;
 	IConsole = FindWindowA("Valve001", NULL);
 	gameState = mem.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
 	IClientState.address = mem.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
@@ -62,6 +63,19 @@ void Core::update() {
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
 	const auto map = mem.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
 	mapName = map.data();
+	if (mapBuff != mapName) {
+		parsedMap = false;
+		mapBuff = mapName;
+	}
+	if (!parsedMap) {
+		if (bspParser->loadMap(std::string(gameDir).append("\\maps").c_str(), mapName.append(".bsp").c_str())) {
+			cmd.AddLog("~[!] Map Parsed!");
+			parsedMap = true;
+			return;
+		} else
+			cmd.AddLog("~[!] Couldn't parse map!");
+		
+	}
 	RECT rct;
 	if (GetWindowRect(IConsole, &rct)) {
 		gameScreenPos = { static_cast<float>(rct.left) , static_cast<float>(rct.top) };

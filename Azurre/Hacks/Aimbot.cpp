@@ -48,7 +48,7 @@ void Aimbot::run() noexcept {
 			if (entity->isDead() || entity->dormant())
 				continue;
 
-			if (cfg->a.visibleOnly && !entity->spottedByMask())
+			if (cfg->a.visibleOnly && !entity->isVisible())
 				continue;
 
 			if (!cfg->a.friendlyFire && entity->isSameTeam())
