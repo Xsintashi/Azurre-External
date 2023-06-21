@@ -117,7 +117,7 @@ void renderProjectile(ProjectileData* projectile) {
 	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
 
 	float height = headScreen.y - posScreen.y;
-	const float width = height;
+	const float width = height / 2.f;
 
 	const auto colorBox = config.box.gradientColor ? config.box.grandientTop : config.box.solid;
 	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
