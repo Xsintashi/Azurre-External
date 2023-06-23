@@ -73,10 +73,8 @@ void Aimbot::run() noexcept {
 				}
 			}
 
-			float x = (-bestAngle.y * 10 / (cfg->a.smooth * bestFov / 2));
-			float y = (bestAngle.x * 10 / (cfg->a.smooth * bestFov / 2));
-			DWORD xMove = static_cast<DWORD>( 2 * (-bestAngle.y * 2 / (cfg->a.smooth * bestFov / 2)));
-			DWORD yMove = static_cast<DWORD>( 2 * (bestAngle.x * 2 / (cfg->a.smooth * bestFov / 2)));
+			DWORD xMove = static_cast<DWORD>(fabs(2 * bestAngle.y) * (-bestAngle.y * 2 / (cfg->a.smooth * bestFov / 2)));
+			DWORD yMove = static_cast<DWORD>(fabs(2 * bestAngle.x) * (bestAngle.x * 2 / (cfg->a.smooth * bestFov / 2)));
 			if (localPlayer->isScoped()) {
 				xMove += bestAngle.y < 0.f ? 1 : -1;
 				yMove += bestAngle.x < 0.f ? -1 : 1;

@@ -91,8 +91,9 @@ struct Console
 
     void   Draw()
     {
+        ImGui::SetNextWindowCollapsed(true, ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(480, 480), ImGuiCond_FirstUseEver);
-        if (!ImGui::Begin("Azurre Console", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+        if (!ImGui::Begin("Azurre Console", nullptr, ImGuiWindowFlags_NoResize))
         {
             ImGui::End();
             return;
@@ -175,7 +176,7 @@ struct Console
         // Command-line
         bool reclaim_focus = false;
         ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
-        if (ImGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), input_text_flags, &TextEditCallbackStub, (void*)this))
+        if (ImGui::InputText("##input", InputBuf, IM_ARRAYSIZE(InputBuf), input_text_flags, &TextEditCallbackStub, (void*)this))
         {
             char* s = InputBuf;
             Strtrim(s);
