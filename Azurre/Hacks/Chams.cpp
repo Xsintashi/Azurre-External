@@ -22,21 +22,19 @@ void Chams::run() noexcept {
 	if (tempCurr + 1.f > globalVars->currentTime) return;
 	tempCurr = globalVars->currentTime;
 
-	for (unsigned int i = 1; i <= 32; i++) {
-		const auto& entity = getEntity(i);
-		if (!entity) continue;
+	for (auto& i : gameData.playerData) {
 
-		if ((!cfg->c.ally.enabled && entity->isSameTeam()) || (!cfg->c.enemy.enabled && !entity->isSameTeam())) continue;
+		if ((!cfg->c.ally.enabled && i.entity->isSameTeam()) || (!cfg->c.enemy.enabled && !i.entity->isSameTeam())) continue;
 
 		if (cfg->c.enabled) {
 
-			if (entity->isSameTeam() && cfg->v.noAllies)
+			if (i.entity->isSameTeam() && cfg->v.noAllies)
 				continue;
 
-			if (entity->isSameTeam())
-				mem.Write<uint8_tColor3>(entity + Offset::netvars::m_clrRender, allyColor);
+			if (i.entity->isSameTeam())
+				mem.Write<uint8_tColor3>(i.entity + Offset::netvars::m_clrRender, allyColor);
 			else
-				mem.Write<uint8_tColor3>(entity + Offset::netvars::m_clrRender, enemyColor);
+				mem.Write<uint8_tColor3>(i.entity + Offset::netvars::m_clrRender, enemyColor);
 
 			float brightness = cfg->c.brightness * 10.f;
 			const auto _this = static_cast<uintptr_t>(IEngine.address + Offset::signatures::model_ambient_min - 0x2c);
@@ -44,10 +42,10 @@ void Chams::run() noexcept {
 			toggle = true;
 		} else if(toggle){
 
-			if (entity->isSameTeam())
-				mem.Write<uint8_tColor3>(entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
+			if (i.entity->isSameTeam())
+				mem.Write<uint8_tColor3>(i.entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
 			else
-				mem.Write<uint8_tColor3>(entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
+				mem.Write<uint8_tColor3>(i.entity + Offset::netvars::m_clrRender, uint8_tColor3{ 255, 255, 255 });
 
 			float brightness = 0;
 			const auto _this = static_cast<uintptr_t>(IEngine.address + Offset::signatures::model_ambient_min - 0x2c);
