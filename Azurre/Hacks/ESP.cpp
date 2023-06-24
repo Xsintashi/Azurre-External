@@ -28,10 +28,10 @@ Vector getBonePos(std::array<Matrix3x4, 128> bonematrix, int idx) {
 	return Vector(bone[0][3], bone[1][3], bone[2][3]);
 }
 
-void drawBorderBox(ImVec2 pos, float width, float height, float duckHeight, ImU32 color, ImU32 color_) {
-	drawList->AddRectFilled({ pos.x - width, pos.y - .5f + duckHeight }, { pos.x + width, pos.y + .5f + duckHeight }, color); //TOP
-	drawList->AddRectFilledMultiColor({ pos.x - width + .5f, pos.y + duckHeight }, { pos.x - width - .5f, pos.y - height }, color, color, color_, color_); //LEFT
-	drawList->AddRectFilledMultiColor({ pos.x + width + .5f, pos.y + duckHeight }, { pos.x + width - .5f, pos.y - height }, color, color, color_, color_); //RIGHT
+void drawBorderBox(ImVec2 pos, float width, float height, ImU32 color, ImU32 color_) {
+	drawList->AddRectFilled({ pos.x - width, pos.y - .5f }, { pos.x + width, pos.y + .5f }, color); //TOP
+	drawList->AddRectFilledMultiColor({ pos.x - width + .5f, pos.y }, { pos.x - width - .5f, pos.y - height }, color, color, color_, color_); //LEFT
+	drawList->AddRectFilledMultiColor({ pos.x + width + .5f, pos.y }, { pos.x + width - .5f, pos.y - height }, color, color, color_, color_); //RIGHT
 	drawList->AddRectFilled({ pos.x - width, pos.y - height - .5f}, { pos.x + width, pos.y - height + .5f}, color_); //BOTTOM
 }
 
@@ -55,22 +55,22 @@ void drawSkeleton(uintptr_t entBones) {
 	}	
 }
 
-void drawHealthBar(ImVec2 pos, float width, float height, float duckHeight , int health, ImU32 color, ImU32 colorNumber, ColorToggle3 showHealthNumber) {
+void drawHealthBar(ImVec2 pos, float width, float height , int health, ImU32 color, ImU32 colorNumber, ColorToggle3 showHealthNumber) {
 	const auto centerText = ImGui::CalcTextSize(std::to_string(health).c_str());
 
 	if (health < 1)
 		return;
 
-	drawList->AddLine({ pos.x + width + (width * .1f), pos.y - (100 - health) / 100.0f * height + (duckHeight / (100 / health)) }, { pos.x + width + (width * .1f), pos.y - height }, color, 4.f);
+	drawList->AddLine({ pos.x + width + (width * .1f), pos.y - (100 - health) / 100.0f * height }, { pos.x + width + (width * .1f), pos.y - height }, color, 4.f);
 	if (showHealthNumber.enabled) { // text
-		drawList->AddText({ (pos.x + width + (width * .1f) - centerText.x / 2) + 1.f, (pos.y - (100 - health) / 100.0f * height + (duckHeight / (100 / health))) + 1.f }, colorNumber & IM_COL32_A_MASK, std::to_string(health).c_str());
-		drawList->AddText({ pos.x + width + (width * .1f) - centerText.x / 2, pos.y - (100 - health) / 100.0f * height + (duckHeight / (100 / health)) }, colorNumber, std::to_string(health).c_str());
+		drawList->AddText({ (pos.x + width + (width * .1f) - centerText.x / 2) + 1.f, (pos.y - (100 - health) / 100.0f * height) + 1.f }, colorNumber & IM_COL32_A_MASK, std::to_string(health).c_str());
+		drawList->AddText({ pos.x + width + (width * .1f) - centerText.x / 2, pos.y - (100 - health) / 100.0f * height}, colorNumber, std::to_string(health).c_str());
 	}
 }
 
-void drawPlayerName(ImVec2 pos, float width, float height, float duckHeight, std::string name, ImU32 color) {
+void drawPlayerName(ImVec2 pos, float width, float height, std::string name, ImU32 color) {
 	const auto centerText = ImGui::CalcTextSize(name.c_str());
-	drawList->AddText({pos.x - centerText.x / 2, pos.y - 4.f + (height * .1f) + duckHeight }, color, name.c_str());
+	drawList->AddText({pos.x - centerText.x / 2, pos.y - 4.f + (height * .1f) }, color, name.c_str());
 }
 
 constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible", "Weapons" };
@@ -97,8 +97,8 @@ void renderWeapon(Entity* entity) {
 	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
 
 	if (posScreen.z >= 0.01f) {
-		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, 0.f, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
-		if (config.other.names.enabled)	drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, 0.f, 0.f, 0.f, name, Helpers::calculateColor(config.other.names));
+		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
+		if (config.other.names.enabled)	drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, 0.f, 0.f, name, Helpers::calculateColor(config.other.names));
 		if (config.other.lines.enabled) drawLines({ gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, Helpers::calculateColor(config.other.lines));
 	}
 }
@@ -123,8 +123,8 @@ void renderProjectile(ProjectileData* projectile) {
 	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
 
 	if (posScreen.z >= 0.01f) {
-		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, 0.f, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
-		if (config.names.enabled)	drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, 0.f, 0.f, 0.f, projectile->name, Helpers::calculateColor(config.names));
+		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
+		if (config.names.enabled)	drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, 0.f, 0.f, projectile->name, Helpers::calculateColor(config.names));
 	}
 }
 
@@ -145,15 +145,13 @@ void renderPlayer(Entity* entity, int index) {
 
 #pragma region Box
 	Vector pos = entity->origin();
-	Vector head;
+	Vector head = Vector{
+	mem.Read<float>(entity->boneMatrix() + 0x30 * 0x8 + 0x0C),
+	mem.Read<float>(entity->boneMatrix() + 0x30 * 0x8 + 0x1C),
+	mem.Read<float>(entity->boneMatrix() + 0x30 * 0x8 + 0x2C)
+	};
 	pos.z -= 8.f;
-	head.x = pos.x;
-	head.y = pos.y;
-	head.z = pos.z + 75.f;
-
-	float duckHeight = 0.f;
-	if (entity->duckAmount() > .25f)
-		duckHeight += (16.f * entity->duckAmount());
+	head.z += 8.f;
 
 	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
 	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
@@ -185,10 +183,10 @@ void renderPlayer(Entity* entity, int index) {
 #pragma endregion Player Name
 	if (posScreen.z >= 0.01f && !entity->dormant()) {
 		if (config.skeleton) drawSkeleton(entity->boneMatrix());
-		if (config.box.enabled) drawBorderBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
-		if (config.healthBar.enabled) drawHealthBar( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
-		if (config.other.names.enabled) drawPlayerName( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, duckHeight, name, Helpers::calculateColor(config.other.names));
-		if (config.weapons.enabled) drawPlayerName( { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y}, width, height, duckHeight, weapon, Helpers::calculateColor(config.weapons));
+		if (config.box.enabled) drawBorderBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
+		if (config.healthBar.enabled) drawHealthBar( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
+		if (config.other.names.enabled) drawPlayerName( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, Helpers::calculateColor(config.other.names));
+		if (config.weapons.enabled) drawPlayerName( { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y}, width, height, weapon, Helpers::calculateColor(config.weapons));
 		if (config.other.lines.enabled) drawLines( { gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, Helpers::calculateColor(config.other.lines));
 	}
 }
