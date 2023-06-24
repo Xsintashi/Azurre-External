@@ -23,11 +23,6 @@
 
 #define drawList ImGui::GetBackgroundDrawList()
 
-Vector getBonePos(std::array<Matrix3x4, 128> bonematrix, int idx) {
-	const auto bone = bonematrix.at(idx);
-	return Vector(bone[0][3], bone[1][3], bone[2][3]);
-}
-
 void drawBorderBox(ImVec2 pos, float width, float height, ImU32 color, ImU32 color_) {
 	drawList->AddRectFilled({ pos.x - width, pos.y - .5f }, { pos.x + width, pos.y + .5f }, color); //TOP
 	drawList->AddRectFilledMultiColor({ pos.x - width + .5f, pos.y }, { pos.x - width - .5f, pos.y - height }, color, color, color_, color_); //LEFT
@@ -145,11 +140,7 @@ void renderPlayer(Entity* entity, int index) {
 
 #pragma region Box
 	Vector pos = entity->origin();
-	Vector head = Vector{
-	mem.Read<float>(entity->boneMatrix() + 0x30 * 0x8 + 0x0C),
-	mem.Read<float>(entity->boneMatrix() + 0x30 * 0x8 + 0x1C),
-	mem.Read<float>(entity->boneMatrix() + 0x30 * 0x8 + 0x2C)
-	};
+	Vector head = entity->bonePosition(8);
 	pos.z -= 8.f;
 	head.z += 8.f;
 

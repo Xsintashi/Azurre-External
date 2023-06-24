@@ -177,6 +177,16 @@ public:
     OFFSET(isInReload, (), Offset::netvars::m_bInReload, bool)
     OFFSET(accuracyPenalty, (), Offset::netvars::m_fAccuracyPenalty, float)
 
+    Vector bonePosition(int bone) {
+        const auto buff = Vector{
+                    mem.Read<float>(this->boneMatrix() + 0x30 * bone + 0x0C),
+                    mem.Read<float>(this->boneMatrix() + 0x30 * bone + 0x1C),
+                    mem.Read<float>(this->boneMatrix() + 0x30 * bone + 0x2C)
+        };
+
+        return buff;
+    }
+
     bool isValid() {
         return (this != nullptr || this != 0);
     }

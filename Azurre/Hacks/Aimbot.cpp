@@ -57,11 +57,7 @@ void Aimbot::run() noexcept {
 			for (auto bone : { 8, 4, 3, 7, 6, 5 }) {
 				const auto bonePosition = 8 - cfg->a.bone;
 
-				const auto bonePos = Vector{
-					mem.Read<float>(entity->boneMatrix() + 0x30 * bonePosition + 0x0C),
-					mem.Read<float>(entity->boneMatrix() + 0x30 * bonePosition + 0x1C),
-					mem.Read<float>(entity->boneMatrix() + 0x30 * bonePosition + 0x2C)
-				};
+				const auto bonePos = entity->bonePosition(bonePosition);
 
 				const auto angle = Helpers::calculateRelativeAngle(eyePosition, bonePos, { viewAngles.x + aimPunch.x, viewAngles.y + aimPunch.y, 0.f });
 
