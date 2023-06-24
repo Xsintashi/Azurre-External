@@ -45,8 +45,8 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	GetModuleFileName(NULL, exeFileName, MAX_PATH);
 	std::string path = std::string(exeFileName);
 	std::string exe = path.substr(path.find_last_of("\\") + 1, path.size());
-
-	srand(time(NULL));
+	time_t* timeRand = 0;
+	srand(time(timeRand));
 
 	char letters[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_~+";
 	char newName[64];
