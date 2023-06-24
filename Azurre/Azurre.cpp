@@ -48,13 +48,13 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 
 	srand(time(NULL));
 
-	char letters[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyz_~";
-	char newName[17];
+	char letters[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_~+";
+	char newName[64];
 
-	int z = rand() % 5 + 5;
+	int z = rand() % 10 + 10;
 	for (int i = 0; i < z; i++)
 	{
-		char x = letters[rand() % 196];
+		char x = letters[rand() % (sizeof(letters) - 1)];
 		newName[i] = x;
 	}
 	newName[z] = 0x0;
