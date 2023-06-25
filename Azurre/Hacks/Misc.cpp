@@ -229,9 +229,9 @@ void Misc::showKeybinds() noexcept
 	if (!cfg->m.keybinds.enabled)
 		return;
 
-	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabled && cfg->a.hotkey.canShowKeybind());
+	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabled && cfg->a.hotkey.canShowKeybind()) || (cfg->m.playerList.enabled && cfg->m.playerList.hotkey.canShowKeybind()) || (cfg->m.minimap.enabled && cfg->m.minimap.hotkey.canShowKeybind());
 
-	if (!anyActive)
+	if (!anyActive && !showMenu)
 		return;
 
 	if (cfg->m.keybinds.pos != ImVec2{}) {
@@ -255,6 +255,8 @@ void Misc::showKeybinds() noexcept
 	cfg->t.hotkey.showKeybind();
 	cfg->a.hotkey.showKeybind();
 	cfg->v.thirdPersonKey.showKeybind();
+	cfg->m.playerList.hotkey.showKeybind();
+	cfg->m.minimap.hotkey.showKeybind();
 	ImGui::End();
 }
 
