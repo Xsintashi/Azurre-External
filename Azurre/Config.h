@@ -147,6 +147,12 @@ public:
 			int type = 0;
 		} fakeLag;
 
+		struct OffscreenEnemies {
+			ColorToggle3 toggle;
+			float radius = 16.f;
+			float size = 32.f;
+		}offscreenEnemies;
+
 		Marker hitMarker;
 		Marker killMarker;
 

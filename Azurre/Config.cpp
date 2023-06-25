@@ -268,6 +268,13 @@ static void from_json(const json& j, Config::MiscConfig::SpectatorList& sl)
     read<value_t::object>(j, "Pos", sl.pos);
 }
 
+static void from_json(const json& j, Config::MiscConfig::OffscreenEnemies& oe)
+{
+    read<value_t::object>(j, "Color", oe.toggle);
+    read(j, "Radius", oe.radius);
+    read(j, "Size", oe.size);
+}
+
 static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Menu Key", c.menuKey);
     read(j, "Bunny Hop", c.bhop);
@@ -283,6 +290,7 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read<value_t::object>(j, "Player List", c.playerList);
     read<value_t::object>(j, "Keybinds List", c.keybinds);
     read<value_t::object>(j, "Minimap", c.minimap);
+    read<value_t::object>(j, "Offscreen Enemies", c.offscreenEnemies);
     read<value_t::object>(j, "Fake Lag", c.fakeLag);
     read<value_t::object>(j, "Spectator list", c.spectatorList);
     read<value_t::object>(j, "Bomb Timer", c.bombTimer);
@@ -613,6 +621,13 @@ static void to_json(json& j, const Config::MiscConfig::SpectatorList& o, const C
     }
 }
 
+static void to_json(json& j, const Config::MiscConfig::OffscreenEnemies& o, const Config::MiscConfig::OffscreenEnemies& dummy = {})
+{
+    WRITE("Color", toggle);
+    WRITE("Radius", radius);
+    WRITE("Size", size);
+}
+
 static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConfig dummy = {} ) {
     WRITE("Menu Key", menuKey);
     WRITE("Bunny Hop", bhop);
@@ -627,6 +642,7 @@ static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConf
     WRITE("Kill Sound", killSound);
     WRITE("Hit Marker", hitMarker);
     WRITE("Minimap", minimap);
+    WRITE("Offscreen Enemies", offscreenEnemies);
     WRITE("Keybinds List", keybinds);
     WRITE("Player List", playerList);
     WRITE("Spectator list", spectatorList);

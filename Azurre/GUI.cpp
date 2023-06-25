@@ -1446,6 +1446,18 @@ void renderMiscWindow() noexcept {
 		ImGui::Checkbox("Fast Stop", &cfg->m.autoStop);
 		ImGui::Checkbox("Grenade Trajectory", &cfg->m.grenadeTrajectory);
 		ImGui::EndDisabled();
+		ImGuiCustom::colorPicker("Offscreen Enemies", cfg->m.offscreenEnemies.toggle.color.data(), nullptr, &cfg->m.offscreenEnemies.toggle.rainbow, &cfg->m.offscreenEnemies.toggle.rainbowSpeed, &cfg->m.offscreenEnemies.toggle.enabled);
+		ImGui::SameLine();
+		ImGui::PushID("Offscreen Enemies");
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+
+		if (ImGui::BeginPopup("")) {
+			ImGui::SliderFloat("##size", &cfg->m.offscreenEnemies.size, 4.0f, 64.0f, "Size: %.1f");
+			ImGui::SliderFloat("##radius", &cfg->m.offscreenEnemies.radius, 1.0f, 64.0f, "Radius: %.1f");
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
 		ImGui::PushID("hit");
 		ImGui::InputText("Hit Sound", &cfg->m.hitSound);
 		ImGui::Combo("Type", &cfg->m.hitMarker.type, "None\0Cross\0Cross Fading\0"); ImGui::SameLine(); ImGuiCustom::colorPicker("Hit Marker", cfg->m.hitMarker.color.color.data());
@@ -2107,6 +2119,7 @@ void GUI::overlay() noexcept {
 	Misc::hitMarkerSound();
 	Misc::killMarkerSound();
 	Misc::crosshairs();
+	Misc::drawOffscreenEnemies();
 	watermark();
 #if defined(_DEBUG)
 	//ImGui::GetBackgroundDrawList()->AddRect( //Draws Rectangle around csgo window

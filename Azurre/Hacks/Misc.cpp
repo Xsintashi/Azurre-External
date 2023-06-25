@@ -11,6 +11,7 @@
 #include "../SDK/Vector.h"
 
 #include <chrono>
+#include <cmath>
 #include <fstream>
 #include <algorithm>
 #include "../SDK/UserInterface.h"
@@ -312,6 +313,46 @@ void Misc::modifyConVars(bool reset) noexcept {
 		tempSkybox = cfg->v.skybox;
 	}
 
+}
+
+void Misc::drawOffscreenEnemies() noexcept
+{
+	if (!cfg->m.offscreenEnemies.toggle.enabled)
+		return;
+
+	const auto &angles = mem.Read<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
+	const auto yaw = Helpers::deg2rad(angles.y);
+
+	for (auto& player : gameData.playerData) {
+		if (player.dormant || !player.entity->isAlive() || player.entity->isSameTeam())
+			continue;
+
+		const auto positionDiff = localPlayer->origin() - player.entity->origin();
+
+		auto x = std::cos(yaw) * positionDiff.y - std::sin(yaw) * positionDiff.x;
+		auto y = std::cos(yaw) * positionDiff.x + std::sin(yaw) * positionDiff.y;
+		if (const auto len = std::sqrt(x * x + y * y); len != 0.0f) {
+			x /= len;
+			y /= len;
+		}
+
+		ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
+
+		const auto pos = mid + ImVec2{ x, y } * (cfg->m.offscreenEnemies.radius * 10);
+		const auto trianglePos = pos + ImVec2{ x, y } * cfg->m.offscreenEnemies.radius;
+
+		const auto white = Helpers::calculateColor(255, 255, 255, 255);
+		const auto background = Helpers::calculateColor(0, 0, 0, 80);
+		const auto color = Helpers::calculateColor(cfg->m.offscreenEnemies.toggle);
+
+		const ImVec2 trianglePoints[]{
+			trianglePos + ImVec2{  0.4f * y, -0.4f * x } * cfg->m.offscreenEnemies.size,
+			trianglePos + ImVec2{  1.0f * x,  1.0f * y } * cfg->m.offscreenEnemies.size,
+			trianglePos + ImVec2{ -0.4f * y,  0.4f * x } * cfg->m.offscreenEnemies.size
+		};
+
+		ImGui::GetBackgroundDrawList()->AddConvexPolyFilled(trianglePoints, 3, color);
+	}
 }
 
 void Misc::spectatorList() noexcept {
