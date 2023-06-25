@@ -1356,6 +1356,22 @@ void renderESPWindow() noexcept {
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();
+			ImGui::Checkbox("Head Boxes", &cfg->esp.players[categories[list + spotted]].headBox.enabled);
+			ImGui::PushID("hboxes");
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[categories[list + spotted]].headBox.gradientColor)) {
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].headBox.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].headBox.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+				}
+				else
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].headBox.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
 			ImGui::Checkbox("Health Bar", &cfg->esp.players[categories[list + spotted]].healthBar.enabled);
 			ImGui::PushID("healbar");
 			ImGui::SameLine();

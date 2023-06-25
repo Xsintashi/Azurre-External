@@ -23,7 +23,14 @@
 
 #define drawList ImGui::GetBackgroundDrawList()
 
-void drawBorderBox(ImVec2 pos, float width, float height, ImU32 color, ImU32 color_) {
+void drawBorderBox(ImVec2 pos, float size, ImU32 color, ImU32 color_) {
+	drawList->AddRectFilled({ pos.x - size, pos.y - .5f - size }, { pos.x + size, pos.y + .5f - size }, color); //TOP
+	drawList->AddRectFilledMultiColor({ pos.x - size + .5f, pos.y - size }, { pos.x - size - .5f, pos.y + size }, color, color, color_, color_); //LEFT
+	drawList->AddRectFilledMultiColor({ pos.x + size + .5f, pos.y - size }, { pos.x + size - .5f, pos.y + size }, color, color, color_, color_); //RIGHT
+	drawList->AddRectFilled({ pos.x - size, pos.y + size - .5f}, { pos.x + size, pos.y + size + .5f}, color_); //BOTTOM
+}
+
+void drawBorderTwoBox(ImVec2 pos, float width, float height, ImU32 color, ImU32 color_) {
 	drawList->AddRectFilled({ pos.x - width, pos.y - .5f }, { pos.x + width, pos.y + .5f }, color); //TOP
 	drawList->AddRectFilledMultiColor({ pos.x - width + .5f, pos.y }, { pos.x - width - .5f, pos.y - height }, color, color, color_, color_); //LEFT
 	drawList->AddRectFilledMultiColor({ pos.x + width + .5f, pos.y }, { pos.x + width - .5f, pos.y - height }, color, color, color_, color_); //RIGHT
@@ -92,7 +99,7 @@ void renderWeapon(Entity* entity) {
 	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
 
 	if (posScreen.z >= 0.01f) {
-		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
+		if (config.box.enabled) drawBorderTwoBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
 		if (config.other.names.enabled)	drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, 0.f, 0.f, name, Helpers::calculateColor(config.other.names));
 		if (config.other.lines.enabled) drawLines({ gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, Helpers::calculateColor(config.other.lines));
 	}
@@ -118,7 +125,7 @@ void renderProjectile(ProjectileData* projectile) {
 	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
 
 	if (posScreen.z >= 0.01f) {
-		if (config.box.enabled) drawBorderBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
+		if (config.box.enabled) drawBorderTwoBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
 		if (config.names.enabled)	drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, 0.f, 0.f, projectile->name, Helpers::calculateColor(config.names));
 	}
 }
@@ -147,11 +154,17 @@ void renderPlayer(Entity* entity, int index) {
 	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
 	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
 
+	Vector headPos = entity->bonePosition(8);
+	Vector headBoxScreen = Helpers::world2Screen(gameScreenSize, headPos, viewMatix);
+
 	float height = headScreen.y - posScreen.y;
 	const float width = height / 4;
 
 	const auto colorBox = config.box.gradientColor ? config.box.grandientTop : config.box.solid;
 	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
+
+	const auto colorHeadBox = config.headBox.gradientColor ? config.headBox.grandientTop : config.headBox.solid;
+	const auto colorHeadBox_ = config.headBox.gradientColor ? config.headBox.grandientBottom : config.headBox.solid;
 
 #pragma endregion Box
 #pragma region Health Bar
@@ -174,7 +187,8 @@ void renderPlayer(Entity* entity, int index) {
 #pragma endregion Player Name
 	if (posScreen.z >= 0.01f && !entity->dormant()) {
 		if (config.skeleton) drawSkeleton(entity->boneMatrix());
-		if (config.box.enabled) drawBorderBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
+		if (config.headBox.enabled) drawBorderBox( { gameScreenPos.x + headBoxScreen.x, gameScreenPos.y + headBoxScreen.y }, width / 3, Helpers::calculateColor(colorHeadBox), Helpers::calculateColor(colorHeadBox_));
+		if (config.box.enabled) drawBorderTwoBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
 		if (config.healthBar.enabled) drawHealthBar( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
 		if (config.other.names.enabled) drawPlayerName( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, Helpers::calculateColor(config.other.names));
 		if (config.weapons.enabled) drawPlayerName( { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y}, width, height, weapon, Helpers::calculateColor(config.weapons));
