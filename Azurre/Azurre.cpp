@@ -28,8 +28,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 
 	char mutexName[8] = "azurre\0";
 
-	HANDLE mutex = OpenMutex(
-		MUTEX_ALL_ACCESS, 0, mutexName);
+	HANDLE mutex = OpenMutex(MUTEX_ALL_ACCESS, 0, mutexName);
 
 	if (!mutex)
 		mutex = CreateMutex(0, 0, mutexName);
