@@ -2,6 +2,7 @@
 #include "GUI.h"
 #include "Core.h"
 #include "Config.h"
+#include "resources.h"
 
 #include "Hacks/Aimbot.h"
 #include "Hacks/Clantag.h"
@@ -75,12 +76,6 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	GUI::CreateDevice();
 	GUI::CreateImGui();
 
-#ifdef _DEBUG
-	cfg->load(u8"debug", false);
-#else
-	cfg->load(u8"default", false);
-#endif 
-
 	//SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT); //Soon
 	//while (!IConsole && GUI::isRunning) {
 	//	IConsole = FindWindowA("Valve001", NULL);
@@ -97,6 +92,16 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	std::thread(Discord::Update).detach();
 	std::thread(Skin::update).detach();
 
+#ifdef _DEBUG
+	cfg->load(u8"debug", false);
+#else
+	std::ostringstream wav; //No idea bruh
+	for (int t = 0; t < sizeof(resource::introSound); t++)
+		wav << resource::introSound[t];
+
+	PlaySound(wav.str().c_str(), NULL, SND_MEMORY | SND_ASYNC);
+	cfg->load(u8"default", false);
+#endif 
 
 #if _DEBUG
 	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW);
