@@ -188,7 +188,7 @@ public:
     }
 
     bool isValid() {
-        return (this != nullptr || this != 0);
+        return (this != nullptr);
     }
 
     bool isDead() noexcept {
