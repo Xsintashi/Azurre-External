@@ -17,6 +17,20 @@ enum class Team {
     CT
 };
 
+enum FlagsState {
+    ONGROUND			 = (1 << 0), // On the floor
+    DUCKING				 = (1 << 1), // Crouching
+    WATERJUMP			 = (1 << 3),
+    ONTRAIN				 = (1 << 4),
+    INRAIN				 = (1 << 5),
+    FROZEN				 = (1 << 6), // Frozen
+    ATCONTROLS			 = (1 << 7),
+    CLIENT				 = (1 << 8),
+    FAKECLIENT			 = (1 << 9),
+    INWATER				 = (1 << 10), // In water
+    HIDEHUD_SCOPE		 = (1 << 11)
+};
+
 enum LifeState {
     LIFE_ALIVE,         // alive
     LIFE_DYING,         // playing death animation or still falling off of a ledge waiting to hit ground
