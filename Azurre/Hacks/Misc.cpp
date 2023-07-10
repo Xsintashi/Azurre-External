@@ -35,8 +35,8 @@ void Misc::bunnyHop() noexcept {
 
 	if (cfg->restrictions && GetAsyncKeyState(VK_SPACE)) {
 		(flags & (1 << 0)) ?
-			usr0::SendConsoleCommand("+jump") :
-			usr0::SendConsoleCommand("-jump");
+			clientCmd("+jump") :
+			clientCmd("-jump");
 	}
 }
 
@@ -308,7 +308,7 @@ void Misc::modifyConVars(bool reset) noexcept {
 		flags &= ~(CVarFlags::CHEAT);
 		skyname.flags(flags);
 		std::string cmd = "sv_skyname " + std::string(skyboxList[cfg->v.skybox]);
-		usr0::SendConsoleCommand(cmd.c_str());
+		clientCmd(cmd.c_str());
 		skyname.flags(skynameFlags);
 		tempSkybox = cfg->v.skybox;
 	}

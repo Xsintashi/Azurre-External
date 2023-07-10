@@ -225,7 +225,6 @@
     <ClCompile Include="Azurre\Helpers.cpp" />
     <ClCompile Include="Azurre\InputUtil.cpp" />
     <ClCompile Include="Azurre\Memory.cpp" />
-    <ClCompile Include="Azurre\SDK\UserInterface.cpp" />
     <ClCompile Include="Azurre\Texture.cpp" />
     <ClCompile Include="Lib\imgui\imgui.cpp" />
     <ClCompile Include="Lib\imgui\ImGuiCustom.cpp" />

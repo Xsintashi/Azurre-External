@@ -1027,7 +1027,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::InputText("convar", &cmd);
 	ImGui::SameLine();
 	if (ImGui::Button("Send"))
-		usr0::SendConsoleCommand(cmd);
+		clientCmd(cmd);
 	ImGui::End();
 }
 
