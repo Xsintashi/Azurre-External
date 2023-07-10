@@ -75,7 +75,7 @@ void Aimbot::run() noexcept {
 				xMove += bestAngle.y < 0.f ? 1 : -1;
 				yMove += bestAngle.x < 0.f ? -1 : 1;
 			}
-			if (bestAngle.notNull() && (cfg->a.hotkey.isActive() && cfg->a.hotkey.isSet())) {
+			if (bestAngle.notNull() && (cfg->a.hotkey.isActive() && cfg->a.hotkey.isSet() || !cfg->a.hotkey.isSet())) {
 				if (cfg->restrictions && !showMenu)
 					mouse_event(MOUSEEVENTF_MOVE, xMove, yMove, NULL, NULL);
 				else if (!cfg->restrictions)
