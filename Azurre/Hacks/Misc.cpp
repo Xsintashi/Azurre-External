@@ -27,14 +27,14 @@ void Misc::bunnyHop() noexcept {
 	const auto flags = localPlayer->flags();
 
 	if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions){
-		(flags & (1 << 0)) ?
+		(flags & FlagsState::ONGROUND) ?
 		mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
 		mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
 		return;
 	}
 
 	if (cfg->restrictions && GetAsyncKeyState(VK_SPACE)) {
-		(flags & (1 << 0)) ?
+		(flags & FlagsState::ONGROUND) ?
 			clientCmd("+jump") :
 			clientCmd("-jump");
 	}
