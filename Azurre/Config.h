@@ -143,7 +143,6 @@ public:
 		} minimap;
 
 		struct FakeLag {
-			bool enabled = false;
 			int limit = 0;
 			int type = 0;
 		} fakeLag;

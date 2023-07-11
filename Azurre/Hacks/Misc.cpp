@@ -51,7 +51,7 @@ void Misc::fakeLag() noexcept {
 	const auto& chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
 	int choke = 0;
 
-	if (!cfg->m.fakeLag.enabled)return;
+	if (cfg->m.fakeLag.limit < 1) return;
 
 	const float speed = localPlayer->velocity().length2D() >= 15.0f ? localPlayer->velocity().length2D() : 0.0f;
 

@@ -225,7 +225,6 @@ static void from_json(const json& j, Config::MiscConfig::Minimap& c) {
 }
 
 static void from_json(const json& j, Config::MiscConfig::FakeLag& c) {
-    read(j, "Enabled", c.enabled);
     read(j, "Limit", c.limit);
     read(j, "Type", c.type);
 }
@@ -566,8 +565,6 @@ static void to_json(json& j, const Config::MiscConfig::Minimap& o, const Config:
 }
 
 static void to_json(json& j, const Config::MiscConfig::FakeLag& o, const Config::MiscConfig::FakeLag& dummy){
-
-    WRITE("Enabled", enabled);
     WRITE("Limit", limit);
     WRITE("Type", type);
 }
