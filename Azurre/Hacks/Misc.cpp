@@ -243,7 +243,7 @@ void Misc::showKeybinds() noexcept
 	ImGui::SetNextWindowSize({ 250.f, 0.f }, ImGuiCond_Once);
 	ImGui::SetNextWindowSizeConstraints({ 250.f, 0.f }, { 250.f, FLT_MAX });
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoFocusOnAppearing;
 	if (!showMenu)
 		windowFlags |= ImGuiWindowFlags_NoInputs;
 
