@@ -1330,7 +1330,7 @@ void renderESPWindow() noexcept {
 		static int spotted = 0;
 		constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
 		ImGui::Checkbox("Enabled", &cfg->esp.enabled);
-		ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons\0Projectiles");
+		ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons\0Projectiles\0Others\0");
 		switch (list) {
 		default: case 0: case 1:
 			if (list) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
@@ -1425,6 +1425,32 @@ void renderESPWindow() noexcept {
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();
+			break;
+		case 4:
+			static int currentCategory = 0;
+			constexpr std::array categories{ "C4", "Planted C4", "Defuse Kits"};
+			ImGui::Combo("Others", &currentCategory, categories.data(), categories.size());
+
+			ImGuiCustom::colorPicker("Name", cfg->esp.others[categories[currentCategory]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.others[categories[currentCategory]].other.names.enabled);
+			ImGui::Checkbox("Boxes", &cfg->esp.others[categories[currentCategory]].box.enabled);
+			ImGui::PushID("boxes weapons");
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				if (ImGui::Checkbox("Gradient Color", &cfg->esp.others[categories[currentCategory]].box.gradientColor)) {
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.others[categories[currentCategory]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.others[categories[currentCategory]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+				}
+				else
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.others[categories[currentCategory]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+			ImGuiCustom::colorPicker("Lines", cfg->esp.others[categories[currentCategory]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.others[categories[currentCategory]].other.lines.enabled);
+			break;
+
 		}
 	}
 	ImGui::End();

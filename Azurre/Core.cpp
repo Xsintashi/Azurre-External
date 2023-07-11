@@ -182,10 +182,12 @@ void Core::gameDataUpdate() noexcept {
 			}
 			break;
 		}
-		case ClassID::PlantedC4: {
+		case ClassID::PlantedC4:
 			gameData.plantedC4 = entity;
 			break;
-		}
+		case ClassID::C4:
+			gameData.droppedC4 = entity;
+			break;
 		case ClassID::BaseCSGrenadeProjectile: {
 			const int& modelIndex = entity->modelIndex();
 			if (Skin::getModelIndex("models/Weapons/w_eq_flashbang_dropped.mdl") == modelIndex)
@@ -194,7 +196,6 @@ void Core::gameDataUpdate() noexcept {
 				gameData.projectileData.push_back({ entity, "Explosive Grenade" });
 			break;
 		}
-				
 		case ClassID::DecoyProjectile:
 			gameData.projectileData.push_back({ entity, "Decoy" });
 			break;
@@ -203,6 +204,9 @@ void Core::gameDataUpdate() noexcept {
 			break;
 		case ClassID::SmokeGrenadeProjectile:
 			gameData.projectileData.push_back({ entity, "Smoke" });
+			break;
+		case ClassID::EconEntity:
+			gameData.defuseKits.push_back(entity);
 			break;
 			
 		}

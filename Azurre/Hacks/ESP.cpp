@@ -77,9 +77,31 @@ void drawPlayerName(ImVec2 pos, float width, float height, std::string name, ImU
 
 constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible", "Weapons" };
 
-void renderWeapon(Entity* entity) {
-	auto& config = cfg->esp.weapons["All"];
+void render_____(Entity* entity, std::string name, auto& config) {
+	Vector pos = entity->origin();
+	Vector head;
+	pos.z -= 8.f;
+	head.x = pos.x;
+	head.y = pos.y;
+	head.z = pos.z + 16.f;
 
+	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
+	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
+
+	float height = headScreen.y - posScreen.y;
+	const float width = height;
+
+	const auto colorBox = config.box.gradientColor ? config.box.grandientTop : config.box.solid;
+	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
+
+	if (posScreen.z >= 0.01f) {
+		if (config.box.enabled) drawBorderTwoBox({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
+		if (config.other.names.enabled)	drawPlayerName({ gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, 0.f, 0.f, name, Helpers::calculateColor(config.other.names));
+		if (config.other.lines.enabled) drawLines({ gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, Helpers::calculateColor(config.other.lines));
+	}
+}
+
+void renderWeapon(Entity* entity, auto& config) {
 	Vector pos = entity->origin();
 	Vector head;
 	pos.z -= 8.f;
@@ -210,12 +232,28 @@ void ESP::render() noexcept {
 	for (auto& weapon : gameData.weaponData) {
 		if (weapon->origin() == Vector{ 0.f, 0.f, 0.f })
 			continue;
-		renderWeapon(weapon);
+		renderWeapon(weapon, cfg->esp.weapons["All"]);
 	}
 
 	for (auto& projectile : gameData.projectileData) {
 		if (projectile.entity->origin() == Vector{ 0.f, 0.f, 0.f })
 			continue;
 		renderProjectile(&projectile);
+	}
+
+	for (auto& dk : gameData.defuseKits) {
+		if (dk->origin() == Vector{ 0.f, 0.f, 0.f })
+			continue;
+		render_____(dk, "Defuse Kit", cfg->esp.others["Defuse Kits"]);
+	}
+
+	if (gameData.droppedC4->origin() != Vector{ 0.f, 0.f, 0.f }&& gameData.droppedC4->isValid())
+		render_____(gameData.droppedC4, "C4", cfg->esp.others["C4"]);
+
+	if (gameData.plantedC4->origin() != Vector{ 0.f, 0.f, 0.f }&& gameData.plantedC4->isValid()) {
+		std::ostringstream ss;
+		ss << std::fixed << std::setprecision(2) << (gameData.plantedC4->C4Blow() - globalVars->currentTime) << "sec";
+
+		render_____(gameData.plantedC4, ss.str().c_str(), cfg->esp.others["Planted C4"]);
 	}
 }

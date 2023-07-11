@@ -92,10 +92,12 @@ struct GameData {
 	PlayerResource playerResource;
 	std::vector<Entity*> weaponData;
 	std::vector<ProjectileData> projectileData;
+	std::vector<Entity*> defuseKits;
 	std::vector<ObserverData> observerData;
 	Entity* tablet;
 	Entity* toneMapController;
 	Entity* plantedC4;
+	Entity* droppedC4;
 	std::string defusingPlayerName;
 };
 
