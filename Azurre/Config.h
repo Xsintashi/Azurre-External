@@ -165,6 +165,7 @@ public:
 		bool enabled = false;
 		bool friendlyFire = false;
 		int delay = 0;
+		int burst = 0;
 		KeyBind hotkey = std::string("Triggerbot");
 	} t;
 

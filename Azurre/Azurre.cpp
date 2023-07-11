@@ -10,6 +10,7 @@
 #include "Hacks/Minimap.h"
 #include "Hacks/Misc.h"
 #include "Hacks/SkinChanger.h"
+#include "Hacks/TriggerBot.h"
 #include "Hacks/Visuals.h"
 
 #include "DiscordSDK/RPC.h"
@@ -91,6 +92,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	std::thread(Core::_).detach();
 	std::thread(Discord::Update).detach();
 	std::thread(Skin::update).detach();
+	std::thread(TriggerBot::run).detach();
 
 #ifdef _DEBUG
 	cfg->load(u8"debug", false);

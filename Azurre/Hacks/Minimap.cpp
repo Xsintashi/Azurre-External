@@ -109,12 +109,6 @@ std::string mapRadar;
 #define config cfg->m.minimap
 constexpr float iconSize = 8.f;
 
-struct TextureInfo {
-	int width;
-	int height;
-	PDIRECT3DTEXTURE9 data;
-};
-
 TextureInfo mapTexture;
 
 void Minimap::_() {

@@ -218,7 +218,6 @@ void Core::_() noexcept {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		update();
 		Aimbot::recoilSystem();
-		TriggerBot::run();
 		Chams::run();
 		Misc::bunnyHop();
 		if (!cfg->restrictions) {

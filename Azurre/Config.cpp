@@ -316,6 +316,8 @@ static void from_json(const json& j, Config::ChangerConfig& c) {
 static void from_json(const json& j, Config::TriggerBotConfig& c) {
     read(j, "Enabled", c.enabled);
     read(j, "Hotkey", c.hotkey);
+    read(j, "Delay", c.delay);
+    read(j, "Burst", c.burst);
 }
 
 static void from_json(const json& j, Config::VisualsConfig::CustomPostProcessing& c) {
@@ -672,6 +674,8 @@ static void to_json(json& j, const Config::ChangerConfig& o, const Config::Chang
 static void to_json(json& j, const Config::TriggerBotConfig& o, const Config::TriggerBotConfig dummy = {} ) {
     WRITE("Enabled", enabled);
     WRITE("Hotkey", hotkey);
+    WRITE("Delay", delay);
+    WRITE("Burst", burst);
 }
 
 static void to_json(json& j, const Config::VisualsConfig::CustomPostProcessing& o, const Config::VisualsConfig::CustomPostProcessing& dummy) {
