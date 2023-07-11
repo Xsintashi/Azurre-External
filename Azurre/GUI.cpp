@@ -1232,11 +1232,15 @@ void GUI::RenderPlayerList() noexcept {
 	ImGui::End();
 }
 
-static bool toggleAimbotWindow = false;
-void renderAimbotWindow() noexcept {
+void childLabel(const char* text) {
+	ImGui::BeginChild(std::string(text).append(" Label").c_str(), {232.f , 20.f}, false, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	ImGui::SeparatorText(text);
+	ImGui::EndChild();
+}
 
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-	ImGui::Begin( "Aimbot", &toggleAimbotWindow, flags ); 
+void renderAimbotWindow() noexcept {
+	ImGui::PushID("Aimbot");
+	ImGui::BeginChild("Aimbot", {232.f , 266.f}, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	{
 		ImGui::PushID("key");
 		ImGui::Checkbox("Enabled", &cfg->a.enabled);
@@ -1247,10 +1251,10 @@ void renderAimbotWindow() noexcept {
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::EndDisabled();
 		ImGui::Checkbox("Auto Stop", &cfg->a.autoStop);
-		ImGui::Checkbox("Disable While Being Spectated", &cfg->a.disableWhileBeingSpectated);
+		ImGui::Checkbox("Disable While Spectated", &cfg->a.disableWhileBeingSpectated);
 		ImGui::Checkbox("Visible Only", &cfg->a.visibleOnly);
 		ImGui::Checkbox("Friendly Fire", &cfg->a.friendlyFire);
-		ImGui::PushItemWidth(220.0f);
+		ImGui::PushItemWidth(128.f);
 		ImGui::Combo("Bone", &cfg->a.bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
 		ImGui::SliderFloat("##fov", &cfg->a.fov, 0.001f, 255.000f, "Fov: %.2f");
 		ImGui::SliderFloat("##smooth", &cfg->a.smooth, 1.00f, 100.00f, "Smooth: %.2f");
@@ -1260,15 +1264,12 @@ void renderAimbotWindow() noexcept {
 		ImGui::EndDisabled();
 		ImGuiCustom::colorPicker("Draw fov", cfg->a.drawFov);
 	}
-	ImGui::End();
+	ImGui::EndChild();
+	ImGui::PopID();
 }
 
-static bool toggleTriggerbotWindow = false;
 void renderTriggerBotWindow() noexcept {
-
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-
-	ImGui::Begin("Trigger Bot", &toggleTriggerbotWindow, flags);
+	ImGui::BeginChild("Trigger Bot", { 232.f , 105.f }, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	{
 		ImGui::PushID("Key");
 		ImGui::Checkbox("Enabled", &cfg->t.enabled);
@@ -1277,16 +1278,16 @@ void renderTriggerBotWindow() noexcept {
 		ImGui::PopID();
 		ImGui::Checkbox("Friendly Fire", &cfg->t.friendlyFire);
 		ImGui::SetNextItemWidth(200.0f);
+		ImGui::PushItemWidth(128.f);
 		ImGui::SliderInt("Delay", &cfg->t.delay, 0, 1000);
+		ImGui::SliderInt("Burst", &cfg->t.burst, 0, 1000);
+		ImGui::PopItemWidth();
 	}
-	ImGui::End();
+	ImGui::EndChild();
 }
 
-static bool toggleGlowWindow = false;
 void renderGlowWindow() noexcept {
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-
-	ImGui::Begin("Glow", &toggleGlowWindow, flags);
+	ImGui::BeginChild("Glow", { 232.f, 105.f }, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::Checkbox("Enabled", &cfg->g.enabled);
@@ -1300,14 +1301,11 @@ void renderGlowWindow() noexcept {
 		ImGuiCustom::colorPicker("Allies", cfg->g.ally.color.data(), &cfg->g.ally.color[3], nullptr, nullptr, &cfg->g.ally.enabled);
 		ImGui::EndDisabled();
 	}
-	ImGui::End();
+	ImGui::EndChild();
 }
 
-static bool toggleChamsWindow = false;
 void renderChamsWindow() noexcept {
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-
-	ImGui::Begin("Chams", &toggleChamsWindow, flags);
+	ImGui::BeginChild("Chams", { 232.f, 105.f }, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::Checkbox("Enabled", &cfg->c.enabled);
@@ -1317,14 +1315,11 @@ void renderChamsWindow() noexcept {
 		ImGui::SliderFloat("Brightness", &cfg->c.brightness, 0.1f, 1.f);
 		ImGui::EndDisabled();
 	}
-	ImGui::End();
+	ImGui::EndChild();
 }
 
-static bool toggleESPWindow = false;
 void renderESPWindow() noexcept {
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-
-	ImGui::Begin("ESP", &toggleESPWindow, flags);
+	ImGui::BeginChild("ESP", { 232.f,242.f }, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		static int list = 0;
 		static int spotted = 0;
@@ -1453,17 +1448,51 @@ void renderESPWindow() noexcept {
 
 		}
 	}
-	ImGui::End();
+	ImGui::EndChild();
 }
 
-static bool toggleMiscWindow = false;
-void renderMiscWindow() noexcept {
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
+void renderFakeLagWindow() noexcept {
+	ImGui::BeginChild("Fake Lag", { 232.f, 56.f }, true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	{
+		ImGui::BeginDisabled(cfg->restrictions);
+		ImGui::Combo("Mode", &cfg->m.fakeLag.type, "Static\0Adaptative\0Random\0");
+		ImGui::SliderInt("##limit", &cfg->m.fakeLag.limit, 0, 16, "Limit: %d");
+		ImGui::EndDisabled();
+	}
+	ImGui::EndChild();
 
-	ImGui::Begin("Misc", &toggleMiscWindow, flags);
+}
+
+void renderClanTagWindow() noexcept {
+	ImGui::BeginChild("Clantag", { 232.f, 200.f }, true, ImGuiWindowFlags_NoTitleBar);
+	{
+		ImGui::BeginDisabled(cfg->restrictions);
+		ImGui::PushItemWidth(120.f);
+		ImGui::Combo("ClanTag", &cfg->clanTag.mode, "None\0Azurre\0Clock\0Reverse\0Velocity\0Position\0HP\0\\n Overflow\0Custom\0");
+		ImGui::Combo("Type", &cfg->clanTag.custom.type, "Static\0Rotate\0Rotate Backwards\0Add\0Remove\0");
+		if (cfg->clanTag.mode == 8) {
+			if (ImGui::InputText("Name", &cfg->clanTag.custom.tag))
+				Clan::update(false, true);
+			if (ImGui::InputText("Team", &cfg->clanTag.custom.teamTag))
+				Clan::update(false, true);
+			if (ImGui::InputText("Prefix", &cfg->clanTag.custom.prefix))
+				Clan::update(false, true);
+			if (ImGui::InputText("Postfix", &cfg->clanTag.custom.postfix))
+				Clan::update(false, true);
+			ImGui::SliderFloat("##speed", &cfg->clanTag.custom.speed, 0.01f, 1.f, "Speed: %.2f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_Logarithmic);
+			ImGui::Checkbox("Hide Name", &cfg->clanTag.custom.hideName);
+		}
+		ImGui::PopItemWidth();
+		ImGui::EndDisabled();
+	}
+	ImGui::EndChild();
+
+}
+
+void renderMiscWindow() noexcept {
+	ImGui::BeginChild("Miscellaneous", { 232.f, -1 }, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::PushItemWidth(96.f);
-		ImGui::Combo("Restrictions", &cfg->restrictions, "None\0Read Only");
 		ImGuiCustom::classicHotkey("Menu Key", cfg->m.menuKey);
 		ImGui::Checkbox("Bunny Hop", &cfg->m.bhop);
 		ImGui::BeginDisabled(cfg->restrictions);
@@ -1612,45 +1641,7 @@ void renderMiscWindow() noexcept {
 			ImGui::EndPopup();
 		}
 		ImGui::PopID();
-		ImGui::PushID("FakeLag");
 		ImGui::BeginDisabled(cfg->restrictions);
-		ImGui::Checkbox("Fake Lag", &cfg->m.fakeLag.enabled);
-		ImGui::SameLine();
-		if (ImGui::Button("..."))
-			ImGui::OpenPopup("");
-		
-		if (ImGui::BeginPopup("")) {
-			ImGui::Combo("Mode", &cfg->m.fakeLag.type, "Static\0Adaptative\0Random\0");
-			ImGui::SliderInt("##limit", &cfg->m.fakeLag.limit, 1, 16, "Limit: %d");
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
-		ImGui::Combo("ClanTag", &cfg->clanTag.mode, "None\0Azurre\0Clock\0Reverse\0Velocity\0Position\0HP\0\\n Overflow\0Custom\0");
-		if (cfg->clanTag.mode == 8) {
-			ImGui::PushID("ClanTagCustom");
-			ImGui::SameLine();
-			if (ImGui::Button("..."))
-				ImGui::OpenPopup("##custom");
-		
-			if (ImGui::BeginPopup("##custom")) {
-				ImGui::PushItemWidth(120.f);
-		
-				ImGui::Combo("Type", &cfg->clanTag.custom.type, "Static\0Rotate\0Rotate Backwards\0Add\0Remove\0");
-				if (ImGui::InputText("Name", &cfg->clanTag.custom.tag))
-					Clan::update(false, true);
-				if (ImGui::InputText("Team", &cfg->clanTag.custom.teamTag))
-					Clan::update(false, true);
-				if (ImGui::InputText("Prefix", &cfg->clanTag.custom.prefix))
-					Clan::update(false, true);
-				if (ImGui::InputText("Postfix", &cfg->clanTag.custom.postfix))
-					Clan::update(false, true);
-				ImGui::SliderFloat("##speed", &cfg->clanTag.custom.speed, 0.01f, 1.f, "Speed: %.2f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_Logarithmic);
-				ImGui::Checkbox("Hide Name", &cfg->clanTag.custom.hideName);
-				ImGui::PopItemWidth();
-				ImGui::EndPopup();
-			}
-			ImGui::PopID();
-		}
 		if (ImGui::Button("Fake Prime")) {
 			constexpr uint8_t patch[]{ 0x31, 0xC0, 0x40, 0xC3 };
 			WriteProcessMemory(mem.processHandle, (LPVOID)(IClient.address + 0x62EDF0), patch, 4, 0);
@@ -1658,14 +1649,11 @@ void renderMiscWindow() noexcept {
 		ImGui::EndDisabled();
 		ImGui::PopItemWidth();
 	}
-	ImGui::End();
+	ImGui::EndChild();
 }
 
-static bool toggleVisualsWindow = false;
 void renderVisualsWindow() noexcept {
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-
-	ImGui::Begin("Visuals", &toggleVisualsWindow, flags);
+	ImGui::BeginChild("Visuals", { 232.f, 250.f}, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::PushID("PostProcessingPopup");
@@ -1697,14 +1685,11 @@ void renderVisualsWindow() noexcept {
 		ImGui::PopItemWidth();
 		ImGui::EndDisabled();
 	}
-	ImGui::End();
+	ImGui::EndChild();
 }
 
-static bool toggleChangerWindow = false;
 void renderChangerWindow() noexcept {
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-
-	ImGui::Begin("Changer", &toggleChangerWindow, flags);
+	ImGui::BeginChild("Skin Changer", { 232.f, 272.f }, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::BeginDisabled(cfg->restrictions);
 		static int itemIndex = 0;
@@ -1862,14 +1847,11 @@ void renderChangerWindow() noexcept {
 		ImGui::PopItemWidth();
 		ImGui::EndDisabled();
 	}
-	ImGui::End();
+	ImGui::EndChild();
 }
 
-static bool toggleDiscordWindow = false;
 void renderDiscordWindow() noexcept {
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-
-	ImGui::Begin("Discord", &toggleDiscordWindow, flags);
+	ImGui::BeginChild("Discord", { 232.f,-1 }, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::Checkbox("Enabled", &cfg->d.enabled);
 		ImGui::Checkbox("Show Map", &cfg->d.showMap);
@@ -1877,31 +1859,27 @@ void renderDiscordWindow() noexcept {
 		ImGui::Combo("Details", &cfg->d.details, "Azurre!\0Nick\0Rank\0");
 		ImGui::Combo("State", &cfg->d.state, "Only for chosen\0Stats\0Rank\0");
 	}
-	ImGui::End();
+	ImGui::EndChild();
 }
 
-static bool toggleGUIWindow = false;
 void renderGUIWindow() noexcept {
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-	ImGui::Begin("GUI", &toggleGUIWindow, flags);
+	ImGui::BeginChild("GUI", { 232.f, 152.f }, true, ImGuiWindowFlags_NoTitleBar);
 	{
+		ImGui::SetNextItemWidth(96.f);
 		if (ImGui::Combo("Menu colors", &cfg->u.menuColors, "Azurre\0Genshi\0Emerald\0Bloddy Red\0Gold Mine\0Pandora\0Holy Light\0Deep Dark\0Visual Studio\0GoldSrc\0ImGui\0Neverlose\0Aimware\0Onetap\0Custom\0"))
 			GUI::updateColors();
 		
-		ImGui::Checkbox("AntiAliasing",&cfg->u.antiAliasing);
-		ImGui::Checkbox("Center Title",&cfg->u.centerTitle);
-		ImGui::Checkbox("Frame Border",&cfg->u.frameBorder);
-		ImGui::Checkbox("Round Border",&cfg->u.roundBorder);
-		ImGui::Checkbox("Window Border",&cfg->u.windowBorder);
+		ImGui::Checkbox("AntiAliasing", &cfg->u.antiAliasing);
+		ImGui::Checkbox("Center Title", &cfg->u.centerTitle);
+		ImGui::Checkbox("Frame Border", &cfg->u.frameBorder);
+		ImGui::Checkbox("Round Border", &cfg->u.roundBorder);
+		ImGui::Checkbox("Window Border", &cfg->u.windowBorder);
 	}
-	ImGui::End();
+	ImGui::EndChild();
 }
 
-static bool toggleConfigWindow = false;
 void renderConfigWindow() noexcept {
-	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-	ImGui::SetNextWindowSize({320.f, 200.f});
-	ImGui::Begin("Config", &toggleConfigWindow, flags);
+	ImGui::BeginChild("Config", { 232.f, 232.f }, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::Columns(2, nullptr, false);
 		ImGui::SetColumnOffset(1, 170.0f);
@@ -1909,7 +1887,7 @@ void renderConfigWindow() noexcept {
 		static bool incrementalLoad = false;
 		ImGui::Checkbox("Incremental Load", &incrementalLoad);
 
-		ImGui::PushItemWidth(160.0f);
+		ImGui::PushItemWidth(152.0f);
 
 		auto& configItems = cfg->getConfigs();
 		static int currentConfig = -1;
@@ -1927,11 +1905,11 @@ void renderConfigWindow() noexcept {
 		if (static_cast<std::size_t>(currentConfig) >= configItems.size())
 			currentConfig = -1;
 
-		if (ImGui::ListBox("Configs:", &currentConfig, [](void* data, int idx, const char** out_text) {
+		if (ImGui::ListBox("##configs", &currentConfig, [](void* data, int idx, const char** out_text) {
 			auto& vector = *static_cast<std::vector<std::string>*>(data);
 			*out_text = vector[idx].c_str();
 			return true;
-			}, &configItems, configItems.size(), 5) && currentConfig != -1)
+			}, &configItems, configItems.size(), 8) && currentConfig != -1)
 			buffer = configItems[currentConfig];
 
 			ImGui::PushID(0);
@@ -1944,13 +1922,13 @@ void renderConfigWindow() noexcept {
 
 			ImGui::PushItemWidth(100.0f);
 
-			if (ImGui::Button("Open config folder"))
+			if (ImGui::Button("Folder", { 48.0f, 24.0f }))
 				cfg->openConfigDir();
 
-			if (ImGui::Button("Create config", { 100.0f, 25.0f }))
+			if (ImGui::Button("Create", { 48.0f, 24.0f }))
 				cfg->add(buffer.c_str());
 
-			if (ImGui::Button("Reset config", { 100.0f, 25.0f }))
+			if (ImGui::Button("Reset", { 48.0f, 24.0f }))
 				ImGui::OpenPopup("Config to reset");
 
 			if (ImGui::BeginPopup("Config to reset")) {
@@ -1975,10 +1953,10 @@ void renderConfigWindow() noexcept {
 				ImGui::EndPopup();
 			}
 			if (currentConfig != -1) {
-				if (ImGui::Button("Load selected", { 100.0f, 25.0f })) {
+				if (ImGui::Button("Load", { 48.0f, 24.0f })) {
 					cfg->load(currentConfig, incrementalLoad);
 				}
-				if (ImGui::Button("Save selected", { 100.0f, 25.0f }))
+				if (ImGui::Button("Save", { 48.0f, 24.0f }))
 					ImGui::OpenPopup("##reallySave");
 				if (ImGui::BeginPopup("##reallySave"))
 				{
@@ -1993,7 +1971,7 @@ void renderConfigWindow() noexcept {
 					}
 					ImGui::EndPopup();
 				}
-				if (ImGui::Button("Delete selected", { 100.0f, 25.0f }))
+				if (ImGui::Button("Delete", { 48.0f, 24.0f }))
 					ImGui::OpenPopup("##reallyDelete");
 				if (ImGui::BeginPopup("##reallyDelete"))
 				{
@@ -2014,97 +1992,93 @@ void renderConfigWindow() noexcept {
 				}
 			}
 			ImGui::Columns(1);
+			ImGui::SetNextItemWidth(96.f);
+			ImGui::Combo("Restrictions", &cfg->restrictions, "None\0Read Only");
 	}
-	ImGui::End();
-}
-
-//static bool toggleWindow = true; // template for newest
-//void renderWindow() noexcept {
-//	constexpr static int flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-//
-//	ImGui::SetNextWindowPos({ screenSize.x / 2 - 320, screenSize.y / 2 - 240 }, ImGuiCond_FirstUseEver);
-//	ImGui::Begin("", &toggleWindow, flags);
-//	{
-//
-//	}
-//	ImGui::End();
-//}
-
-void sortWindows() noexcept {
-	ImGuiContext* GImGui = ImGui::GetCurrentContext();
-	ImGuiContext& g = *GImGui;
-
-	ImVector<ImGuiWindow*> windows;
-	for (ImGuiWindow* window : g.WindowsFocusOrder)
-		if (window->WasActive)
-			windows.push_back(window);
-
-	if (windows.Size > 0) {
-		for (int n = 0; n < windows.Size; n++) {
-			ImGui::SetWindowPos(windows[n], {64.f * n, 32.f * n});
-		}
-	}
+	ImGui::EndChild();
 }
 
 void GUI::RenderMainMenu() noexcept {
 
-	if (toggleAimbotWindow)		renderAimbotWindow();
-	if (toggleTriggerbotWindow)	renderTriggerBotWindow();
-	if (toggleGlowWindow)		renderGlowWindow();
-	if (toggleChamsWindow)		renderChamsWindow();
-	if (toggleESPWindow)		renderESPWindow();
-	if (toggleMiscWindow)		renderMiscWindow();
-	if (toggleVisualsWindow)	renderVisualsWindow();
-	if (toggleChangerWindow)	renderChangerWindow();
-	if (toggleDiscordWindow)	renderDiscordWindow();
-	if (toggleGUIWindow)		renderGUIWindow();
-	if (toggleConfigWindow)		renderConfigWindow();
+	static int category = -1;
 
 	ImGui::SetNextWindowPos({ screenSize.x / 2 - 320, screenSize.y / 2 - 240 }, ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize({ -1, -1 });
+	ImGui::SetNextWindowSize({ 576.f, 512.f });
 	ImGui::Begin(
 		"Azurre External",
 		&isRunning,
-		ImGuiWindowFlags_AlwaysAutoResize
+		ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse
 	);
-	ImGui::Text("Hello xs9 :)");
+	ImGui::Columns(2, "menu", false);
+	ImGui::SetColumnOffset(1, 80.f);
+	if (ImGui::Button("Aimbot", { 64.f, 64.f })) category = 0;
+	if (ImGui::Button("ESP", { 64.f, 64.f })) category = 1;
+	if (ImGui::Button("Misc", { 64.f, 64.f })) category = 2;
+	if (ImGui::Button("Visual", { 64.f, 64.f })) category = 3;
+	if (ImGui::Button("Changer", { 64.f, 64.f })) category = 4;
+	if (ImGui::Button("Config", { 64.f, 64.f })) category = 5;
+	ImGui::Image(profilePicture.data, { 64.f, 64.f });
+	ImGui::NextColumn();
+	switch (category) {
+		default:
+		case -1:
+			break;
+		case 0: // Aimbot | TriggerBot
+			childLabel("Aimbot");
+			ImGui::SameLine();
+			childLabel("Trigger Bot");
+			renderAimbotWindow();
+			ImGui::SameLine();
+			renderTriggerBotWindow();
+			break;
+		case 1: // ESP | Chams | Glow
+			ImGui::BeginChild("ESPChild", { 232.f, -1.f }, false, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+			childLabel("ESP");
+			renderESPWindow();
+			ImGui::EndChild();
 
-	if (ImGui::Button("Aimbot", {64.f, 24.f}))
-		toggleAimbotWindow = !toggleAimbotWindow;
-	ImGui::SameLine();
-	if (ImGui::Button("Trigger", { 64.f, 24.f }))
-		toggleTriggerbotWindow = !toggleTriggerbotWindow;
-	ImGui::SameLine();
-	if (ImGui::Button("Glow", { 64.f, 24.f }))
-		toggleGlowWindow = !toggleGlowWindow;
-	ImGui::SameLine();
-	if (ImGui::Button("Chams", { 64.f, 24.f }))
-		toggleChamsWindow = !toggleChamsWindow;
-	ImGui::SameLine();
-	if (ImGui::Button("ESP", { 64.f, 24.f }))
-		toggleESPWindow = !toggleESPWindow;
-	ImGui::SameLine();
-	if (ImGui::Button("Misc", { 64.f, 24.f }))
-		toggleMiscWindow = !toggleMiscWindow;
-	
-	if (ImGui::Button("Visuals", { 64.f, 24.f }))
-		toggleVisualsWindow = !toggleVisualsWindow;
-	ImGui::SameLine();
-	if (ImGui::Button("Changer", { 64.f, 24.f }))
-		toggleChangerWindow = !toggleChangerWindow;
-	ImGui::SameLine();
-	if (ImGui::Button("Discord", { 64.f, 24.f }))
-		toggleDiscordWindow = !toggleDiscordWindow;
-	ImGui::SameLine();
-	if (ImGui::Button("GUI", { 64.f, 24.f }))
-		toggleGUIWindow = !toggleGUIWindow;
-	ImGui::SameLine();
-	if (ImGui::Button("Config", { 64.f, 24.f }))
-		toggleConfigWindow = !toggleConfigWindow;
-	//ImGui::SameLine();
-	//if (ImGui::Button("Sort", { 64.f, 24.f }))
-	//	sortWindows();
+			ImGui::SameLine();
+			ImGui::BeginChild("ChamsGlow", { 232.f, -1.f }, false, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+			childLabel("Chams");
+			renderChamsWindow();
+			childLabel("Glow");
+			renderGlowWindow();
+			ImGui::EndChild();
+			break;
+		case 2: // Misc | Discord | GUI
+			ImGui::BeginChild("Misc", { 232.f, -1.f }, false, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+			childLabel("Miscellaneous");
+			renderMiscWindow();
+			ImGui::EndChild();
+			ImGui::SameLine();
+			ImGui::BeginChild("MiscOther", { 232.f, -1.f }, false, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+			childLabel("Fake Lag");
+			renderFakeLagWindow();
+			childLabel("ClanTag");
+			renderClanTagWindow();
+			childLabel("Discord");
+			renderDiscordWindow();
 
+			ImGui::EndChild();
+			break;
+		case 3: // Visuals
+			childLabel("Visuals");
+			renderVisualsWindow();
+			break;
+		case 4: // Skins
+			childLabel("Changer");
+			renderChangerWindow();
+			break;
+		case 5: // Config
+			childLabel("Config");
+			ImGui::SameLine();
+			childLabel("GUI Style");
+			renderConfigWindow();
+			ImGui::SameLine();
+			renderGUIWindow();
+			break;
+	}
+	ImGui::Columns(1);
 	ImGui::End();
 }
 

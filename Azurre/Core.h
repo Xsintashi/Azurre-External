@@ -101,11 +101,18 @@ struct GameData {
 	std::string defusingPlayerName;
 };
 
+struct TextureInfo {
+	int width;
+	int height;
+	PDIRECT3DTEXTURE9 data;
+};
+
 inline WORD equipment[8] = { 0,0,0,0,0,0,0,0 };
 inline int localPlayerIndex;
 inline bool showMenu = false;
 inline std::string mapName = "";
 inline std::string gameDir = "";
+inline std::string windowsUserName = "";
 inline ConnectionState gameState = ConnectionState::None;
 inline ImVec2 screenSize;
 inline ImVec2 gameScreenSize = {};
@@ -113,6 +120,7 @@ inline ImVec2 gameScreenPos = {};
 inline ImVec2 gameScreenPosEnd = {};
 inline GameData gameData;
 inline Matrix4x4 viewMatix;
+inline TextureInfo profilePicture;
 inline int maxEntity;
 inline int highestEntityIndex;
 inline bool parsedMap = false;

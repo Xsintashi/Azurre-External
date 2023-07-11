@@ -8,7 +8,6 @@
 #include "Hacks/Clantag.h"
 #include "Hacks/Minimap.h"
 #include "Hacks/Misc.h"
-#include "Hacks/TriggerBot.h"
 #include "Hacks/Visuals.h"
 
 
@@ -22,6 +21,12 @@
 #include "DiscordSDK/RPC.h"
 #include "Hacks/SkinChanger.h"
 #include "Console.h"
+#include "TextureManager.h"
+
+#include <filesystem>
+#include <windows.h>
+#include <gdiplus.h>
+#include <stdio.h>
 
 void Core::init() {
 	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
@@ -45,6 +50,12 @@ void Core::init() {
 	gameState = mem.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
 	const auto dir = mem.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
 	gameDir = dir.data();
+
+	char username[257];
+	DWORD usernameLength = 257;
+	GetUserName(username, &usernameLength);
+	windowsUserName = username;
+
 };
 
 void Core::update() {
@@ -75,6 +86,10 @@ void Core::update() {
 		} else
 			cmd.AddLog("~[!] Couldn't parse map!");
 		
+	}
+	if (profilePicture.data == NULL) {
+		std::string bmpPath = std::string(std::filesystem::temp_directory_path().string()).append(windowsUserName).append(".bmp");
+		TextureManager::LoadTextureFromFile(bmpPath.c_str(), &profilePicture.data, &profilePicture.width, &profilePicture.height);
 	}
 	RECT rct;
 	if (GetWindowRect(IConsole, &rct)) {
