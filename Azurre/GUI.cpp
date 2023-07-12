@@ -797,7 +797,7 @@ void GUI::CreateImGui() noexcept
 	if (PWSTR pathToFonts; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Fonts, 0, nullptr, &pathToFonts))) {
 		const std::filesystem::path path{ pathToFonts };
 		CoTaskMemFree(pathToFonts);
-		font = io.Fonts->AddFontFromMemoryTTF((void*)resource::ubuntuFont, sizeof(resource::ubuntuFont), 15.0f, &cfgFont, Helpers::getFontGlyphRanges());
+		font = io.Fonts->AddFontFromMemoryTTF((void*)resource::ubuntuFont, sizeof(resource::ubuntuFont), 13.0f, &cfgFont, Helpers::getFontGlyphRanges());
 		if (!font)
 			io.Fonts->AddFontDefault(&cfgFont);
 	}
