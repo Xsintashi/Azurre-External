@@ -1469,8 +1469,8 @@ void renderClanTagWindow() noexcept {
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::PushItemWidth(120.f);
 		ImGui::Combo("ClanTag", &cfg->clanTag.mode, "None\0Azurre\0Clock\0Reverse\0Velocity\0Position\0HP\0\\n Overflow\0Custom\0");
-		ImGui::Combo("Type", &cfg->clanTag.custom.type, "Static\0Rotate\0Rotate Backwards\0Add\0Remove\0");
 		if (cfg->clanTag.mode == 8) {
+			ImGui::Combo("Type", &cfg->clanTag.custom.type, "Static\0Rotate\0Rotate Backwards\0Add\0Remove\0");
 			if (ImGui::InputText("Name", &cfg->clanTag.custom.tag))
 				Clan::update(false, true);
 			if (ImGui::InputText("Team", &cfg->clanTag.custom.teamTag))
@@ -1653,7 +1653,7 @@ void renderMiscWindow() noexcept {
 }
 
 void renderVisualsWindow() noexcept {
-	ImGui::BeginChild("Visuals", { 232.f, 250.f}, true, ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild("Visuals", { 228.f, 250.f}, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::PushID("PostProcessingPopup");
@@ -1689,7 +1689,7 @@ void renderVisualsWindow() noexcept {
 }
 
 void renderChangerWindow() noexcept {
-	ImGui::BeginChild("Skin Changer", { 232.f, 272.f }, true, ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild("Skin Changer", { 232.f, 272.f }, true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	{
 		ImGui::BeginDisabled(cfg->restrictions);
 		static int itemIndex = 0;
@@ -1998,6 +1998,15 @@ void renderConfigWindow() noexcept {
 	ImGui::EndChild();
 }
 
+const static std::array<PNGTexture, 6> guiIcons{
+	resource::aimbotIcon,
+	resource::espIcon,
+	resource::miscIcon,
+	resource::visualsIcon,
+	resource::skinsIcon,
+	resource::configIcon
+};
+
 void GUI::RenderMainMenu() noexcept {
 
 	static int category = -1;
@@ -2011,13 +2020,12 @@ void GUI::RenderMainMenu() noexcept {
 	);
 	ImGui::Columns(2, "menu", false);
 	ImGui::SetColumnOffset(1, 80.f);
-	if (ImGui::Button("Aimbot", { 64.f, 64.f })) category = 0;
-	if (ImGui::Button("ESP", { 64.f, 64.f })) category = 1;
-	if (ImGui::Button("Misc", { 64.f, 64.f })) category = 2;
-	if (ImGui::Button("Visual", { 64.f, 64.f })) category = 3;
-	if (ImGui::Button("Changer", { 64.f, 64.f })) category = 4;
-	if (ImGui::Button("Config", { 64.f, 64.f })) category = 5;
-	ImGui::Image(profilePicture.data, { 64.f, 64.f });
+	if (ImGui::ImageButton(guiIcons[0].getTexture(), {56.f, 56.f})) category = 0;
+	if (ImGui::ImageButton(guiIcons[1].getTexture(), {56.f, 56.f})) category = 1;
+	if (ImGui::ImageButton(guiIcons[2].getTexture(), {56.f, 56.f})) category = 2;
+	if (ImGui::ImageButton(guiIcons[3].getTexture(), {56.f, 56.f})) category = 3;
+	if (ImGui::ImageButton(guiIcons[4].getTexture(), {56.f, 56.f})) category = 4;
+	if (ImGui::ImageButton(guiIcons[5].getTexture(), {56.f, 56.f})) category = 5;
 	ImGui::NextColumn();
 	switch (category) {
 		default:
