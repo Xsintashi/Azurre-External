@@ -174,11 +174,13 @@ void Clan::update(bool reset, bool update) noexcept
             break;
         case 3: // add
             addRemoveTemp = clanTemp;
+            if (!addRemoveTemp.size()) return;
             clan = addRemoveTemp.substr(0, addRemoveMod % addRemoveTemp.size() + 1);
             break;
         case 4: // remove
             std::string addRemoveTemp;
             addRemoveTemp = clanTemp;
+            if (!addRemoveTemp.size()) return;
             clan = addRemoveTemp.substr(0, clanTemp.size() - addRemoveMod % addRemoveTemp.size());
             break;
         }
