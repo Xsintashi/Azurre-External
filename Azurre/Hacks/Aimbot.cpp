@@ -98,6 +98,7 @@ void Aimbot::run() noexcept {
 
 				const auto& crosshair = localPlayer->crosshairID();
 				if (!crosshair || crosshair > 64) continue;
+				if (const auto ent = getEntity(crosshair - 1); ent->isSameTeam() && !cfg->a.friendlyFire) continue;
 				if (cfg->a.autoShot || (cfg->a.autoShot && cfg->a.autoStop && localPlayer->velocity().length2D() < 15.f)) {
 					if (cfg->restrictions) {
 						mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
