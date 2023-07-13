@@ -221,8 +221,11 @@ void Misc::forceReload(bool onKey) noexcept {
 			equipment[i] = 0;
 		}
 		mem.Write<std::int32_t>(IClientState.address + 0x174, -1);
+		mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, true);
 		changeWindowTitle();
 	}
+	if (GetAsyncKeyState(VK_HOME))
+		mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, true);
 }
 
 void Misc::showKeybinds() noexcept

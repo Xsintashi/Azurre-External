@@ -2,26 +2,27 @@
 #include "Core.h"
 #include "GUI.h"
 #include "Offsets.h"
+#include "Config.h"
+#include "Console.h"
+#include "TextureManager.h"
 
 #include "Hacks/Aimbot.h"
 #include "Hacks/Chams.h"
 #include "Hacks/Clantag.h"
 #include "Hacks/Minimap.h"
 #include "Hacks/Misc.h"
+#include "Hacks/SkinChanger.h"
 #include "Hacks/Visuals.h"
 
 
 #include "SDK/LocalPlayer.h"
-#include "SDK/interfaces.h"
+#include "SDK/Interfaces.h"
 #include "SDK/Entity.h"
 #include "SDK/GlobalVars.h"
 #include "SDK/PlayerInfo.h"
 #include "SDK/Matrix.h"
-#include "Config.h"
+
 #include "DiscordSDK/RPC.h"
-#include "Hacks/SkinChanger.h"
-#include "Console.h"
-#include "TextureManager.h"
 
 #include <filesystem>
 #include <windows.h>
@@ -59,7 +60,6 @@ void Core::init() {
 };
 
 void Core::update() {
-	static std::string mapBuff;
 	IConsole = FindWindowA("Valve001", NULL);
 	gameState = mem.Read<ConnectionState>(IClientState.address + Offset::signatures::dwClientState_State);
 	IClientState.address = mem.Read<uintptr_t>(IEngine.address + Offset::signatures::dwClientState);
@@ -74,6 +74,7 @@ void Core::update() {
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
 	const auto map = mem.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
 	mapName = map.data();
+	static std::string mapBuff;
 	if (mapBuff != mapName) {
 		parsedMap = false;
 		mapBuff = mapName;

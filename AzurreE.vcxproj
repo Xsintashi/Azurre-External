@@ -177,7 +177,6 @@
     <ClInclude Include="Azurre\SDK\PlayerInfo.h" />
     <ClInclude Include="Azurre\SDK\SkinID.h" />
     <ClInclude Include="Azurre\SDK\Studio.h" />
-    <ClInclude Include="Azurre\SDK\UserCmd.h" />
     <ClInclude Include="Azurre\SDK\UserInterface.h" />
     <ClInclude Include="Azurre\SDK\Vector.h" />
     <ClInclude Include="Azurre\SDK\ViewMatrix.h" />
