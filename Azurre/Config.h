@@ -151,7 +151,15 @@ public:
 			ColorToggle3 toggle;
 			float radius = 16.f;
 			float size = 32.f;
-		}offscreenEnemies;
+		} offscreenEnemies;
+
+		struct Indicators {
+			bool enabled = false;
+			bool noTitleBar = false;
+			bool noBackground = false;
+			ImVec2 pos;
+			int bytewise = 0;
+		} indicators;
 
 		Marker hitMarker;
 		Marker killMarker;

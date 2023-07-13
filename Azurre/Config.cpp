@@ -275,6 +275,15 @@ static void from_json(const json& j, Config::MiscConfig::OffscreenEnemies& oe)
     read(j, "Size", oe.size);
 }
 
+static void from_json(const json& j, Config::MiscConfig::Indicators& in)
+{
+    read(j, "Enabled", in.enabled);
+    read(j, "No Title Bar", in.noTitleBar);
+    read(j, "No Background", in.noBackground);
+    read(j, "Flags", in.bytewise);
+    read<value_t::object>(j, "Pos", in.pos);
+}
+
 static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Menu Key", c.menuKey);
     read(j, "Bunny Hop", c.bhop);
@@ -294,6 +303,7 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read<value_t::object>(j, "Fake Lag", c.fakeLag);
     read<value_t::object>(j, "Spectator list", c.spectatorList);
     read<value_t::object>(j, "Bomb Timer", c.bombTimer);
+    read<value_t::object>(j, "Indicators", c.indicators);
 }
 
 static void from_json(const json& j, Config::SkinChangerConfig& c) {
@@ -629,6 +639,17 @@ static void to_json(json& j, const Config::MiscConfig::OffscreenEnemies& o, cons
     WRITE("Size", size);
 }
 
+static void to_json(json& j, const Config::MiscConfig::Indicators& o, const Config::MiscConfig::Indicators& dummy = {})
+{
+    WRITE("Enabled", enabled);
+    WRITE("No Title Bar", noTitleBar);
+    WRITE("No Background", noBackground);
+    WRITE("Flags", bytewise);
+    if (const auto window = ImGui::FindWindowByName("Indicators")) {
+        j["Pos"] = window->Pos;
+    }
+}
+
 static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConfig dummy = {} ) {
     WRITE("Menu Key", menuKey);
     WRITE("Bunny Hop", bhop);
@@ -648,6 +669,7 @@ static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConf
     WRITE("Player List", playerList);
     WRITE("Spectator list", spectatorList);
     WRITE("Bomb Timer", bombTimer);
+    WRITE("Indicators", indicators);
 }
 
 static void to_json(json& j, const Config::SkinChangerConfig& o, const Config::SkinChangerConfig dummy = {} ) {

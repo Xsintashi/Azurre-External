@@ -56,4 +56,8 @@ namespace Helpers {
 			(firstByte & 0xF8) == 0xF0 ? 4 :
 			0;
 	}
+
+	static bool getByteFromBytewise(int input, int byte) {
+		return (input & 1 << byte) == 1 << byte;
+	}
 }

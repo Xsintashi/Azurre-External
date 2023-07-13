@@ -9,6 +9,7 @@ namespace Misc {
 	void fakeLag() noexcept;
 	void hitMarkerSound() noexcept;
 	void killMarkerSound() noexcept;
+	void indicators() noexcept;
 	void changeWindowTitle(bool restore = false) noexcept;
 	void forceReload(bool onKey = false) noexcept;
 	void showKeybinds() noexcept;

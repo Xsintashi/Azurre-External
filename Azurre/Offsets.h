@@ -62,7 +62,9 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_flNextAttack = 0x2D80;
 		constexpr ::std::ptrdiff_t m_flNextPrimaryAttack = 0x3248;
 		constexpr ::std::ptrdiff_t m_flSimulationTime = 0x268;
+		constexpr ::std::ptrdiff_t m_flStamina = 0x103D8;
 		constexpr ::std::ptrdiff_t m_flTimerLength = 0x29A4;
+		constexpr ::std::ptrdiff_t m_flVelocityModifier = 0x103EC;
 		constexpr ::std::ptrdiff_t m_hActiveWeapon = 0x2F08;
 		constexpr ::std::ptrdiff_t m_hBombDefuser = 0x29C4;
 		constexpr ::std::ptrdiff_t m_hMyWeapons = 0x2E08;

@@ -147,6 +147,8 @@ public:
 	OFFSET(crosshairID, (), Offset::netvars::m_iCrosshairId, int)
 	OFFSET(shotsFired, (), Offset::netvars::m_iShotsFired, int)
 	OFFSET(velocity, (), Offset::netvars::m_vecVelocity, Vector)
+	OFFSET(stamina, (), Offset::netvars::m_flStamina, float)
+	OFFSET(velocityModifier, (), Offset::netvars::m_flVelocityModifier, float)
     OFFSET(aimPunch, (), Offset::netvars::m_aimPunchAngle, Vector)
     OFFSET(origin, (), Offset::netvars::m_vecOrigin, Vector)
     OFFSET(viewOffset, (), Offset::netvars::m_vecViewOffset, Vector)

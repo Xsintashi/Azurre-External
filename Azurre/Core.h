@@ -14,6 +14,11 @@
 #define ENT_ENTRY_MASK			(NUM_ENT_ENTRIES - 1)		// 0xFFF
 #define INVALID_EHANDLE_INDEX	0xFFFFFFFF					// W chuj duzo
 
+#define PLAYER_EYE_HEIGHT 64.093811f
+#define PLAYER_EYE_HEIGHT_CROUCH 46.076218f
+#define PLAYER_HEIGHT 72.0f
+#define PLAYER_HEIGHT_CROUCH 54.0f
+
 #define IClient interfaces->client
 #define IEngine interfaces->engine
 #define IClientState interfaces->clientState

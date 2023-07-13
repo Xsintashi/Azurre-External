@@ -1641,6 +1641,20 @@ void renderMiscWindow() noexcept {
 			ImGui::EndPopup();
 		}
 		ImGui::PopID();
+		ImGui::PushID("Indicators");
+		ImGui::Checkbox("Indicators", &cfg->m.indicators.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+
+		if (ImGui::BeginPopup("")) {
+			ImGui::Checkbox("No Title Bar", &cfg->m.indicators.noTitleBar);
+			ImGui::Checkbox("No Background", &cfg->m.indicators.noBackground);
+			ImGui::SetNextItemWidth(80.0f);
+			ImGuiCustom::multiCombo("Flags", cfg->m.indicators.bytewise, "Chocked Packets\0Height\0Velocity\0Slowdown\0Stamina\0");
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
 		ImGui::BeginDisabled(cfg->restrictions);
 		if (ImGui::Button("Fake Prime")) {
 			constexpr uint8_t patch[]{ 0x31, 0xC0, 0x40, 0xC3 };

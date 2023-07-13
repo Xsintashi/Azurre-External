@@ -141,6 +141,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		if (cfg->m.keybinds.enabled) Misc::showKeybinds();
 		if (cfg->m.spectatorList.enabled) Misc::spectatorList();
 		if (cfg->m.bombTimer.enabled) Misc::bombTimer();
+		if (cfg->m.indicators.enabled)  Misc::indicators();
 		if (showMenu) GUI::RenderMainMenu();
 #if defined(_DEBUG)
 		//cmd.Draw();

@@ -192,6 +192,81 @@ void Misc::killMarkerSound() noexcept {
 
 }
 
+void Misc::indicators() noexcept {
+
+	if (cfg->m.indicators.pos != ImVec2{}) {
+		ImGui::SetNextWindowPos(cfg->m.indicators.pos);
+		cfg->m.indicators.pos = {};
+	}
+
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
+	if (!GUI::isRunning)
+		windowFlags |= ImGuiWindowFlags_NoInputs;
+
+	if (cfg->m.indicators.noTitleBar)
+		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+	if (cfg->m.indicators.noBackground)
+		windowFlags |= ImGuiWindowFlags_NoBackground;
+
+	ImGui::SetNextWindowSize({ 192.0f, 0.0f });
+	ImGui::Begin("Indicators", &cfg->m.indicators.enabled, windowFlags);
+
+	if (gameState != ConnectionState::FullyConnected || !localPlayer->isValid() || localPlayer->isDead()) {
+		float sinuses[5];
+		for (int i = 0; i < 5; i++) {
+			sinuses[i] = sin((i + 1) * globalVars->realTime / 2.f);
+		}
+
+		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 0)) {
+			int chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
+			ImGui::TextUnformatted("Choked packets");
+			ImGui::progressBarFullWidth(sinuses[0], 5.f);
+		}
+		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 1)) {
+			ImGui::TextUnformatted("Height");
+			ImGui::progressBarFullWidth(sinuses[1], 5.f);
+		}
+		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 2)) {
+			ImGui::TextUnformatted("Velocity");
+			float velocity = localPlayer->velocity().length2D() / 300.f;
+			ImGui::progressBarFullWidth(sinuses[2], 5.f);
+		}
+		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 3)) {
+			ImGui::TextUnformatted("Slowdown");
+			ImGui::progressBarFullWidth(sinuses[3], 5.f);
+		}
+		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 4)) {
+			ImGui::TextUnformatted("Stamina");
+			ImGui::progressBarFullWidth(sinuses[4], 5.f);
+		}
+		ImGui::End();
+		return;
+	}
+
+	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 0)){
+		int chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
+		ImGui::TextUnformatted("Choked packets");
+		ImGui::progressBarFullWidth(static_cast<float>(chokedPackets / 16), 5.f);
+	}
+	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 1)) {
+		ImGui::TextUnformatted("Height");
+		ImGui::progressBarFullWidth((localPlayer->bonePosition(8).z - localPlayer->origin().z - PLAYER_EYE_HEIGHT_CROUCH) / (PLAYER_EYE_HEIGHT - PLAYER_EYE_HEIGHT_CROUCH), 5.f);
+	}
+	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 2)) {
+		ImGui::TextUnformatted("Velocity");
+		float velocity = localPlayer->velocity().length2D() / 300.f;
+		ImGui::progressBarFullWidth(std::clamp(velocity, 0.f, 1.f), 5.f);
+	}
+	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 3)) {
+		ImGui::TextUnformatted("Slowdown");
+		ImGui::progressBarFullWidth(1.f - (localPlayer->velocityModifier() / 100), 5.f);
+	}
+	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 4)) {
+		ImGui::TextUnformatted("Stamina");
+		ImGui::progressBarFullWidth(1.f - (localPlayer->stamina() / 80), 5.f);
+	}
+	ImGui::End();
+}
 
 void Misc::changeWindowTitle(bool restore) noexcept {
 	
@@ -228,10 +303,7 @@ void Misc::forceReload(bool onKey) noexcept {
 		mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, true);
 }
 
-void Misc::showKeybinds() noexcept
-{
-	if (!cfg->m.keybinds.enabled)
-		return;
+void Misc::showKeybinds() noexcept {
 
 	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabled && cfg->a.hotkey.canShowKeybind()) || (cfg->m.playerList.enabled && cfg->m.playerList.hotkey.canShowKeybind()) || (cfg->m.minimap.enabled && cfg->m.minimap.hotkey.canShowKeybind());
 
@@ -425,11 +497,6 @@ void Misc::spectatorList() noexcept {
 }
 
 void Misc::bombTimer() noexcept {
-
-	if (!showMenu) {
-		ImGui::SetNextWindowBgAlpha(0.3f);
-	}
-
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoFocusOnAppearing;
 	if (!showMenu)
 		windowFlags |= ImGuiWindowFlags_NoInputs;
