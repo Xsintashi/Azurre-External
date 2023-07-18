@@ -19,7 +19,7 @@ void Aimbot::run() noexcept {
 		if (!localPlayer || localPlayer->isDead() || localPlayer->isDefusing() || localPlayer->waitForNoAttack()) continue;
 
 		const auto eyePosition = localPlayer->origin() + localPlayer->viewOffset();
-		const auto& viewAngles = mem.Read<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
+		const auto& viewAngles = mem.Read<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
 
 		if (!gameData.observerData.empty() && cfg->a.disableWhileBeingSpectated)
 			continue;
