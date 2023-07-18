@@ -93,6 +93,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	std::thread(Discord::Update).detach();
 	std::thread(Skin::update).detach();
 	std::thread(TriggerBot::run).detach();
+	std::thread(Visuals::trailsThread).detach();
 
 #ifdef _DEBUG
 	cfg->load(u8"debug", false);
@@ -136,6 +137,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		GUI::update();
 		GUI::BeginRender();
 		GUI::overlay();
+		Visuals::renderTrails();
 		if (cfg->m.minimap.enabled) Minimap::Render();
 		if (cfg->m.playerList.enabled) GUI::RenderPlayerList();
 		if (cfg->m.keybinds.enabled) Misc::showKeybinds();

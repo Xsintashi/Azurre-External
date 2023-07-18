@@ -203,6 +203,13 @@ public:
 			float worldExposure = 0.0f;
 			float bloomScale = 0.0f;
 		} customPostProcessing;
+
+		struct Trails {
+			ColorToggle3 color;
+			int size = 256;
+			float thickness = 2.f;
+			int rainbowType = 0;
+		} trails;
 	} v;
 
     struct SkinChangerConfig {

@@ -81,3 +81,60 @@ void Visuals::fov() noexcept {
 
     mem.Write<int>(localPlayer.get() + Offset::netvars::m_iFOV, cfg->v.fov);
 }
+
+std::vector<Vector> trailsData;
+
+void Visuals::trailsThread() noexcept {
+    while (GUI::isRunning) {
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+        if (!cfg->v.trails.color.enabled)
+            continue;
+
+        if (gameState != ConnectionState::FullyConnected)
+            continue;
+
+        if (!localPlayer)
+            continue;
+
+        if (localPlayer->isDead())
+            continue;
+
+        static unsigned size = cfg->v.trails.size;
+        if (size != cfg->v.trails.size) {
+            size = cfg->v.trails.size;
+            trailsData.clear();
+        }
+
+        if (trailsData.size() && trailsData.size() > cfg->v.trails.size)
+            trailsData.erase(trailsData.begin());
+
+        trailsData.push_back(localPlayer->origin());
+    }
+
+}
+
+void Visuals::renderTrails() {
+    if (!cfg->v.trails.color.enabled)
+        return;
+
+    for (unsigned i = 0; i < (trailsData.size() - 1); i++) {
+
+        auto color = Helpers::calculateColor(cfg->v.trails.color);
+
+        if (cfg->v.trails.rainbowType) { //Chroma Rainbow
+            constexpr float pi = std::numbers::pi_v<float>;
+            const float r = static_cast<float>(std::sin((cfg->v.trails.color.rainbowSpeed * i / 16) - 5.f * globalVars->realTime / 2.f) * 0.5f + 0.5f);
+            const float g = static_cast<float>(std::sin((cfg->v.trails.color.rainbowSpeed * i / 16) - 5.f * globalVars->realTime / 2.f + 2 * pi / 3) * 0.5f + 0.5f);
+            const float b = static_cast<float>(std::sin((cfg->v.trails.color.rainbowSpeed * i / 16) - 5.f * globalVars->realTime / 2.f + 4 * pi / 3) * 0.5f + 0.5f);
+
+            color = ImGui::GetColorU32(ImVec4{ r, g, b, 1.f });
+        }
+
+        Vector pos = Helpers::world2Screen(gameScreenSize, trailsData[i], viewMatix);
+        Vector pos_ = Helpers::world2Screen(gameScreenSize, trailsData[i + 1], viewMatix);
+        if (pos.z >= 0.001f && pos_.z >= 0.001f)
+            ImGui::GetBackgroundDrawList()->AddLine(ImVec2{ pos.x, pos.y }, ImVec2{ pos_.x, pos_.y }, color, cfg->v.trails.thickness);
+    }
+}

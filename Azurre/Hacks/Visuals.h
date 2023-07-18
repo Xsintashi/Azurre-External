@@ -5,4 +5,6 @@ namespace Visuals{
 	void noFlash();
 	void doNotRenderTeammates();
 	void fov() noexcept;
+	void trailsThread() noexcept;
+	void renderTrails();
 }

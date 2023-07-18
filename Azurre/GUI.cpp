@@ -1671,7 +1671,7 @@ void renderMiscWindow() noexcept {
 }
 
 void renderVisualsWindow() noexcept {
-	ImGui::BeginChild("Visuals", { 228.f, 250.f}, true, ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild("Visuals", { 228.f, 274.f}, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::PushID("PostProcessingPopup");
@@ -1702,6 +1702,21 @@ void renderVisualsWindow() noexcept {
 		ImGui::SliderInt("##fov", &cfg->v.fov, 30, 150, "Fov: %d");
 		ImGui::PopItemWidth();
 		ImGui::EndDisabled();
+		ImGui::PushID("Trails");
+		ImGuiCustom::colorPicker("Trails", cfg->v.trails.color.color.data(), nullptr, &cfg->v.trails.color.rainbow, &cfg->v.trails.color.rainbowSpeed, &cfg->v.trails.color.enabled);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
+			ImGui::OpenPopup("");
+
+		if (ImGui::BeginPopup("")) {
+			ImGui::BeginDisabled(!cfg->v.trails.color.rainbow);
+			ImGui::Combo("Rainbow Mode", &cfg->v.trails.rainbowType, "Solid\0Chroma\0");
+			ImGui::EndDisabled();
+			ImGui::SliderInt("##length", &cfg->v.trails.size, 2, 512, "Length: %d");
+			ImGui::SliderFloat("##thickness", &cfg->v.trails.thickness, 0.1f, 16.0f, "Thickness: %.1f");
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
 	}
 	ImGui::EndChild();
 }

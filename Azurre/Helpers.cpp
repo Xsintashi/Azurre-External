@@ -210,7 +210,8 @@ std::array<float, 4U> Helpers::rainbowColor(float speed, float alpha) noexcept
 static auto rainbowColor(float time, float speed, float alpha) noexcept
 {
 	constexpr float pi = std::numbers::pi_v<float>;
-	return std::array{ std::sin(speed* time) * 0.5f + 0.5f,
+	return std::array{
+		std::sin(speed* time) * 0.5f + 0.5f,
 		std::sin(speed* time + 2 * pi / 3) * 0.5f + 0.5f,
 		std::sin(speed* time + 4 * pi / 3) * 0.5f + 0.5f,
 		alpha };

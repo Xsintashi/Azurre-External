@@ -335,6 +335,13 @@ static void from_json(const json& j, Config::VisualsConfig::CustomPostProcessing
     read(j, "World Exposures", c.worldExposure);
 }
 
+static void from_json(const json& j, Config::VisualsConfig::Trails& c) {
+    read<value_t::object>(j, "Color", c.color);
+    read(j, "Size", c.size);
+    read(j, "Thickness", c.thickness);
+    read(j, "Rainbow Type", c.rainbowType);
+}
+
 static void from_json(const json& j, Config::VisualsConfig& c) {
     read(j, "No Allies", c.noAllies);
     read(j, "No Particles", c.noParticles);
@@ -347,6 +354,7 @@ static void from_json(const json& j, Config::VisualsConfig& c) {
     read(j, "Third Person", c.thirdPerson);
     read(j, "Third Person Key", c.thirdPersonKey);
     read<value_t::object>(j, "Custom PostProcessing", c.customPostProcessing);
+    read<value_t::object>(j, "Trails", c.trails);
 }
 
 void Config::load(size_t id, bool incremental) noexcept
@@ -703,6 +711,13 @@ static void to_json(json& j, const Config::VisualsConfig::CustomPostProcessing& 
     WRITE("World Exposures", worldExposure);
 }
 
+static void to_json(json& j, const Config::VisualsConfig::Trails& o, const Config::VisualsConfig::Trails& dummy) {
+    WRITE("Color", color);
+    WRITE("Size", size);
+    WRITE("Thickness", thickness);
+    WRITE("Rainbow Type", rainbowType);
+}
+
 static void to_json(json& j, const Config::VisualsConfig& o, const Config::VisualsConfig dummy = {} ) {
     WRITE("No Allies", noAllies);
     WRITE("No Particles", noParticles);
@@ -715,6 +730,7 @@ static void to_json(json& j, const Config::VisualsConfig& o, const Config::Visua
     WRITE("Third Person", thirdPerson);
     WRITE("Third Person Key", thirdPersonKey);
     WRITE("Custom PostProcessing", customPostProcessing);
+    WRITE("Trails", trails);
 }
 
 #pragma endregion
