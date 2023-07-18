@@ -226,6 +226,7 @@ public:
 
 	struct Debug {
 		bool boolDebug0 = false;
+		float floatDebug0 = 1.f;
 		KeyBind keyDebug0 = std::string("Debug 0");
 	} debug;
 

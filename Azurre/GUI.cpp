@@ -1023,6 +1023,8 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::PopID();
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 	ImGui::hotkey("Key Debug 0", cfg->debug.keyDebug0);
+	ImGui::InputFloat("FloatDebug 0", &cfg->debug.floatDebug0);
+	ImGui::GetIO().FontGlobalScale = cfg->debug.floatDebug0;
 	static std::string cmd = "";
 	ImGui::InputText("convar", &cmd);
 	ImGui::SameLine();
