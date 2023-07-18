@@ -242,6 +242,8 @@ void ESP::render() noexcept {
 	}
 
 	for (auto& dk : gameData.defuseKits) {
+		if (cfg->esp.onCT && localPlayer->teamNumber() == Team::TT)
+			break;
 		if (dk->origin() == Vector{ 0.f, 0.f, 0.f })
 			continue;
 		render_____(dk, "Defuse Kit", cfg->esp.others["Defuse Kits"]);
