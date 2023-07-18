@@ -154,7 +154,7 @@ public:
     OFFSET(viewOffset, (), Offset::netvars::m_vecViewOffset, Vector)
     OFFSET(hasHelmet, (), Offset::netvars::m_bHasHelmet, bool)
     OFFSET(hasDefuser, (), Offset::netvars::m_bHasDefuser, bool)
-    OFFSET(spottedByMask, (), Offset::netvars::m_bSpottedByMask, bool)
+    OFFSET(spottedByMask, (), Offset::netvars::m_bSpottedByMask, std::uint32_t)
     OFFSET(spotted, (), Offset::netvars::m_bSpotted, bool)
     OFFSET(isDefusing, (), Offset::netvars::m_bIsDefusing, bool)
     OFFSET(waitForNoAttack, (), Offset::netvars::m_bWaitForNoAttack, bool)
@@ -212,7 +212,7 @@ public:
     }
 
     bool isVisible() noexcept {
-        return (localPlayer && localPlayer->isAlive()) ?  (bspParser->isVisible(localPlayer->origin(), this->origin()) || this->spottedByMask()) : false;
+        return (localPlayer && localPlayer->isAlive()) ?  (bspParser->isVisible(localPlayer->origin(), this->origin()) || (this->spottedByMask() & (1 << localPlayerIndex))) : false;
     }
 
     bool isSameTeam() noexcept {
