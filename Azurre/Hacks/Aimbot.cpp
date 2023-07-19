@@ -69,12 +69,11 @@ void Aimbot::run() noexcept {
 				}
 			}
 
-			DWORD xMove = static_cast<DWORD>(fabs(2 * bestAngle.y) * (-bestAngle.y * 2 / (cfg->a.smooth * bestFov / 2)));
-			DWORD yMove = static_cast<DWORD>(fabs(2 * bestAngle.x) * (bestAngle.x * 2 / (cfg->a.smooth * bestFov / 2)));
-			if (localPlayer->isScoped()) {
-				xMove += bestAngle.y < 0.f ? 1 : -1;
-				yMove += bestAngle.x < 0.f ? -1 : 1;
-			}
+			DWORD xMove = static_cast<DWORD>(fabs(2 * bestAngle.y) * (-bestAngle.y * 2 / (cfg->a.smooth * bestFov)));
+			DWORD yMove = static_cast<DWORD>(fabs(2 * bestAngle.x) * (bestAngle.x * 2 / (cfg->a.smooth * bestFov)));
+			xMove += bestAngle.y < 0.f ? 4 : -4;
+			yMove += bestAngle.x < 0.f ? -4 : 4;
+			
 			if (bestAngle.notNull() && (cfg->a.hotkey.isActive() && cfg->a.hotkey.isSet() || !cfg->a.hotkey.isSet())) {
 				if (cfg->restrictions && !showMenu)
 					mouse_event(MOUSEEVENTF_MOVE, xMove, yMove, NULL, NULL);

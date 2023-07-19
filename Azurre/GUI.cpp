@@ -1021,6 +1021,11 @@ void GUI::RenderDebugWindow() noexcept {
 		mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, { viewAngles.x, viewAngles.y, roll });
 	}
 	ImGui::PopID();
+
+	Entity* weapon = localPlayer->getActiveWeapon();
+	const float accurany = weapon->accuracyPenalty();
+	ImGui::Text("Weapon Accuracy Penalty: %.8f", accurany);
+
 	ImGui::Checkbox("Bool Debug 0", &cfg->debug.boolDebug0);
 	ImGui::hotkey("Key Debug 0", cfg->debug.keyDebug0);
 	ImGui::InputFloat("FloatDebug 0", &cfg->debug.floatDebug0);

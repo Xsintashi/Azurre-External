@@ -128,6 +128,10 @@ void Visuals::renderTrails() {
     if (localPlayer->isDead())
         return;
 
+    if (trailsData.empty())
+        return;
+
+
     for (unsigned i = 0; i < (trailsData.size() - 1); i++) {
 
         auto color = Helpers::calculateColor(cfg->v.trails.color);

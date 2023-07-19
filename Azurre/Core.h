@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#ifdef DEBUG
+#ifdef _DEBUG
 #define THREAD_LOOP					GUI::isRunning
 #else
 #define THREAD_LOOP					!IsDebuggerPresent() && GUI::isRunning
