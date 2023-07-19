@@ -27,8 +27,8 @@ void Discord::Run() {
 }
 
 void Discord::Update(){
-	auto& config = cfg->d;
-	while (GUI::isRunning) {
+	const auto& config = cfg->d;
+	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000)); // cap to 1 loop per 5 sec
 		if (!config.enabled) {
 			Discord_ClearPresence();

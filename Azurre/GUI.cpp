@@ -1429,8 +1429,10 @@ void renderESPWindow() noexcept {
 			ImGui::Combo("Others", &currentCategory, categories.data(), categories.size());
 
 			ImGuiCustom::colorPicker("Name", cfg->esp.others[categories[currentCategory]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.others[categories[currentCategory]].other.names.enabled);
-			ImGui::SameLine();
-			ImGui::Checkbox("Enable on CT site", &cfg->esp.onCT);
+			if (currentCategory == 2) {
+				ImGui::SameLine();
+				ImGui::Checkbox("Enable on CT site", &cfg->esp.onCT);
+			}
 			ImGui::Checkbox("Boxes", &cfg->esp.others[categories[currentCategory]].box.enabled);
 			ImGui::PushID("boxes weapons");
 			ImGui::SameLine();

@@ -12,7 +12,7 @@
 #include <chrono>
 
 void Aimbot::run() noexcept {
-	while (GUI::isRunning) {
+	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (!cfg->a.enabled) continue;
 

@@ -8,24 +8,31 @@
 #include <string>
 #include <vector>
 
-#define MAX_EDICT_BITS			11							// B
-#define NUM_ENT_ENTRY_BITS		(MAX_EDICT_BITS + 1)		// C
-#define NUM_ENT_ENTRIES			(1 << NUM_ENT_ENTRY_BITS)	// 0x1000
-#define ENT_ENTRY_MASK			(NUM_ENT_ENTRIES - 1)		// 0xFFF
-#define INVALID_EHANDLE_INDEX	0xFFFFFFFF					// W chuj duzo
+#ifdef DEBUG
+#define THREAD_LOOP					GUI::isRunning
+#else
+#define THREAD_LOOP					!IsDebuggerPresent() && GUI::isRunning
+#endif
 
-#define PLAYER_EYE_HEIGHT 64.093811f
-#define PLAYER_EYE_HEIGHT_CROUCH 46.076218f
-#define PLAYER_HEIGHT 72.0f
-#define PLAYER_HEIGHT_CROUCH 54.0f
 
-#define IClient interfaces->client
-#define IEngine interfaces->engine
-#define IClientState interfaces->clientState
-#define IVstdlib interfaces->vstdlib
-#define IPlayerResource interfaces->playerResource
-#define IConsole interfaces->console
-#define IGameRules interfaces->gameRulesProxy
+#define MAX_EDICT_BITS				11							// B
+#define NUM_ENT_ENTRY_BITS			(MAX_EDICT_BITS + 1)		// C
+#define NUM_ENT_ENTRIES				(1 << NUM_ENT_ENTRY_BITS)	// 0x1000
+#define ENT_ENTRY_MASK				(NUM_ENT_ENTRIES - 1)		// 0xFFF
+#define INVALID_EHANDLE_INDEX		0xFFFFFFFF					// W chuj duzo
+
+#define PLAYER_EYE_HEIGHT			64.093811f
+#define PLAYER_EYE_HEIGHT_CROUCH	46.076218f
+#define PLAYER_HEIGHT				72.0f
+#define PLAYER_HEIGHT_CROUCH		54.0f
+
+#define IClient						interfaces->client
+#define IEngine						interfaces->engine
+#define IClientState				interfaces->clientState
+#define IVstdlib					interfaces->vstdlib
+#define IPlayerResource				interfaces->playerResource
+#define IConsole					interfaces->console
+#define IGameRules					interfaces->gameRulesProxy
 
 struct ImVec2;
 class Entity;

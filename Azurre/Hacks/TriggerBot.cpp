@@ -9,7 +9,7 @@
 #include <thread>
 
 void TriggerBot::run() noexcept{
-	while (GUI::isRunning) {
+	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		if (!localPlayer) continue;
 

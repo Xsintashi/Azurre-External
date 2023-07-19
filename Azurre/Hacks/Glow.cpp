@@ -10,7 +10,7 @@
 #include <thread>
 
 void Glow::run() noexcept {
-	while (GUI::isRunning) {
+	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (!localPlayer) continue;
 

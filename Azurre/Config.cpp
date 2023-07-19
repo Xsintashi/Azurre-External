@@ -177,6 +177,7 @@ static void from_json(const json& j, Projectiles& p) {
 
 static void from_json(const json& j, Config::ESPConfig& e) {
     read(j, "Enabled", e.enabled);
+    read(j, "Enable Defuse Kits on CT Site", e.onCT);
     read(j, "Players", e.players);
     read(j, "Weapons", e.weapons);
     read(j, "Projectiles", e.projectiles);
@@ -532,6 +533,7 @@ static void to_json(json& j, const Projectiles& o, const Projectiles& dummy = {}
 static void to_json(json& j, const Config::ESPConfig& o) {
     const Config::ESPConfig dummy;
     WRITE("Enabled", enabled);
+    WRITE("Enable Defuse Kits on CT Site", onCT);
     j["Players"] = o.players;
     j["Weapons"] = o.weapons;
     j["Projectiles"] = o.projectiles;

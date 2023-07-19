@@ -111,6 +111,101 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 #endif
 	while (GUI::isRunning){
 		std::this_thread::sleep_for(std::chrono::milliseconds(8)); // cap to 128tps
+#if not _DEBUG
+		while (IsDebuggerPresent()) {
+
+
+			//		Debugger detected:
+			//		interfaces->engine->findVar("cl_junkcode")->SetValue(1);
+			//		interfaces->engine->findVar("sv_junkcode")->SetValue(1);
+
+
+			__debugbreak();
+			int ymsrszobtam = 3064;
+			double gfvczwiczpcy = 15204;
+			int ftejlzviddr = 5498;
+			if (3064 == 3064) {
+				int iwzp;
+				for (iwzp = 57; iwzp > 0; iwzp--) {
+					int* oisjfdodjs;
+					oisjfdodjs = &iwzp;
+					__debugbreak();
+					continue;
+				}
+			}
+			if (5498 == 5498) {
+				int pdqk;
+				for (pdqk = 80; pdqk > 0; pdqk--) {
+					__debugbreak();
+					continue;
+				}
+			}
+			if (15204 == 15204) {
+				int frqf;
+				for (frqf = 45; frqf > 0; frqf--) {
+					__debugbreak();
+					continue;
+				}
+			}
+			if (5498 != 5498) {
+				int zjezvrw;
+				for (zjezvrw = 57; zjezvrw > 0; zjezvrw--) {
+					__debugbreak();
+					continue;
+				}
+			}
+			if (3064 == 3064) {
+				int mmq;
+				for (mmq = 73; mmq > 0; mmq--) {
+					__debugbreak();
+					continue;
+				}
+			}
+
+			std::string axtzapiziq = "Aimbot\0ESP\0Glow\0Chams\0Skin Changer\0";
+			bool mektqojswljrsz = false;
+			int jeoutyziqtrjg = 1371;
+			bool spvnpg = true;
+			bool fvcevpu = true;
+			int tdqwivuxep = 1567;
+			int lbcdsiwjwhrffp = 4423;
+			if (true != true) {
+				int grxjmymzb;
+				for (grxjmymzb = 23; grxjmymzb > 0; grxjmymzb--) {
+					__debugbreak();
+					continue;
+				}
+			}
+			if (4423 == 4423) {
+				int rwnivn;
+				for (rwnivn = 47; rwnivn > 0; rwnivn--) {
+					__debugbreak();
+					continue;
+				}
+			}
+			if (false != false) {
+				int ckzb;
+				for (ckzb = 69; ckzb > 0; ckzb--) {
+					__debugbreak();
+					continue;
+				}
+			}
+			if (true == true) {
+				int pljlwvubvk;
+				for (pljlwvubvk = 43; pljlwvubvk > 0; pljlwvubvk--) {
+					__debugbreak();
+					continue;
+				}
+			}
+			if (std::string("Enabled\0") != std::string("Enabled\0")) {
+				int orstwvni;
+				for (orstwvni = 40; orstwvni > 0; orstwvni--) {
+					__debugbreak();
+					continue;
+				}
+			}
+		}
+#endif
 		if (cfg->m.menuKey.isPressed()) {
 			ImGuiIO& io = ImGui::GetIO(); (void)io;
 			showMenu = !showMenu;

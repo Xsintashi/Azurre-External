@@ -47,7 +47,7 @@ void Visuals::noFlash() {
 }
 
 void Visuals::doNotRenderTeammates() {
-    while (GUI::isRunning){
+    while (THREAD_LOOP){
         if (!cfg->v.noAllies || !localPlayer || cfg->restrictions) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             continue;
@@ -85,7 +85,7 @@ void Visuals::fov() noexcept {
 std::vector<Vector> trailsData;
 
 void Visuals::trailsThread() noexcept {
-    while (GUI::isRunning) {
+    while (THREAD_LOOP) {
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
@@ -119,6 +119,15 @@ void Visuals::renderTrails() {
     if (!cfg->v.trails.color.enabled)
         return;
 
+    if (gameState != ConnectionState::FullyConnected)
+        return;
+
+    if (!localPlayer)
+        return;
+
+    if (localPlayer->isDead())
+        return;
+
     for (unsigned i = 0; i < (trailsData.size() - 1); i++) {
 
         auto color = Helpers::calculateColor(cfg->v.trails.color);
@@ -135,6 +144,6 @@ void Visuals::renderTrails() {
         Vector pos = Helpers::world2Screen(gameScreenSize, trailsData[i], viewMatix);
         Vector pos_ = Helpers::world2Screen(gameScreenSize, trailsData[i + 1], viewMatix);
         if (pos.z >= 0.001f && pos_.z >= 0.001f)
-            ImGui::GetBackgroundDrawList()->AddLine(ImVec2{ pos.x, pos.y }, ImVec2{ pos_.x, pos_.y }, color, cfg->v.trails.thickness);
+            ImGui::GetBackgroundDrawList()->AddLine(ImVec2{ pos.x + gameScreenPos.x, pos.y + gameScreenPos.y }, ImVec2{ pos_.x + gameScreenPos.x, pos_.y + gameScreenPos.y }, color, cfg->v.trails.thickness);
     }
 }
