@@ -111,6 +111,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 #endif
 	while (GUI::isRunning){
 		std::this_thread::sleep_for(std::chrono::milliseconds(8)); // cap to 128tps
+#pragma region Anti Debugger
 #if not _DEBUG
 		while (IsDebuggerPresent()) {
 
@@ -206,6 +207,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 			}
 		}
 #endif
+#pragma endregion Anti Debugger
 		if (cfg->m.menuKey.isPressed()) {
 			ImGuiIO& io = ImGui::GetIO(); (void)io;
 			showMenu = !showMenu;
