@@ -33,11 +33,14 @@ void Misc::bunnyHop() noexcept {
 		return;
 	}
 
-	if (cfg->restrictions && GetAsyncKeyState(VK_SPACE)) {
-		(flags & FlagsState::ONGROUND) ?
-			clientCmd("+jump") :
-			clientCmd("-jump");
-	}
+	const static auto rpmJump = []() {
+		clientCmd("+jump");
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		clientCmd("-jump");
+	};
+
+	if (cfg->restrictions && GetAsyncKeyState(VK_SPACE) && (flags & FlagsState::ONGROUND))
+		rpmJump();
 }
 
 void Misc::fakeLag() noexcept {
@@ -47,7 +50,6 @@ void Misc::fakeLag() noexcept {
 
 	if (cfg->restrictions) return; //RPM ONLY
 
-	const auto& sendPacket = mem.Read<BYTE>(IEngine.address + Offset::signatures::dwbSendPackets);
 	const auto& chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
 	int choke = 0;
 

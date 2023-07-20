@@ -133,7 +133,7 @@ namespace Offset {
 	} // namespace netvars
 	namespace signatures {
 		constexpr ::std::ptrdiff_t anim_overlays = 0x2990;
-		constexpr ::std::ptrdiff_t clearHudWeapon = 0xDB33F178;
+		constexpr ::std::ptrdiff_t clearHudWeapon = 0xDCEEF178;
 		constexpr ::std::ptrdiff_t clientstate_choked_commands = 0x4D30;
 		constexpr ::std::ptrdiff_t clientstate_delta_ticks = 0x174;
 		constexpr ::std::ptrdiff_t clientstate_last_outgoing_command = 0x4D2C;
@@ -170,7 +170,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t dwMouseEnablePtr = 0x5239180;
 		constexpr ::std::ptrdiff_t dwPlayerResource = 0x322C120;
 		constexpr ::std::ptrdiff_t dwRadarBase = 0x5236A54;
-		constexpr ::std::ptrdiff_t dwSensitivity = 0xDEEBA8;
+		constexpr ::std::ptrdiff_t dwSensitivity = 0xDEEBD4;
 		constexpr ::std::ptrdiff_t dwSensitivityPtr = 0xDEEBA8;
 		constexpr ::std::ptrdiff_t dwSetClanTag = 0x8DA80;
 		constexpr ::std::ptrdiff_t dwViewMatrix = 0x4DF0DC4;
@@ -181,7 +181,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t dwbSendPackets = 0xDD2B2;
 		constexpr ::std::ptrdiff_t dwppDirect3DDevice9 = 0xA62C0;
 		constexpr ::std::ptrdiff_t fakePrime = 0x62EDF0;
-		constexpr ::std::ptrdiff_t find_hud_element = 0x24F902D0;
+		constexpr ::std::ptrdiff_t find_hud_element = 0x233E02D0;
 		constexpr ::std::ptrdiff_t force_update_spectator_glow = 0x3D997A;
 		constexpr ::std::ptrdiff_t hud = 0x5236A38;
 		constexpr ::std::ptrdiff_t interface_engine_cvar = 0x3FA9C;
