@@ -94,6 +94,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	std::thread(Skin::update).detach();
 	std::thread(TriggerBot::run).detach();
 	std::thread(Visuals::trailsThread).detach();
+	std::thread(Misc::bunnyHop).detach();
 
 #ifdef _DEBUG
 	cfg->load(u8"debug", false);

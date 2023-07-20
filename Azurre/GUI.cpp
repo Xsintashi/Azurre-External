@@ -1265,6 +1265,7 @@ void renderAimbotWindow() noexcept {
 		ImGui::Combo("Bone", &cfg->a.bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
 		ImGui::SliderFloat("##fov", &cfg->a.fov, 0.001f, 255.000f, "Fov: %.2f");
 		ImGui::SliderFloat("##smooth", &cfg->a.smooth, 1.00f, 100.00f, "Smooth: %.2f");
+		ImGui::Combo("Priority", &cfg->a.priority, "Health\0Distance\0Fov\0");
 		ImGui::PopItemWidth();
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::Checkbox("RCS", &cfg->a.rcs);

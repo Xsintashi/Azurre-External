@@ -32,7 +32,7 @@ void TriggerBot::run() noexcept{
 		if (!activeWeapon || activeWeapon->clip() < 1)
 			continue;
 
-		if (entity->isDead()) continue;
+		if (entity->isDead() || entity->gunGameImmunity()) continue;
 
 		if (!cfg->t.friendlyFire && entity->isSameTeam()) continue;
 

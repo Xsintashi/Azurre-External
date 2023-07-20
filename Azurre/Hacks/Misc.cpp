@@ -18,20 +18,6 @@
 #include "../../Lib/imgui/ImGuiCustom.h"
 
 void Misc::bunnyHop() noexcept {
-	if (!cfg->m.bhop) return;
-
-	if (!localPlayer) return;
-
-	if (localPlayer->isDead()) return;
-
-	const auto flags = localPlayer->flags();
-
-	if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions){
-		(flags & FlagsState::ONGROUND) ?
-		mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
-		mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
-		return;
-	}
 
 	const static auto rpmJump = []() {
 		clientCmd("+jump");
@@ -39,8 +25,26 @@ void Misc::bunnyHop() noexcept {
 		clientCmd("-jump");
 	};
 
-	if (cfg->restrictions && GetAsyncKeyState(VK_SPACE) && (flags & FlagsState::ONGROUND))
-		rpmJump();
+	while (THREAD_LOOP) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		if (!cfg->m.bhop) continue;
+
+		if (!localPlayer) continue;
+
+		if (localPlayer->isDead()) continue;
+
+		const auto flags = localPlayer->flags();
+
+		if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions) {
+			(flags & FlagsState::ONGROUND) ?
+				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
+				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
+			continue;
+		}
+
+		if (cfg->restrictions && GetAsyncKeyState(VK_SPACE) && (flags & FlagsState::ONGROUND))
+			rpmJump();
+	}
 }
 
 void Misc::fakeLag() noexcept {

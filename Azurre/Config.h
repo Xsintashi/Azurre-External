@@ -39,6 +39,7 @@ public:
 		bool disableWhileBeingSpectated = false;
 		bool visibleOnly = false;
 		int bone = 0;
+		int priority = 0;
 		float fov = 0.f;
 		float smooth = 1.f;
 		bool rcs = false;

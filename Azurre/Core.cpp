@@ -235,7 +235,6 @@ void Core::_() noexcept {
 		update();
 		Aimbot::recoilSystem();
 		Chams::run();
-		Misc::bunnyHop();
 		if (!cfg->restrictions) {
 			Misc::fakeLag();
 			Misc::fastStop();

@@ -173,6 +173,7 @@ public:
     OFFSET(fov, (), Offset::netvars::m_iFOV, int)
     OFFSET(lby, (), Offset::netvars::m_flLowerBodyYawTarget, float)
     OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
+    OFFSET(gunGameImmunity, (), Offset::netvars::m_bGunGameImmunity, bool)
 
     //Planted C4
     OFFSET(C4Blow, (), Offset::netvars::m_flC4Blow, float)

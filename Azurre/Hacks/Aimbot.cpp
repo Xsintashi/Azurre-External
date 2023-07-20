@@ -38,14 +38,14 @@ void Aimbot::run() noexcept {
 		if (!activeWeapon || activeWeapon->clip() < 1)
 			continue;
 
-		for (auto i = 1; i <= 32; ++i)
-		{
+		std::vector<Aimbot::Enemies> enemies;
+		for (int i = 1; i <= globalVars->maxClients; ++i) {
 			const auto entity = getEntity(i);
 
-			if (!entity)
+			if (!entity->isValid())
 				continue;
 
-			if (entity->isDead() || entity->dormant())
+			if (entity->isDead() || entity->dormant() || entity->gunGameImmunity())
 				continue;
 
 			if (cfg->a.visibleOnly && !entity->isVisible())
@@ -54,14 +54,17 @@ void Aimbot::run() noexcept {
 			if (!cfg->a.friendlyFire && entity->isSameTeam())
 				continue;
 
+			Vector angle;
+			float fov;
+
 			for (auto bone : { 8, 4, 3, 7, 6, 5 }) {
 				const auto bonePosition = 8 - cfg->a.bone;
 
 				const auto bonePos = entity->bonePosition(bonePosition);
 
-				const auto angle = Helpers::calculateRelativeAngle(eyePosition, bonePos, { viewAngles.x + aimPunch.x, viewAngles.y + aimPunch.y, 0.f });
+				angle = Helpers::calculateRelativeAngle(eyePosition, bonePos, { viewAngles.x + aimPunch.x, viewAngles.y + aimPunch.y, 0.f });
 
-				const auto fov = std::hypot(angle.x, angle.y);
+				fov = angle.length2D(); //fov
 
 				if (fov < bestFov) {
 					bestFov = fov;
@@ -69,14 +72,43 @@ void Aimbot::run() noexcept {
 				}
 			}
 
-			DWORD xMove = static_cast<DWORD>(fabs(2 * bestAngle.y) * (-bestAngle.y * 2 / (cfg->a.smooth * bestFov)));
-			DWORD yMove = static_cast<DWORD>(fabs(2 * bestAngle.x) * (bestAngle.x * 2 / (cfg->a.smooth * bestFov)));
-			xMove += bestAngle.y < 0.f ? 4 : -4;
-			yMove += bestAngle.x < 0.f ? -4 : 4;
-			
+			const auto origin{ entity->origin() };
+			const auto health{ entity->health() }; //health
+			const auto distance{ localPlayer->origin().distTo(origin)}; //distance
+			enemies.emplace_back(i, health, distance, fov);
+		}
+
+		if (enemies.empty())
+			continue;
+
+		switch (cfg->a.priority)
+		{
+		case 0:
+			std::sort(enemies.begin(), enemies.end(), healthSort);
+			break;
+		case 1:
+			std::sort(enemies.begin(), enemies.end(), distanceSort);
+			break;
+		case 2:
+			std::sort(enemies.begin(), enemies.end(), fovSort);
+			break;
+		default:
+			break;
+		}
+
+		constexpr int multiplier = 10;
+		DWORD xMove = static_cast<DWORD>(-bestAngle.y * multiplier / cfg->a.smooth);
+		DWORD yMove = static_cast<DWORD>(bestAngle.x * multiplier / cfg->a.smooth);
+		bool doOnce = true;
+		for (const auto& target : enemies) {
+
 			if (bestAngle.notNull() && (cfg->a.hotkey.isActive() && cfg->a.hotkey.isSet() || !cfg->a.hotkey.isSet())) {
-				if (cfg->restrictions && !showMenu)
-					mouse_event(MOUSEEVENTF_MOVE, xMove, yMove, NULL, NULL);
+				if (cfg->restrictions && !showMenu) {
+					if (doOnce) {
+						mouse_event(MOUSEEVENTF_MOVE, xMove, yMove, NULL, NULL);
+						doOnce = false;
+					}
+				}
 				else if (!cfg->restrictions)
 					mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f });
 				
