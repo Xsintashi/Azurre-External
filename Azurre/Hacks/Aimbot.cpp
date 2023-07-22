@@ -16,7 +16,8 @@ void Aimbot::run() noexcept {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		if (!cfg->a.enabled) continue;
 
-		if (!localPlayer || localPlayer->isDead() || localPlayer->isDefusing() || localPlayer->waitForNoAttack()) continue;
+		if (!localPlayer || localPlayer->isDead() || localPlayer->nextAttack() > serverTime || localPlayer->nextPrimaryAttack() > serverTime || localPlayer->isDefusing() || localPlayer->waitForNoAttack())
+			continue;
 
 		const auto eyePosition = localPlayer->origin() + localPlayer->viewOffset();
 		const auto& viewAngles = mem.Read<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
@@ -51,7 +52,7 @@ void Aimbot::run() noexcept {
 			if (cfg->a.visibleOnly && !entity->isVisible())
 				continue;
 
-			if (!cfg->a.friendlyFire && entity->isSameTeam())
+			if (!cfg->a.friendlyFire && entity->isSameTeam()  && !isDangerZoneModePlayed)
 				continue;
 
 			Vector angle;

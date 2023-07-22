@@ -67,10 +67,12 @@ void Core::update() {
 	IGameRules.address = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwGameRulesProxy);
 	localPlayer.init(mem.Read<Entity*>(IClient.address + Offset::signatures::dwLocalPlayer));
 	globalVars = mem.Read<GlobalVars>(IEngine.address + Offset::signatures::dwGlobalVars);
+	serverTime = localPlayer->tickBase() * globalVars->intervalPerTick;
 	viewMatix = mem.Read<Matrix4x4>(IClient.address + Offset::signatures::dwViewMatrix);
 	maxEntity = mem.Read<int>(IClient.address + Offset::signatures::dwEntityList + 0x2001C);
 	highestEntityIndex = mem.Read<int>(IClient.address + Offset::signatures::dwEntityList + 0x20024);
 	localPlayerIndex = mem.Read<int>(IClientState.address + Offset::signatures::dwClientState_GetLocalPlayer);
+	isDangerZoneModePlayed = mem.Read<DWORD>(IGameRules.address + Offset::netvars::m_SurvivalGameRuleDecisionTypes);
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) };
 	const auto map = mem.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map);
 	mapName = map.data();

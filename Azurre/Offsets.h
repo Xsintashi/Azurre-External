@@ -115,6 +115,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_nMusicID = 0x4CD0;
 		constexpr ::std::ptrdiff_t m_nPersonaDataPublicLevel = 0x4DD4;
 		constexpr ::std::ptrdiff_t m_nSequence = 0x28C0;
+		constexpr ::std::ptrdiff_t m_nSurvivalTeam = 0x10410;
 		constexpr ::std::ptrdiff_t m_nTickBase = 0x3440;
 		constexpr ::std::ptrdiff_t m_nViewModelIndex = 0x29D0;
 		constexpr ::std::ptrdiff_t m_rgflCoordinateFrame = 0x444;

@@ -174,6 +174,10 @@ public:
     OFFSET(lby, (), Offset::netvars::m_flLowerBodyYawTarget, float)
     OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
     OFFSET(gunGameImmunity, (), Offset::netvars::m_bGunGameImmunity, bool)
+    OFFSET(survivalTeam, (), Offset::netvars::m_nSurvivalTeam, int)
+    OFFSET(tickBase, (), Offset::netvars::m_nTickBase, int)
+    OFFSET(nextAttack, (), Offset::netvars::m_flNextAttack, float)
+    OFFSET(nextPrimaryAttack, (), Offset::netvars::m_flNextPrimaryAttack, float)
 
     //Planted C4
     OFFSET(C4Blow, (), Offset::netvars::m_flC4Blow, float)
@@ -217,7 +221,7 @@ public:
     }
 
     bool isSameTeam() noexcept {
-        return this->teamNumber() == localPlayer->teamNumber();
+        return this->teamNumber() == localPlayer->teamNumber() || this->survivalTeam() == localPlayer->survivalTeam();
     }
 
     bool isAlive() noexcept {

@@ -63,10 +63,10 @@ void drawHealthBar(ImVec2 pos, float width, float height , int health, ImU32 col
 	if (health < 1)
 		return;
 
-	drawList->AddLine({ pos.x + width + (width * .1f), pos.y - (100 - health) / 100.0f * height }, { pos.x + width + (width * .1f), pos.y - height }, color, 4.f);
+	drawList->AddLine({ pos.x + width + (width * .1f), pos.y - (100 - std::clamp(health, 0, 100)) / 100.0f * height }, { pos.x + width + (width * .1f), pos.y - height }, color, 4.f);
 	if (showHealthNumber.enabled) { // text
-		drawList->AddText({ (pos.x + width + (width * .1f) - centerText.x / 2) + 1.f, (pos.y - (100 - health) / 100.0f * height) + 1.f }, colorNumber & IM_COL32_A_MASK, std::to_string(health).c_str());
-		drawList->AddText({ pos.x + width + (width * .1f) - centerText.x / 2, pos.y - (100 - health) / 100.0f * height}, colorNumber, std::to_string(health).c_str());
+		drawList->AddText({ (pos.x + width + (width * .1f) - centerText.x / 2) + 1.f, (pos.y - (100 - std::clamp(health, 0, 100)) / 100.0f * height) + 1.f }, colorNumber & IM_COL32_A_MASK, std::to_string(health).c_str());
+		drawList->AddText({ pos.x + width + (width * .1f) - centerText.x / 2, pos.y - (100 - std::clamp(health, 0, 100)) / 100.0f * height}, colorNumber, std::to_string(health).c_str());
 	}
 }
 
@@ -162,22 +162,22 @@ void renderPlayer(Entity* entity, int index) {
 		spotted = 0;
 	}
 
+	if (isDangerZoneModePlayed) // All players in Dangerzone are our teammates. Friendly Fire !!!
+		tab = 1;
+
 	if (spotted >= 2)
 		spotted = 1;
 
 	auto& config = cfg->esp.players[categories[tab + spotted]];
 
 #pragma region Box
-	Vector pos = entity->origin();
+	Vector pos = entity->bonePosition(1);
 	Vector head = entity->bonePosition(8);
 	pos.z -= 8.f;
 	head.z += 8.f;
 
 	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
 	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
-
-	Vector headPos = entity->bonePosition(8);
-	Vector headBoxScreen = Helpers::world2Screen(gameScreenSize, headPos, viewMatix);
 
 	float height = headScreen.y - posScreen.y;
 	const float width = height / 4;
@@ -207,9 +207,9 @@ void renderPlayer(Entity* entity, int index) {
 	std::string weapon = Skin::getWeaponIDName(entity->getWeaponIDFromPlayer());
 
 #pragma endregion Player Name
-	if (posScreen.z >= 0.01f && !entity->dormant()) {
+	if (posScreen.z >= 0.01f) {
 		if (config.skeleton) drawSkeleton(entity->boneMatrix());
-		if (config.headBox.enabled) drawBorderBox( { gameScreenPos.x + headBoxScreen.x, gameScreenPos.y + headBoxScreen.y }, width / 3, Helpers::calculateColor(colorHeadBox), Helpers::calculateColor(colorHeadBox_));
+		if (config.headBox.enabled) drawBorderBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width / 3, Helpers::calculateColor(colorHeadBox), Helpers::calculateColor(colorHeadBox_));
 		if (config.box.enabled) drawBorderTwoBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
 		if (config.healthBar.enabled) drawHealthBar( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
 		if (config.other.names.enabled) drawPlayerName( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, Helpers::calculateColor(config.other.names));
@@ -224,7 +224,7 @@ void ESP::render() noexcept {
 	if (!cfg->esp.enabled) return;
 
 	for (auto& player : gameData.playerData) {
-		if (player.entity->isDead() || (uintptr_t)player.entity == localPlayer.get())
+		if (player.entity->isDead() || (uintptr_t)player.entity == localPlayer.get() || player.entity->dormant())
 			continue;
 		renderPlayer(player.entity, player.idx);
 	}

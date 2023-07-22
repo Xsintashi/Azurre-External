@@ -11,15 +11,19 @@
 void TriggerBot::run() noexcept{
 	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		if (!localPlayer) continue;
+		if (!localPlayer)
+			continue;
 
-		if (!cfg->t.enabled) continue;
+		if (!cfg->t.enabled)
+			continue;
 
-		if (localPlayer->isDead()) continue;
+		if (localPlayer->isDead())
+			continue;
 
 		const auto& crosshair = localPlayer->crosshairID();
 
-		if (!crosshair || crosshair > 64) continue;
+		if (!crosshair || crosshair > 64)
+			continue;
 
 		const auto& entity = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (crosshair - 1) * 0x10);
 
@@ -32,9 +36,11 @@ void TriggerBot::run() noexcept{
 		if (!activeWeapon || activeWeapon->clip() < 1)
 			continue;
 
-		if (entity->isDead() || entity->gunGameImmunity()) continue;
+		if (entity->isDead() || entity->gunGameImmunity())
+			continue;
 
-		if (!cfg->t.friendlyFire && entity->isSameTeam()) continue;
+		if (!cfg->t.friendlyFire && entity->isSameTeam() && isDangerZoneModePlayed)
+			continue;
 
 		if (cfg->t.hotkey.isActive()) {
 			static DWORD time = GetTickCount();
@@ -54,7 +60,6 @@ void TriggerBot::run() noexcept{
 						burstBuff++;
 					} while (burstBuff > cfg->t.burst);
 				}
-
 				time = GetTickCount();
 			}
 		}

@@ -986,6 +986,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("TickCount: %i", globalVars->tickCount);
 	ImGui::Text("IntervalPerTick: %.2f", globalVars->intervalPerTick);
 	ImGui::Text("InterpolationAmount: %.2f", globalVars->interpolationAmount);
+	ImGui::Text("ServerTime: %.2f", serverTime);
 	ImGui::Text("GameState: %i", gameState);
 	ImGui::Text("Choked Packets: %i", chokedPackets);
 	ImGui::SeparatorText("Font Test");
@@ -1001,15 +1002,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("HighestEntityIndex: %d", highestEntityIndex);
 	ImGui::Text("LocalPlayerIndex: %d", localPlayerIndex);
 	ImGui::Text("CrosshairID: %d", localPlayer->crosshairID());
-	ImGui::SeparatorText("GameRules Test");
-	const auto& m_fRoundStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fRoundStartTime);
-	const auto& m_fMatchStartTime = mem.Read<float>(IGameRules.address + Offset::netvars::m_fMatchStartTime);
-	const float roundTime = globalVars->currentTime - m_fRoundStartTime;
-	const float matchTime = globalVars->currentTime - m_fMatchStartTime;
-	ImGui::Text("m_fRoundStartTime: %.2f", m_fRoundStartTime);
-	ImGui::Text("m_fMatchStartTime: %.2f", m_fMatchStartTime);
-	ImGui::Text("Round Time: %.2f", roundTime);
-	ImGui::Text("Match Time: %.2f", matchTime);
+	ImGui::Text("Next Attack: %s", localPlayer->waitForNoAttack() ? "true" : "false");
 	ImGui::PushID("Roll");
 	static float roll = 0.f;
 	static float tempRoll = 0.f;
@@ -1247,7 +1240,7 @@ void childLabel(const char* text) {
 
 void renderAimbotWindow() noexcept {
 	ImGui::PushID("Aimbot");
-	ImGui::BeginChild("Aimbot", {232.f , 266.f}, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	ImGui::BeginChild("Aimbot", {232.f , 290.f}, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	{
 		ImGui::PushID("key");
 		ImGui::Checkbox("Enabled", &cfg->a.enabled);

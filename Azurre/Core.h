@@ -133,6 +133,8 @@ inline ImVec2 gameScreenPosEnd = {};
 inline GameData gameData;
 inline Matrix4x4 viewMatix;
 inline TextureInfo profilePicture;
+inline bool isDangerZoneModePlayed;
+inline float serverTime;
 inline int maxEntity;
 inline int highestEntityIndex;
 inline bool parsedMap = false;
