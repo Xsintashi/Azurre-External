@@ -146,7 +146,7 @@ struct Vector {
     {
         this->x = std::clamp(this->x, -89.f, 89.f);
         this->y = std::clamp(this->y, -180.f, 180.f);
-        this->z = std::clamp(this->z, -50.f, 50.f);
+        this->z = std::clamp(this->z, -45.f, 45.f);
         return *this;
     }
 
