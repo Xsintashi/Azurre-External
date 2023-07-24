@@ -7,6 +7,7 @@
 #include "SDK/GlobalVars.h"
 #include "SDK/Interfaces.h"
 #include "SDK/LocalPlayer.h"
+#include "SDK/maxSpeed.h"
 #include "SDK/UserInterface.h"
 
 #include "Hacks/Clantag.h"
@@ -1003,6 +1004,11 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("LocalPlayerIndex: %d", localPlayerIndex);
 	ImGui::Text("CrosshairID: %d", localPlayer->crosshairID());
 	ImGui::Text("Next Attack: %s", localPlayer->waitForNoAttack() ? "true" : "false");
+
+	const short &weaponID = localPlayer->getWeaponIDFromPlayer();
+	float maxSpeedOfWeapon = getWeaponMaxSpeed(weaponID);
+	ImGui::Text("Max Weapon Speed: %.2f", maxSpeedOfWeapon);
+
 	ImGui::PushID("Roll");
 	static float roll = 0.f;
 	static float tempRoll = 0.f;
@@ -1661,6 +1667,24 @@ void renderMiscWindow() noexcept {
 		}
 		ImGui::PopID();
 		ImGui::BeginDisabled(cfg->restrictions);
+		
+		ImGui::PushID("SlowWalk");
+		ImGui::hotkey("Slow Walk", cfg->m.slowWalk.hotkey);
+		ImGui::SameLine();
+		if (ImGui::Button("...")) {
+			ImGui::OpenPopup("");
+		}
+		if (ImGui::BeginPopup("")) {
+			ImGui::PushItemWidth(100);
+			ImGui::Combo("Mode", &cfg->m.slowWalk.slowWalkMode, "Accurate\0Custom\0");
+			ImGui::BeginDisabled(!cfg->m.slowWalk.slowWalkMode);
+			ImGui::SliderFloat("##speed", &cfg->m.slowWalk.slowSpeed, 1.0f, 250.0f, "Speed: %.0f u/s");
+			ImGui::PopItemWidth();
+			ImGui::EndDisabled();
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		
 		if (ImGui::Button("Fake Prime")) {
 			constexpr uint8_t patch[]{ 0x31, 0xC0, 0x40, 0xC3 };
 			WriteProcessMemory(mem.processHandle, (LPVOID)(IClient.address + 0x62EDF0), patch, 4, 0);

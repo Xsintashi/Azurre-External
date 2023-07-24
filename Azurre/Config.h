@@ -103,7 +103,7 @@ public:
 			bool noTitleBar = false;
 			bool noBackground = false;
 			ImVec2 pos;
-		}keybinds;
+		} keybinds;
 
 		struct PlayerList {
 			bool enabled = false;
@@ -162,6 +162,12 @@ public:
 			ImVec2 pos;
 			int bytewise = 0;
 		} indicators;
+
+		struct SlowWalk {
+			float slowSpeed = 135.f;
+			int slowWalkMode = 0;
+			KeyBind hotkey = std::string("SlowWalk");
+		} slowWalk;
 
 		Marker hitMarker;
 		Marker killMarker;

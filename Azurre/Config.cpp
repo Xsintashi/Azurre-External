@@ -286,6 +286,12 @@ static void from_json(const json& j, Config::MiscConfig::Indicators& in)
     read<value_t::object>(j, "Pos", in.pos);
 }
 
+static void from_json(const json& j, Config::MiscConfig::SlowWalk& in) {
+    read(j, "Custom Speed", in.slowSpeed);
+    read(j, "Mode", in.slowWalkMode);
+    read(j, "Hotkey", in.hotkey);
+}
+
 static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Menu Key", c.menuKey);
     read(j, "Bunny Hop", c.bhop);
@@ -306,6 +312,7 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read<value_t::object>(j, "Spectator list", c.spectatorList);
     read<value_t::object>(j, "Bomb Timer", c.bombTimer);
     read<value_t::object>(j, "Indicators", c.indicators);
+    read<value_t::object>(j, "Slow Walk", c.slowWalk);
 }
 
 static void from_json(const json& j, Config::SkinChangerConfig& c) {
@@ -662,6 +669,14 @@ static void to_json(json& j, const Config::MiscConfig::Indicators& o, const Conf
     }
 }
 
+static void to_json(json& j, const Config::MiscConfig::SlowWalk& o, const Config::MiscConfig::SlowWalk& dummy = {})
+{
+    WRITE("Custom Speed", slowSpeed);
+    WRITE("Mode", slowWalkMode);
+    WRITE("Hotkey", hotkey);
+}
+
+
 static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConfig dummy = {} ) {
     WRITE("Menu Key", menuKey);
     WRITE("Bunny Hop", bhop);
@@ -682,6 +697,7 @@ static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConf
     WRITE("Spectator list", spectatorList);
     WRITE("Bomb Timer", bombTimer);
     WRITE("Indicators", indicators);
+    WRITE("Slow Walk", slowWalk);
 }
 
 static void to_json(json& j, const Config::SkinChangerConfig& o, const Config::SkinChangerConfig dummy = {} ) {

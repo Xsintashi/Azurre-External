@@ -16,6 +16,7 @@
 #include <algorithm>
 #include "../SDK/UserInterface.h"
 #include "../../Lib/imgui/ImGuiCustom.h"
+#include "../SDK/maxSpeed.h"
 
 void Misc::bunnyHop() noexcept {
 
@@ -350,13 +351,37 @@ void Misc::modifyConVars(bool reset) noexcept {
 
 	if (cfg->restrictions) return; //RPM ONLY
 
-	ConVar sky{ "r_3dsky"};
-	ConVar shadow{ "cl_csm_enabled"};
-	ConVar grenade{ "cl_grenadepreview"};
-	ConVar panoramaBlur{ "@panorama_disable_blur"};
-	ConVar skyname{ "sv_skyname"};
-	ConVar particles{ IClient.address + Offset::signatures::convar_r_drawparticles };
+	static ConVar sky{ "r_3dsky"};
+	static ConVar shadow{ "cl_csm_enabled"};
+	static ConVar grenade{ "cl_grenadepreview"};
+	static ConVar panoramaBlur{ "@panorama_disable_blur"};
+	static ConVar skyname{ "sv_skyname"};
+	static ConVar particles{ IClient.address + Offset::signatures::convar_r_drawparticles };
+
+	static ConVar forwardspeed{"cl_forwardspeed"};
+	static ConVar sidespeed{"cl_sidespeed"};
+	static ConVar backspeed{forwardspeed.offset + 0x68};
+
 	const static int skynameFlags = skyname.getFlags();
+
+	if (cfg->m.slowWalk.hotkey.isActive()) {
+
+		float speed = cfg->m.slowWalk.slowSpeed;
+
+		if (cfg->m.slowWalk.slowWalkMode == 0) {
+			const short& weaponID = localPlayer->getWeaponIDFromPlayer();
+			speed = getWeaponMaxSpeed(weaponID) / 3;
+		}
+
+		forwardspeed.setValue(speed);
+		sidespeed.setValue(speed);
+		backspeed.setValue(speed);
+	}
+	else {
+		forwardspeed.setValue(450.f);
+		sidespeed.setValue(450.f);
+		backspeed.setValue(450.f);
+	}
 
 	if (reset) {
 		sky.setValue(1);

@@ -172,6 +172,7 @@
     <ClInclude Include="Azurre\SDK\LocalPlayer.h" />
     <ClInclude Include="Azurre\SDK\Macros.h" />
     <ClInclude Include="Azurre\SDK\Matrix.h" />
+    <ClInclude Include="Azurre\SDK\maxSpeed.h" />
     <ClInclude Include="Azurre\SDK\MStudio.h" />
     <ClInclude Include="Azurre\SDK\Pad.h" />
     <ClInclude Include="Azurre\SDK\PlayerInfo.h" />
