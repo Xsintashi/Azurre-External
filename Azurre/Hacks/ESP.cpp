@@ -202,10 +202,7 @@ void renderPlayer(Entity* entity, int index) {
 	const auto colorHealthBarFinal = config.healthBar.solidColor.enabled ? colorHealthBar : colorHealthBarMix;
 #pragma endregion Health Bar
 #pragma region Player Name
-	const auto& userInfoTable = mem.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
-	const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
-	PlayerInfo pInfo = mem.Read<PlayerInfo>(mem.Read<uintptr_t>(items + 0x28 + (index * 0x34)));
-	std::string name = pInfo.name;
+	std::string name = gameData.playerData[index].name;
 	std::string weapon = Skin::getWeaponIDName(entity->getWeaponIDFromPlayer());
 
 #pragma endregion Player Name
@@ -226,6 +223,7 @@ void ESP::render() noexcept {
 	if (!cfg->esp.enabled) return;
 
 	for (auto& player : gameData.playerData) {
+	for (const auto& [index, player] : gameData.playerData) {
 		if (player.entity->isDead() || (uintptr_t)player.entity == localPlayer.get() || player.entity->dormant())
 			continue;
 		renderPlayer(player.entity, player.idx);

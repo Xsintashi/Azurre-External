@@ -22,7 +22,7 @@ void Chams::run() noexcept {
 	if (tempCurr + 1.f > globalVars->currentTime) return;
 	tempCurr = globalVars->currentTime;
 
-	for (auto& i : gameData.playerData) {
+	for (const auto& [index, i] : gameData.playerData) {
 
 		if ((!cfg->c.ally.enabled && i.entity->isSameTeam()) || (!cfg->c.enemy.enabled && !i.entity->isSameTeam())) continue;
 

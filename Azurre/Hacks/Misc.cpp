@@ -408,7 +408,7 @@ void Misc::drawOffscreenEnemies() noexcept
 	const auto &angles = mem.Read<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
 	const auto yaw = Helpers::deg2rad(angles.y);
 
-	for (auto& player : gameData.playerData) {
+	for (const auto& [index, player] : gameData.playerData) {
 		if (player.dormant || !player.entity->isAlive() || player.entity->isSameTeam())
 			continue;
 

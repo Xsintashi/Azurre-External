@@ -77,6 +77,7 @@ struct PlayerData {
 	int weaponID;
 	std::string placename;
 	bool dormant;
+	bool isScoped;
 };
 
 struct PlayerResource {
@@ -100,7 +101,7 @@ struct ProjectileData {
 };
 
 struct GameData {
-	std::vector<PlayerData> playerData;
+	std::unordered_map<int, PlayerData> playerData;
 	PlayerResource playerResource;
 	std::vector<Entity*> weaponData;
 	std::vector<ProjectileData> projectileData;

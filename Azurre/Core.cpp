@@ -137,6 +137,7 @@ void Core::gameDataUpdate() noexcept {
 			const auto& hasDefuser = entity->hasDefuser();
 			const auto& teamNumber = static_cast<int>(entity->teamNumber());
 			const auto& money = entity->money();
+			const auto& isScoped = entity->isScoped();
 			const auto& weaponID = entity->getWeaponIDFromPlayer();
 			const auto& dormant = entity->dormant();
 			const std::string name = playerInfo.name;
@@ -145,7 +146,7 @@ void Core::gameDataUpdate() noexcept {
 			const std::string steamID = playerInfo.steamID;
 			char placeName[18];
 			ReadProcessMemory(mem.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), &placeName, 18, NULL);
-			gameData.playerData.push_back({ entity, idx, steamID, bot, hltv, name , health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placeName, dormant });
+			gameData.playerData[idx] = { entity, idx, steamID, bot, hltv, name, health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placeName, dormant, isScoped };
 
 #pragma region Player Resource
 

@@ -20,7 +20,7 @@ void Glow::run() noexcept {
 
 		const auto glowObjectManager = mem.Read<std::uintptr_t>(IClient.address + Offset::signatures::dwGlowObjectManager);
 
-		for (auto& i : gameData.playerData) {
+		for (const auto& [index, i] : gameData.playerData) {
 
 			if (i.entity->isSameTeam() && cfg->v.noAllies)
 				continue;
