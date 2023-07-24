@@ -57,7 +57,25 @@ void drawSkeleton(uintptr_t entBones) {
 	}	
 }
 
-void drawHealthBar(ImVec2 pos, float width, float height , int health, ImU32 color, ImU32 colorNumber, ColorToggle3 showHealthNumber) {
+void drawFlags(ImVec2 pos, int idx, float width, int bytewise) {
+	std::ostringstream ss;
+	const auto& bombCarrier = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iPlayerC4);
+
+	if (Helpers::getByteFromBytewise(bytewise, 0))
+		ss << "$" << gameData.playerData[idx].money << "\n";
+	if (Helpers::getByteFromBytewise(bytewise, 1))
+		ss << (gameData.playerData[idx].isScoped ? "Scoping" : "") << "\n";
+	if (Helpers::getByteFromBytewise(bytewise, 2))
+		ss << gameData.playerData[idx].placename << "\n";
+	if (Helpers::getByteFromBytewise(bytewise, 3) && idx + 1 == bombCarrier)
+		ss << "C4 Carrier" << "\n";
+	if (Helpers::getByteFromBytewise(bytewise, 4))
+		ss << (gameData.playerData[idx].hasDefuser ? "Has Defuser" : "") << "\n";
+
+	drawList->AddText(ImVec2{ pos.x - width + 0.5f, pos.y }, IM_COL32(255, 255, 255, 255), ss.str().c_str()); //RIGHT
+}
+
+void drawHealthBar(ImVec2 pos, float width, float height, int health, ImU32 color, ImU32 colorNumber, ColorToggle3 showHealthNumber) {
 	const auto centerText = ImGui::CalcTextSize(std::to_string(health).c_str());
 
 	if (health < 1)
@@ -214,6 +232,7 @@ void renderPlayer(Entity* entity, int index) {
 		if (config.other.names.enabled) drawPlayerName( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, Helpers::calculateColor(config.other.names));
 		if (config.weapons.enabled) drawPlayerName( { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y}, width, height, weapon, Helpers::calculateColor(config.weapons));
 		if (config.other.lines.enabled) drawLines( { gameScreenPos.x + (gameScreenSize.x / 2), gameScreenSize.y + gameScreenPos.y }, { gameScreenPos.x + posScreen.x, gameScreenPos.y + posScreen.y }, Helpers::calculateColor(config.other.lines));
+		if (config.flags) drawFlags({ gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, index, width, config.flags);
 	}
 }
 
@@ -222,7 +241,6 @@ void ESP::render() noexcept {
 	if (gameData.playerData.empty() || gameData.weaponData.empty()) return;
 	if (!cfg->esp.enabled) return;
 
-	for (auto& player : gameData.playerData) {
 	for (const auto& [index, player] : gameData.playerData) {
 		if (player.entity->isDead() || (uintptr_t)player.entity == localPlayer.get() || player.entity->dormant())
 			continue;

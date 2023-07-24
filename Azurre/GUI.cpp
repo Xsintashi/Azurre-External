@@ -1344,6 +1344,7 @@ void renderESPWindow() noexcept {
 #if defined(_DEBUG)
 				ImGui::Checkbox("Skeleton", &cfg->esp.players[categories[list + spotted]].skeleton); // DEBUG bones pos
 #endif
+			ImGuiCustom::multiCombo("Flags", cfg->esp.players[categories[list + spotted]].flags, "Money\0Scoping\0Location\0C4 Carrier\0Defuse \0");
 			ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled);
 			ImGui::PushID("boxes");
 			ImGui::SameLine();

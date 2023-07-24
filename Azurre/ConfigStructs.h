@@ -77,7 +77,8 @@ struct Player {
     Box headBox;
     HealthBar healthBar;
     ColorToggle3 weapons = { 1.f, 1.f, 1.f };
-    bool skeleton;
+    int flags = 0;
+    bool skeleton = false;
 };
 
 struct Weapons {
