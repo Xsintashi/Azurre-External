@@ -139,8 +139,8 @@ void Visuals::renderTrails() {
             color = ImGui::GetColorU32(ImVec4{ r, g, b, 1.f });
         }
 
-        Vector pos = Helpers::world2Screen(gameScreenSize, trailsData[i], viewMatix);
-        Vector pos_ = Helpers::world2Screen(gameScreenSize, trailsData[i + 1], viewMatix);
+        Vector pos = Helpers::world2Screen(gameScreenSize, trailsData[i], viewMatrix);
+        Vector pos_ = Helpers::world2Screen(gameScreenSize, trailsData[i + 1], viewMatrix);
         if (pos.z >= 0.001f && pos_.z >= 0.001f)
             ImGui::GetBackgroundDrawList()->AddLine(ImVec2{ pos.x + gameScreenPos.x, pos.y + gameScreenPos.y }, ImVec2{ pos_.x + gameScreenPos.x, pos_.y + gameScreenPos.y }, color, cfg->v.trails.thickness);
     }

@@ -50,7 +50,7 @@ void drawSkeleton(uintptr_t entBones) {
 			mem.Read<float>(entBones + 0x30 * skel + 0x2C)
 		};
 
-		Vector vStart = Helpers::world2Screen(gameScreenSize, bonePos, viewMatix);
+		Vector vStart = Helpers::world2Screen(gameScreenSize, bonePos, viewMatrix);
 		const auto centerText = ImGui::CalcTextSize(std::to_string(skel).c_str());
 		drawList->AddCircleFilled({ vStart.x, vStart.y }, 8.f, IM_COL32(255, 255, 255, 255));
 		drawList->AddText({ vStart.x - centerText.x / 2.f, vStart.y - centerText.x / 2.f },IM_COL32(255, 0, 0, 255), std::to_string(skel).c_str());
@@ -85,8 +85,8 @@ void render_____(Entity* entity, std::string name, auto& config) {
 	head.y = pos.y;
 	head.z = pos.z + 16.f;
 
-	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
-	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
+	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatrix);
+	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatrix);
 
 	float height = headScreen.y - posScreen.y;
 	const float width = height;
@@ -109,8 +109,8 @@ void renderWeapon(Entity* entity, auto& config) {
 	head.y = pos.y;
 	head.z = pos.z + 16.f;
 
-	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
-	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
+	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatrix);
+	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatrix);
 
 	float height = headScreen.y - posScreen.y;
 	const float width = height;
@@ -137,8 +137,8 @@ void renderProjectile(ProjectileData* projectile) {
 	head.y = pos.y;
 	head.z = pos.z + 8.f;
 
-	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
-	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
+	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatrix);
+	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatrix);
 
 	float height = headScreen.y - posScreen.y;
 	const float width = height / 2.f;
@@ -176,8 +176,8 @@ void renderPlayer(Entity* entity, int index) {
 	pos.z -= 8.f;
 	head.z += 8.f;
 
-	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatix);
-	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatix);
+	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatrix);
+	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatrix);
 
 	float height = headScreen.y - posScreen.y;
 	const float width = height / 4;
