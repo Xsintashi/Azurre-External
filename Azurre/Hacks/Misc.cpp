@@ -312,7 +312,7 @@ void Misc::forceReload(bool onKey) noexcept {
 
 void Misc::showKeybinds() noexcept {
 
-	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabled && cfg->a.hotkey.canShowKeybind()) || (cfg->m.playerList.enabled && cfg->m.playerList.hotkey.canShowKeybind()) || (cfg->m.minimap.enabled && cfg->m.minimap.hotkey.canShowKeybind());
+	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabled && cfg->a.hotkey.canShowKeybind()) || (cfg->m.playerList.enabled && cfg->m.playerList.hotkey.canShowKeybind()) || (cfg->m.minimap.enabled && cfg->m.minimap.hotkey.canShowKeybind() || (cfg->m.slowWalk.hotkey.isActive() && cfg->m.slowWalk.hotkey.canShowKeybind()));
 
 	if (!anyActive && !showMenu)
 		return;
@@ -340,6 +340,7 @@ void Misc::showKeybinds() noexcept {
 	cfg->v.thirdPersonKey.showKeybind();
 	cfg->m.playerList.hotkey.showKeybind();
 	cfg->m.minimap.hotkey.showKeybind();
+	cfg->m.slowWalk.hotkey.showKeybind();
 	ImGui::End();
 }
 
@@ -364,7 +365,7 @@ void Misc::modifyConVars(bool reset) noexcept {
 
 	const static int skynameFlags = skyname.getFlags();
 
-	if (cfg->m.slowWalk.hotkey.isActive()) {
+	if (cfg->m.slowWalk.hotkey.isActive() && cfg->m.slowWalk.hotkey.isSet()) {
 
 		float speed = cfg->m.slowWalk.slowSpeed;
 
@@ -373,11 +374,15 @@ void Misc::modifyConVars(bool reset) noexcept {
 			speed = getWeaponMaxSpeed(weaponID) / 3;
 		}
 
+		if ((GetAsyncKeyState('W') || GetAsyncKeyState('S')) && (GetAsyncKeyState('A') || GetAsyncKeyState('D'))){ // Fuck AZERTY
+			speed /= 1.4142f; // By holding for example W and A, our speed (100.00u) is multiplied by 1.4142 then (141.42u) this should fix that, but slowly
+		}
+
 		forwardspeed.setValue(speed);
 		sidespeed.setValue(speed);
 		backspeed.setValue(speed);
 	}
-	else {
+	else if (cfg->m.slowWalk.hotkey.isSet()){
 		forwardspeed.setValue(450.f);
 		sidespeed.setValue(450.f);
 		backspeed.setValue(450.f);
