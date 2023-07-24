@@ -1923,7 +1923,7 @@ void renderGUIWindow() noexcept {
 	ImGui::BeginChild("GUI", { 232.f, 152.f }, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		ImGui::SetNextItemWidth(96.f);
-		if (ImGui::Combo("Menu colors", &cfg->u.menuColors, "Azurre\0Genshi\0Emerald\0Bloddy Red\0Gold Mine\0Pandora\0Holy Light\0Deep Dark\0Visual Studio\0GoldSrc\0ImGui\0Neverlose\0Aimware\0Onetap\0Custom\0"))
+		if (ImGui::Combo("Menu colors", &cfg->u.menuColors, "Azurre\0Genshi\0Emerald\0Bloddy Red\0Gold Mine\0Pandora\0Holy Light\0Deep Dark\0Visual Studio\0GoldSrc\0ImGui\0Neverlose\0Aimware\0Onetap\0"))
 			GUI::updateColors();
 		
 		ImGui::Checkbox("AntiAliasing", &cfg->u.antiAliasing);
