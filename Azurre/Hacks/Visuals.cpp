@@ -55,18 +55,12 @@ void Visuals::doNotRenderTeammates() {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         for (unsigned int i = 1; i <= 32; i++) {
             const auto& entity = getEntity(i);
-            if (!entity) {
+            if (!entity->isValid())
                 continue;
-            }
 
-            if((uintptr_t)entity == localPlayer.get())
-
-            if (entity->isDead() || entity->dormant()) {
+            if ((uintptr_t)entity == localPlayer.get() || entity->isDead() || entity->dormant() || !entity->isSameTeam())
                 continue;
-            }
-
-            if (entity->isSameTeam())
-                mem.Write<bool>(entity + Offset::netvars::m_bReadyToDraw, false);
+            mem.Write<bool>(entity + Offset::netvars::m_bReadyToDraw, false);
         }
     }
 }

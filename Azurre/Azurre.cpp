@@ -248,6 +248,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		GUI::RenderDebugWindow();
 		if (showMenu) ImGui::ShowDemoWindow();
 #endif
+
 		GUI::EndRender();
 	}
 	Misc::forceReload();
