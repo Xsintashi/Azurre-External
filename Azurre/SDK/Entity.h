@@ -221,7 +221,10 @@ public:
     }
 
     bool isSameTeam() noexcept {
-        return this->teamNumber() == localPlayer->teamNumber() || this->survivalTeam() == localPlayer->survivalTeam();
+        if (isDangerZoneModePlayed) {
+            return this->survivalTeam() == localPlayer->survivalTeam();
+        }
+        return this->teamNumber() == localPlayer->teamNumber();
     }
 
     bool isAlive() noexcept {
