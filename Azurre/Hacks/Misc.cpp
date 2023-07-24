@@ -356,14 +356,11 @@ void Misc::modifyConVars(bool reset) noexcept {
 	static ConVar shadow{ "cl_csm_enabled"};
 	static ConVar grenade{ "cl_grenadepreview"};
 	static ConVar panoramaBlur{ "@panorama_disable_blur"};
-	static ConVar skyname{ "sv_skyname"};
 	static ConVar particles{ IClient.address + Offset::signatures::convar_r_drawparticles };
 
 	static ConVar forwardspeed{"cl_forwardspeed"};
 	static ConVar sidespeed{"cl_sidespeed"};
 	static ConVar backspeed{forwardspeed.offset + 0x68};
-
-	const static int skynameFlags = skyname.getFlags();
 
 	if (cfg->m.slowWalk.hotkey.isActive() && cfg->m.slowWalk.hotkey.isSet()) {
 
@@ -396,34 +393,11 @@ void Misc::modifyConVars(bool reset) noexcept {
 		return;
 	}
 
-	static bool doOnce = true;
-	if (doOnce) {
-		int flags = skyname.getFlags();
-		flags &= ~(CVarFlags::REPLICATED);
-		flags &= ~(CVarFlags::CHEAT);
-		skyname.flags(flags);
-		doOnce = false;
-	}
-
 	sky.setValue(!cfg->v.no3DSky);
 	shadow.setValue(!cfg->v.noShadows);
 	grenade.setValue(cfg->m.grenadeTrajectory);
 	particles.setValue(!cfg->v.noParticles);
 	panoramaBlur.setValue(cfg->v.noPanoramaBlur);
-
-	static int tempSkybox = 0;
-
-	if (cfg->v.skybox && tempSkybox != cfg->v.skybox) {
-		static int flags = skynameFlags;
-		flags &= ~(CVarFlags::REPLICATED);
-		flags &= ~(CVarFlags::CHEAT);
-		skyname.flags(flags);
-		std::string cmd = "sv_skyname " + std::string(skyboxList[cfg->v.skybox]);
-		clientCmd(cmd.c_str());
-		skyname.flags(skynameFlags);
-		tempSkybox = cfg->v.skybox;
-	}
-
 }
 
 void Misc::drawOffscreenEnemies() noexcept
