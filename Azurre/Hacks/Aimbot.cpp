@@ -110,8 +110,12 @@ void Aimbot::run() noexcept {
 						doOnce = false;
 					}
 				}
-				else if (!cfg->restrictions)
-					mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, Vector{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f });
+				else if (!cfg->restrictions) {
+					Vector correctAngles{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f };
+					correctAngles.normalize();
+					correctAngles.clamp();
+					mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, correctAngles);
+				}
 				
 				if (cfg->a.autoStop && !cfg->restrictions) {
 					const float velocity = localPlayer->velocity().length2D();
