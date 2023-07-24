@@ -251,7 +251,7 @@ void Misc::indicators() noexcept {
 	}
 
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 0)){
-		int chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
+		const int& chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
 		ImGui::TextUnformatted("Choked packets");
 		ImGui::progressBarFullWidth(static_cast<float>(chokedPackets / 16), 5.f);
 	}
@@ -266,7 +266,7 @@ void Misc::indicators() noexcept {
 	}
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 3)) {
 		ImGui::TextUnformatted("Slowdown");
-		ImGui::progressBarFullWidth(1.f - (localPlayer->velocityModifier() / 100), 5.f);
+		ImGui::progressBarFullWidth(localPlayer->velocityModifier() / 1.f, 5.f);
 	}
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 4)) {
 		ImGui::TextUnformatted("Stamina");

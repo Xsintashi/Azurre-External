@@ -75,7 +75,7 @@ void drawPlayerName(ImVec2 pos, float width, float height, std::string name, ImU
 	drawList->AddText({pos.x - centerText.x / 2, pos.y - 4.f + (height * .1f) }, color, name.c_str());
 }
 
-constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible", "Weapons" };
+constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible"};
 
 void render_____(Entity* entity, std::string name, auto& config) {
 	Vector pos = entity->origin();
@@ -173,6 +173,8 @@ void renderPlayer(Entity* entity, int index) {
 #pragma region Box
 	Vector pos = entity->bonePosition(1);
 	Vector head = entity->bonePosition(8);
+
+	Vector skull = Helpers::world2Screen(gameScreenSize, head, viewMatrix);
 	pos.z -= 8.f;
 	head.z += 8.f;
 
@@ -209,7 +211,7 @@ void renderPlayer(Entity* entity, int index) {
 #pragma endregion Player Name
 	if (posScreen.z >= 0.01f) {
 		if (config.skeleton) drawSkeleton(entity->boneMatrix());
-		if (config.headBox.enabled) drawBorderBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width / 3, Helpers::calculateColor(colorHeadBox), Helpers::calculateColor(colorHeadBox_));
+		if (config.headBox.enabled) drawBorderBox( { gameScreenPos.x + skull.x, gameScreenPos.y + skull.y }, width / 3, Helpers::calculateColor(colorHeadBox), Helpers::calculateColor(colorHeadBox_));
 		if (config.box.enabled) drawBorderTwoBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_));
 		if (config.healthBar.enabled) drawHealthBar( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber);
 		if (config.other.names.enabled) drawPlayerName( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, name, Helpers::calculateColor(config.other.names));

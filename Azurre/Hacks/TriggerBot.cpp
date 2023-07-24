@@ -39,7 +39,7 @@ void TriggerBot::run() noexcept{
 		if (entity->isDead() || entity->gunGameImmunity())
 			continue;
 
-		if (!cfg->t.friendlyFire && entity->isSameTeam() && isDangerZoneModePlayed)
+		if (!cfg->t.friendlyFire && entity->isSameTeam() && !isDangerZoneModePlayed)
 			continue;
 
 		if (cfg->t.hotkey.isActive()) {

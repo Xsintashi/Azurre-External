@@ -101,7 +101,7 @@ void Visuals::trailsThread() noexcept {
             trailsData.clear();
         }
 
-        if (!trailsData.empty() && trailsData.size() > cfg->v.trails.size)
+        if (!trailsData.empty() && trailsData.size() > (unsigned)cfg->v.trails.size)
             trailsData.erase(trailsData.begin());
 
         trailsData.push_back(localPlayer->origin());
