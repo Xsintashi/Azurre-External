@@ -101,7 +101,7 @@ struct ProjectileData {
 };
 
 struct GameData {
-	std::unordered_map<int, PlayerData> playerData;
+	std::vector<PlayerData> playerData;
 	PlayerResource playerResource;
 	std::vector<Entity*> weaponData;
 	std::vector<ProjectileData> projectileData;

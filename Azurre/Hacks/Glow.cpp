@@ -20,21 +20,23 @@ void Glow::run() noexcept {
 
 		const auto glowObjectManager = mem.Read<std::uintptr_t>(IClient.address + Offset::signatures::dwGlowObjectManager);
 
-		for (const auto& [index, i] : gameData.playerData) {
+		for (auto& i : gameData.playerData) {
 
-			if (i.entity->isSameTeam() && cfg->v.noAllies)
+			const auto& entity = i.entity;
+
+			if (entity->isSameTeam() && cfg->v.noAllies)
 				continue;
 
-			if ((!cfg->g.ally.enabled && i.entity->isSameTeam()) || (!cfg->g.enemy.enabled && !i.entity->isSameTeam())) continue;
+			if ((!cfg->g.ally.enabled && entity->isSameTeam()) || (!cfg->g.enemy.enabled && !entity->isSameTeam())) continue;
 
 			static uint8_tColor4 color;
 
-			if (i.entity->isSameTeam())
+			if (entity->isSameTeam())
 				color = Helpers::ConvertColors4ToUint8_t(cfg->g.ally.color);
 			else
 				color = Helpers::ConvertColors4ToUint8_t(cfg->g.enemy.color);;
 
-			const auto glowIndex = mem.Read<std::int32_t>(i.entity + Offset::netvars::m_iGlowIndex);
+			const auto glowIndex = mem.Read<std::int32_t>(entity + Offset::netvars::m_iGlowIndex);
 
 			mem.Write<uint8_t>(IClient.address + Offset::signatures::force_update_spectator_glow, 235); //Fix Flickering
 

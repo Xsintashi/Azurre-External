@@ -142,7 +142,7 @@ void Core::gameDataUpdate() noexcept {
 			const std::string steamID = playerInfo.steamID;
 			char placeName[18];
 			ReadProcessMemory(mem.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), &placeName, 18, NULL);
-			gameData.playerData[idx] = { entity, idx, steamID, bot, hltv, name, health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placeName, dormant, isScoped };
+			gameData.playerData.push_back({ entity, idx, steamID, bot, hltv, name, health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placeName, dormant, isScoped });
 
 #pragma region Player Resource
 

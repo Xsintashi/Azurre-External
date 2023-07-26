@@ -271,6 +271,13 @@ public:
         return this->getWeaponID() == WeaponID::Ssg08 || this->getWeaponID() == WeaponID::Awp || this->getWeaponID() == WeaponID::Scar20 || this->getWeaponID() == WeaponID::G3SG1;
     }
 
+    std::string getPlaceName() noexcept {
+        char placeName[18];
+        ReadProcessMemory(mem.processHandle, (LPCVOID)(this + Offset::netvars::m_szLastPlaceName), &placeName, 18, NULL);
+
+        return placeName;
+    }
+
 };
 
 static Entity* getEntity(int idx) {

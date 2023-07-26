@@ -1094,29 +1094,26 @@ void GUI::RenderPlayerList() noexcept {
 		ImGui::TableSetupColumn("More", flagsColumn);
 		ImGui::TableHeadersRow();
 
-		std::vector<std::pair<int, PlayerData>> playersOrdered(gameData.playerData.begin(), gameData.playerData.end());
-		std::sort(playersOrdered.begin(), playersOrdered.end(), [](const std::pair<int, PlayerData> a, const std::pair<int, PlayerData> b) {
+		std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ gameData.playerData.begin(), gameData.playerData.end()};
+		std::ranges::sort(playersOrdered, [](const PlayerData& a, const PlayerData& b) {
 			switch (cfg->m.playerList.sort) {
-				default:
-				case 0: // By Index asc
-					return a.second.idx < b.second.idx;
-				case 1: // by Index desc
-					return a.second.idx > b.second.idx;
-				case 2: // by Team (Teammates First)
-					return a.second.teamNumber < b.second.teamNumber;
-				case 3: // by Team (Enemies First)
-					return a.second.teamNumber > b.second.teamNumber;
-				case 4: // by Rank asc
-					return gameData.playerResource.competitiveRanking[a.second.idx] < gameData.playerResource.competitiveRanking[b.second.idx];
-				case 5: // by Rank desc
-					return gameData.playerResource.competitiveRanking[a.second.idx] > gameData.playerResource.competitiveRanking[b.second.idx];
+			default:
+			case 0: // By Index asc
+				return a.idx < b.idx;
+			case 1: // by Index desc
+				return a.idx > b.idx;
+			case 2: // by Team (Teammates First)
+				return a.teamNumber < b.teamNumber;
+			case 3: // by Team (Enemies First)
+				return a.teamNumber > b.teamNumber;
+			case 4: // by Rank asc
+				return gameData.playerResource.competitiveRanking[a.idx] < gameData.playerResource.competitiveRanking[b.idx];
+			case 5: // by Rank desc
+				return gameData.playerResource.competitiveRanking[a.idx] > gameData.playerResource.competitiveRanking[b.idx];
 			}
-		});
+			});
 
-		for (const std::pair<int, PlayerData>& i : playersOrdered)
-		{
-			const auto& player = i.second;
-
+		for (const PlayerData& player : playersOrdered) {
 			const auto& lpColor = cfg->m.playerList.localPlayerColor.color;
 			auto teamColor = localPlayer.get() == (uintptr_t)player.entity ? ImVec4{lpColor[0], lpColor[1], lpColor[2], lpColor[3]} : player.teamNumber == 2 ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{0.26f, 0.59f, 0.98f, 1.f};
 			const auto hpColor = player.health < 50 ? player.health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f };
