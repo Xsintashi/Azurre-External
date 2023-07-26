@@ -90,10 +90,6 @@ void Core::update() {
 			cmd.AddLog("~[!] Couldn't parse map!");
 		
 	}
-	if (profilePicture.data == NULL) {
-		std::string bmpPath = std::string(std::filesystem::temp_directory_path().string()).append(windowsUserName).append(".bmp");
-		TextureManager::LoadTextureFromFile(bmpPath.c_str(), &profilePicture.data, &profilePicture.width, &profilePicture.height);
-	}
 	RECT rct;
 	if (GetWindowRect(IConsole, &rct)) {
 		gameScreenPos = { static_cast<float>(rct.left) , static_cast<float>(rct.top) };

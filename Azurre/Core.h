@@ -133,7 +133,6 @@ inline ImVec2 gameScreenPos = {};
 inline ImVec2 gameScreenPosEnd = {};
 inline GameData gameData;
 inline Matrix4x4 viewMatrix;
-inline TextureInfo profilePicture;
 inline bool isDangerZoneModePlayed;
 inline float serverTime;
 inline int maxEntity;
