@@ -31,6 +31,7 @@
 #include "resources.h"
 
 #include "Hacks/Aimbot.h"
+#include "Hacks/Chams.h"
 #include "Hacks/Clantag.h"
 #include "Hacks/Glow.h"
 #include "Hacks/Minimap.h"
@@ -253,6 +254,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 		}
 		//Here funcs which dont need be updated every ms
 
+		Chams::run();
 		Minimap::_();
 		Clan::update();
 		Core::gameDataUpdate();

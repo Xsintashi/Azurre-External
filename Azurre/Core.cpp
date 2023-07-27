@@ -7,7 +7,6 @@
 #include "TextureManager.h"
 
 #include "Hacks/Aimbot.h"
-#include "Hacks/Chams.h"
 #include "Hacks/Clantag.h"
 #include "Hacks/Minimap.h"
 #include "Hacks/Misc.h"
@@ -98,8 +97,15 @@ void Core::update() {
 	}
 
 	cfg->a.hotkey.handleToggle();
+	cfg->m.playerList.hotkey.handleToggle();
+	cfg->m.minimap.hotkey.handleToggle();
+	cfg->m.slowWalk.hotkey.handleToggle();
 	cfg->t.hotkey.handleToggle();
 	cfg->v.thirdPersonKey.handleToggle();
+#if defined(_DEBUG)
+	cfg->debug.keyDebug0.handleToggle();
+#endif
+
 };
 
 void Core::gameDataUpdate() noexcept {
@@ -233,7 +239,6 @@ void Core::_() noexcept {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		update();
 		Aimbot::recoilSystem();
-		Chams::run();
 		if (!cfg->restrictions) {
 			Misc::fakeLag();
 			Misc::fastStop();
