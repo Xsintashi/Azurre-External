@@ -38,8 +38,8 @@ void Misc::bunnyHop() noexcept {
 
 		if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions) {
 			(flags & FlagsState::ONGROUND) ?
-				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
-				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
+				driver.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
+				driver.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
 			continue;
 		}
 

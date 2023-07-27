@@ -2,6 +2,8 @@
 
 #include "../Lib/imgui/imgui.h"
 #include "Memory.h"
+#include "KeInterface.h"
+
 #include "SDK/Matrix.h"
 #include "SDK/BspParser.h"
 
@@ -141,3 +143,4 @@ inline bool parsedMap = false;
 inline rn::bsp_parser* bspParser = new rn::bsp_parser;
 #define mem azurre
 inline Memory mem = Memory{ "csgo.exe" };
+inline KeInterface driver("\\\\.\\azurre");

@@ -30,16 +30,19 @@
 #include <stdio.h>
 
 void Core::init() {
+
 	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
-	IClient.address = mem.GetModuleAddress("client.dll");
+	DWORD ProcessId = driver.GetTargetPid();
+
+	IClient.address = driver.GetClientModule();
 	IClient.size = mem.ModuleSize("client.dll");
 	cmd.AddLog("client.dll: 0x%p, sizeof: %d", IClient.address, IClient.size);
 
-	IEngine.address = mem.GetModuleAddress("engine.dll");
+	IEngine.address = driver.GetEngineModule();
 	IEngine.size = mem.ModuleSize("engine.dll");
 	cmd.AddLog("engine.dll: 0x%p, sizeof: %d", IEngine.address, IEngine.size);
 
-	IVstdlib.address = mem.GetModuleAddress("vstdlib.dll");
+	IVstdlib.address = driver.GetVstdLibModule();
 	IVstdlib.size = mem.ModuleSize("vstdlib.dll");
 	cmd.AddLog("vstdlib.dll: 0x%p, sizeof: %d", IVstdlib.address, IVstdlib.size);
 
