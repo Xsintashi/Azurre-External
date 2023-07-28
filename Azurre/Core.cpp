@@ -133,22 +133,8 @@ void Core::gameDataUpdate() noexcept {
 			const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
 			PlayerInfo playerInfo = mem.Read<PlayerInfo>(mem.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
 
-			const auto& health = entity->health();
-			const auto& armor = entity->armor();
-			const auto& hasHelmet = entity->hasHelmet();
-			const auto& hasDefuser = entity->hasDefuser();
-			const auto& teamNumber = static_cast<int>(entity->teamNumber());
-			const auto& money = entity->money();
-			const auto& isScoped = entity->isScoped();
-			const auto& weaponID = entity->getWeaponIDFromPlayer();
-			const auto& dormant = entity->dormant();
 			const std::string name = playerInfo.name;
-			const bool bot = playerInfo.fakePlayer;
-			const bool hltv = playerInfo.isHLTV;
-			const std::string steamID = playerInfo.steamID;
-			char placeName[18];
-			ReadProcessMemory(mem.processHandle, (LPCVOID)(entity + Offset::netvars::m_szLastPlaceName), &placeName, 18, NULL);
-			gameData.playerData.push_back({ entity, idx, steamID, bot, hltv, name, health, armor, hasHelmet, hasDefuser, teamNumber, money, weaponID, placeName, dormant, isScoped });
+			gameData.playerData.push_back({ entity, idx, playerInfo});
 
 #pragma region Player Resource
 

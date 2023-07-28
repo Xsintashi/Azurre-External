@@ -136,7 +136,6 @@ static ClassID GetClassId(Entity* entity) {
 
 class Entity {
 public:
-	OFFSET(lastPlaceName, (), Offset::netvars::m_szLastPlaceName, LPVOID)
 	OFFSET(money, (), Offset::netvars::m_iAccount, int)
 	OFFSET(health, (), Offset::netvars::m_iHealth, int)
 	OFFSET(armor, (), Offset::netvars::m_ArmorValue, int)
@@ -158,7 +157,7 @@ public:
     OFFSET(spotted, (), Offset::netvars::m_bSpotted, bool)
     OFFSET(isDefusing, (), Offset::netvars::m_bIsDefusing, bool)
     OFFSET(waitForNoAttack, (), Offset::netvars::m_bWaitForNoAttack, bool)
-    OFFSET(boneMatrix, (), Offset::netvars::m_dwBoneMatrix, uintptr_t)
+    OFFSET(boneMatrix, (), Offset::netvars::m_dwBoneMatrix, DWORD)
     OFFSET(activeWeapon, (), Offset::netvars::m_hActiveWeapon, int)
     OFFSET(eyeAngleX, (), Offset::netvars::m_angEyeAnglesX, float)
     OFFSET(eyeAngleY, (), Offset::netvars::m_angEyeAnglesY, float)
@@ -167,7 +166,7 @@ public:
     OFFSET(totalHits, (), Offset::netvars::m_totalHitsOnServer, int)
     OFFSET(observerTarget, (), Offset::netvars::m_hObserverTarget, int)
     OFFSET(observerMode, (), Offset::netvars::m_iObserverMode, ObsMode)
-    OFFSET(lifeState, (), Offset::netvars::m_lifeState, bool)
+    OFFSET(lifeState, (), Offset::netvars::m_lifeState, LifeState)
     OFFSET(isScoped, (), Offset::netvars::m_bIsScoped, bool)
     OFFSET(modelIndex, (), Offset::netvars::m_nModelIndex, int)
     OFFSET(fov, (), Offset::netvars::m_iFOV, int)
@@ -242,7 +241,7 @@ public:
     }
 
     short getWeaponIDFromPlayer() noexcept {
-        int weaponIndex = mem.Read<int>((uintptr_t)this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+        int weaponIndex = mem.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
         if (!weaponIndex)
             return 0;
 
@@ -250,7 +249,7 @@ public:
         if (!activeWeapon)
             return 0;
 
-        return mem.Read<short>((uintptr_t)activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
+        return mem.Read<short>(activeWeapon + Offset::netvars::m_iItemDefinitionIndex);
     }
 
     Entity* getActiveWeapon() noexcept {

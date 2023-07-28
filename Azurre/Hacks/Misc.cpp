@@ -20,7 +20,7 @@
 
 void Misc::bunnyHop() noexcept {
 
-	const static auto rpmJump = []() {
+	constexpr static auto rpmJump = []() {
 		clientCmd("+jump");
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		clientCmd("-jump");

@@ -1103,9 +1103,9 @@ void GUI::RenderPlayerList() noexcept {
 			case 1: // by Index desc
 				return a.idx > b.idx;
 			case 2: // by Team (Teammates First)
-				return a.teamNumber < b.teamNumber;
+				return a.entity->teamNumber() < b.entity->teamNumber();
 			case 3: // by Team (Enemies First)
-				return a.teamNumber > b.teamNumber;
+				return a.entity->teamNumber() > b.entity->teamNumber();
 			case 4: // by Rank asc
 				return gameData.playerResource.competitiveRanking[a.idx] < gameData.playerResource.competitiveRanking[b.idx];
 			case 5: // by Rank desc
@@ -1115,19 +1115,19 @@ void GUI::RenderPlayerList() noexcept {
 
 		for (const PlayerData& player : playersOrdered) {
 			const auto& lpColor = cfg->m.playerList.localPlayerColor.color;
-			auto teamColor = localPlayer.get() == (uintptr_t)player.entity ? ImVec4{lpColor[0], lpColor[1], lpColor[2], lpColor[3]} : player.teamNumber == 2 ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{0.26f, 0.59f, 0.98f, 1.f};
-			const auto hpColor = player.health < 50 ? player.health < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f };
+			auto teamColor = localPlayer.get() == (uintptr_t)player.entity ? ImVec4{lpColor[0], lpColor[1], lpColor[2], lpColor[3]} : player.entity->teamNumber() == Team::TT ? ImVec4{ 0.92f, 0.82f, .54f, 1.f } : ImVec4{0.26f, 0.59f, 0.98f, 1.f};
+			const auto hpColor = player.entity->health() < 50 ? player.entity->health() < 25 ? ImVec4{ 1.f, .0f, .0f, 1.f } : ImVec4{ 1.f, 1.f, .0f, 1.f } : ImVec4{ 0.f, 1.f, .0f, 1.f };
 
 			if (cfg->m.playerList.hideLocalPlayer && (player.idx == localPlayerIndex))
 				continue;
 
-			if (cfg->m.playerList.hideDormant && player.dormant)
+			if (cfg->m.playerList.hideDormant && player.entity->dormant())
 				continue;
 
-			if (player.dormant)
+			if (player.entity->dormant())
 				teamColor.w = 0.5f;
 
-			if (player.isHLTV)
+			if (player.playerInfo.isHLTV)
 				continue;
 
 			ImGui::TableNextRow();
@@ -1135,33 +1135,28 @@ void GUI::RenderPlayerList() noexcept {
 			ImGui::TableNextColumn();
 			ImGui::Text("%i", player.idx);
 			ImGui::TableNextColumn();
-			ImGui::TextColored(teamColor, "%s", player.name.c_str());
+			ImGui::TextColored(teamColor, "%s", player.playerInfo.name);
 			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("%s", player.steamID.c_str());
+				ImGui::SetTooltip("%s", player.playerInfo.steamID);
 			
 			ImGui::TableNextColumn();
-			ImGui::TextColored(hpColor, "%s", player.health < 1 ? "DEAD" : std::to_string(player.health).c_str());
+			ImGui::TextColored(hpColor, "%s", player.entity->health() < 1 ? "DEAD" : std::to_string(player.entity->health()).c_str());
 			ImGui::TableNextColumn();
-			ImGui::Text("%i%s", player.armor, player.hasHelmet ? "+H" : "");
+			ImGui::Text("%i%s", player.entity->armor(), player.entity->hasHelmet() ? "+H" : "");
 			ImGui::TableNextColumn();
-			ImGui::Text("$%i", player.money);
+			ImGui::Text("$%i", player.entity->money());
 			ImGui::TableNextColumn();
-			ImGui::Text("%s", Skin::getWeaponIDName(player.weaponID));
+			ImGui::Text("%s", Skin::getWeaponIDName(player.entity->getWeaponIDFromPlayer()));
 			ImGui::TableNextColumn();
 			ImGui::Image(ranksTextures[gameData.playerResource.competitiveRanking[player.idx]].getTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
-			if (ImGui::IsItemHovered()) {
-				ImGui::BeginTooltip();
-				ImGui::PushFont(nullptr);
-				ImGui::TextUnformatted(std::to_string(gameData.playerResource.competitiveWins[player.idx]).append(" wins").c_str());
-				ImGui::PopFont(); 
-				ImGui::EndTooltip();
-			}
+			ImGui::SameLine();
+			ImGui::TextUnformatted(std::string("(").append(std::to_string(gameData.playerResource.competitiveWins[player.idx])).append(" wins)").c_str());
 			if (ImGui::TableNextColumn()) {
 				if (ImGui::Button("...", { 24.f, 16.f }))
 					ImGui::OpenPopup("plMore");
 			}
 			if (ImGui::BeginPopup("plMore")) {
-				ImGui::Text("Name: %s", player.name.c_str());
+				ImGui::Text("Name: %s", player.playerInfo.name);
 				ImGui::Text("Clantag: %s", gameData.playerResource.clanTag[player.idx].c_str());
 				ImGui::Text("Ping: %d", gameData.playerResource.ping[player.idx]);
 				ImGui::Text("Kills: %d", gameData.playerResource.kills[player.idx]);

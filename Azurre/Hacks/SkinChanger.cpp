@@ -249,7 +249,7 @@ void Skin::update() {
         static const int knifeIndexCT = getModelIndexByID(WeaponID::Knife);
         static const int knifeIndexTT = getModelIndexByID(WeaponID::KnifeT);
 
-        const auto localPlayerModel = mem.Read<DWORD>(localPlayer + Offset::netvars::m_nModelIndex);
+        const auto localPlayerModel = mem.Read<DWORD>(localPlayer.get() + Offset::netvars::m_nModelIndex);
         for (int i = 0; i < 8; i++) {
             const auto& weapons = mem.Read<uintptr_t>(localPlayer.get() + Offset::netvars::m_hMyWeapons + i * 0x4) & ENT_ENTRY_MASK;
             const auto& weapon = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weapons - 1) * 0x10);

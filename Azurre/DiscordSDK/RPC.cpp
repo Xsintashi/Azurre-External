@@ -57,7 +57,7 @@ void Discord::Update(){
 				break;
 			case 1: //Nick
 				if (gameState == ConnectionState::FullyConnected && localPlayer.get())
-					details = "Nick: " + gameData.playerData[localPlayerIndex].name;
+					details = "Nick: " + std::string(gameData.playerData[localPlayerIndex].playerInfo.name);
 				else 
 					details = "Nick: unconnected";
 				break;

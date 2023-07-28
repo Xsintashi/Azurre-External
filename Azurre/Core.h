@@ -4,6 +4,7 @@
 #include "Memory.h"
 #include "SDK/Matrix.h"
 #include "SDK/BspParser.h"
+#include "SDK/PlayerInfo.h"
 
 #include <string>
 #include <vector>
@@ -64,20 +65,7 @@ struct ObserverData {
 struct PlayerData {
 	Entity* entity;
 	int idx;
-	std::string steamID;
-	bool isBot;
-	bool isHLTV;
-	std::string name;
-	int health;
-	int armor;
-	bool hasHelmet;
-	bool hasDefuser;
-	int teamNumber;
-	int money;
-	int weaponID;
-	std::string placename;
-	bool dormant;
-	bool isScoped;
+	PlayerInfo playerInfo;
 };
 
 struct PlayerResource {
