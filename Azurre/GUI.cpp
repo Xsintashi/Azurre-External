@@ -789,20 +789,6 @@ void GUI::CreateImGui() noexcept
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
-#if !defined(_DEBUG)
-
-	ImFontConfig cfgFont;
-	cfgFont.SizePixels = 15.0f;
-
-	ImFont* font;
-	if (PWSTR pathToFonts; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Fonts, 0, nullptr, &pathToFonts))) {
-		const std::filesystem::path path{ pathToFonts };
-		CoTaskMemFree(pathToFonts);
-		font = io.Fonts->AddFontFromMemoryTTF((void*)resource::ubuntuFont, sizeof(resource::ubuntuFont), 13.0f, &cfgFont, Helpers::getFontGlyphRanges());
-		if (!font)
-			io.Fonts->AddFontDefault(&cfgFont);
-	}
-#endif
 	io.IniFilename = NULL;
 
 	ImGui::StyleColorsDark();
