@@ -41,14 +41,13 @@ void Discord::Update(){
 		if (gameData.playerData.empty())
 			continue;
 		constexpr int intSize = sizeof(int);
-		const auto& kills = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iKills + intSize + localPlayerIndex * 4);
-		const auto& assists = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iAssists + intSize + localPlayerIndex * 4);
-		const auto& deaths = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iDeaths + intSize + localPlayerIndex * 4);
-		const auto& score = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iScore + intSize + localPlayerIndex * 4);
-		const auto& rank = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRanking + intSize + localPlayerIndex * 4);
-		const auto& wins = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveWins + intSize + localPlayerIndex * 4);
-		const auto& mvp = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iMVPs + intSize + localPlayerIndex * 4);
-		const auto& rankType = mem.Read<int>(IPlayerResource.address + Offset::netvars::m_iCompetitiveRankType + intSize + localPlayerIndex * 4);
+		const static auto& kills = gameData.playerResource.kills[localPlayerIndex];
+		const static auto& assists = gameData.playerResource.assists[localPlayerIndex];
+		const static auto& deaths = gameData.playerResource.deaths[localPlayerIndex];
+		const static auto& score = gameData.playerResource.score[localPlayerIndex];
+		const static auto& rank = gameData.playerResource.competitiveRanking[localPlayerIndex];
+		const static auto& wins = gameData.playerResource.competitiveWins[localPlayerIndex];
+		const static auto& mvp = gameData.playerResource.MVPs[localPlayerIndex];
 
 		switch (config.details) {
 			default:
