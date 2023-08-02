@@ -9,6 +9,7 @@
 #include "../SDK/Matrix.h"
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/Vector.h"
+#include "../SDK/WeaponInfo.h"
 
 #include <chrono>
 #include <cmath>
@@ -16,7 +17,6 @@
 #include <algorithm>
 #include "../SDK/UserInterface.h"
 #include "../../Lib/imgui/ImGuiCustom.h"
-#include "../SDK/maxSpeed.h"
 
 void Misc::bunnyHop() noexcept {
 

@@ -7,7 +7,7 @@
 #include "SDK/GlobalVars.h"
 #include "SDK/Interfaces.h"
 #include "SDK/LocalPlayer.h"
-#include "SDK/maxSpeed.h"
+#include "SDK/WeaponInfo.h"
 #include "SDK/UserInterface.h"
 
 #include "Hacks/Clantag.h"
