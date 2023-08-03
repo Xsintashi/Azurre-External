@@ -96,6 +96,7 @@ static void from_json(const json& j, Config::AimbotConfig& c) {
     read(j, "Hotkey", c.hotkey);
     read(j, "Auto Shot", c.autoShot);
     read(j, "Auto Stop", c.autoStop);
+    read(j, "Force Accuracy", c.forceAccuracy);
     read(j, "Disable on spectator", c.disableWhileBeingSpectated);
     read(j, "Visible Only", c.visibleOnly);
     read(j, "Bone", c.bone);
@@ -457,6 +458,7 @@ static void to_json(json& j, const Config::AimbotConfig& o, const Config::Aimbot
     WRITE("Hotkey", hotkey);
     WRITE("Auto Shot", autoShot);
     WRITE("Auto Stop", autoStop);
+    WRITE("Force Accuracy", forceAccuracy);
     WRITE("Disable on spectator", disableWhileBeingSpectated);
     WRITE("Visible Only", visibleOnly);
     WRITE("Bone", bone);

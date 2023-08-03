@@ -8,6 +8,7 @@
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
+#include "../SDK/WeaponInfo.h"
 
 #include <chrono>
 
@@ -117,10 +118,12 @@ void Aimbot::run() noexcept {
 					mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, correctAngles);
 				}
 				
+				const short& weaponID = localPlayer->getWeaponIDFromPlayer();
+
 				if (cfg->a.autoStop && !cfg->restrictions) {
 					const float velocity = localPlayer->velocity().length2D();
 					Vector finalVector = Helpers::calculateRealAngles();
-					if (velocity >= 30.f && (localPlayer->flags() & 1)) {
+					if (velocity >= (getWeaponMaxSpeed(weaponID) / 3) && (localPlayer->flags() & 1)) {
 						if (finalVector.x >= 20) // FRONT, SO GO BACKWARDS
 							mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceBackward, 6);
 						if (finalVector.x <= -20) // BACK, SO GO FRONT
@@ -133,9 +136,16 @@ void Aimbot::run() noexcept {
 				}
 
 				const auto& crosshair = localPlayer->crosshairID();
-				if (!crosshair || crosshair > 64) continue;
-				if (const auto ent = getEntity(crosshair - 1); ent->isSameTeam() && !cfg->a.friendlyFire) continue;
-				if (cfg->a.autoShot || (cfg->a.autoShot && cfg->a.autoStop && localPlayer->velocity().length2D() < 15.f)) {
+
+				if (!crosshair || crosshair > 64)
+					continue;
+				if (const auto ent = getEntity(crosshair - 1); ent->isSameTeam() && !cfg->a.friendlyFire)
+					continue;
+
+				if (cfg->a.autoShot) {
+					if (localPlayer->velocity().length2D() > (getWeaponMaxSpeed(weaponID) / 3) && cfg->a.forceAccuracy) // Force accuracy shoots when spread doesnt affect player
+						break;
+
 					if (cfg->restrictions) {
 						mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
 						std::this_thread::sleep_for(std::chrono::milliseconds(2));

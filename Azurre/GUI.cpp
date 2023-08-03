@@ -1231,7 +1231,7 @@ void childLabel(const char* text) {
 
 void renderAimbotWindow() noexcept {
 	ImGui::PushID("Aimbot");
-	ImGui::BeginChild("Aimbot", {232.f , 290.f}, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	ImGui::BeginChild("Aimbot", {232.f , 314.f}, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	{
 		ImGui::PushID("key");
 		ImGui::Checkbox("Enabled", &cfg->a.enabled);
@@ -1242,6 +1242,7 @@ void renderAimbotWindow() noexcept {
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::EndDisabled();
 		ImGui::Checkbox("Auto Stop", &cfg->a.autoStop);
+		ImGui::Checkbox("Force Accuracy", &cfg->a.forceAccuracy);
 		ImGui::Checkbox("Disable While Spectated", &cfg->a.disableWhileBeingSpectated);
 		ImGui::Checkbox("Visible Only", &cfg->a.visibleOnly);
 		ImGui::Checkbox("Friendly Fire", &cfg->a.friendlyFire);

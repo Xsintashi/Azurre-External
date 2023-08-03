@@ -36,6 +36,7 @@ public:
 		bool friendlyFire = false;
 		bool autoShot = false;
 		bool autoStop = false;
+		bool forceAccuracy = false;
 		bool disableWhileBeingSpectated = false;
 		bool visibleOnly = false;
 		int bone = 0;
