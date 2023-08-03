@@ -1216,6 +1216,23 @@ void GUI::RenderPlayerList() noexcept {
 
 		}
 		ImGui::EndTable();
+		if (showMenu) {
+			if (ImGui::Button("Dump Ranks to Clipboard")) {
+				std::vector<std::reference_wrapper<const PlayerData>> p{ gameData.playerData.begin(), gameData.playerData.end()};
+				std::ranges::sort(p, [](const PlayerData& a, const PlayerData& b) {
+					return a.entity->teamNumber() < b.entity->teamNumber(); // I think sorting by team is better for printing ranks out anyway
+				});
+				std::ostringstream ss;
+				Team team = Team::None;
+				for (const PlayerData& player : p) {
+					if (team != player.entity->teamNumber())
+						ss << (player.entity->teamNumber() == Team::TT ? "TTs:" : "CTs:") << "\n";
+					ss << player.playerInfo.name << " - " << Helpers::convertRankFromNumber(false, gameData.playerResource.competitiveRanking[player.idx]) << " (" << gameData.playerResource.competitiveWins[player.idx] << " wins)" << "\n";
+					team = player.entity->teamNumber();
+				}
+				ImGui::SetClipboardText(ss.str().c_str());
+			}
+		}
 	}
 	ImGui::End();
 }
