@@ -52,6 +52,7 @@ enum class ObsMode {
 enum class ClassID {
     Ak47 = 1,
     BaseCSGrenadeProjectile = 9,
+    WeaponWorldModel = 23, // Wrench, Axe, Hammer
     BreachChargeProjectile = 29,
     BumpMineProjectile = 33,
     C4,

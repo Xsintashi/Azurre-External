@@ -185,6 +185,7 @@ static void from_json(const json& j, Config::ESPConfig& e) {
     read(j, "Weapons", e.weapons);
     read(j, "Projectiles", e.projectiles);
     read(j, "Others", e.others);
+    read(j, "Danger Zone", e.dangerzone);
 }
 
 static void from_json(const json& j, Crosshair& o) {
@@ -550,6 +551,7 @@ static void to_json(json& j, const Config::ESPConfig& o) {
     j["Weapons"] = o.weapons;
     j["Projectiles"] = o.projectiles;
     j["Others"] = o.others;
+    j["Danger Zone"] = o.dangerzone;
 }
 
 static void to_json(json& j, const Crosshair& o, const Crosshair& dummy = {}) {

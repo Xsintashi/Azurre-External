@@ -88,6 +88,15 @@ struct ProjectileData {
 	const char* name;
 };
 
+struct DangerZoneData {
+	std::vector<Entity*> drone;
+	std::vector<Entity*> ammoBox;
+	std::vector<Entity*> cash;
+	std::vector<Entity*> dronegun;
+	std::vector<Entity*> healthshots;
+	std::vector<ProjectileData> lootCases;
+};
+
 struct GameData {
 	std::vector<PlayerData> playerData;
 	PlayerResource playerResource;
@@ -100,6 +109,7 @@ struct GameData {
 	Entity* plantedC4;
 	Entity* droppedC4;
 	std::string defusingPlayerName;
+	DangerZoneData dangerZoneData;
 };
 
 struct TextureInfo {

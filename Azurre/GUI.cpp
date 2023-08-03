@@ -989,6 +989,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("HighestEntityIndex: %d", highestEntityIndex);
 	ImGui::Text("LocalPlayerIndex: %d", localPlayerIndex);
 	ImGui::Text("CrosshairID: %d", localPlayer->crosshairID());
+	ImGui::Text("Crosshair Entity Class ID: %d", (int)GetClassId(getEntity(localPlayer->crosshairID())));
 	ImGui::Text("Next Attack: %s", localPlayer->waitForNoAttack() ? "true" : "false");
 
 	const short &weaponID = localPlayer->getWeaponIDFromPlayer();
@@ -1326,21 +1327,25 @@ void renderChamsWindow() noexcept {
 }
 
 void renderESPWindow() noexcept {
+	static int currentCategory = 0;
 	ImGui::BeginChild("ESP", { 232.f,242.f }, true, ImGuiWindowFlags_NoTitleBar);
 	{
 		static int list = 0;
-		static int spotted = 0;
-		constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
 		ImGui::Checkbox("Enabled", &cfg->esp.enabled);
-		ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons\0Projectiles\0Others\0");
+		ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons\0Projectiles\0Others\0Danger Zone\0");
 		switch (list) {
-		default: case 0: case 1:
-			if (list) ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
-			else spotted = 0;
+		default: case 0: case 1: {
+			static int spotted = 0;
+			constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible" };
+			if (list)
+				ImGui::Combo("##players", &spotted, "Occluded\0Visible\0");
+			else
+				spotted = 0;
+
 			ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.names.enabled);
 			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].weapons.enabled);
 #if defined(_DEBUG)
-				ImGui::Checkbox("Skeleton", &cfg->esp.players[categories[list + spotted]].skeleton); // DEBUG bones pos
+			ImGui::Checkbox("Skeleton", &cfg->esp.players[categories[list + spotted]].skeleton); // DEBUG bones pos
 #endif
 			ImGuiCustom::multiCombo("Flags", cfg->esp.players[categories[list + spotted]].flags, "Money\0Scoping\0Location\0C4 Carrier\0Defuse \0");
 			ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled);
@@ -1389,8 +1394,8 @@ void renderESPWindow() noexcept {
 			ImGui::PopID();
 			ImGuiCustom::colorPicker("Lines", cfg->esp.players[categories[list + spotted]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.lines.enabled);
 			break;
-
-		case 2:
+		}
+		case 2: {
 			ImGuiCustom::colorPicker("Name", cfg->esp.weapons["All"].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.names.enabled);
 			ImGui::Checkbox("Boxes", &cfg->esp.weapons["All"].box.enabled);
 			ImGui::PushID("boxes weapons");
@@ -1410,7 +1415,8 @@ void renderESPWindow() noexcept {
 			ImGui::PopID();
 			ImGuiCustom::colorPicker("Lines", cfg->esp.weapons["All"].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.lines.enabled);
 			break;
-		case 3:
+		}
+		case 3: {
 			ImGuiCustom::colorPicker("Name", cfg->esp.projectiles["All"].names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.projectiles["All"].names.enabled);
 			ImGui::Checkbox("Boxes", &cfg->esp.projectiles["All"].box.enabled);
 			ImGui::PushID("boxes projectiles");
@@ -1429,11 +1435,11 @@ void renderESPWindow() noexcept {
 			}
 			ImGui::PopID();
 			break;
-		case 4:
-			static int currentCategory = 0;
+		}
+		case 4: {
 			constexpr std::array categories{ "C4", "Planted C4", "Defuse Kits"};
+			static int currentCategory = 0;
 			ImGui::Combo("Others", &currentCategory, categories.data(), categories.size());
-
 			ImGuiCustom::colorPicker("Name", cfg->esp.others[categories[currentCategory]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.others[categories[currentCategory]].other.names.enabled);
 			if (currentCategory == 2) {
 				ImGui::SameLine();
@@ -1457,7 +1463,32 @@ void renderESPWindow() noexcept {
 			ImGui::PopID();
 			ImGuiCustom::colorPicker("Lines", cfg->esp.others[categories[currentCategory]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.others[categories[currentCategory]].other.lines.enabled);
 			break;
+		}
+		case 5: {
+			static int currentCategory = 0;
+			constexpr std::array categories{ "Ammo Box", "Cash", "Drone", "Dronegun", "Healthshot", "Pistol Case", "Light Case", "Heavy Case", "Explosive Case", "Tools Case", "Cash Dufflebag"};
+			ImGui::Combo("Danger Zone", &currentCategory, categories.data(), categories.size());
 
+			ImGuiCustom::colorPicker("Name", cfg->esp.dangerzone[categories[currentCategory]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.dangerzone[categories[currentCategory]].other.names.enabled);
+			ImGui::Checkbox("Boxes", &cfg->esp.dangerzone[categories[currentCategory]].box.enabled);
+			ImGui::PushID("boxes weapons");
+			ImGui::SameLine();
+			if (ImGui::Button("..."))
+				ImGui::OpenPopup("");
+
+			if (ImGui::BeginPopup("")) {
+				if (ImGui::Checkbox("Gradient Color", &cfg->esp.dangerzone[categories[currentCategory]].box.gradientColor)) {
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.dangerzone[categories[currentCategory]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr);
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.dangerzone[categories[currentCategory]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr);
+				}
+				else
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.dangerzone[categories[currentCategory]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr);
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+			ImGuiCustom::colorPicker("Lines", cfg->esp.dangerzone[categories[currentCategory]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.dangerzone[categories[currentCategory]].other.lines.enabled);
+			break;
+		}
 		}
 	}
 	ImGui::EndChild();

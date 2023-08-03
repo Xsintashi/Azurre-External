@@ -108,6 +108,7 @@ void Core::update() {
 
 void Core::gameDataUpdate() noexcept {
 	const auto& userInfoTable = mem.Read<uintptr_t>(IClientState.address + Offset::signatures::dwClientState_PlayerInfo);
+	const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
 	gameData.playerData.clear();
 	gameData.weaponData.clear();
 	gameData = {}; // reset GameData
@@ -128,9 +129,7 @@ void Core::gameDataUpdate() noexcept {
 				mem.Write<bool>(entity + Offset::netvars::m_bSpotted, true);
 
 			// Player Info
-			const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC);
 			PlayerInfo playerInfo = mem.Read<PlayerInfo>(mem.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
-
 			const std::string name = playerInfo.name;
 			gameData.playerData.push_back({ entity, idx, playerInfo});
 
@@ -195,9 +194,11 @@ void Core::gameDataUpdate() noexcept {
 			break;
 		case ClassID::BaseCSGrenadeProjectile: {
 			const int& modelIndex = entity->modelIndex();
-			if (Skin::getModelIndex("models/Weapons/w_eq_flashbang_dropped.mdl") == modelIndex)
+			const static int flash = Skin::getModelIndex("models/Weapons/w_eq_flashbang_dropped.mdl");
+			const static int nade = Skin::getModelIndex("models/Weapons/w_eq_fraggrenade_dropped.mdl");
+			if (flash == modelIndex)
 				gameData.projectileData.push_back({ entity, "Flashbang" });
-			if (Skin::getModelIndex("models/Weapons/w_eq_fraggrenade_dropped.mdl") == modelIndex)
+			if (nade == modelIndex)
 				gameData.projectileData.push_back({ entity, "Explosive Grenade" });
 			break;
 		}
@@ -213,7 +214,58 @@ void Core::gameDataUpdate() noexcept {
 		case ClassID::EconEntity:
 			gameData.defuseKits.push_back(entity);
 			break;
-			
+		case ClassID::AmmoBox:
+			gameData.dangerZoneData.ammoBox.push_back(entity);
+			break;
+		case ClassID::Drone:
+			gameData.dangerZoneData.drone.push_back(entity);
+			break;
+		case ClassID::Cash:
+			gameData.dangerZoneData.cash.push_back(entity);
+			break;
+		case ClassID::Healthshot:
+			gameData.dangerZoneData.healthshots.push_back(entity);
+			break;
+		case ClassID::Dronegun:
+			gameData.dangerZoneData.dronegun.push_back(entity);
+			break;
+		case ClassID::LootCrate: {
+			const int& modelIndex = entity->modelIndex();
+
+			const static int pistol = Skin::getModelIndex("models/props_survival/cases/case_pistol.mdl");
+			const static int light = Skin::getModelIndex("models/props_survival/cases/case_light_weapon.mdl");
+			const static int heavy = Skin::getModelIndex("models/props_survival/cases/case_heavy_weapon.mdl");
+			const static int explosive = Skin::getModelIndex("models/props_survival/cases/case_explosive.mdl");
+			const static int tools = Skin::getModelIndex("models/props_survival/cases/case_tools.mdl");
+			const static int bag = Skin::getModelIndex("models/props_survival/cash/dufflebag.mdl");
+
+			if (pistol == modelIndex) {
+				gameData.dangerZoneData.lootCases.push_back({ entity, "Pistol Case" });
+				break;
+			}
+			if (light == modelIndex) {
+				gameData.dangerZoneData.lootCases.push_back({ entity, "Light Case" });
+				break;
+			}
+			if (heavy == modelIndex) {
+				gameData.dangerZoneData.lootCases.push_back({ entity, "Heavy Case" });
+				break;
+			}
+			if (explosive == modelIndex) {
+				gameData.dangerZoneData.lootCases.push_back({ entity, "Explosive Case" });
+				break;
+			}
+			if (tools == modelIndex) {
+				gameData.dangerZoneData.lootCases.push_back({ entity, "Tools Case" });
+				break;
+			}
+			if (bag == modelIndex) {
+				gameData.dangerZoneData.lootCases.push_back({ entity, "Cash Dufflebag" });
+				break;
+			}
+
+			break;
+		}
 		}
 	}
 }
@@ -222,8 +274,8 @@ void Core::_() noexcept {
 	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		update();
-		Aimbot::recoilSystem();
 		if (!cfg->restrictions) {
+			Aimbot::recoilSystem();
 			Misc::fakeLag();
 			Misc::fastStop();
 			Visuals::noFlash();

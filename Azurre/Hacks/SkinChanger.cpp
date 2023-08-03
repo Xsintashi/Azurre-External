@@ -293,7 +293,7 @@ void Skin::update() {
 
             mem.Write<int32_t>(weapon + Offset::netvars::m_iAccountID, mem.Read<int32_t>(weapon + Offset::netvars::m_OriginalOwnerXuidLow));
         }
-        if (cfg->ch.TTAgent || cfg->ch.CTAgent) {
+        if (cfg->ch.TTAgent || cfg->ch.CTAgent && !isDangerZoneModePlayed) {
             if (localPlayer->teamNumber() == Team::Spectators) continue;
             int modelIndex = localPlayer->teamNumber() == Team::TT ? cfg->ch.TTAgent : cfg->ch.CTAgent;
             int index = Skin::getModelIndex(models[modelIndex - 1]);

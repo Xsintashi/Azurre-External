@@ -82,6 +82,7 @@ public:
 		std::unordered_map<std::string, Weapons> weapons;
 		std::unordered_map<std::string, Projectiles> projectiles;
 		std::unordered_map<std::string, Weapons> others;
+		std::unordered_map<std::string, Weapons> dangerzone;
 	} esp;
 
 	struct GlowConfig {

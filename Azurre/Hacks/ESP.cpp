@@ -98,6 +98,7 @@ void drawPlayerName(ImVec2 pos, float width, float height, std::string name, ImU
 constexpr std::array categories{ "Allies", "Enemies Occluded", "Enemies Visible"};
 
 void render_____(Entity* entity, std::string name, auto& config) {
+	
 	Vector pos = entity->origin();
 	Vector head;
 	pos.z -= 8.f;
@@ -105,11 +106,26 @@ void render_____(Entity* entity, std::string name, auto& config) {
 	head.y = pos.y;
 	head.z = pos.z + 16.f;
 
+	if (GetClassId(entity) == ClassID::Dronegun)
+		head.z += 48.f;
+
+	if (GetClassId(entity) == ClassID::Drone)
+		head.z += 32.f;
+
 	Vector posScreen = Helpers::world2Screen(gameScreenSize, pos, viewMatrix);
 	Vector headScreen = Helpers::world2Screen(gameScreenSize, head, viewMatrix);
 
 	float height = headScreen.y - posScreen.y;
-	const float width = height;
+	float width = height;
+
+	if (GetClassId(entity) == ClassID::Dronegun)
+		width /= 4;
+
+	if (GetClassId(entity) == ClassID::Drone)
+		width /= 3;
+
+	if (GetClassId(entity) == ClassID::Healthshot)
+		width /= 2;
 
 	const auto colorBox = config.box.gradientColor ? config.box.grandientTop : config.box.solid;
 	const auto colorBox_ = config.box.gradientColor ? config.box.grandientBottom : config.box.solid;
@@ -270,6 +286,44 @@ void ESP::render() noexcept {
 		if (dk->origin() == Vector{ 0.f, 0.f, 0.f })
 			continue;
 		render_____(dk, "Defuse Kit", cfg->esp.others["Defuse Kits"]);
+	}
+
+	if (isDangerZoneModePlayed) {
+		for (auto& dz : gameData.dangerZoneData.ammoBox) {
+			if (dz->origin() == Vector{ 0.f, 0.f, 0.f })
+				continue;
+			render_____(dz, "Ammo Box", cfg->esp.dangerzone["Ammo Box"]);
+		}
+
+		for (auto& dz : gameData.dangerZoneData.cash) {
+			if (dz->origin() == Vector{ 0.f, 0.f, 0.f })
+				continue;
+			render_____(dz, "Cash", cfg->esp.dangerzone["Cash"]);
+		}
+
+		for (auto& dz : gameData.dangerZoneData.dronegun) {
+			if (dz->origin() == Vector{ 0.f, 0.f, 0.f })
+				continue;
+			render_____(dz, "Dronegun", cfg->esp.dangerzone["Dronegun"]);
+		}
+
+		for (auto& dz : gameData.dangerZoneData.drone) {
+			if (dz->origin() == Vector{ 0.f, 0.f, 0.f })
+				continue;
+			render_____(dz, "Drone", cfg->esp.dangerzone["Drone"]);
+		}
+
+		for (auto& dz : gameData.dangerZoneData.healthshots) {
+			if (dz->origin() == Vector{ 0.f, 0.f, 0.f })
+				continue;
+			render_____(dz, "Healthshot", cfg->esp.dangerzone["Healthshot"]);
+		}
+
+		for (auto& dz : gameData.dangerZoneData.lootCases) {
+			if (dz.entity->origin() == Vector{ 0.f, 0.f, 0.f })
+				continue;
+			render_____(dz.entity, dz.name, cfg->esp.dangerzone[dz.name]);
+		}
 	}
 
 	if (gameData.droppedC4->origin() != Vector{ 0.f, 0.f, 0.f }&& gameData.droppedC4->isValid())
