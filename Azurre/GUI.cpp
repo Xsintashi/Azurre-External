@@ -995,10 +995,7 @@ void GUI::RenderDebugWindow() noexcept {
 	float maxSpeedOfWeapon = getWeaponMaxSpeed(weaponID);
 	ImGui::Text("Max Weapon Speed: %.2f", maxSpeedOfWeapon);
 
-	const auto buffer = mem.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::m_szSteamName); //Names are 128 length long
-	std::string name = buffer.data(); // We don't want zeros cuz we have to delete unwanted " in next step
-	name.pop_back(); //Name comes with " character, so we want to remove that cuz its not included in names
-	ImGui::Text("Player Name: %s", name.data());
+	ImGui::Text("Player Name: %s", playerName.c_str());
 
 	ImGui::PushID("Roll");
 	static float roll = 0.f;
@@ -1984,7 +1981,7 @@ void renderConfigWindow() noexcept {
 						switch (i) {
 						case 0: cfg->reset(); break;
 						case 1:	cfg->a = {}; break;
-						case 2:	cfg->c = {};  break;
+						case 2:	cfg->c = {}; break;
 						case 3:	cfg->d = {}; break;
 						case 4:	cfg->g = {}; break;
 						case 5:	cfg->m = {}; break;
@@ -2074,6 +2071,8 @@ void GUI::RenderMainMenu() noexcept {
 	switch (category) {
 		default:
 		case -1:
+			ImGui::SeparatorText("Welcome");
+			ImGui::Text("Hello %s! How are you today?", playerName.c_str()); // to remake lol
 			break;
 		case 0: // Aimbot | TriggerBot
 			childLabel("Aimbot");
@@ -2150,6 +2149,7 @@ void watermark() {
 	const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0;
 	const std::string watermark = std::string("Azurre | FPS: ").append(std::to_string(framePerSecond)).append(s).append("Hello xs9 :)");
 #endif
+	const std::string loggedAs = "Logged as: " + playerName;
 	for (unsigned int i = 0; i < watermark.size(); i++) {
 
 		constexpr float pi = std::numbers::pi_v<float>;
@@ -2162,6 +2162,19 @@ void watermark() {
 		std::string sym(1, watermark[i]);
 		ImGui::GetForegroundDrawList()->AddText({ i * 8.f, 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) }, color, sym.c_str());
 		ImGui::GetForegroundDrawList()->AddText({ i * 8.f + 1.f , 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) + 1.f }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), sym.c_str());
+	}
+	for (unsigned int i = 0; i < loggedAs.size(); i++) {
+
+		constexpr float pi = std::numbers::pi_v<float>;
+		const float r = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime / 2.f) * 0.5f + 0.5f);
+		const float g = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime / 2.f + 2 * pi / 3) * 0.5f + 0.5f);
+		const float b = static_cast<float>(std::sin((i / 16) - 5.f * globalVars->realTime / 2.f + 4 * pi / 3) * 0.5f + 0.5f);
+
+		const auto color = ImGui::GetColorU32(ImVec4{ r, g, b, 1.f });
+
+		std::string sym(1, loggedAs[i]);
+		ImGui::GetForegroundDrawList()->AddText({ i * 8.f, 12 + 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) }, color, sym.c_str());
+		ImGui::GetForegroundDrawList()->AddText({ i * 8.f + 1.f , 12 + 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) + 1.f }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), sym.c_str());
 	}
 }
 

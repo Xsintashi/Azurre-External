@@ -113,7 +113,7 @@ inline int localPlayerIndex;
 inline bool showMenu = false;
 inline std::string mapName = "";
 inline std::string gameDir = "";
-inline std::string windowsUserName = "";
+inline std::string playerName = "";
 inline ConnectionState gameState = ConnectionState::None;
 inline ImVec2 screenSize;
 inline ImVec2 gameScreenSize = {};

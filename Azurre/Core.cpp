@@ -51,11 +51,9 @@ void Core::init() {
 	const auto dir = mem.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::dwGameDir);
 	gameDir = dir.data();
 
-	char username[257];
-	DWORD usernameLength = 257;
-	GetUserName(username, &usernameLength);
-	windowsUserName = username;
-
+	const auto buffer = mem.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::m_szSteamName); //Names are 128 length long
+	playerName = buffer.data(); // We don't want zeros cuz we have to delete unwanted " in next step
+	playerName.pop_back(); //Name comes with " character, so we want to remove that cuz its not included in names
 };
 
 void Core::update() {
