@@ -995,6 +995,11 @@ void GUI::RenderDebugWindow() noexcept {
 	float maxSpeedOfWeapon = getWeaponMaxSpeed(weaponID);
 	ImGui::Text("Max Weapon Speed: %.2f", maxSpeedOfWeapon);
 
+	const auto buffer = mem.Read<std::array<char, 128>>(IEngine.address + Offset::signatures::m_szSteamName); //Names are 128 length long
+	std::string name = buffer.data(); // We don't want zeros cuz we have to delete unwanted " in next step
+	name.pop_back(); //Name comes with " character, so we want to remove that cuz its not included in names
+	ImGui::Text("Player Name: %s", name.data());
+
 	ImGui::PushID("Roll");
 	static float roll = 0.f;
 	static float tempRoll = 0.f;

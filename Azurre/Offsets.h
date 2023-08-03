@@ -133,6 +133,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_bReadyToDraw = 0x274;
 	} // namespace netvars
 	namespace signatures {
+		constexpr ::std::ptrdiff_t m_szSteamName = 0x80DD85; //"engine.dll"+0x80DD85
 		constexpr ::std::ptrdiff_t anim_overlays = 0x2990;
 		constexpr ::std::ptrdiff_t clearHudWeapon = 0xDCEEF178;
 		constexpr ::std::ptrdiff_t clientstate_choked_commands = 0x4D30;
