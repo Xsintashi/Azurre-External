@@ -23,6 +23,10 @@
 
 	That's all I had to say bye! ~xsin ~xs9 ~azurre ~guest
 
+	Internal -> https://steamcommunity.com/id/gns0/
+	External -> https://steamcommunity.com/id/gst0/
+	External -> https://steamcommunity.com/id/hrt0/
+
 */
 
 #include "GUI.h"
