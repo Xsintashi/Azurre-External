@@ -95,6 +95,7 @@ public:
 		KeyBind menuKey = KeyBind::INSERT;
 		bool fixTablet = false;
 		bool bhop = false;
+		bool exojumpHop = false;
 		bool radarHack = false;
 		bool autoStop = false;
 		bool grenadeTrajectory = false;

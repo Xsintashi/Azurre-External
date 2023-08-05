@@ -104,7 +104,6 @@ void Aimbot::run() noexcept {
 		sensitivity ^= sensPtr;
 
 		const float actualSensitivity = *reinterpret_cast<float*>(&sensitivity);
-		
 
 		const float multiplier = (50.f / actualSensitivity);
 		DWORD xMove = static_cast<DWORD>(-bestAngle.y * multiplier / cfg->a.smooth);

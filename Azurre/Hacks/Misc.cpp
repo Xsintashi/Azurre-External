@@ -26,9 +26,16 @@ void Misc::bunnyHop() noexcept {
 		clientCmd("-jump");
 	};
 
+	constexpr static auto rpmExoJump = []() {
+		clientCmd("+jump;+duck");
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		clientCmd("-duck");
+		std::this_thread::sleep_for(std::chrono::milliseconds(400));
+		clientCmd("-jump");
+	};
+
 	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		if (!cfg->m.bhop) continue;
 
 		if (!localPlayer) continue;
 
@@ -36,15 +43,32 @@ void Misc::bunnyHop() noexcept {
 
 		const auto flags = localPlayer->flags();
 
-		if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions) {
-			(flags & FlagsState::ONGROUND) ?
-				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
-				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
-			continue;
-		}
+		if (cfg->m.bhop) {
 
-		if (cfg->restrictions && GetAsyncKeyState(VK_SPACE) && (flags & FlagsState::ONGROUND))
-			rpmJump();
+			if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions) {
+				(flags & FlagsState::ONGROUND) ?
+					mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
+					mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
+				continue;
+			}
+
+			if (cfg->restrictions && GetAsyncKeyState(VK_SPACE) && (flags & FlagsState::ONGROUND))
+				rpmJump();
+		}
+		else if (cfg->m.exojumpHop && isDangerZoneModePlayed) {
+			if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions && flags & FlagsState::ONGROUND) {
+				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 5);
+				clientCmd("+duck");
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				clientCmd("-duck");
+				std::this_thread::sleep_for(std::chrono::milliseconds(400));
+				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
+				continue;
+			}
+
+			if (cfg->restrictions && GetAsyncKeyState(VK_SPACE) && (flags & FlagsState::ONGROUND))
+				rpmExoJump();
+		}
 	}
 }
 

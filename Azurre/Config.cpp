@@ -298,6 +298,7 @@ static void from_json(const json& j, Config::MiscConfig::SlowWalk& in) {
 static void from_json(const json& j, Config::MiscConfig& c) {
     read(j, "Menu Key", c.menuKey);
     read(j, "Bunny Hop", c.bhop);
+    read(j, "Exo Hop", c.exojumpHop);
     read(j, "Auto Stop", c.autoStop);
     read(j, "Fix Tablet Signal", c.fixTablet);
     read(j, "Engine Radar", c.radarHack);
@@ -685,6 +686,7 @@ static void to_json(json& j, const Config::MiscConfig::SlowWalk& o, const Config
 static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConfig dummy = {} ) {
     WRITE("Menu Key", menuKey);
     WRITE("Bunny Hop", bhop);
+    WRITE("Exo Hop", exojumpHop);
     WRITE("Auto Stop", autoStop);
     WRITE("Fix Tablet Signal", fixTablet);
     WRITE("Engine Radar", radarHack);

@@ -1538,6 +1538,7 @@ void renderMiscWindow() noexcept {
 		ImGui::PushItemWidth(96.f);
 		ImGuiCustom::classicHotkey("Menu Key", cfg->m.menuKey);
 		ImGui::Checkbox("Bunny Hop", &cfg->m.bhop);
+		ImGui::Checkbox("Exo Hop", &cfg->m.exojumpHop);
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::Checkbox("Fix Tablet Signal", &cfg->m.fixTablet);
 		ImGui::Checkbox("Engine Radar", &cfg->m.radarHack);
