@@ -53,7 +53,7 @@ void Aimbot::run() noexcept {
 			if (cfg->a.visibleOnly && !entity->isVisible())
 				continue;
 
-			if (!cfg->a.friendlyFire && entity->isSameTeam()  && !isDangerZoneModePlayed)
+			if (!cfg->a.friendlyFire && entity->isSameTeam() && !isDangerZoneModePlayed)
 				continue;
 
 			Vector angle;
@@ -76,7 +76,7 @@ void Aimbot::run() noexcept {
 
 			const auto origin{ entity->origin() };
 			const auto health{ entity->health() }; //health
-			const auto distance{ localPlayer->origin().distTo(origin)}; //distance
+			const auto distance{ localPlayer->origin().distTo(origin) }; //distance
 			enemies.emplace_back(i, health, distance, fov);
 		}
 
@@ -98,7 +98,15 @@ void Aimbot::run() noexcept {
 			break;
 		}
 
-		constexpr int multiplier = 10;
+		//Get Sensitivity
+		const uintptr_t sensPtr = IClient.address + Offset::signatures::dwSensitivityPtr;
+		auto sensitivity = mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwSensitivity);
+		sensitivity ^= sensPtr;
+
+		const float actualSensitivity = *reinterpret_cast<float*>(&sensitivity);
+		
+
+		const float multiplier = (50.f / actualSensitivity);
 		DWORD xMove = static_cast<DWORD>(-bestAngle.y * multiplier / cfg->a.smooth);
 		DWORD yMove = static_cast<DWORD>(bestAngle.x * multiplier / cfg->a.smooth);
 		bool doOnce = true;
