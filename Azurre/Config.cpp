@@ -91,20 +91,26 @@ static void from_json(const json& j, ColorToggleThicknessRounding& cttr)
     read(j, "Thickness", cttr.thickness);
 }
 
-static void from_json(const json& j, Config::AimbotConfig& c) {
-    read(j, "Enabled", c.enabled);
-    read(j, "Hotkey", c.hotkey);
+static void from_json(const json& j, Config::WeaponAimbot& c) {
+    read(j, "Enabled Weapon", c.enable);
     read(j, "Auto Shot", c.autoShot);
     read(j, "Auto Stop", c.autoStop);
     read(j, "Force Accuracy", c.forceAccuracy);
-    read(j, "Disable on spectator", c.disableWhileBeingSpectated);
     read(j, "Visible Only", c.visibleOnly);
+    read(j, "Ignore Flash", c.ignoreFlash);
     read(j, "Bone", c.bone);
     read(j, "Fov", c.fov);
     read(j, "Smooth", c.smooth);
     read(j, "Priority", c.priority);
+}
+
+static void from_json(const json& j, Config::AimbotConfig& c) {
+    read(j, "Enabled", c.enabledAimbot);
+    read(j, "Hotkey", c.hotkey);
+    read(j, "Disable on spectator", c.disableWhileBeingSpectated);
     read(j, "RCS", c.rcs);
     read<value_t::object>(j, "Draw legitbot fov", c.drawFov);
+    read(j, "Weapons", c.weapons);
 }
 
 static void from_json(const json& j, Config::ClanTagConfig::CustomClanTag& c) {
@@ -455,20 +461,26 @@ static void to_json(json& j, const ColorToggleThicknessRounding& o, const ColorT
     WRITE("Thickness", thickness);
 }
 
-static void to_json(json& j, const Config::AimbotConfig& o, const Config::AimbotConfig dummy = {}) {
-    WRITE("Enabled", enabled);
-    WRITE("Hotkey", hotkey);
+static void to_json(json& j, const Config::WeaponAimbot& o, const Config::WeaponAimbot& dummy = {}) {
+    WRITE("Enabled Weapon", enable);
     WRITE("Auto Shot", autoShot);
     WRITE("Auto Stop", autoStop);
     WRITE("Force Accuracy", forceAccuracy);
-    WRITE("Disable on spectator", disableWhileBeingSpectated);
     WRITE("Visible Only", visibleOnly);
+    WRITE("Ignore Flash", ignoreFlash);
     WRITE("Bone", bone);
     WRITE("Fov", fov);
     WRITE("Smooth", smooth);
     WRITE("Priority", priority);
+}
+
+static void to_json(json& j, const Config::AimbotConfig& o, const Config::AimbotConfig dummy = {}) {
+    WRITE("Enabled", enabledAimbot);
+    WRITE("Hotkey", hotkey);
+    WRITE("Disable on spectator", disableWhileBeingSpectated);
     WRITE("RCS", rcs);
     WRITE("Draw legitbot fov", drawFov);
+    j["Weapons"] = o.weapons;
 }
 
 static void to_json(json& j, const Config::ClanTagConfig::CustomClanTag& o, const Config::ClanTagConfig::CustomClanTag& dummy) {
@@ -544,8 +556,7 @@ static void to_json(json& j, const Projectiles& o, const Projectiles& dummy = {}
     WRITE("Box", box);
 }
 
-static void to_json(json& j, const Config::ESPConfig& o) {
-    const Config::ESPConfig dummy;
+static void to_json(json& j, const Config::ESPConfig& o, const Config::ESPConfig dummy = {}) {
     WRITE("Enabled", enabled);
     WRITE("Enable Defuse Kits on CT Site", onCT);
     j["Players"] = o.players;

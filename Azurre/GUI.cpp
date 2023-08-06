@@ -1246,26 +1246,123 @@ void childLabel(const char* text) {
 
 void renderAimbotWindow() noexcept {
 	ImGui::PushID("Aimbot");
-	ImGui::BeginChild("Aimbot", {232.f , 314.f}, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	static int currentCategory = 0;
+	static int currentWeapon = 0;
+
+	ImGui::BeginChild("Aimbot", {232.f , 382.f}, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	{
 		ImGui::PushID("key");
-		ImGui::Checkbox("Enabled", &cfg->a.enabled);
+		ImGui::Checkbox("Enabled", &cfg->a.enabledAimbot);
 		ImGui::SameLine();
 		ImGui::hotkey("", cfg->a.hotkey);
+		ImGui::Checkbox("Disable While Spectated", &cfg->a.disableWhileBeingSpectated);
 		ImGui::PopID();
-		ImGui::Checkbox("Auto Shot", &cfg->a.autoShot);
+		ImGui::PushItemWidth(105.0f);
+		ImGui::PushID("CurrentCategory");
+		ImGui::Combo("", &currentCategory, "All\0Pistols\0Heavy\0SMG\0Rifles\0");
+		ImGui::PopID();
+		ImGui::PushID("Weapons");
+		switch (currentCategory) {
+		case 0:
+			currentWeapon = 0;
+			break;
+		case 1: {
+			static int currentPistol{ 0 };
+			static constexpr const char* pistols[]{ "All", "Glock-18", "P2000", "USP-S", "Dual Berettas", "P250", "Tec-9", "Five-Seven", "CZ-75", "Desert Eagle", "Revolver" };
+
+			ImGui::SameLine();
+			ImGui::Combo("", &currentPistol, [](void*, int idx, const char** out_text) {
+				if (cfg->a.weapons[idx ? idx : 35].enable) {
+					static std::string name;
+					name = pistols[idx];
+					*out_text = name.append(" *").c_str();
+				}
+				else {
+					*out_text = pistols[idx];
+				}
+				return true;
+				}, nullptr, IM_ARRAYSIZE(pistols));
+
+			currentWeapon = currentPistol ? currentPistol : 35;
+			break;
+		}
+		case 2: {
+			static int currentHeavy{ 0 };
+			static constexpr const char* heavies[]{ "All", "Nova", "XM1014", "Sawed-off", "MAG-7", "M249", "Negev" };
+
+			ImGui::SameLine();
+			ImGui::Combo("", &currentHeavy, [](void*, int idx, const char** out_text) {
+				if (cfg->a.weapons[idx ? idx + 10 : 36].enable) {
+					static std::string name;
+					name = heavies[idx];
+					*out_text = name.append(" *").c_str();
+				}
+				else {
+					*out_text = heavies[idx];
+				}
+				return true;
+				}, nullptr, IM_ARRAYSIZE(heavies));
+
+			currentWeapon = currentHeavy ? currentHeavy + 10 : 36;
+			break;
+		}
+		case 3: {
+			static int currentSmg{ 0 };
+			static constexpr const char* smgs[]{ "All", "Mac-10", "MP9", "MP7", "MP5-SD", "UMP-45", "P90", "PP-Bizon" };
+
+			ImGui::SameLine();
+			ImGui::Combo("", &currentSmg, [](void*, int idx, const char** out_text) {
+				if (cfg->a.weapons[idx ? idx + 16 : 37].enable) {
+					static std::string name;
+					name = smgs[idx];
+					*out_text = name.append(" *").c_str();
+				}
+				else {
+					*out_text = smgs[idx];
+				}
+				return true;
+				}, nullptr, IM_ARRAYSIZE(smgs));
+
+			currentWeapon = currentSmg ? currentSmg + 16 : 37;
+			break;
+		}
+		case 4: {
+			static int currentRifle{ 0 };
+			static constexpr const char* rifles[]{ "All", "Galil AR", "Famas", "AK-47", "M4A4", "M4A1-S", "SSG-08", "SG-553", "AUG", "AWP", "G3SG1", "SCAR-20" };
+
+			ImGui::SameLine();
+			ImGui::Combo("", &currentRifle, [](void*, int idx, const char** out_text) {
+				if (cfg->a.weapons[idx ? idx + 23 : 38].enable) {
+					static std::string name;
+					name = rifles[idx];
+					*out_text = name.append(" *").c_str();
+				}
+				else {
+					*out_text = rifles[idx];
+				}
+				return true;
+				}, nullptr, IM_ARRAYSIZE(rifles));
+
+			currentWeapon = currentRifle ? currentRifle + 23 : 38;
+			break;
+		}
+		}
+		ImGui::PopID();
+		ImGui::PopItemWidth();
+		ImGui::Checkbox("Enable", &cfg->a.weapons[currentWeapon].enable);
+		ImGui::Checkbox("Auto Shot", &cfg->a.weapons[currentWeapon].autoShot);
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::EndDisabled();
-		ImGui::Checkbox("Auto Stop", &cfg->a.autoStop);
-		ImGui::Checkbox("Force Accuracy", &cfg->a.forceAccuracy);
-		ImGui::Checkbox("Disable While Spectated", &cfg->a.disableWhileBeingSpectated);
-		ImGui::Checkbox("Visible Only", &cfg->a.visibleOnly);
-		ImGui::Checkbox("Friendly Fire", &cfg->a.friendlyFire);
+		ImGui::Checkbox("Auto Stop", &cfg->a.weapons[currentWeapon].autoStop);
+		ImGui::Checkbox("Force Accuracy", &cfg->a.weapons[currentWeapon].forceAccuracy);
+		ImGui::Checkbox("Ignore Flash", &cfg->a.weapons[currentWeapon].ignoreFlash);
+		ImGui::Checkbox("Visible Only", &cfg->a.weapons[currentWeapon].visibleOnly);
+		ImGui::Checkbox("Friendly Fire", &cfg->a.weapons[currentWeapon].friendlyFire);
 		ImGui::PushItemWidth(128.f);
-		ImGui::Combo("Bone", &cfg->a.bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
-		ImGui::SliderFloat("##fov", &cfg->a.fov, 0.001f, 255.000f, "Fov: %.2f");
-		ImGui::SliderFloat("##smooth", &cfg->a.smooth, 1.00f, 100.00f, "Smooth: %.2f");
-		ImGui::Combo("Priority", &cfg->a.priority, "Health\0Distance\0Fov\0");
+		ImGui::Combo("Bone", &cfg->a.weapons[currentWeapon].bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
+		ImGui::SliderFloat("##fov", &cfg->a.weapons[currentWeapon].fov, 0.001f, 255.000f, "Fov: %.2f");
+		ImGui::SliderFloat("##smooth", &cfg->a.weapons[currentWeapon].smooth, 1.00f, 100.00f, "Smooth: %.2f");
+		ImGui::Combo("Priority", &cfg->a.weapons[currentWeapon].priority, "Health\0Distance\0Fov\0");
 		ImGui::PopItemWidth();
 		ImGui::BeginDisabled(cfg->restrictions);
 		ImGui::Checkbox("RCS", &cfg->a.rcs);

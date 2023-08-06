@@ -178,6 +178,7 @@ public:
     OFFSET(tickBase, (), Offset::netvars::m_nTickBase, int)
     OFFSET(nextAttack, (), Offset::netvars::m_flNextAttack, float)
     OFFSET(nextPrimaryAttack, (), Offset::netvars::m_flNextPrimaryAttack, float)
+    OFFSET(getWeaponID, (), Offset::netvars::m_iItemDefinitionIndex, WeaponID)
 
     //Planted C4
     OFFSET(C4Blow, (), Offset::netvars::m_flC4Blow, float)
@@ -241,6 +242,11 @@ public:
         return (classID == ClassID::Ak47 || classID == ClassID::Deagle || (classID > ClassID::Aug && classID < ClassID::XM1014));
     }
 
+    bool isFlashed() noexcept
+    {
+        return this->flashDuration() > 75.f;
+    }
+
     short getWeaponIDFromPlayer() noexcept {
         int weaponIndex = mem.Read<int>(this + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
         if (!weaponIndex)
@@ -261,10 +267,6 @@ public:
         const auto& activeWeapon = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (weaponIndex - 1) * 0x10);
        
         return activeWeapon;
-    }
-
-    short getWeaponID() noexcept {
-        return mem.Read<short>(this + Offset::netvars::m_iItemDefinitionIndex);
     }
 
     bool isWeaponRifleSniper() noexcept {

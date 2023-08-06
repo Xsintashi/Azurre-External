@@ -153,3 +153,93 @@ enum WeaponID{
     GloveHydra,
     MAX_VALUE
 };
+
+constexpr int getWeaponIndex(WeaponID weaponId) noexcept {
+    switch (weaponId) {
+    default: return 0;
+
+    case WeaponID::Glock: return 1;
+    case WeaponID::Hkp2000: return 2;
+    case WeaponID::Usp_s: return 3;
+    case WeaponID::Elite: return 4;
+    case WeaponID::P250: return 5;
+    case WeaponID::Tec9: return 6;
+    case WeaponID::Fiveseven: return 7;
+    case WeaponID::Cz75a: return 8;
+    case WeaponID::Deagle: return 9;
+    case WeaponID::Revolver: return 10;
+
+    case WeaponID::Nova: return 11;
+    case WeaponID::Xm1014: return 12;
+    case WeaponID::Sawedoff: return 13;
+    case WeaponID::Mag7: return 14;
+    case WeaponID::M249: return 15;
+    case WeaponID::Negev: return 16;
+
+    case WeaponID::Mac10: return 17;
+    case WeaponID::Mp9: return 18;
+    case WeaponID::Mp7: return 19;
+    case WeaponID::Mp5sd: return 20;
+    case WeaponID::Ump45: return 21;
+    case WeaponID::P90: return 22;
+    case WeaponID::Bizon: return 23;
+
+    case WeaponID::GalilAr: return 24;
+    case WeaponID::Famas: return 25;
+    case WeaponID::Ak47: return 26;
+    case WeaponID::M4A1: return 27;
+    case WeaponID::M4a1_s: return 28;
+    case WeaponID::Ssg08: return 29;
+    case WeaponID::Sg553: return 30;
+    case WeaponID::Aug: return 31;
+    case WeaponID::Awp: return 32;
+    case WeaponID::G3SG1: return 33;
+    case WeaponID::Scar20: return 34;
+
+    case WeaponID::Taser: return 39;
+    }
+}
+
+constexpr int getWeaponClass(WeaponID weaponId) noexcept {
+    switch (weaponId) {
+    default: return 0;
+
+    case WeaponID::Glock:
+    case WeaponID::Hkp2000:
+    case WeaponID::Usp_s:
+    case WeaponID::Elite:
+    case WeaponID::P250:
+    case WeaponID::Tec9:
+    case WeaponID::Fiveseven:
+    case WeaponID::Cz75a:
+    case WeaponID::Deagle:
+    case WeaponID::Revolver: return 35;
+
+    case WeaponID::Nova:
+    case WeaponID::Xm1014:
+    case WeaponID::Sawedoff:
+    case WeaponID::Mag7:
+    case WeaponID::M249:
+    case WeaponID::Negev: return 36;
+
+    case WeaponID::Mac10:
+    case WeaponID::Mp9:
+    case WeaponID::Mp7:
+    case WeaponID::Mp5sd:
+    case WeaponID::Ump45:
+    case WeaponID::P90:
+    case WeaponID::Bizon: return 37;
+
+    case WeaponID::GalilAr:
+    case WeaponID::Famas:
+    case WeaponID::Ak47:
+    case WeaponID::M4A1:
+    case WeaponID::M4a1_s:
+    case WeaponID::Ssg08:
+    case WeaponID::Sg553:
+    case WeaponID::Aug:
+    case WeaponID::Awp:
+    case WeaponID::G3SG1:
+    case WeaponID::Scar20: return 38;
+    }
+}

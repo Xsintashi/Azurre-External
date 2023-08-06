@@ -29,23 +29,29 @@ public:
     {
         return configs;
     }
-
-	struct AimbotConfig {
-		bool enabled = false;
-		KeyBind hotkey = std::string("Aimbot");
+	
+	struct WeaponAimbot {
+		bool enable = false;
 		bool friendlyFire = false;
 		bool autoShot = false;
 		bool autoStop = false;
 		bool forceAccuracy = false;
-		bool disableWhileBeingSpectated = false;
 		bool visibleOnly = false;
+		bool ignoreFlash = false;
 		int bone = 0;
 		int priority = 0;
 		float fov = 0.f;
 		float smooth = 1.f;
+	};
+	
+	struct AimbotConfig {
+		bool enabledAimbot = false;
+		bool disableWhileBeingSpectated = false;
 		bool rcs = false;
+		KeyBind hotkey = std::string("Aimbot");
+		std::array<WeaponAimbot, 40> weapons;
 		ColorToggleOutline drawFov{ 1.0f, 1.0f, 1.0f, 0.0f };
-	} a;
+	}a;
 
 	struct ChamsConfig {
 		bool enabled = false;

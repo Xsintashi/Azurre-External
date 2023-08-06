@@ -9,13 +9,14 @@
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
 #include "../SDK/WeaponInfo.h"
+#include "../SDK/WeaponID.h"
 
 #include <chrono>
 
 void Aimbot::run() noexcept {
 	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		if (!cfg->a.enabled) continue;
+		if (!cfg->a.enabledAimbot) continue;
 
 		if (!localPlayer || localPlayer->isDead() || localPlayer->nextAttack() > serverTime || localPlayer->nextPrimaryAttack() > serverTime || localPlayer->isDefusing() || localPlayer->waitForNoAttack())
 			continue;
@@ -25,20 +26,36 @@ void Aimbot::run() noexcept {
 
 		if (!gameData.observerData.empty() && cfg->a.disableWhileBeingSpectated)
 			continue;
+		
+		const auto& activeWeapon = localPlayer->getActiveWeapon();
+
+		if (!activeWeapon->isValid())
+			continue;
+
+		if (activeWeapon->clip() < 1)
+			continue;
+
+		int weaponIndex = getWeaponIndex((WeaponID)localPlayer->getWeaponIDFromPlayer());
+		if (!weaponIndex)
+			continue;
+
+		int weaponClass = getWeaponClass((WeaponID)localPlayer->getWeaponIDFromPlayer());
+
+		if (!cfg->a.weapons[weaponIndex].enable)
+			weaponIndex = weaponClass;
+
+		if (!cfg->a.weapons[weaponIndex].enable)
+			weaponIndex = 0;
 
 		const auto& aimPunch = localPlayer->aimPunch() * 2.f;
 
-		float bestFov = cfg->a.fov;
-		Vector bestAngle = {};
+		auto& config = cfg->a.weapons[weaponIndex];
 
-		int weaponIndex = mem.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
-
-		if (!weaponIndex) continue;
-
-		const auto& activeWeapon = getEntity(weaponIndex - 1);
-
-		if (!activeWeapon || activeWeapon->clip() < 1)
+		if (config.ignoreFlash && localPlayer->isFlashed())
 			continue;
+
+		float bestFov = config.fov;
+		Vector bestAngle = {};
 
 		std::vector<Aimbot::Enemies> enemies;
 		for (int i = 1; i <= globalVars->maxClients; ++i) {
@@ -50,17 +67,17 @@ void Aimbot::run() noexcept {
 			if (entity->isDead() || entity->dormant() || entity->gunGameImmunity())
 				continue;
 
-			if (cfg->a.visibleOnly && !entity->isVisible())
+			if (config.visibleOnly && !entity->isVisible())
 				continue;
 
-			if (!cfg->a.friendlyFire && entity->isSameTeam() && !isDangerZoneModePlayed)
+			if (!config.friendlyFire && entity->isSameTeam() && !isDangerZoneModePlayed)
 				continue;
 
 			Vector angle;
 			float fov;
 
 			for (auto bone : { 8, 4, 3, 7, 6, 5 }) {
-				const auto bonePosition = 8 - cfg->a.bone;
+				const auto bonePosition = 8 - config.bone;
 
 				const auto bonePos = entity->bonePosition(bonePosition);
 
@@ -83,7 +100,7 @@ void Aimbot::run() noexcept {
 		if (enemies.empty())
 			continue;
 
-		switch (cfg->a.priority)
+		switch (config.priority)
 		{
 		case 0:
 			std::sort(enemies.begin(), enemies.end(), healthSort);
@@ -106,8 +123,8 @@ void Aimbot::run() noexcept {
 		const float actualSensitivity = *reinterpret_cast<float*>(&sensitivity);
 
 		const float multiplier = (50.f / actualSensitivity);
-		DWORD xMove = static_cast<DWORD>(-bestAngle.y * multiplier / cfg->a.smooth);
-		DWORD yMove = static_cast<DWORD>(bestAngle.x * multiplier / cfg->a.smooth);
+		DWORD xMove = static_cast<DWORD>(-bestAngle.y * multiplier / config.smooth);
+		DWORD yMove = static_cast<DWORD>(bestAngle.x * multiplier / config.smooth);
 		bool doOnce = true;
 		for (const auto& target : enemies) {
 
@@ -119,7 +136,7 @@ void Aimbot::run() noexcept {
 					}
 				}
 				else if (!cfg->restrictions) {
-					Vector correctAngles{ viewAngles.x + bestAngle.x / cfg->a.smooth, viewAngles.y + bestAngle.y / cfg->a.smooth, 0.f };
+					Vector correctAngles{ viewAngles.x + bestAngle.x / config.smooth, viewAngles.y + bestAngle.y / config.smooth, 0.f };
 					correctAngles.normalize();
 					correctAngles.clamp();
 					mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, correctAngles);
@@ -127,7 +144,7 @@ void Aimbot::run() noexcept {
 				
 				const short& weaponID = localPlayer->getWeaponIDFromPlayer();
 
-				if (cfg->a.autoStop && !cfg->restrictions) {
+				if (config.autoStop && !cfg->restrictions) {
 					const float velocity = localPlayer->velocity().length2D();
 					Vector finalVector = Helpers::calculateRealAngles();
 					if (velocity >= (getWeaponMaxSpeed(weaponID) / 3) && (localPlayer->flags() & 1)) {
@@ -146,11 +163,11 @@ void Aimbot::run() noexcept {
 
 				if (!crosshair || crosshair > 64)
 					continue;
-				if (const auto ent = getEntity(crosshair - 1); ent->isSameTeam() && !cfg->a.friendlyFire)
+				if (const auto ent = getEntity(crosshair - 1); ent->isSameTeam() && !config.friendlyFire)
 					continue;
 
-				if (cfg->a.autoShot) {
-					if (localPlayer->velocity().length2D() > (getWeaponMaxSpeed(weaponID) / 3) && cfg->a.forceAccuracy) // Force accuracy shoots when spread doesnt affect player
+				if (config.autoShot) {
+					if (localPlayer->velocity().length2D() > (getWeaponMaxSpeed(weaponID) / 3) && config.forceAccuracy) // Force accuracy shoots when spread doesnt affect player
 						break;
 
 					if (cfg->restrictions) {
@@ -208,25 +225,34 @@ void Aimbot::recoilSystem() noexcept {
 }
 
 void Aimbot::drawFov() noexcept {
-	if (!cfg->a.enabled || !cfg->a.drawFov.enabled)
+	if (!cfg->a.enabledAimbot || !cfg->a.drawFov.enabled)
 		return;
 
 	if (!localPlayer || !localPlayer->isAlive())
 		return;
 
-	const auto activeWeapon = localPlayer->getActiveWeapon();
-	if (!activeWeapon)
+	const auto& activeWeapon = localPlayer->getActiveWeapon();
+
+	if (!activeWeapon->isValid())
 		return;
 
-	auto weaponIndex = localPlayer->getWeaponIDFromPlayer();
+	int weaponIndex = getWeaponIndex((WeaponID)localPlayer->getWeaponIDFromPlayer());
 	if (!weaponIndex)
 		return;
+
+	int weaponClass = getWeaponClass((WeaponID)localPlayer->getWeaponIDFromPlayer());
+
+	if (!cfg->a.weapons[weaponIndex].enable)
+		weaponIndex = weaponClass;
+
+	if (!cfg->a.weapons[weaponIndex].enable)
+		weaponIndex = 0;
 
 	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
 	Vector aimPunch = localPlayer->aimPunch() / 2.f;
 	ImVec2 recoil = { mid.x - (screenSize.x / 90.f * aimPunch.y), mid.y + (screenSize.x / 90.f * aimPunch.x) };
 
-	const auto radius = std::tan(Helpers::deg2rad(cfg->a.fov) / (16.0f / 6.0f)) / std::tan(Helpers::deg2rad(localPlayer->isScoped() ? localPlayer->fov() : 90.0f) / 2.0f) * gameScreenSize.x;
+	const auto radius = std::tan(Helpers::deg2rad(cfg->a.weapons[weaponIndex].fov) / (16.0f / 6.0f)) / std::tan(Helpers::deg2rad(localPlayer->isScoped() ? localPlayer->fov() : 90.0f) / 2.0f) * gameScreenSize.x;
 	if (radius > gameScreenSize.x || radius > gameScreenSize.y || !std::isfinite(radius))
 		return;
 

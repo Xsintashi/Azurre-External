@@ -336,7 +336,7 @@ void Misc::forceReload(bool onKey) noexcept {
 
 void Misc::showKeybinds() noexcept {
 
-	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabled && cfg->a.hotkey.canShowKeybind()) || (cfg->m.playerList.enabled && cfg->m.playerList.hotkey.canShowKeybind()) || (cfg->m.minimap.enabled && cfg->m.minimap.hotkey.canShowKeybind() || (cfg->m.slowWalk.hotkey.isActive() && cfg->m.slowWalk.hotkey.canShowKeybind()));
+	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabledAimbot && cfg->a.hotkey.canShowKeybind()) || (cfg->m.playerList.enabled && cfg->m.playerList.hotkey.canShowKeybind()) || (cfg->m.minimap.enabled && cfg->m.minimap.hotkey.canShowKeybind() || (cfg->m.slowWalk.hotkey.isActive() && cfg->m.slowWalk.hotkey.canShowKeybind()));
 
 	if (!anyActive && !showMenu)
 		return;
