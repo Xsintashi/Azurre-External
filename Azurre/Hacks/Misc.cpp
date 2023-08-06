@@ -281,7 +281,7 @@ void Misc::indicators() noexcept {
 	}
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 1)) {
 		ImGui::TextUnformatted("Height");
-		ImGui::progressBarFullWidth((localPlayer->bonePosition(8).z - localPlayer->origin().z - PLAYER_EYE_HEIGHT_CROUCH) / (PLAYER_EYE_HEIGHT - PLAYER_EYE_HEIGHT_CROUCH), 5.f);
+		ImGui::progressBarFullWidth((localPlayer->viewOffset().z - PLAYER_EYE_HEIGHT_CROUCH) / (PLAYER_EYE_HEIGHT - PLAYER_EYE_HEIGHT_CROUCH), 5.f);
 	}
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 2)) {
 		ImGui::TextUnformatted("Velocity");
