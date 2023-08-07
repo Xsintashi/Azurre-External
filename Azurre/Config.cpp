@@ -397,6 +397,7 @@ void Config::load(const char8_t* name, bool incremental) noexcept
         reset();
 
     read(j, "Restrictions", restrictions);
+    read<value_t::array>(j, "Friendly SteamIDs", friendlySteamIDs);
 
     read<value_t::object>(j, "Aimbot", a);
     read<value_t::object>(j, "Chams", c);
@@ -779,6 +780,7 @@ void Config::save(size_t id) const noexcept {
         json j;
 
         j["Restrictions"] = restrictions;
+        j["Friendly SteamIDs"] = friendlySteamIDs;
 
         j["Aimbot"] = a;
         j["Chams"] = c;

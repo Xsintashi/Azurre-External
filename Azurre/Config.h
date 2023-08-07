@@ -252,6 +252,8 @@ public:
 		KeyBind keyDebug0 = std::string("Debug 0");
 	} debug;
 
+	std::vector<__int64> friendlySteamIDs;
+
 #if defined(_DEBUG)
 	int restrictions = 0;
 #else

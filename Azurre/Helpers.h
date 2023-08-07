@@ -99,6 +99,14 @@ namespace Helpers {
 			return Ranks[rank];
 	}
 
+	constexpr bool isFriendly(__int64 steamID, std::vector<__int64> list) {
+		for (const auto& i : list) {
+			if (steamID == i)
+				return true;
+		}
+		return false;
+	}
+
 	constexpr std::uint8_t utf8SeqLen(char firstByte) noexcept
 	{
 		return (firstByte & 0x80) == 0x00 ? 1 :

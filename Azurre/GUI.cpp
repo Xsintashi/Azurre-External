@@ -2185,6 +2185,34 @@ void renderConfigWindow() noexcept {
 	ImGui::EndChild();
 }
 
+
+void renderFriendlySteamID() noexcept {
+	ImGui::BeginChild("SteamIDs", { 232.f, 192.f }, true, ImGuiWindowFlags_NoTitleBar);
+	{
+		static std::string steamID;
+		ImGui::SetNextItemWidth(128.f);
+		if (ImGui::InputText("Enter Here", &steamID, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll | ImGuiInputTextFlags_CharsDecimal)) {
+			if (steamID.size() == 17 && steamID.substr(0,7) == "7656119") { // basic validation
+				cfg->friendlySteamIDs.push_back(_atoi64(steamID.c_str()));
+			}
+			steamID.clear();
+		}
+		ImGui::Separator();
+		for (size_t o = 0; o < cfg->friendlySteamIDs.size(); o++) {
+			std::string idToString = std::to_string(cfg->friendlySteamIDs[o]);
+			ImGui::PushID(o);
+			ImGui::SetNextItemWidth(128.f);
+			ImGui::InputText("", &idToString, ImGuiInputTextFlags_ReadOnly);
+			ImGui::SameLine();
+			if (ImGui::Button("Delete")) {
+				cfg->friendlySteamIDs.erase(cfg->friendlySteamIDs.begin() + o);
+			}
+			ImGui::PopID();
+		}
+		ImGui::EndChild();
+	}
+}
+
 const static std::array<PNGTexture, 6> guiIcons{
 	resource::aimbotIcon,
 	resource::espIcon,
@@ -2273,6 +2301,8 @@ void GUI::RenderMainMenu() noexcept {
 			renderConfigWindow();
 			ImGui::SameLine();
 			renderGUIWindow();
+			childLabel("Friendly SteamIDs");
+			renderFriendlySteamID();
 			break;
 	}
 	ImGui::Columns(1);

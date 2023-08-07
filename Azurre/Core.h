@@ -59,6 +59,7 @@ namespace Core {
 
 struct ObserverData {
 	std::string name;
+	__int64 steamID;
 	ObsMode obsMode;
 };
 

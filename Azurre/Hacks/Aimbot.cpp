@@ -24,8 +24,13 @@ void Aimbot::run() noexcept {
 		const auto eyePosition = localPlayer->origin() + localPlayer->viewOffset();
 		const auto& viewAngles = mem.Read<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
 
-		if (!gameData.observerData.empty() && cfg->a.disableWhileBeingSpectated)
-			continue;
+		if (!gameData.observerData.empty() && cfg->a.disableWhileBeingSpectated) {
+			for (auto& i : gameData.observerData) {
+				if(!Helpers::isFriendly(i.steamID, cfg->friendlySteamIDs))
+					break;
+			}
+		}
+		
 		
 		const auto& activeWeapon = localPlayer->getActiveWeapon();
 

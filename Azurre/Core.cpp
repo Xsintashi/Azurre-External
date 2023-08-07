@@ -162,7 +162,7 @@ void Core::gameDataUpdate() noexcept {
 			// Spectator List
 			const int obs = (entity->observerTarget() & ENT_ENTRY_MASK);
 			if (entity->isDead() && obs == localPlayerIndex + 1) // Ghetto way, hope it will work (me before testing on valve servers)
-				gameData.observerData.push_back({ name, entity->observerMode() });
+				gameData.observerData.push_back({ name, playerInfo.steamID64, entity->observerMode()});
 
 			break;
 		}
