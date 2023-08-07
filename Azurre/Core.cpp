@@ -27,6 +27,7 @@
 #include <windows.h>
 #include <gdiplus.h>
 #include <stdio.h>
+#include <intrin.h>
 
 void Core::init() {
 	SetWindowLongPtr(GUI::window, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOPMOST);
@@ -131,6 +132,7 @@ void Core::gameDataUpdate() noexcept {
 			// Player Info
 			PlayerInfo playerInfo = mem.Read<PlayerInfo>(mem.Read<uintptr_t>(items + 0x28 + (idx * 0x34)));
 			const std::string name = playerInfo.name;
+			playerInfo.steamID64 = _byteswap_uint64(playerInfo.steamID64); // Little endian -> Big endian >:[
 			gameData.playerData.push_back({ entity, idx, playerInfo});
 
 #pragma region Player Resource

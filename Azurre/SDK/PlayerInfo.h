@@ -1,14 +1,14 @@
 #pragma once
 
 struct PlayerInfo {
-	std::uint64_t         unknown;            //0x0000 
+	__int64         version;
 	union
 	{
-		std::uint64_t       steamID64;          //0x0008 - SteamID64
+		__int64       steamID64;          //_byteswap_uint64 them!
 		struct
 		{
-			std::uint32_t     xuidLow;
-			std::uint32_t     xuidHigh;
+			__int32     xuidLow;
+			__int32     xuidHigh;
 		};
 	};
 	char            name[128];			//0x0010 - Player Name
