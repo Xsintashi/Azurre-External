@@ -52,13 +52,9 @@ void TriggerBot::run() noexcept{
 
 				}
 				else {
-					int burstBuff = 0;
-					do {
-						mem.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 5);
-						std::this_thread::sleep_for(std::chrono::milliseconds(cfg->t.burst));
-						mem.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 6);
-						burstBuff++;
-					} while (burstBuff > cfg->t.burst);
+					mem.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 5);
+					std::this_thread::sleep_for(std::chrono::milliseconds(cfg->t.burst));
+					mem.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 4);
 				}
 				time = GetTickCount();
 			}
