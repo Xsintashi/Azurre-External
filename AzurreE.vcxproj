@@ -159,6 +159,7 @@
     <ClInclude Include="Azurre\Hacks\Visuals.h" />
     <ClInclude Include="Azurre\Helpers.h" />
     <ClInclude Include="Azurre\InputUtil.h" />
+    <ClInclude Include="Azurre\Junk.h" />
     <ClInclude Include="Azurre\Memory.h" />
     <ClInclude Include="Azurre\Offsets.h" />
     <ClInclude Include="Azurre\PNGTexture.h" />

@@ -2,6 +2,7 @@
 
 #include "../Config.h"
 #include "../GUI.h"
+#include "../Junk.h"
 
 #include "../SDK/Convar.h"
 #include "../SDK/Entity.h"
@@ -27,7 +28,7 @@ void Misc::bunnyHop() noexcept {
 	};
 
 	constexpr static auto rpmExoJump = []() {
-		clientCmd("+jump;+duck");
+		clientCmd("+jump; $$$+duck");
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		clientCmd("-duck");
 		std::this_thread::sleep_for(std::chrono::milliseconds(400));
@@ -35,105 +36,105 @@ void Misc::bunnyHop() noexcept {
 	};
 
 	while (THREAD_LOOP) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1)); $$$
 
-		if (!localPlayer) continue;
+		if (!localPlayer) continue; $$$
 
-		if (localPlayer->isDead()) continue;
+		if (localPlayer->isDead()) continue; $$$
 
-		const auto flags = localPlayer->flags();
+		const auto flags = localPlayer->flags(); $$$
 
 		if (cfg->m.bhop) {
 
 			if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions) {
 				(flags & FlagsState::ONGROUND) ?
 					mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 6) :
-					mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
-				continue;
+					mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4); $$$
+				continue; $$$
 			}
 
 			if (cfg->restrictions && GetAsyncKeyState(VK_SPACE) && (flags & FlagsState::ONGROUND))
-				rpmJump();
+				rpmJump(); $$$
 		}
 		else if (cfg->m.exojumpHop && isDangerZoneModePlayed) {
 			if (GetAsyncKeyState(VK_SPACE) && !cfg->restrictions && flags & FlagsState::ONGROUND) {
-				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 5);
-				clientCmd("+duck");
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
-				clientCmd("-duck");
-				std::this_thread::sleep_for(std::chrono::milliseconds(400));
-				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4);
-				continue;
+				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 5); $$$
+				clientCmd("+duck"); $$$
+				std::this_thread::sleep_for(std::chrono::milliseconds(100)); $$$
+				clientCmd("-duck"); $$$
+				std::this_thread::sleep_for(std::chrono::milliseconds(400)); $$$
+				mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceJump, 4); $$$
+				continue; $$$
 			}
 
 			if (cfg->restrictions && GetAsyncKeyState(VK_SPACE) && (flags & FlagsState::ONGROUND))
-				rpmExoJump();
+				rpmExoJump(); $$$
 		}
 	}
 }
 
 void Misc::fakeLag() noexcept {
-	if (!localPlayer) return;
+	if (!localPlayer) return; $$$
 
-	if (localPlayer->isDead()) return;
+	if (localPlayer->isDead()) return; $$$
 
-	if (cfg->restrictions) return; //RPM ONLY
+	if (cfg->restrictions) return; $$$ //RPM ONLY
 
-	const auto& chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
-	int choke = 0;
+	const auto& chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands); $$$
+	int choke = 0; $$$
 
-	if (cfg->m.fakeLag.limit < 1) return;
+	if (cfg->m.fakeLag.limit < 1) return; $$$
 
-	const float speed = localPlayer->velocity().length2D() >= 15.0f ? localPlayer->velocity().length2D() : 0.0f;
+	const float speed = localPlayer->velocity().length2D() >= 15.0f ? localPlayer->velocity().length2D() : 0.0f; $$$
 
 	switch (cfg->m.fakeLag.type) {
 	case 0: //Static
-		choke = cfg->m.fakeLag.limit;
-		break;
+		choke = cfg->m.fakeLag.limit; $$$
+		break; $$$
 	case 1: //Adaptive
-		choke = std::clamp(static_cast<int>(std::ceilf(64 / (speed * globalVars->intervalPerTick))), 1, cfg->m.fakeLag.limit);
-		break;
+		choke = std::clamp(static_cast<int>(std::ceilf(64 / (speed * globalVars->intervalPerTick))), 1, cfg->m.fakeLag.limit); $$$
+		break; $$$
 	case 2: // Random
-		srand(static_cast<unsigned int>(time(NULL)));
-		choke = rand() % cfg->m.fakeLag.limit + 1;
-		break;
+		srand(static_cast<unsigned int>(time(NULL))); $$$
+		choke = rand() % cfg->m.fakeLag.limit + 1; $$$
+		break; $$$
 	}
 
-	choke = std::clamp(choke, 0, 16);
-	mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, chokedPackets >= choke);
+	choke = std::clamp(choke, 0, 16); $$$
+	mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, chokedPackets >= choke); $$$
 
 }
 
 void Misc::hitMarkerSound() noexcept
 {
 	if (!localPlayer || gameState != 6)
-		return;
+		return; $$$
 
-	static int currentHitsCounter = localPlayer->totalHits();
-	static float lastHitTime = 0.0f;
+	static int currentHitsCounter = localPlayer->totalHits(); $$$
+	static float lastHitTime = 0.0f; $$$
 
 	if (currentHitsCounter != localPlayer->totalHits() && localPlayer->totalHits() != 0) {
 
-		std::string out = std::string(gameDir).append("\\").append(cfg->m.hitSound);
+		std::string out = std::string(gameDir).append("\\").append(cfg->m.hitSound); $$$
 
-		std::ifstream isFileExist;
-		isFileExist.open(out);
+		std::ifstream isFileExist; $$$
+		isFileExist.open(out); $$$
 
-		currentHitsCounter = localPlayer->totalHits();
-		lastHitTime = globalVars->realTime;
+		currentHitsCounter = localPlayer->totalHits(); $$$
+		lastHitTime = globalVars->realTime; $$$
 
 		if (isFileExist.is_open()) {
-			PlaySound(out.c_str(), NULL, SND_ASYNC);
-			isFileExist.close();
+			PlaySound(out.c_str(), NULL, SND_ASYNC); $$$
+			isFileExist.close(); $$$
 		}
 	}
 	if (!cfg->m.hitMarker.type)
-		return;
+		return; $$$
 
 	if (lastHitTime + cfg->m.hitMarker.time < globalVars->realTime)
-		return;
+		return; $$$
 
-	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
+	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos; $$$
 
 	switch (cfg->m.hitMarker.type) {
 		case 1: {
@@ -141,24 +142,24 @@ void Misc::hitMarkerSound() noexcept
 				static_cast<int>(cfg->m.hitMarker.color.color[0] * 255.f),
 				static_cast<int>(cfg->m.hitMarker.color.color[1] * 255.f),
 				static_cast<int>(cfg->m.hitMarker.color.color[2] * 255.f),
-				255);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
-			break;
+				255); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color); $$$
+			break; $$$
 		}
 		case 2: {
 			auto color = IM_COL32(
 				static_cast<int>(cfg->m.hitMarker.color.color[0] * 255.f),
 				static_cast<int>(cfg->m.hitMarker.color.color[1] * 255.f),
 				static_cast<int>(cfg->m.hitMarker.color.color[2] * 255.f),
-				static_cast<int>(Helpers::lerp(fabsf(lastHitTime + cfg->m.hitMarker.time - globalVars->realTime) / cfg->m.hitMarker.time + FLT_EPSILON, 0.0f, 255.0f)));
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
-			break;
+				static_cast<int>(Helpers::lerp(fabsf(lastHitTime + cfg->m.hitMarker.time - globalVars->realTime) / cfg->m.hitMarker.time + FLT_EPSILON, 0.0f, 255.0f))); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color); $$$
+			break; $$$
 		}
 	}
 	
@@ -166,33 +167,33 @@ void Misc::hitMarkerSound() noexcept
 
 void Misc::killMarkerSound() noexcept {
 	if (!localPlayer || gameState != 6)
-		return;
-	const auto& kills = gameData.playerResource.kills[localPlayerIndex];
-	static int currentKillsCounter = gameData.playerResource.kills[localPlayerIndex];
-	static float lastKillTime = 0.0f;
+		return; $$$
+	const auto& kills = gameData.playerResource.kills[localPlayerIndex]; $$$
+	static int currentKillsCounter = gameData.playerResource.kills[localPlayerIndex]; $$$
+	static float lastKillTime = 0.0f; $$$
 
 	if (currentKillsCounter != kills && kills > 0) {
 
-		std::string out = std::string(gameDir).append("\\").append(cfg->m.killSound);
+		std::string out = std::string(gameDir).append("\\").append(cfg->m.killSound); $$$
 
-		std::ifstream isFileExist;
-		isFileExist.open(out);
+		std::ifstream isFileExist; $$$
+		isFileExist.open(out); $$$
 
-		currentKillsCounter = kills;
-		lastKillTime = globalVars->realTime;
+		currentKillsCounter = kills; $$$
+		lastKillTime = globalVars->realTime; $$$
 
 		if (isFileExist.is_open()) {
-			PlaySound(out.c_str(), NULL, SND_ASYNC);
-			isFileExist.close();
+			PlaySound(out.c_str(), NULL, SND_ASYNC); $$$
+			isFileExist.close(); $$$
 		}
 	}
 	if (!cfg->m.killMarker.type)
-		return;
+		return; $$$
 
 	if (lastKillTime + cfg->m.killMarker.time < globalVars->realTime)
-		return;
+		return; $$$
 
-	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
+	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos; $$$
 
 	switch (cfg->m.killMarker.type) {
 		case 1: {
@@ -200,24 +201,24 @@ void Misc::killMarkerSound() noexcept {
 				static_cast<int>(cfg->m.killMarker.color.color[0] * 255.f),
 				static_cast<int>(cfg->m.killMarker.color.color[1] * 255.f),
 				static_cast<int>(cfg->m.killMarker.color.color[2] * 255.f),
-				255);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
-			break;
+				255); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color); $$$
+			break; $$$
 		}
 		case 2: {
 			auto color = IM_COL32(
 				static_cast<int>(cfg->m.killMarker.color.color[0] * 255.f),
 				static_cast<int>(cfg->m.killMarker.color.color[1] * 255.f),
 				static_cast<int>(cfg->m.killMarker.color.color[2] * 255.f),
-				static_cast<int>(Helpers::lerp(fabsf(lastKillTime + cfg->m.killMarker.time - globalVars->realTime) / cfg->m.killMarker.time + FLT_EPSILON, 0.0f, 255.0f)));
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color);
-			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color);
-			break;
+				static_cast<int>(Helpers::lerp(fabsf(lastKillTime + cfg->m.killMarker.time - globalVars->realTime) / cfg->m.killMarker.time + FLT_EPSILON, 0.0f, 255.0f))); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y - 10 }, { mid.x - 4, mid.y - 4 }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y - 10.5f }, { mid.x + 4.5f, mid.y - 4.5f }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x + 10.5f, mid.y + 10.5f }, { mid.x + 4.5f, mid.y + 4.5f }, color); $$$
+			ImGui::GetBackgroundDrawList()->AddLine({ mid.x - 10, mid.y + 10 }, { mid.x - 4, mid.y + 4 }, color); $$$
+			break; $$$
 		}
 	}
 
@@ -226,365 +227,365 @@ void Misc::killMarkerSound() noexcept {
 void Misc::indicators() noexcept {
 
 	if (cfg->m.indicators.pos != ImVec2{}) {
-		ImGui::SetNextWindowPos(cfg->m.indicators.pos);
-		cfg->m.indicators.pos = {};
+		ImGui::SetNextWindowPos(cfg->m.indicators.pos); $$$
+		cfg->m.indicators.pos = {}; $$$
 	}
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize; $$$
 	if (!GUI::isRunning)
-		windowFlags |= ImGuiWindowFlags_NoInputs;
+		windowFlags |= ImGuiWindowFlags_NoInputs; $$$
 
 	if (cfg->m.indicators.noTitleBar)
-		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+		windowFlags |= ImGuiWindowFlags_NoTitleBar; $$$
 	if (cfg->m.indicators.noBackground)
-		windowFlags |= ImGuiWindowFlags_NoBackground;
+		windowFlags |= ImGuiWindowFlags_NoBackground; $$$
 
-	ImGui::SetNextWindowSize({ 192.0f, 0.0f });
-	ImGui::Begin("Indicators", &cfg->m.indicators.enabled, windowFlags);
+	ImGui::SetNextWindowSize({ 192.0f, 0.0f }); $$$
+	ImGui::Begin("Indicators", &cfg->m.indicators.enabled, windowFlags); $$$
 
 	if (gameState != ConnectionState::FullyConnected || !localPlayer->isValid() || localPlayer->isDead()) {
-		float sinuses[5];
+		float sinuses[5]; $$$
 		for (int i = 0; i < 5; i++) {
-			sinuses[i] = sin((i + 1) * globalVars->realTime / 2.f);
+			sinuses[i] = sin((i + 1) * globalVars->realTime / 2.f); $$$
 		}
 
 		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 0)) {
-			int chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
-			ImGui::TextUnformatted("Choked packets");
-			ImGui::progressBarFullWidth(sinuses[0], 5.f);
+			int chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands); $$$
+			ImGui::TextUnformatted("Choked packets"); $$$
+			ImGui::progressBarFullWidth(sinuses[0], 5.f); $$$
 		}
 		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 1)) {
-			ImGui::TextUnformatted("Height");
-			ImGui::progressBarFullWidth(sinuses[1], 5.f);
+			ImGui::TextUnformatted("Height"); $$$
+			ImGui::progressBarFullWidth(sinuses[1], 5.f); $$$
 		}
 		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 2)) {
-			ImGui::TextUnformatted("Velocity");
-			float velocity = localPlayer->velocity().length2D() / 300.f;
-			ImGui::progressBarFullWidth(sinuses[2], 5.f);
+			ImGui::TextUnformatted("Velocity"); $$$
+			float velocity = localPlayer->velocity().length2D() / 300.f; $$$
+			ImGui::progressBarFullWidth(sinuses[2], 5.f); $$$
 		}
 		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 3)) {
-			ImGui::TextUnformatted("Slowdown");
-			ImGui::progressBarFullWidth(sinuses[3], 5.f);
+			ImGui::TextUnformatted("Slowdown"); $$$
+			ImGui::progressBarFullWidth(sinuses[3], 5.f); $$$
 		}
 		if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 4)) {
-			ImGui::TextUnformatted("Stamina");
-			ImGui::progressBarFullWidth(sinuses[4], 5.f);
+			ImGui::TextUnformatted("Stamina"); $$$
+			ImGui::progressBarFullWidth(sinuses[4], 5.f); $$$
 		}
-		ImGui::End();
-		return;
+		ImGui::End(); $$$
+		return; $$$
 	}
 
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 0)){
-		const int& chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands);
-		ImGui::TextUnformatted("Choked packets");
-		ImGui::progressBarFullWidth(static_cast<float>(chokedPackets / 16), 5.f);
+		const int& chokedPackets = mem.Read<int>(IClientState.address + Offset::signatures::clientstate_choked_commands); $$$
+		ImGui::TextUnformatted("Choked packets"); $$$
+		ImGui::progressBarFullWidth(static_cast<float>(chokedPackets / 16), 5.f); $$$
 	}
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 1)) {
-		ImGui::TextUnformatted("Height");
-		ImGui::progressBarFullWidth((localPlayer->viewOffset().z - PLAYER_EYE_HEIGHT_CROUCH) / (PLAYER_EYE_HEIGHT - PLAYER_EYE_HEIGHT_CROUCH), 5.f);
+		ImGui::TextUnformatted("Height"); $$$
+		ImGui::progressBarFullWidth((localPlayer->viewOffset().z - PLAYER_EYE_HEIGHT_CROUCH) / (PLAYER_EYE_HEIGHT - PLAYER_EYE_HEIGHT_CROUCH), 5.f); $$$
 	}
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 2)) {
-		ImGui::TextUnformatted("Velocity");
-		float velocity = localPlayer->velocity().length2D() / 300.f;
-		ImGui::progressBarFullWidth(std::clamp(velocity, 0.f, 1.f), 5.f);
+		ImGui::TextUnformatted("Velocity"); $$$
+		float velocity = localPlayer->velocity().length2D() / 300.f; $$$
+		ImGui::progressBarFullWidth(std::clamp(velocity, 0.f, 1.f), 5.f); $$$
 	}
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 3)) {
-		ImGui::TextUnformatted("Slowdown");
-		ImGui::progressBarFullWidth(localPlayer->velocityModifier() / 1.f, 5.f);
+		ImGui::TextUnformatted("Slowdown"); $$$
+		ImGui::progressBarFullWidth(localPlayer->velocityModifier() / 1.f, 5.f); $$$
 	}
 	if (Helpers::getByteFromBytewise(cfg->m.indicators.bytewise, 4)) {
-		ImGui::TextUnformatted("Stamina");
-		ImGui::progressBarFullWidth(1.f - (localPlayer->stamina() / 80), 5.f);
+		ImGui::TextUnformatted("Stamina"); $$$
+		ImGui::progressBarFullWidth(1.f - (localPlayer->stamina() / 80), 5.f); $$$
 	}
-	ImGui::End();
+	ImGui::End(); $$$
 }
 
 void Misc::changeWindowTitle(bool restore) noexcept {
 	
-	if (cfg->restrictions) return;
+	if (cfg->restrictions) return; $$$
 	
 	if (restore) {
-		SetWindowTextA(IConsole, "Counter-Strike: Global Offensive - Direct3D 9");
-		return;
+		SetWindowTextA(IConsole, "Counter-Strike: Global Offensive - Direct3D 9"); $$$
+		return; $$$
 	}
 
-	std::stringstream title;
-	title << "Counter-Strike: Global Offensive - Azurre External 0.1";
+	std::stringstream title; $$$
+	title << "Counter-Strike: Global Offensive - Azurre External 0.1"; $$$
 #if defined(_DEBUG)
-	title << " | ";
-	title << " Client: 0x" << std::hex << IClient.address;
-	title << " Engine: 0x" << std::hex << IEngine.address;
-	title << " LocalPlayer: 0x" << std::hex << localPlayer.get();
+	title << " | "; $$$
+	title << " Client: 0x" << std::hex << IClient.address; $$$
+	title << " Engine: 0x" << std::hex << IEngine.address; $$$
+	title << " LocalPlayer: 0x" << std::hex << localPlayer.get(); $$$
 #endif
-	std::string titleConverted = title.str();
-	SetWindowTextA(IConsole, titleConverted.c_str());
+	std::string titleConverted = title.str(); $$$
+	SetWindowTextA(IConsole, titleConverted.c_str()); $$$
 }
 
 void Misc::forceReload(bool onKey) noexcept {
 
 	if (!onKey || GetAsyncKeyState(VK_END) && !cfg->restrictions) {
 		for (int i = 0; i < 8; i++) {
-			equipment[i] = 0;
+			equipment[i] = 0; $$$
 		}
-		mem.Write<std::int32_t>(IClientState.address + 0x174, -1);
-		mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, true);
-		changeWindowTitle();
+		mem.Write<std::int32_t>(IClientState.address + 0x174, -1); $$$
+		mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, true); $$$
+		changeWindowTitle(); $$$
 	}
 	if (GetAsyncKeyState(VK_HOME))
-		mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, true);
+		mem.Write<byte>(IEngine.address + Offset::signatures::dwbSendPackets, true); $$$
 }
 
 void Misc::showKeybinds() noexcept {
 
-	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabledAimbot && cfg->a.hotkey.canShowKeybind()) || (cfg->m.playerList.enabled && cfg->m.playerList.hotkey.canShowKeybind()) || (cfg->m.minimap.enabled && cfg->m.minimap.hotkey.canShowKeybind() || (cfg->m.slowWalk.hotkey.isActive() && cfg->m.slowWalk.hotkey.canShowKeybind()));
+	bool anyActive = (cfg->t.enabled && cfg->t.hotkey.canShowKeybind()) || (cfg->v.thirdPerson && cfg->v.thirdPersonKey.canShowKeybind()) || (cfg->a.enabledAimbot && cfg->a.hotkey.canShowKeybind()) || (cfg->m.playerList.enabled && cfg->m.playerList.hotkey.canShowKeybind()) || (cfg->m.minimap.enabled && cfg->m.minimap.hotkey.canShowKeybind() || (cfg->m.slowWalk.hotkey.isActive() && cfg->m.slowWalk.hotkey.canShowKeybind())); $$$
 
 	if (!anyActive && !showMenu)
-		return;
+		return; $$$
 
 	if (cfg->m.keybinds.pos != ImVec2{}) {
-		ImGui::SetNextWindowPos(cfg->m.keybinds.pos);
-		cfg->m.keybinds.pos = {};
+		ImGui::SetNextWindowPos(cfg->m.keybinds.pos); $$$
+		cfg->m.keybinds.pos = {}; $$$
 	}
 
-	ImGui::SetNextWindowSize({ 250.f, 0.f }, ImGuiCond_Once);
-	ImGui::SetNextWindowSizeConstraints({ 250.f, 0.f }, { 250.f, FLT_MAX });
+	ImGui::SetNextWindowSize({ 250.f, 0.f }, ImGuiCond_Once); $$$
+	ImGui::SetNextWindowSizeConstraints({ 250.f, 0.f }, { 250.f, FLT_MAX }); $$$
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoFocusOnAppearing;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoFocusOnAppearing; $$$
 	if (!showMenu)
-		windowFlags |= ImGuiWindowFlags_NoInputs;
+		windowFlags |= ImGuiWindowFlags_NoInputs; $$$
 
 	if (cfg->m.keybinds.noTitleBar)
-		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+		windowFlags |= ImGuiWindowFlags_NoTitleBar; $$$
 
 	if (cfg->m.keybinds.noBackground)
-		windowFlags |= ImGuiWindowFlags_NoBackground;
-	ImGui::Begin("Keybind list", nullptr, windowFlags);
-	cfg->t.hotkey.showKeybind();
-	cfg->a.hotkey.showKeybind();
-	cfg->v.thirdPersonKey.showKeybind();
-	cfg->m.playerList.hotkey.showKeybind();
-	cfg->m.minimap.hotkey.showKeybind();
-	cfg->m.slowWalk.hotkey.showKeybind();
-	ImGui::End();
+		windowFlags |= ImGuiWindowFlags_NoBackground; $$$
+	ImGui::Begin("Keybind list", nullptr, windowFlags); $$$
+	cfg->t.hotkey.showKeybind(); $$$
+	cfg->a.hotkey.showKeybind(); $$$
+	cfg->v.thirdPersonKey.showKeybind(); $$$
+	cfg->m.playerList.hotkey.showKeybind(); $$$
+	cfg->m.minimap.hotkey.showKeybind(); $$$
+	cfg->m.slowWalk.hotkey.showKeybind(); $$$
+	ImGui::End(); $$$
 }
 
 void Misc::modifyConVars(bool reset) noexcept {
 
-	if (!localPlayer) return;
+	if (!localPlayer) return; $$$
 
-	if (gameState != 6) return;
+	if (gameState != 6) return; $$$
 
-	if (cfg->restrictions) return; //RPM ONLY
+	if (cfg->restrictions) return; $$$ //RPM ONLY
 
-	static ConVar sky{ "r_3dsky"};
-	static ConVar shadow{ "cl_csm_enabled"};
-	static ConVar grenade{ "cl_grenadepreview"};
-	static ConVar panoramaBlur{ "@panorama_disable_blur"};
-	static ConVar particles{ IClient.address + Offset::signatures::convar_r_drawparticles };
+	static ConVar sky{ "r_3dsky"}; $$$
+	static ConVar shadow{ "cl_csm_enabled"}; $$$
+	static ConVar grenade{ "cl_grenadepreview"}; $$$
+	static ConVar panoramaBlur{ "@panorama_disable_blur"}; $$$
+	static ConVar particles{ IClient.address + Offset::signatures::convar_r_drawparticles }; $$$
 
-	static ConVar forwardspeed{"cl_forwardspeed"};
-	static ConVar sidespeed{"cl_sidespeed"};
-	static ConVar backspeed{forwardspeed.offset + 0x68};
+	static ConVar forwardspeed{"cl_forwardspeed"}; $$$
+	static ConVar sidespeed{"cl_sidespeed"}; $$$
+	static ConVar backspeed{forwardspeed.offset + 0x68}; $$$
 
 	if (cfg->m.slowWalk.hotkey.isActive() && cfg->m.slowWalk.hotkey.isSet()) {
 
-		float speed = cfg->m.slowWalk.slowSpeed;
+		float speed = cfg->m.slowWalk.slowSpeed; $$$
 
 		if (cfg->m.slowWalk.slowWalkMode == 0) {
-			const short& weaponID = localPlayer->getWeaponIDFromPlayer();
-			speed = getWeaponMaxSpeed(weaponID) / 3;
+			const short& weaponID = localPlayer->getWeaponIDFromPlayer(); $$$
+			speed = getWeaponMaxSpeed(weaponID) / 3; $$$
 		}
 
 		if ((GetAsyncKeyState('W') || GetAsyncKeyState('S')) && (GetAsyncKeyState('A') || GetAsyncKeyState('D'))){ // Fuck AZERTY
-			speed /= 1.4142f; // By holding for example W and A, our speed (100.00u) is multiplied by 1.4142 then (141.42u) this should fix that, but slowly
+			speed /= 1.4142f; $$$ // By holding for example W and A, our speed (100.00u) is multiplied by 1.4142 then (141.42u) this should fix that, but slowly
 		}
 
-		forwardspeed.setValue(speed);
-		sidespeed.setValue(speed);
-		backspeed.setValue(speed);
+		forwardspeed.setValue(speed); $$$
+		sidespeed.setValue(speed); $$$
+		backspeed.setValue(speed); $$$
 	}
 	else if (cfg->m.slowWalk.hotkey.isSet()){
-		forwardspeed.setValue(450.f);
-		sidespeed.setValue(450.f);
-		backspeed.setValue(450.f);
+		forwardspeed.setValue(450.f); $$$
+		sidespeed.setValue(450.f); $$$
+		backspeed.setValue(450.f); $$$
 	}
 
 	if (reset) {
-		sky.setValue(1);
-		shadow.setValue(1);
-		grenade.setValue(0);
-		particles.setValue(1);
-		return;
+		sky.setValue(1); $$$
+		shadow.setValue(1); $$$
+		grenade.setValue(0); $$$
+		particles.setValue(1); $$$
+		return; $$$
 	}
 
-	sky.setValue(!cfg->v.no3DSky);
-	shadow.setValue(!cfg->v.noShadows);
-	grenade.setValue(cfg->m.grenadeTrajectory);
-	particles.setValue(!cfg->v.noParticles);
-	panoramaBlur.setValue(cfg->v.noPanoramaBlur);
+	sky.setValue(!cfg->v.no3DSky); $$$
+	shadow.setValue(!cfg->v.noShadows); $$$
+	grenade.setValue(cfg->m.grenadeTrajectory); $$$
+	particles.setValue(!cfg->v.noParticles); $$$
+	panoramaBlur.setValue(cfg->v.noPanoramaBlur); $$$
 }
 
 void Misc::drawOffscreenEnemies() noexcept
 {
 	if (!cfg->m.offscreenEnemies.toggle.enabled)
-		return;
+		return; $$$
 
-	const auto &angles = mem.Read<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles);
-	const auto yaw = Helpers::deg2rad(angles.y);
+	const auto &angles = mem.Read<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles); $$$
+	const auto yaw = Helpers::deg2rad(angles.y); $$$
 
 	for (auto& player : gameData.playerData) {
 		if (player.entity->dormant() || !player.entity->isAlive() || player.entity->isSameTeam())
-			continue;
+			continue; $$$
 
-		const auto positionDiff = localPlayer->origin() - player.entity->origin();
+		const auto positionDiff = localPlayer->origin() - player.entity->origin(); $$$
 
-		auto x = std::cos(yaw) * positionDiff.y - std::sin(yaw) * positionDiff.x;
-		auto y = std::cos(yaw) * positionDiff.x + std::sin(yaw) * positionDiff.y;
+		auto x = std::cos(yaw) * positionDiff.y - std::sin(yaw) * positionDiff.x; $$$
+		auto y = std::cos(yaw) * positionDiff.x + std::sin(yaw) * positionDiff.y; $$$
 		if (const auto len = std::sqrt(x * x + y * y); len != 0.0f) {
-			x /= len;
-			y /= len;
+			x /= len; $$$
+			y /= len; $$$
 		}
 
-		ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
+		ImVec2 mid = gameScreenSize / 2.f + gameScreenPos; $$$
 
-		const auto pos = mid + ImVec2{ x, y } * (cfg->m.offscreenEnemies.radius * 10);
-		const auto trianglePos = pos + ImVec2{ x, y } * cfg->m.offscreenEnemies.radius;
+		const auto pos = mid + ImVec2{ x, y } * (cfg->m.offscreenEnemies.radius * 10); $$$
+		const auto trianglePos = pos + ImVec2{ x, y } * cfg->m.offscreenEnemies.radius; $$$
 
-		const auto white = Helpers::calculateColor(255, 255, 255, 255);
-		const auto background = Helpers::calculateColor(0, 0, 0, 80);
-		const auto color = Helpers::calculateColor(cfg->m.offscreenEnemies.toggle);
+		const auto white = Helpers::calculateColor(255, 255, 255, 255); $$$
+		const auto background = Helpers::calculateColor(0, 0, 0, 80); $$$
+		const auto color = Helpers::calculateColor(cfg->m.offscreenEnemies.toggle); $$$
 
 		const ImVec2 trianglePoints[]{
 			trianglePos + ImVec2{  0.4f * y, -0.4f * x } * cfg->m.offscreenEnemies.size,
 			trianglePos + ImVec2{  1.0f * x,  1.0f * y } * cfg->m.offscreenEnemies.size,
 			trianglePos + ImVec2{ -0.4f * y,  0.4f * x } * cfg->m.offscreenEnemies.size
-		};
+		}; $$$
 
-		ImGui::GetBackgroundDrawList()->AddConvexPolyFilled(trianglePoints, 3, color);
+		ImGui::GetBackgroundDrawList()->AddConvexPolyFilled(trianglePoints, 3, color); $$$
 	}
 }
 
 void Misc::spectatorList() noexcept {
 
 
-	ImGui::SetNextWindowSize({ 200.0f, 0.f });
+	ImGui::SetNextWindowSize({ 200.0f, 0.f }); $$$
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing; $$$
 	if (!showMenu)
-		windowFlags |= ImGuiWindowFlags_NoInputs;
+		windowFlags |= ImGuiWindowFlags_NoInputs; $$$
 	if (cfg->m.spectatorList.noTitleBar)
-		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+		windowFlags |= ImGuiWindowFlags_NoTitleBar; $$$
 	if (cfg->m.spectatorList.noBackground)
-		windowFlags |= ImGuiWindowFlags_NoBackground;
+		windowFlags |= ImGuiWindowFlags_NoBackground; $$$
 
 	if (cfg->m.spectatorList.pos != ImVec2{}) {
-		ImGui::SetNextWindowPos(cfg->m.spectatorList.pos);
-		cfg->m.spectatorList.pos = {};
+		ImGui::SetNextWindowPos(cfg->m.spectatorList.pos); $$$
+		cfg->m.spectatorList.pos = {}; $$$
 	}
 
 	if (showMenu) {
-		ImGui::Begin("Spectator List", nullptr, windowFlags);
-		ImGui::TextWrapped("VALVE | 3rd");
-		ImGui::TextWrapped("Azurre | 1rd");
-		ImGui::TextWrapped("GOTV | Freecam");
-		ImGui::End();
-		return;
+		ImGui::Begin("Spectator List", nullptr, windowFlags); $$$
+		ImGui::TextWrapped("VALVE | 3rd"); $$$
+		ImGui::TextWrapped("Azurre | 1rd"); $$$
+		ImGui::TextWrapped("GOTV | Freecam"); $$$
+		ImGui::End(); $$$
+		return; $$$
 	}
 
-	if (gameState != ConnectionState::FullyConnected) return;
+	if (gameState != ConnectionState::FullyConnected) return; $$$
 
-	if (!localPlayer) return;
+	if (!localPlayer) return; $$$
 
-	if (gameData.observerData.empty()) return;
+	if (gameData.observerData.empty()) return; $$$
 
-	ImGui::Begin("Spectator List", nullptr, windowFlags);
+	ImGui::Begin("Spectator List", nullptr, windowFlags); $$$
 
 	for (auto& player : gameData.observerData) {
 		
-		const char* obsMode;
+		const char* obsMode; $$$
 
 		switch (player.obsMode) {
 			case ObsMode::Deathcam:
-				obsMode = "Deathcam";
-				break;
+				obsMode = "Deathcam"; $$$
+				break; $$$
 			case ObsMode::Freezecam:
-				obsMode = "Freezecam";
-				break;
+				obsMode = "Freezecam"; $$$
+				break; $$$
 			case ObsMode::Fixed:
-				obsMode = "Fixed";
-				break;
+				obsMode = "Fixed"; $$$
+				break; $$$
 			case ObsMode::InEye:
-				obsMode = "1st";
-				break;
+				obsMode = "1st"; $$$
+				break; $$$
 			case ObsMode::Chase:
-				obsMode = "3rd";
-				break;
+				obsMode = "3rd"; $$$
+				break; $$$
 			case ObsMode::Roaming:
-				obsMode = "Freecam";
-				break;
+				obsMode = "Freecam"; $$$
+				break; $$$
 			default:
-				obsMode = "";
+				obsMode = ""; $$$
 		}
-		ImGui::TextWrapped("%s | %s", player.name.c_str(), obsMode);
+		ImGui::TextWrapped("%s | %s", player.name.c_str(), obsMode); $$$
 	}
-	ImGui::End();
+	ImGui::End(); $$$
 }
 
 void Misc::bombTimer() noexcept {
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoFocusOnAppearing;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoFocusOnAppearing; $$$
 	if (!showMenu)
-		windowFlags |= ImGuiWindowFlags_NoInputs;
+		windowFlags |= ImGuiWindowFlags_NoInputs; $$$
 
 	if (cfg->m.bombTimer.noTitleBar)
-		windowFlags |= ImGuiWindowFlags_NoTitleBar;
+		windowFlags |= ImGuiWindowFlags_NoTitleBar; $$$
 
 	if (cfg->m.bombTimer.pos != ImVec2{}) {
-		ImGui::SetNextWindowPos(cfg->m.bombTimer.pos);
-		cfg->m.bombTimer.pos = {};
+		ImGui::SetNextWindowPos(cfg->m.bombTimer.pos); $$$
+		cfg->m.bombTimer.pos = {}; $$$
 	}
 	
-	const auto& plantedC4 = gameData.plantedC4;
+	const auto& plantedC4 = gameData.plantedC4; $$$
 
 	if (gameData.plantedC4->bombDefused())
-		gameData.plantedC4 = nullptr;
+		gameData.plantedC4 = nullptr; $$$
 
 	if (gameData.plantedC4 != nullptr || showMenu){
-		ImGui::Begin("Bomb Timer", nullptr, windowFlags);
-		std::ostringstream ss; ss << "Bomb on " << (!plantedC4->bombSite() ? 'A' : 'B') << " : " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4->C4Blow() - globalVars->currentTime, 0.0f) << " s";
-		ImGui::textUnformattedCentered(ss.str().c_str());
+		ImGui::Begin("Bomb Timer", nullptr, windowFlags); $$$
+		std::ostringstream ss; $$$ ss << "Bomb on " << (!plantedC4->bombSite() ? 'A' : 'B') << " : " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4->C4Blow() - globalVars->currentTime, 0.0f) << " s"; $$$
+		ImGui::textUnformattedCentered(ss.str().c_str()); $$$
 
-		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, Helpers::calculateColor(cfg->m.bombTimer.barColor));
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f });
-		ImGui::progressBarFullWidth((plantedC4->C4Blow() - globalVars->currentTime) / plantedC4->timerLength(), 5.0f);
+		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, Helpers::calculateColor(cfg->m.bombTimer.barColor)); $$$
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f }); $$$
+		ImGui::progressBarFullWidth((plantedC4->C4Blow() - globalVars->currentTime) / plantedC4->timerLength(), 5.0f); $$$
 
-		int bombDefuseris = plantedC4->bombDefuser();
+		int bombDefuseris = plantedC4->bombDefuser(); $$$
 
 		if (bombDefuseris != -1) {
-			const bool canDefuse = plantedC4->C4Blow() >= plantedC4->defuseCountDown();
+			const bool canDefuse = plantedC4->C4Blow() >= plantedC4->defuseCountDown(); $$$
 
 			if (localPlayer->isDefusing()) {
 				if (canDefuse) {
-					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
-					ImGui::textUnformattedCentered("You can defuse!");
+					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255)); $$$
+					ImGui::textUnformattedCentered("You can defuse!"); $$$
 				}
 				else {
-					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
-					ImGui::textUnformattedCentered("You can not defuse!");
+					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255)); $$$
+					ImGui::textUnformattedCentered("You can not defuse!"); $$$
 				}
-				ImGui::PopStyleColor();
+				ImGui::PopStyleColor(); $$$
 			}
 			else {
-				std::ostringstream ss; ss << (gameData.defusingPlayerName.empty() ? "Player" : gameData.defusingPlayerName) << " is defusing: " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4->defuseCountDown() - globalVars->currentTime, 0.0f) << " s";
-				ImGui::textUnformattedCentered(ss.str().c_str());
+				std::ostringstream ss; $$$ ss << (gameData.defusingPlayerName.empty() ? "Player" : gameData.defusingPlayerName) << " is defusing: " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4->defuseCountDown() - globalVars->currentTime, 0.0f) << " s"; $$$
+				ImGui::textUnformattedCentered(ss.str().c_str()); $$$
 
-				ImGui::PushStyleColor(ImGuiCol_PlotHistogram, canDefuse ? IM_COL32(0, 255, 0, 255) : IM_COL32(255, 0, 0, 255));
-				ImGui::progressBarFullWidth((plantedC4->defuseCountDown() - globalVars->currentTime) / plantedC4->defuseLength(), 5.0f);
-				ImGui::PopStyleColor();
+				ImGui::PushStyleColor(ImGuiCol_PlotHistogram, canDefuse ? IM_COL32(0, 255, 0, 255) : IM_COL32(255, 0, 0, 255)); $$$
+				ImGui::progressBarFullWidth((plantedC4->defuseCountDown() - globalVars->currentTime) / plantedC4->defuseLength(), 5.0f); $$$
+				ImGui::PopStyleColor(); $$$
 			}
 		}
 
-		ImGui::PopStyleColor(2);
-		ImGui::End();
+		ImGui::PopStyleColor(2); $$$
+		ImGui::End(); $$$
 	}
 }
 
@@ -592,78 +593,78 @@ void drawCrosshair(ImVec2 pos, float length, float gap, float thickness, float o
 
 	if (outline) {
 		if (dot)
-			ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x - outlineTickness / 2.f, pos.y - outlineTickness / 2.f }, { pos.x + outlineTickness / 2.f , pos.y + outlineTickness / 2.f }, colorOutline);
+			ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x - outlineTickness / 2.f, pos.y - outlineTickness / 2.f }, { pos.x + outlineTickness / 2.f , pos.y + outlineTickness / 2.f }, colorOutline); $$$
 
 		if (!TStyle)
-			ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y - length - outlineTickness }, { pos.x, pos.y - gap + outlineTickness }, colorOutline, outlineTickness + thickness); //TOP
+			ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y - length - outlineTickness }, { pos.x, pos.y - gap + outlineTickness }, colorOutline, outlineTickness + thickness); $$$ //TOP
 
-		ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y + length + outlineTickness }, { pos.x, pos.y + gap - outlineTickness }, colorOutline, outlineTickness + thickness); //BOTTOM
-		ImGui::GetBackgroundDrawList()->AddLine({ pos.x - length - outlineTickness , pos.y }, { pos.x - gap + outlineTickness, pos.y }, colorOutline, outlineTickness + thickness); //LEFT
-		ImGui::GetBackgroundDrawList()->AddLine({ pos.x + length + outlineTickness, pos.y }, { pos.x + gap - outlineTickness, pos.y}, colorOutline, outlineTickness + thickness); //RIGHT
+		ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y + length + outlineTickness }, { pos.x, pos.y + gap - outlineTickness }, colorOutline, outlineTickness + thickness); $$$ //BOTTOM
+		ImGui::GetBackgroundDrawList()->AddLine({ pos.x - length - outlineTickness , pos.y }, { pos.x - gap + outlineTickness, pos.y }, colorOutline, outlineTickness + thickness); $$$ //LEFT
+		ImGui::GetBackgroundDrawList()->AddLine({ pos.x + length + outlineTickness, pos.y }, { pos.x + gap - outlineTickness, pos.y}, colorOutline, outlineTickness + thickness); $$$ //RIGHT
 	}
 
 	if (dot)
-		ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x - thickness / 2.f, pos.y - thickness / 2.f }, { pos.x + thickness / 2.f , pos.y + thickness / 2.f }, color);
+		ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x - thickness / 2.f, pos.y - thickness / 2.f }, { pos.x + thickness / 2.f , pos.y + thickness / 2.f }, color); $$$
 
 	if(!TStyle)
-		ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y - length }, { pos.x, pos.y - gap }, color, thickness); //TOP
+		ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y - length }, { pos.x, pos.y - gap }, color, thickness); $$$ //TOP
 
-	ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y + length }, { pos.x, pos.y + gap }, color, thickness); //BOTTOM
-	ImGui::GetBackgroundDrawList()->AddLine({ pos.x - length , pos.y }, { pos.x - gap, pos.y }, color, thickness); //LEFT
-	ImGui::GetBackgroundDrawList()->AddLine({ pos.x + length, pos.y }, { pos.x + gap, pos.y }, color, thickness); //RIGHT
+	ImGui::GetBackgroundDrawList()->AddLine({ pos.x , pos.y + length }, { pos.x, pos.y + gap }, color, thickness); $$$ //BOTTOM
+	ImGui::GetBackgroundDrawList()->AddLine({ pos.x - length , pos.y }, { pos.x - gap, pos.y }, color, thickness); $$$ //LEFT
+	ImGui::GetBackgroundDrawList()->AddLine({ pos.x + length, pos.y }, { pos.x + gap, pos.y }, color, thickness); $$$ //RIGHT
 }
 
 void Misc::crosshairs() noexcept {
 
 	if (!localPlayer)
-		return;
+		return; $$$
 
 	if (gameState != ConnectionState::FullyConnected)
-		return;
+		return; $$$
 
 	if (localPlayer->isDead())
-		return;
+		return; $$$
 
-	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos;
+	ImVec2 mid = gameScreenSize / 2.f + gameScreenPos; $$$
 
 	if ((cfg->m.sniperCrosshair.enabled && showMenu) || (cfg->m.sniperCrosshair.enabled && !localPlayer->isScoped() && localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
-		auto& settings = cfg->m.sniperCrosshair;
-		drawCrosshair(mid, settings.length, settings.gap, settings.thickness, settings.outlineThickness, settings.dot, settings.outline.enabled, settings.TStyle, Helpers::calculateColor(settings.color), Helpers::calculateColor(settings.outline));
+		auto& settings = cfg->m.sniperCrosshair; $$$
+		drawCrosshair(mid, settings.length, settings.gap, settings.thickness, settings.outlineThickness, settings.dot, settings.outline.enabled, settings.TStyle, Helpers::calculateColor(settings.color), Helpers::calculateColor(settings.outline)); $$$
 	}
 
 	if ((cfg->m.recoilCrosshair.enabled && showMenu) || (cfg->m.recoilCrosshair.enabled && localPlayer->shotsFired() && !localPlayer->isScoped() && !localPlayer->getActiveWeapon()->isWeaponRifleSniper())) {
-		auto& settings = cfg->m.recoilCrosshair;
-		Vector aimPunch = localPlayer->aimPunch() / 2.f;
-		drawCrosshair({ mid.x - (screenSize.x / 90.f * aimPunch.y), mid.y + (screenSize.x / 90.f * aimPunch.x) }, settings.length, settings.gap, settings.thickness, settings.outlineThickness, settings.dot, settings.outline.enabled, settings.TStyle, Helpers::calculateColor(settings.color), Helpers::calculateColor(settings.outline));
+		auto& settings = cfg->m.recoilCrosshair; $$$
+		Vector aimPunch = localPlayer->aimPunch() / 2.f; $$$
+		drawCrosshair({ mid.x - (screenSize.x / 90.f * aimPunch.y), mid.y + (screenSize.x / 90.f * aimPunch.x) }, settings.length, settings.gap, settings.thickness, settings.outlineThickness, settings.dot, settings.outline.enabled, settings.TStyle, Helpers::calculateColor(settings.color), Helpers::calculateColor(settings.outline)); $$$
 	}
 
 }
 
 void Misc::fastStop() noexcept	{
 
-	if (!cfg->m.autoStop) return;
+	if (!cfg->m.autoStop) return; $$$
 
-	if (!localPlayer) return;
+	if (!localPlayer) return; $$$
 
-	if (localPlayer->isDead()) return;
+	if (localPlayer->isDead()) return; $$$
 
-	if (cfg->restrictions) return;
+	if (cfg->restrictions) return; $$$
 
-	auto wKey = GetAsyncKeyState(0x57);
-	auto aKey = GetAsyncKeyState(0x41);
-	auto sKey = GetAsyncKeyState(0x53);
-	auto dKey = GetAsyncKeyState(0x44);
-	const float velocity = localPlayer->velocity().length2D();
-	Vector finalVector = Helpers::calculateRealAngles();
+	auto wKey = GetAsyncKeyState(0x57); $$$
+	auto aKey = GetAsyncKeyState(0x41); $$$
+	auto sKey = GetAsyncKeyState(0x53); $$$
+	auto dKey = GetAsyncKeyState(0x44); $$$
+	const float velocity = localPlayer->velocity().length2D(); $$$
+	Vector finalVector = Helpers::calculateRealAngles(); $$$
 	if (!wKey && !aKey && !sKey && !dKey && velocity >= 30.f && (localPlayer->flags() & 1)) {
 		if (finalVector.x >= 20) // FRONT, SO GO BACKWARDS
-			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceBackward, 6);
+			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceBackward, 6); $$$
 		if (finalVector.x <= -20) // BACK, SO GO FRONT
-			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceForward, 6);
+			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceForward, 6); $$$
 		if (finalVector.y >= 20) // RIGHT, SO GO LEFT
-			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceLeft, 6);
+			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceLeft, 6); $$$
 		if (finalVector.y <= -20) // LEFT, SO GO RIGHT
-			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6);;
+			mem.Write<std::uintptr_t>(IClient.address + Offset::signatures::dwForceRight, 6); $$$; $$$
 	}
 }
 

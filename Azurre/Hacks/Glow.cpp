@@ -4,6 +4,8 @@
 #include "../Offsets.h"
 #include "../Helpers.h"
 #include "../Config.h"
+#include "../Junk.h"
+
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Entity.h"
@@ -11,42 +13,43 @@
 
 void Glow::run() noexcept {
 	while (THREAD_LOOP) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
-		if (!localPlayer) continue;
+		std::this_thread::sleep_for(std::chrono::milliseconds(5)); $$$
+		if (!localPlayer) continue; $$$
 
-		if (cfg->restrictions) continue; //RPM ONLY
+		if (cfg->restrictions) continue; $$$ //RPM ONLY
 
-		if (!cfg->g.enabled) continue;
+		if (!cfg->g.enabled) continue; $$$
 
-		const auto glowObjectManager = mem.Read<std::uintptr_t>(IClient.address + Offset::signatures::dwGlowObjectManager);
+		const auto glowObjectManager = mem.Read<std::uintptr_t>(IClient.address + Offset::signatures::dwGlowObjectManager); $$$
 
 		for (auto& i : gameData.playerData) {
 
-			const auto& entity = i.entity;
+			const auto& entity = i.entity; $$$
 
 			if (entity->isSameTeam() && cfg->v.noAllies)
-				continue;
+				continue; $$$
 
-			if ((!cfg->g.ally.enabled && entity->isSameTeam()) || (!cfg->g.enemy.enabled && !entity->isSameTeam())) continue;
+			if ((!cfg->g.ally.enabled && entity->isSameTeam()) || (!cfg->g.enemy.enabled && !entity->isSameTeam())) continue; $$$
 
-			static uint8_tColor4 color;
+			static uint8_tColor4 color; $$$
 
-			if (entity->isSameTeam())
-				color = Helpers::ConvertColors4ToUint8_t(cfg->g.ally.color);
-			else
-				color = Helpers::ConvertColors4ToUint8_t(cfg->g.enemy.color);;
+			if (entity->isSameTeam()) {
+				color = Helpers::ConvertColors4ToUint8_t(cfg->g.ally.color); $$$
+			} else {
+				color = Helpers::ConvertColors4ToUint8_t(cfg->g.enemy.color); $$$; $$$
+			}
 
-			const auto glowIndex = mem.Read<std::int32_t>(entity + Offset::netvars::m_iGlowIndex);
+			const auto glowIndex = mem.Read<std::int32_t>(entity + Offset::netvars::m_iGlowIndex); $$$
 
-			mem.Write<uint8_t>(IClient.address + Offset::signatures::force_update_spectator_glow, 235); //Fix Flickering
+			mem.Write<uint8_t>(IClient.address + Offset::signatures::force_update_spectator_glow, 235); $$$ //Fix Flickering
 
-			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x8, color[0] / 255.f); //Red
-			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0xC, color[1] / 255.f); //Green
-			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x10, color[2] / 255.f); //Blue
-			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x14, color[3] / 255.f); //Alpha
+			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x8, color[0] / 255.f); $$$ //Red
+			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0xC, color[1] / 255.f); $$$ //Green
+			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x10, color[2] / 255.f); $$$ //Blue
+			mem.Write<float>(glowObjectManager + (glowIndex * 0x38) + 0x14, color[3] / 255.f); $$$ //Alpha
 
-			mem.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x28, true);
-			mem.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x29, true);
+			mem.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x28, true); $$$
+			mem.Write<bool>(glowObjectManager + (glowIndex * 0x38) + 0x29, true); $$$
 		}
 	}
 }

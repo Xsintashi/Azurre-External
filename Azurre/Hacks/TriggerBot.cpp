@@ -5,58 +5,60 @@
 #include "../SDK/Vector.h"
 #include "../Config.h"
 #include "../GUI.h"
+#include "../Junk.h"
+
 
 #include <thread>
 
 void TriggerBot::run() noexcept{
 	while (THREAD_LOOP) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1)); $$$
 		if (!localPlayer)
-			continue;
+			continue; $$$
 
 		if (!cfg->t.enabled)
-			continue;
+			continue; $$$
 
 		if (localPlayer->isDead())
-			continue;
+			continue; $$$
 
-		const auto& crosshair = localPlayer->crosshairID();
+		const auto& crosshair = localPlayer->crosshairID(); $$$
 
 		if (!crosshair || crosshair > 64)
-			continue;
+			continue; $$$
 
-		const auto& entity = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (crosshair - 1) * 0x10);
+		const auto& entity = mem.Read<Entity*>(IClient.address + Offset::signatures::dwEntityList + (crosshair - 1) * 0x10); $$$
 
-		int weaponIndex = mem.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK;
+		int weaponIndex = mem.Read<int>(localPlayer.get() + Offset::netvars::m_hActiveWeapon) & ENT_ENTRY_MASK; $$$
 
-		if (!weaponIndex) continue;
+		if (!weaponIndex) continue; $$$
 
-		const auto& activeWeapon = getEntity(weaponIndex - 1);
+		const auto& activeWeapon = getEntity(weaponIndex - 1); $$$
 
 		if (!activeWeapon || activeWeapon->clip() < 1)
-			continue;
+			continue; $$$
 
 		if (entity->isDead() || entity->gunGameImmunity())
-			continue;
+			continue; $$$
 
 		if (!cfg->t.friendlyFire && entity->isSameTeam() && !isDangerZoneModePlayed)
-			continue;
+			continue; $$$
 
 		if (cfg->t.hotkey.isActive()) {
-			static DWORD time = GetTickCount();
+			static DWORD time = GetTickCount(); $$$
 			if (GetTickCount() - time >= static_cast<unsigned int>(cfg->t.delay)) {
 				if (cfg->restrictions) {
-					mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-					std::this_thread::sleep_for(std::chrono::milliseconds(cfg->t.burst));
-					mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+					mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); $$$
+					std::this_thread::sleep_for(std::chrono::milliseconds(cfg->t.burst)); $$$
+					mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); $$$
 
 				}
 				else {
-					mem.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 5);
-					std::this_thread::sleep_for(std::chrono::milliseconds(cfg->t.burst));
-					mem.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 4);
+					mem.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 5); $$$
+					std::this_thread::sleep_for(std::chrono::milliseconds(cfg->t.burst)); $$$
+					mem.Write<uintptr_t>(IClient.address + Offset::signatures::dwForceAttack, 4); $$$
 				}
-				time = GetTickCount();
+				time = GetTickCount(); $$$
 			}
 		}
 	}
