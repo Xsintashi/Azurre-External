@@ -87,8 +87,13 @@ void Aimbot::run() noexcept {
 				const auto bonePos = entity->bonePosition(bonePosition);
 
 				angle = Helpers::calculateRelativeAngle(eyePosition, bonePos, { viewAngles.x + aimPunch.x, viewAngles.y + aimPunch.y, 0.f });
-
 				fov = angle.length2D(); //fov
+
+				if (fov < config.deadzone)
+					continue;
+
+				if (fov > bestFov)
+					continue;
 
 				if (fov < bestFov) {
 					bestFov = fov;
@@ -230,7 +235,7 @@ void Aimbot::recoilSystem() noexcept {
 }
 
 void Aimbot::drawFov() noexcept {
-	if (!cfg->a.enabledAimbot || !cfg->a.drawFov.enabled)
+	if (!cfg->a.enabledAimbot)
 		return;
 
 	if (!localPlayer || !localPlayer->isAlive())
@@ -257,12 +262,27 @@ void Aimbot::drawFov() noexcept {
 	Vector aimPunch = localPlayer->aimPunch() / 2.f;
 	ImVec2 recoil = { mid.x - (screenSize.x / 90.f * aimPunch.y), mid.y + (screenSize.x / 90.f * aimPunch.x) };
 
-	const auto radius = std::tan(Helpers::deg2rad(cfg->a.weapons[weaponIndex].fov) / (16.0f / 6.0f)) / std::tan(Helpers::deg2rad(localPlayer->isScoped() ? localPlayer->fov() : 90.0f) / 2.0f) * gameScreenSize.x;
-	if (radius > gameScreenSize.x || radius > gameScreenSize.y || !std::isfinite(radius))
-		return;
 
-	const auto color = Helpers::calculateColor(cfg->a.drawFov);
-	ImGui::GetBackgroundDrawList()->AddCircleFilled(localPlayer->shotsFired() > 1 ? recoil : mid, radius, color);
-	if (cfg->a.drawFov.outline)
-		ImGui::GetBackgroundDrawList()->AddCircle(localPlayer->shotsFired() > 1 ? recoil : mid, radius, color | IM_COL32_A_MASK, 360);
+	if (cfg->a.drawFov.enabled) {
+		//Fov
+		const auto fovRadius = std::tan(Helpers::deg2rad(cfg->a.weapons[weaponIndex].fov) / (16.0f / 6.0f)) / std::tan(Helpers::deg2rad(localPlayer->isScoped() ? localPlayer->fov() : 90.0f) / 2.0f) * gameScreenSize.x;
+		if (fovRadius > gameScreenSize.x || fovRadius > gameScreenSize.y || !std::isfinite(fovRadius))
+			return;
+
+		const auto fovColor = Helpers::calculateColor(cfg->a.drawFov);
+		ImGui::GetBackgroundDrawList()->AddCircleFilled(localPlayer->shotsFired() > 1 ? recoil : mid, fovRadius, fovColor);
+		if (cfg->a.drawFov.outline)
+			ImGui::GetBackgroundDrawList()->AddCircle(localPlayer->shotsFired() > 1 ? recoil : mid, fovRadius, fovColor | IM_COL32_A_MASK, 360);
+	}
+	if (cfg->a.drawDeadzone.enabled) {
+		//Deadzone
+		const auto deadZoneRadius = std::tan(Helpers::deg2rad(cfg->a.weapons[weaponIndex].deadzone) / (16.0f / 6.0f)) / std::tan(Helpers::deg2rad(localPlayer->isScoped() ? localPlayer->fov() : 90.0f) / 2.0f) * gameScreenSize.x;
+		if (deadZoneRadius > gameScreenSize.x || deadZoneRadius > gameScreenSize.y || !std::isfinite(deadZoneRadius))
+			return;
+
+		const auto deadzoneColor = Helpers::calculateColor(cfg->a.drawDeadzone);
+		ImGui::GetBackgroundDrawList()->AddCircleFilled(localPlayer->shotsFired() > 1 ? recoil : mid, deadZoneRadius, deadzoneColor);
+		if (cfg->a.drawDeadzone.outline)
+			ImGui::GetBackgroundDrawList()->AddCircle(localPlayer->shotsFired() > 1 ? recoil : mid, deadZoneRadius, deadzoneColor | IM_COL32_A_MASK, 360);
+	}
 }

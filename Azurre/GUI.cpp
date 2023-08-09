@@ -1249,7 +1249,7 @@ void renderAimbotWindow() noexcept {
 	static int currentCategory = 0;
 	static int currentWeapon = 0;
 
-	ImGui::BeginChild("Aimbot", {232.f , 382.f}, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	ImGui::BeginChild("Aimbot", {232.f , 426.f}, true, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	{
 		ImGui::PushID("key");
 		ImGui::Checkbox("Enabled", &cfg->a.enabledAimbot);
@@ -1361,6 +1361,7 @@ void renderAimbotWindow() noexcept {
 		ImGui::PushItemWidth(128.f);
 		ImGui::Combo("Bone", &cfg->a.weapons[currentWeapon].bone, "Head\0Neck\0Sternum\0Chest\0Stomach\0Pelvis\0");
 		ImGui::SliderFloat("##fov", &cfg->a.weapons[currentWeapon].fov, 0.001f, 255.000f, "Fov: %.2f");
+		ImGui::SliderFloat("##dead", &cfg->a.weapons[currentWeapon].deadzone, 0.001f, 255.000f, "Deadzone: %.2f");
 		ImGui::SliderFloat("##smooth", &cfg->a.weapons[currentWeapon].smooth, 1.00f, 100.00f, "Smooth: %.2f");
 		ImGui::Combo("Priority", &cfg->a.weapons[currentWeapon].priority, "Health\0Distance\0Fov\0");
 		ImGui::PopItemWidth();
@@ -1368,6 +1369,7 @@ void renderAimbotWindow() noexcept {
 		ImGui::Checkbox("RCS", &cfg->a.rcs);
 		ImGui::EndDisabled();
 		ImGuiCustom::colorPicker("Draw fov", cfg->a.drawFov);
+		ImGuiCustom::colorPicker("Draw Deadzone", cfg->a.drawDeadzone);
 	}
 	ImGui::EndChild();
 	ImGui::PopID();

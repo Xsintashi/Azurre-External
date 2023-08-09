@@ -41,6 +41,7 @@ public:
 		int bone = 0;
 		int priority = 0;
 		float fov = 0.f;
+		float deadzone = 0.f;
 		float smooth = 1.f;
 	};
 	
@@ -51,7 +52,8 @@ public:
 		KeyBind hotkey = std::string("Aimbot");
 		std::array<WeaponAimbot, 40> weapons;
 		ColorToggleOutline drawFov{ 1.0f, 1.0f, 1.0f, 0.0f };
-	}a;
+		ColorToggleOutline drawDeadzone{ 1.0f, 0.0f, 0.0f, 0.0f };
+	} a;
 
 	struct ChamsConfig {
 		bool enabled = false;
@@ -242,7 +244,7 @@ public:
 		int TTKnife = 1;
 		int CTAgent = 0;
 		int TTAgent = 0;
-	}ch;
+	} ch;
 
 	std::array<SkinChangerConfig, 56> s;
 

@@ -100,6 +100,7 @@ static void from_json(const json& j, Config::WeaponAimbot& c) {
     read(j, "Ignore Flash", c.ignoreFlash);
     read(j, "Bone", c.bone);
     read(j, "Fov", c.fov);
+    read(j, "Deadzone", c.deadzone);
     read(j, "Smooth", c.smooth);
     read(j, "Priority", c.priority);
 }
@@ -109,7 +110,8 @@ static void from_json(const json& j, Config::AimbotConfig& c) {
     read(j, "Hotkey", c.hotkey);
     read(j, "Disable on spectator", c.disableWhileBeingSpectated);
     read(j, "RCS", c.rcs);
-    read<value_t::object>(j, "Draw legitbot fov", c.drawFov);
+    read<value_t::object>(j, "Draw Fov", c.drawFov);
+    read<value_t::object>(j, "Draw Deadzone", c.drawDeadzone);
     read(j, "Weapons", c.weapons);
 }
 
@@ -471,6 +473,7 @@ static void to_json(json& j, const Config::WeaponAimbot& o, const Config::Weapon
     WRITE("Ignore Flash", ignoreFlash);
     WRITE("Bone", bone);
     WRITE("Fov", fov);
+    WRITE("Deadzone", deadzone);
     WRITE("Smooth", smooth);
     WRITE("Priority", priority);
 }
@@ -480,7 +483,8 @@ static void to_json(json& j, const Config::AimbotConfig& o, const Config::Aimbot
     WRITE("Hotkey", hotkey);
     WRITE("Disable on spectator", disableWhileBeingSpectated);
     WRITE("RCS", rcs);
-    WRITE("Draw legitbot fov", drawFov);
+    WRITE("Draw Fov", drawFov);
+    WRITE("Draw Deadzone", drawDeadzone);
     j["Weapons"] = o.weapons;
 }
 
