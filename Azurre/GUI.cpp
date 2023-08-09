@@ -2119,7 +2119,7 @@ void renderConfigWindow() noexcept {
 				ImGui::OpenPopup("Config to reset");
 
 			if (ImGui::BeginPopup("Config to reset")) {
-				static constexpr const char* names[]{ "Whole", "Aimbot", "Chams", "Discord", "Glow", "Misc", "Changer", "TriggerBot", "Visuals" };
+				static constexpr const char* names[]{ "Whole", "Aimbot", "Chams", "Clantag", "Discord", "ESP", "Glow", "GUI", "Misc", "Changer", "TriggerBot", "Visuals"};
 				for (int i = 0; i < IM_ARRAYSIZE(names); i++) {
 					if (i == 1) ImGui::Separator();
 
@@ -2128,12 +2128,15 @@ void renderConfigWindow() noexcept {
 						case 0: cfg->reset(); break;
 						case 1:	cfg->a = {}; break;
 						case 2:	cfg->c = {}; break;
-						case 3:	cfg->d = {}; break;
-						case 4:	cfg->g = {}; break;
-						case 5:	cfg->m = {}; break;
-						case 6:	cfg->s = {}; cfg->ch = {}; break;
-						case 7:	cfg->t = {}; break;
-						case 8:	cfg->v = {}; break;
+						case 3:	cfg->clanTag = {}; break;
+						case 4:	cfg->d = {}; break;
+						case 5:	cfg->esp = {}; break;
+						case 6:	cfg->g = {}; break;
+						case 7:	cfg->u = {}; break;
+						case 8:	cfg->m = {}; break;
+						case 9:	cfg->s = {}; cfg->ch = {}; break;
+						case 10: cfg->t = {}; break;
+						case 11: cfg->v = {}; break;
 						}
 					}
 				}
