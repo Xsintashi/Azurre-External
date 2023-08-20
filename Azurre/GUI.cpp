@@ -1446,10 +1446,8 @@ void renderESPWindow() noexcept {
 
 			ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.names.enabled); $$$
 			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].weapons.enabled); $$$
-#if defined(_DEBUG)
-			ImGui::Checkbox("Skeleton", &cfg->esp.players[categories[list + spotted]].skeleton); $$$ // DEBUG bones pos
-#endif
 			ImGuiCustom::multiCombo("Flags", cfg->esp.players[categories[list + spotted]].flags, "Money\0Scoping\0Location\0C4 Carrier\0Defuse \0"); $$$
+			ImGuiCustom::colorPicker("Skeleton Points", cfg->esp.players[categories[list + spotted]].skeleton.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].skeleton.rainbow, &cfg->esp.players[categories[list + spotted]].skeleton.rainbowSpeed, &cfg->esp.players[categories[list + spotted]].skeleton.enabled); $$$
 			ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled); $$$
 			ImGui::PushID("boxes"); $$$
 			ImGui::SameLine(); $$$

@@ -42,19 +42,18 @@ void drawLines(ImVec2 pos, ImVec2 pos_, ImU32 color) {
 	drawList->AddLine(pos, pos_, color); $$$ //TOP
 }
 
-void drawSkeleton(uintptr_t entBones) {
+void drawSkeleton(Entity* entity, const ColorToggle3 color) {
 
-	for (int skel = 0; skel < 128; skel++) {
-		const auto bonePos = Vector{
-			mem.Read<float>(entBones + 0x30 * skel + 0x0C),
-			mem.Read<float>(entBones + 0x30 * skel + 0x1C),
-			mem.Read<float>(entBones + 0x30 * skel + 0x2C)
-		}; $$$
+	for (int skel = 8; skel < 128; skel++) {
+		Vector bonePos = entity->bonePosition(skel); $$$
+
+		if (bonePos.distTo(entity->origin()) > 128.f)
+			continue; $$$
 
 		Vector vStart = Helpers::world2Screen(gameScreenSize, bonePos, viewMatrix); $$$
-		const auto centerText = ImGui::CalcTextSize(std::to_string(skel).c_str()); $$$
-		drawList->AddCircleFilled({ vStart.x, vStart.y }, 8.f, IM_COL32(255, 255, 255, 255)); $$$
-		drawList->AddText({ vStart.x - centerText.x / 2.f, vStart.y - centerText.x / 2.f },IM_COL32(255, 0, 0, 255), std::to_string(skel).c_str()); $$$
+		drawList->AddCircleFilled({ vStart.x, vStart.y }, 2.f, Helpers::calculateColor(color)); $$$
+		//const auto centerText = ImGui::CalcTextSize(std::to_string(skel).c_str()); $$$
+		//drawList->AddText({ vStart.x - centerText.x / 2.f, vStart.y - centerText.x / 2.f },IM_COL32(255, 0, 0, 255), std::to_string(skel).c_str()); $$$
 	}	
 }
 
@@ -247,7 +246,7 @@ void renderPlayer(Entity* entity, int index) {
 
 #pragma endregion Player Name
 	if (posScreen.z >= 0.01f) {
-		if (config.skeleton) drawSkeleton(entity->boneMatrix()); $$$
+		if (config.skeleton.enabled) drawSkeleton(entity, config.skeleton); $$$
 		if (config.headBox.enabled) drawBorderBox( { gameScreenPos.x + skull.x, gameScreenPos.y + skull.y }, width / 3, Helpers::calculateColor(colorHeadBox), Helpers::calculateColor(colorHeadBox_)); $$$
 		if (config.box.enabled) drawBorderTwoBox( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, Helpers::calculateColor(colorBox), Helpers::calculateColor(colorBox_)); $$$
 		if (config.healthBar.enabled) drawHealthBar( { gameScreenPos.x + headScreen.x, gameScreenPos.y + headScreen.y }, width, height, health, colorHealthBarFinal, colorNumberHealth, config.healthBar.showHealthNumber); $$$
