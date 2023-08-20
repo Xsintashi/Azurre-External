@@ -39,11 +39,13 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_bUseCustomBloomScale = 0x9DA;
 		constexpr ::std::ptrdiff_t m_bWaitForNoAttack = 0x99BC;
 		constexpr ::std::ptrdiff_t m_clrRender = 0x70;
+		constexpr ::std::ptrdiff_t m_bWarmupPeriod = 0x21;
 		constexpr ::std::ptrdiff_t m_dwBoneMatrix = 0x26A8;
 		constexpr ::std::ptrdiff_t m_fAccuracyPenalty = 0x3340;
 		constexpr ::std::ptrdiff_t m_fFlags = 0x104;
 		constexpr ::std::ptrdiff_t m_fMatchStartTime = 0x48;
 		constexpr ::std::ptrdiff_t m_fRoundStartTime = 0x4C;
+		constexpr ::std::ptrdiff_t m_fWarmupPeriodEnd = 0x24;
 		constexpr ::std::ptrdiff_t m_flBloomExponent = 0x9EC;
 		constexpr ::std::ptrdiff_t m_flBloomSaturation = 0x9F0;
 		constexpr ::std::ptrdiff_t m_flC4Blow = 0x29A0;

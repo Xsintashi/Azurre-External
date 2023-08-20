@@ -2361,6 +2361,19 @@ void watermark() {
 		ImGui::GetForegroundDrawList()->AddText({ i * 8.f, 12 + 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) }, color, sym.c_str()); $$$
 		ImGui::GetForegroundDrawList()->AddText({ i * 8.f + 1.f , 12 + 2 * static_cast<float>(sin(static_cast<int>(globalVars->realTime * 10) % (i + 1))) + 1.f }, ImGui::GetColorU32({ 1.f, 1.f, 1.f, 1.f }), sym.c_str()); $$$
 	}
+	const bool& warmup = mem.Read<bool>(IGameRules.address + Offset::netvars::m_bWarmupPeriod); $$$
+	const bool& isValveDS = mem.Read<bool>(IGameRules.address + Offset::netvars::m_bIsValveDS); $$$
+	if (isValveDS) {
+		std::string o = "Valve Dedicated Server"; $$$
+		ImVec2 pos = ImGui::CalcTextSize(o.c_str()); $$$
+		ImGui::GetForegroundDrawList()->AddText({ screenSize.x - pos.x, 0.f }, ImGui::GetColorU32(ImVec4{ 1.f, 1.f, 1.f, 1.f }), o.c_str()); $$$
+	}
+	if (warmup) {
+		const float& time = mem.Read<float>(IGameRules.address + Offset::netvars::m_fWarmupPeriodEnd); $$$
+		std::string o = "Warmup: " + std::to_string(static_cast<int>((time - globalVars->currentTime) / 60)) + ":" + std::to_string(1 + static_cast<int>((time - globalVars->currentTime)) % 60); $$$
+		ImVec2 pos = ImGui::CalcTextSize(o.c_str()); $$$
+		ImGui::GetForegroundDrawList()->AddText({ screenSize.x - pos.x, 12.f }, ImGui::GetColorU32(ImVec4{ 1.f, 1.f, 1.f, 1.f }), o.c_str()); $$$
+	}
 }
 
 void GUI::overlay() noexcept {
