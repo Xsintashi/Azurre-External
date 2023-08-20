@@ -171,6 +171,7 @@ public:
     OFFSET(isScoped, (), Offset::netvars::m_bIsScoped, bool)
     OFFSET(modelIndex, (), Offset::netvars::m_nModelIndex, int)
     OFFSET(fov, (), Offset::netvars::m_iFOV, int)
+    OFFSET(fovStart, (), Offset::netvars::m_iFOVStart, int)
     OFFSET(lby, (), Offset::netvars::m_flLowerBodyYawTarget, float)
     OFFSET(dormant, (), Offset::signatures::m_bDormant, bool)
     OFFSET(gunGameImmunity, (), Offset::netvars::m_bGunGameImmunity, bool)
