@@ -2,7 +2,7 @@
 
 #if defined(_DEBUG) // asm Junk Code
 
-#define $$$ {}
+#define $$$ { } ;
 
 #else
 
@@ -15,6 +15,6 @@
 	__asm _emit 0xBB \
 	__asm _emit 0xDD \
 	__asm _emit 0xCC \
-} 
+} ;
 
 #endif
