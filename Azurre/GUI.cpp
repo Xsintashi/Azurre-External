@@ -1444,10 +1444,10 @@ void renderESPWindow() noexcept {
 					spotted = 0; $$$
 				}
 
-			ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.names.enabled); $$$
-			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].weapons.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].weapons.enabled); $$$
-			ImGuiCustom::multiCombo("Flags", cfg->esp.players[categories[list + spotted]].flags, "Money\0Scoping\0Location\0C4 Carrier\0Defuse \0"); $$$
+			ImGuiCustom::colorPicker("Name", cfg->esp.players[categories[list + spotted]].other.names.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].other.names.rainbow, &cfg->esp.players[categories[list + spotted]].other.names.rainbowSpeed, &cfg->esp.players[categories[list + spotted]].other.names.enabled); $$$
+			ImGuiCustom::colorPicker("Weapon", cfg->esp.players[categories[list + spotted]].weapons.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].weapons.rainbow, &cfg->esp.players[categories[list + spotted]].weapons.rainbowSpeed, &cfg->esp.players[categories[list + spotted]].weapons.enabled); $$$
 			ImGuiCustom::colorPicker("Skeleton Points", cfg->esp.players[categories[list + spotted]].skeleton.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].skeleton.rainbow, &cfg->esp.players[categories[list + spotted]].skeleton.rainbowSpeed, &cfg->esp.players[categories[list + spotted]].skeleton.enabled); $$$
+			ImGuiCustom::multiCombo("Flags", cfg->esp.players[categories[list + spotted]].flags, "Money\0Scoping\0Location\0C4 Carrier\0Defuse\0"); $$$
 			ImGui::Checkbox("Boxes", &cfg->esp.players[categories[list + spotted]].box.enabled); $$$
 			ImGui::PushID("boxes"); $$$
 			ImGui::SameLine(); $$$
@@ -1456,11 +1456,11 @@ void renderESPWindow() noexcept {
 
 			if (ImGui::BeginPopup("")) {
 				if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[categories[list + spotted]].box.gradientColor)) {
-					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
-					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].box.grandientTop.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].box.grandientTop.rainbow, &cfg->esp.players[categories[list + spotted]].box.grandientTop.rainbowSpeed, nullptr); $$$
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].box.grandientBottom.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].box.grandientBottom.rainbow, &cfg->esp.players[categories[list + spotted]].box.grandientBottom.rainbowSpeed, nullptr); $$$
 				}
 				else
-					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].box.solid.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].box.solid.rainbow, &cfg->esp.players[categories[list + spotted]].box.solid.rainbowSpeed, nullptr); $$$
 				ImGui::EndPopup(); $$$
 			}
 			ImGui::PopID(); $$$
@@ -1472,11 +1472,11 @@ void renderESPWindow() noexcept {
 
 			if (ImGui::BeginPopup("")) {
 				if (ImGui::Checkbox("Gradient Color", &cfg->esp.players[categories[list + spotted]].headBox.gradientColor)) {
-					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].headBox.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
-					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].headBox.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.players[categories[list + spotted]].headBox.grandientTop.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].headBox.grandientTop.rainbow, &cfg->esp.players[categories[list + spotted]].headBox.grandientTop.rainbowSpeed, nullptr); $$$
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.players[categories[list + spotted]].headBox.grandientBottom.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].headBox.grandientBottom.rainbow, &cfg->esp.players[categories[list + spotted]].headBox.grandientBottom.rainbowSpeed, nullptr); $$$
 				}
 				else
-					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].headBox.solid.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].headBox.solid.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].headBox.solid.rainbow, &cfg->esp.players[categories[list + spotted]].headBox.solid.rainbowSpeed, nullptr); $$$
 				ImGui::EndPopup(); $$$
 			}
 			ImGui::PopID(); $$$
@@ -1487,16 +1487,16 @@ void renderESPWindow() noexcept {
 				ImGui::OpenPopup(""); $$$
 
 			if (ImGui::BeginPopup("")) {
-				ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].healthBar.solidColor.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.solidColor.enabled); $$$
-				ImGuiCustom::colorPicker("Health Number", cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.enabled); $$$
+				ImGuiCustom::colorPicker("Solid Color", cfg->esp.players[categories[list + spotted]].healthBar.solidColor.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.solidColor.rainbow, &cfg->esp.players[categories[list + spotted]].healthBar.solidColor.rainbowSpeed, &cfg->esp.players[categories[list + spotted]].healthBar.solidColor.enabled); $$$
+				ImGuiCustom::colorPicker("Health Number", cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.rainbow, &cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.rainbowSpeed, &cfg->esp.players[categories[list + spotted]].healthBar.showHealthNumber.enabled); $$$
 				ImGui::EndPopup(); $$$
 			}
 			ImGui::PopID(); $$$
-			ImGuiCustom::colorPicker("Lines", cfg->esp.players[categories[list + spotted]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.players[categories[list + spotted]].other.lines.enabled); $$$
+			ImGuiCustom::colorPicker("Lines", cfg->esp.players[categories[list + spotted]].other.lines.color.data(), nullptr, &cfg->esp.players[categories[list + spotted]].other.lines.rainbow, &cfg->esp.players[categories[list + spotted]].other.lines.rainbowSpeed, &cfg->esp.players[categories[list + spotted]].other.lines.enabled); $$$
 			break; $$$
 		}
 		case 2: {
-			ImGuiCustom::colorPicker("Name", cfg->esp.weapons["All"].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.names.enabled); $$$
+			ImGuiCustom::colorPicker("Name", cfg->esp.weapons["All"].other.names.color.data(), nullptr, &cfg->esp.weapons["All"].other.names.rainbow, &cfg->esp.weapons["All"].other.names.rainbowSpeed, &cfg->esp.weapons["All"].other.names.enabled); $$$
 			ImGui::Checkbox("Boxes", &cfg->esp.weapons["All"].box.enabled); $$$
 			ImGui::PushID("boxes weapons"); $$$
 			ImGui::SameLine(); $$$
@@ -1505,19 +1505,19 @@ void renderESPWindow() noexcept {
 
 			if (ImGui::BeginPopup("")) {
 				if (ImGui::Checkbox("Gradient Color", &cfg->esp.weapons["All"].box.gradientColor)) {
-					ImGuiCustom::colorPicker("Top Color", cfg->esp.weapons["All"].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
-					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.weapons["All"].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.weapons["All"].box.grandientTop.color.data(), nullptr, &cfg->esp.weapons["All"].box.grandientTop.rainbow, &cfg->esp.weapons["All"].box.grandientTop.rainbowSpeed, nullptr); $$$
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.weapons["All"].box.grandientBottom.color.data(), nullptr, &cfg->esp.weapons["All"].box.grandientBottom.rainbow, &cfg->esp.weapons["All"].box.grandientBottom.rainbowSpeed, nullptr); $$$
 				}
 				else
-					ImGuiCustom::colorPicker("Solid Color", cfg->esp.weapons["All"].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.weapons["All"].box.solid.color.data(), nullptr, &cfg->esp.weapons["All"].box.solid.rainbow, &cfg->esp.weapons["All"].box.solid.rainbowSpeed, nullptr); $$$
 				ImGui::EndPopup(); $$$
 			}
 			ImGui::PopID(); $$$
-			ImGuiCustom::colorPicker("Lines", cfg->esp.weapons["All"].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.weapons["All"].other.lines.enabled); $$$
+			ImGuiCustom::colorPicker("Lines", cfg->esp.weapons["All"].other.lines.color.data(), nullptr, &cfg->esp.weapons["All"].other.lines.rainbow, &cfg->esp.weapons["All"].other.lines.rainbowSpeed, &cfg->esp.weapons["All"].other.lines.enabled); $$$
 			break; $$$
 		}
 		case 3: {
-			ImGuiCustom::colorPicker("Name", cfg->esp.projectiles["All"].names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.projectiles["All"].names.enabled); $$$
+			ImGuiCustom::colorPicker("Name", cfg->esp.projectiles["All"].names.color.data(), nullptr, &cfg->esp.weapons["All"].other.lines.rainbow, &cfg->esp.weapons["All"].other.lines.rainbowSpeed, &cfg->esp.projectiles["All"].names.enabled); $$$
 			ImGui::Checkbox("Boxes", &cfg->esp.projectiles["All"].box.enabled); $$$
 			ImGui::PushID("boxes projectiles"); $$$
 			ImGui::SameLine(); $$$
@@ -1526,11 +1526,11 @@ void renderESPWindow() noexcept {
 
 			if (ImGui::BeginPopup("")) {
 				if (ImGui::Checkbox("Gradient Color", &cfg->esp.projectiles["All"].box.gradientColor)) {
-					ImGuiCustom::colorPicker("Top Color", cfg->esp.projectiles["All"].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
-					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.projectiles["All"].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.projectiles["All"].box.grandientTop.color.data(), nullptr, &cfg->esp.projectiles["All"].box.grandientTop.rainbow, &cfg->esp.projectiles["All"].box.grandientTop.rainbowSpeed, nullptr); $$$
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.projectiles["All"].box.grandientBottom.color.data(), nullptr, &cfg->esp.projectiles["All"].box.grandientBottom.rainbow, &cfg->esp.projectiles["All"].box.grandientBottom.rainbowSpeed, nullptr); $$$
 				}
 				else
-					ImGuiCustom::colorPicker("Solid Color", cfg->esp.projectiles["All"].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.projectiles["All"].box.solid.color.data(), nullptr, &cfg->esp.projectiles["All"].box.solid.rainbow, &cfg->esp.projectiles["All"].box.solid.rainbowSpeed, nullptr); $$$
 				ImGui::EndPopup(); $$$
 			}
 			ImGui::PopID(); $$$
@@ -1540,7 +1540,7 @@ void renderESPWindow() noexcept {
 			constexpr std::array categories{ "C4", "Planted C4", "Defuse Kits"}; $$$
 			static int currentCategory = 0; $$$
 			ImGui::Combo("Others", &currentCategory, categories.data(), categories.size()); $$$
-			ImGuiCustom::colorPicker("Name", cfg->esp.others[categories[currentCategory]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.others[categories[currentCategory]].other.names.enabled); $$$
+			ImGuiCustom::colorPicker("Name", cfg->esp.others[categories[currentCategory]].other.names.color.data(), nullptr, &cfg->esp.others[categories[currentCategory]].other.names.rainbow, &cfg->esp.others[categories[currentCategory]].other.names.rainbowSpeed, &cfg->esp.others[categories[currentCategory]].other.names.enabled); $$$
 			if (currentCategory == 2) {
 				ImGui::SameLine(); $$$
 				ImGui::Checkbox("Enable on CT site", &cfg->esp.onCT); $$$
@@ -1553,15 +1553,15 @@ void renderESPWindow() noexcept {
 
 			if (ImGui::BeginPopup("")) {
 				if (ImGui::Checkbox("Gradient Color", &cfg->esp.others[categories[currentCategory]].box.gradientColor)) {
-					ImGuiCustom::colorPicker("Top Color", cfg->esp.others[categories[currentCategory]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
-					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.others[categories[currentCategory]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.others[categories[currentCategory]].box.grandientTop.color.data(), nullptr, &cfg->esp.others[categories[currentCategory]].box.grandientTop.rainbow, &cfg->esp.others[categories[currentCategory]].box.grandientTop.rainbowSpeed, nullptr); $$$
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.others[categories[currentCategory]].box.grandientBottom.color.data(), nullptr, &cfg->esp.others[categories[currentCategory]].box.grandientBottom.rainbow, &cfg->esp.others[categories[currentCategory]].box.grandientBottom.rainbowSpeed, nullptr); $$$
 				}
 				else
-					ImGuiCustom::colorPicker("Solid Color", cfg->esp.others[categories[currentCategory]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.others[categories[currentCategory]].box.solid.color.data(), nullptr, &cfg->esp.others[categories[currentCategory]].box.solid.rainbow, &cfg->esp.others[categories[currentCategory]].box.solid.rainbowSpeed, nullptr); $$$
 				ImGui::EndPopup(); $$$
 			}
 			ImGui::PopID(); $$$
-			ImGuiCustom::colorPicker("Lines", cfg->esp.others[categories[currentCategory]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.others[categories[currentCategory]].other.lines.enabled); $$$
+			ImGuiCustom::colorPicker("Lines", cfg->esp.others[categories[currentCategory]].other.lines.color.data(), nullptr, &cfg->esp.others[categories[currentCategory]].other.lines.rainbow, &cfg->esp.others[categories[currentCategory]].other.lines.rainbowSpeed, &cfg->esp.others[categories[currentCategory]].other.lines.enabled); $$$
 			break; $$$
 		}
 		case 5: {
@@ -1569,7 +1569,7 @@ void renderESPWindow() noexcept {
 			constexpr std::array categories{ "Ammo Box", "Cash", "Drone", "Dronegun", "Healthshot", "Pistol Case", "Light Case", "Heavy Case", "Explosive Case", "Tools Case", "Cash Dufflebag"}; $$$
 			ImGui::Combo("Danger Zone", &currentCategory, categories.data(), categories.size()); $$$
 
-			ImGuiCustom::colorPicker("Name", cfg->esp.dangerzone[categories[currentCategory]].other.names.color.data(), nullptr, nullptr, nullptr, &cfg->esp.dangerzone[categories[currentCategory]].other.names.enabled); $$$
+			ImGuiCustom::colorPicker("Name", cfg->esp.dangerzone[categories[currentCategory]].other.names.color.data(), nullptr, &cfg->esp.dangerzone[categories[currentCategory]].other.names.rainbow, &cfg->esp.dangerzone[categories[currentCategory]].other.names.rainbowSpeed, &cfg->esp.dangerzone[categories[currentCategory]].other.names.enabled); $$$
 			ImGui::Checkbox("Boxes", &cfg->esp.dangerzone[categories[currentCategory]].box.enabled); $$$
 			ImGui::PushID("boxes weapons"); $$$
 			ImGui::SameLine(); $$$
@@ -1578,15 +1578,15 @@ void renderESPWindow() noexcept {
 
 			if (ImGui::BeginPopup("")) {
 				if (ImGui::Checkbox("Gradient Color", &cfg->esp.dangerzone[categories[currentCategory]].box.gradientColor)) {
-					ImGuiCustom::colorPicker("Top Color", cfg->esp.dangerzone[categories[currentCategory]].box.grandientTop.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
-					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.dangerzone[categories[currentCategory]].box.grandientBottom.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Top Color", cfg->esp.dangerzone[categories[currentCategory]].box.grandientTop.color.data(), nullptr, &cfg->esp.dangerzone[categories[currentCategory]].box.grandientTop.rainbow, &cfg->esp.dangerzone[categories[currentCategory]].box.grandientTop.rainbowSpeed, nullptr); $$$
+					ImGuiCustom::colorPicker("Bottom Color", cfg->esp.dangerzone[categories[currentCategory]].box.grandientBottom.color.data(), nullptr, &cfg->esp.dangerzone[categories[currentCategory]].box.grandientBottom.rainbow, &cfg->esp.dangerzone[categories[currentCategory]].box.grandientBottom.rainbowSpeed, nullptr); $$$
 				}
 				else
-					ImGuiCustom::colorPicker("Solid Color", cfg->esp.dangerzone[categories[currentCategory]].box.solid.color.data(), nullptr, nullptr, nullptr, nullptr); $$$
+					ImGuiCustom::colorPicker("Solid Color", cfg->esp.dangerzone[categories[currentCategory]].box.solid.color.data(), nullptr, &cfg->esp.dangerzone[categories[currentCategory]].box.solid.rainbow, &cfg->esp.dangerzone[categories[currentCategory]].box.solid.rainbowSpeed, nullptr); $$$
 				ImGui::EndPopup(); $$$
 			}
 			ImGui::PopID(); $$$
-			ImGuiCustom::colorPicker("Lines", cfg->esp.dangerzone[categories[currentCategory]].other.lines.color.data(), nullptr, nullptr, nullptr, &cfg->esp.dangerzone[categories[currentCategory]].other.lines.enabled); $$$
+			ImGuiCustom::colorPicker("Lines", cfg->esp.dangerzone[categories[currentCategory]].other.lines.color.data(), nullptr, &cfg->esp.dangerzone[categories[currentCategory]].other.lines.rainbow, &cfg->esp.dangerzone[categories[currentCategory]].other.lines.rainbowSpeed, &cfg->esp.dangerzone[categories[currentCategory]].other.lines.enabled); $$$
 			break; $$$
 		}
 		}
@@ -1669,7 +1669,7 @@ void renderMiscWindow() noexcept {
 		ImGui::SameLine(); $$$
 		ImGui::SliderFloat("##as", &cfg->m.killMarker.time, 0.1f, 1.5f, "Time: %.2fs"); $$$
 		ImGui::PopID(); $$$
-		
+		ImGui::InputText("New Round Sound", &cfg->m.newRoundSound); $$$
 		ImGui::PushID("RecoilCrosshair"); $$$
 		ImGuiCustom::colorPicker("Recoil Crosshair", cfg->m.recoilCrosshair.color.color.data(), nullptr, &cfg->m.recoilCrosshair.color.rainbow, &cfg->m.recoilCrosshair.color.rainbowSpeed, &cfg->m.recoilCrosshair.enabled); $$$
 		ImGui::SameLine(); $$$
