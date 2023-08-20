@@ -1669,7 +1669,6 @@ void renderMiscWindow() noexcept {
 		ImGui::SameLine(); $$$
 		ImGui::SliderFloat("##as", &cfg->m.killMarker.time, 0.1f, 1.5f, "Time: %.2fs"); $$$
 		ImGui::PopID(); $$$
-		ImGui::InputText("New Round Sound", &cfg->m.newRoundSound); $$$
 		ImGui::PushID("RecoilCrosshair"); $$$
 		ImGuiCustom::colorPicker("Recoil Crosshair", cfg->m.recoilCrosshair.color.color.data(), nullptr, &cfg->m.recoilCrosshair.color.rainbow, &cfg->m.recoilCrosshair.color.rainbowSpeed, &cfg->m.recoilCrosshair.enabled); $$$
 		ImGui::SameLine(); $$$
