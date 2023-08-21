@@ -17,6 +17,10 @@
 void Aimbot::run() noexcept {
 	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1)); $$$
+
+		if (GetForegroundWindow() != IConsole)
+			continue; $$$
+
 		if (!cfg->a.enabledAimbot) continue; $$$
 
 		if (!localPlayer || localPlayer->isDead() || localPlayer->nextAttack() > serverTime || localPlayer->nextPrimaryAttack() > serverTime || localPlayer->isDefusing() || localPlayer->waitForNoAttack())
@@ -204,24 +208,15 @@ void Aimbot::recoilSystem() noexcept {
 	if (localPlayer->shotsFired()) {
 
 
-		auto newAngles = ImVec2{
+		auto newAngles = Vector{
 			viewAngles.x + oldAimPunch.x - localPlayer->aimPunch().x * 2.f,
-			viewAngles.y + oldAimPunch.y - localPlayer->aimPunch().y * 2.f,
+			viewAngles.y + oldAimPunch.y - localPlayer->aimPunch().y * 2.f, 0.f
 		}; $$$
 
-		if (newAngles.x > 89.f)
-			newAngles.x = 89.f; $$$
+		newAngles.normalize(); $$$
+		newAngles.clamp(); $$$
 
-		if (newAngles.y < -89.f)
-			newAngles.y = -89.f; $$$
-
-		while (newAngles.y > 180.f)
-			newAngles.y -= 360.f; $$$
-
-		while (newAngles.y < -180.f)
-			newAngles.y += 360.f; $$$
-
-		mem.Write<ImVec2>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, newAngles); $$$
+		mem.Write<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles, newAngles); $$$
 
 		oldAimPunch.x = localPlayer->aimPunch().x * 2.f; $$$
 		oldAimPunch.y = localPlayer->aimPunch().y * 2.f; $$$
