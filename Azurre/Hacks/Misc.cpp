@@ -189,6 +189,9 @@ void Misc::killMarkerSound() noexcept {
 			PlaySound(out.c_str(), NULL, SND_ASYNC); $$$
 			isFileExist.close(); $$$
 		}
+
+		if(!cfg->m.killSay.empty())
+			clientCmd("say " + cfg->m.killSay); $$$
 	}
 	if (!cfg->m.killMarker.type)
 		return; $$$

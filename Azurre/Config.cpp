@@ -319,6 +319,7 @@ static void from_json(const json& j, Config::MiscConfig& c) {
     read<value_t::object>(j, "Sniper Crosshaird", c.sniperCrosshair); $$$
     read<value_t::string>(j, "Hit Sound", c.hitSound); $$$
     read<value_t::string>(j, "Kill Sound", c.killSound); $$$
+    read<value_t::string>(j, "Kill Say", c.killSay); $$$
     read<value_t::object>(j, "Hit Marker", c.hitMarker); $$$
     read<value_t::object>(j, "Player List", c.playerList); $$$
     read<value_t::object>(j, "Keybinds List", c.keybinds); $$$
@@ -717,6 +718,7 @@ static void to_json(json& j, const Config::MiscConfig& o, const Config::MiscConf
     WRITE("Sniper Crosshaird", sniperCrosshair); $$$
     WRITE("Hit Sound", hitSound); $$$
     WRITE("Kill Sound", killSound); $$$
+    WRITE("Kill Say", killSay); $$$
     WRITE("Hit Marker", hitMarker); $$$
     WRITE("Minimap", minimap); $$$
     WRITE("Offscreen Enemies", offscreenEnemies); $$$

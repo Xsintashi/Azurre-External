@@ -185,6 +185,7 @@ public:
 
 		std::string hitSound = "sound\\";
 		std::string killSound = "sound\\";
+		std::string killSay = "";
 	} m;
 
 	struct TriggerBotConfig {

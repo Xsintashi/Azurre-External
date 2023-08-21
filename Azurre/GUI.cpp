@@ -1665,6 +1665,7 @@ void renderMiscWindow() noexcept {
 		ImGui::PopID(); $$$
 		ImGui::PushID("kill"); $$$
 		ImGui::InputText("Kill Sound", &cfg->m.killSound); $$$
+		ImGui::InputText("Kill Say", &cfg->m.killSay); $$$
 		ImGui::Combo("Type", &cfg->m.killMarker.type, "None\0Cross\0Cross Fading\0"); $$$ ImGui::SameLine(); $$$ ImGuiCustom::colorPicker("Kill Marker", cfg->m.killMarker.color.color.data()); $$$
 		ImGui::SameLine(); $$$
 		ImGui::SliderFloat("##as", &cfg->m.killMarker.time, 0.1f, 1.5f, "Time: %.2fs"); $$$
