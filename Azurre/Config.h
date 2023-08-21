@@ -84,7 +84,7 @@ public:
 	} d;
 
 	struct ESPConfig {
-		bool enabled = false;
+		int mode = 0;
 		bool onCT = false;
 		std::unordered_map<std::string, Player> players;
 		std::unordered_map<std::string, Weapons> weapons;

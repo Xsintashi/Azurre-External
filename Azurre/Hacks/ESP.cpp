@@ -260,7 +260,7 @@ void renderPlayer(Entity* entity, int index) {
 void ESP::render() noexcept {
 	if (!localPlayer) return; $$$
 	if (gameData.playerData.empty() || gameData.weaponData.empty()) return; $$$
-	if (!cfg->esp.enabled) return; $$$
+	if (cfg->esp.mode == 0 || (cfg->esp.mode == 2 && localPlayer->isAlive())) return; $$$
 
 	for (auto& player : gameData.playerData) {
 		if (player.entity->isDead() || (uintptr_t)player.entity == localPlayer.get() || player.entity->dormant())

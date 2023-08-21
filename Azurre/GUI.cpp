@@ -1431,7 +1431,7 @@ void renderESPWindow() noexcept {
 	ImGui::BeginChild("ESP", { 232.f,242.f }, true, ImGuiWindowFlags_NoTitleBar); $$$
 	{
 		static int list = 0; $$$
-		ImGui::Checkbox("Enabled", &cfg->esp.enabled); $$$
+		ImGui::Combo("Mode", &cfg->esp.mode, "Disabled\0Enabled\0Dead Only"); $$$
 		ImGui::Combo("##player", &list, "Allies\0Enemies\0Weapons\0Projectiles\0Others\0Danger Zone\0"); $$$
 		switch (list) {
 		default: case 0: case 1: {
