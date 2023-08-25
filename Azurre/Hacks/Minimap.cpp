@@ -294,7 +294,7 @@ void renderNades(Entity* entity, ImVec2 windowPos, unsigned int color) {
 
 void Minimap::Render() { //Render Thread
 	
-	if (!showMenu && !cfg->m.minimap.hotkey.isActive() && cfg->m.minimap.hotkey.isSet() || gameState != ConnectionState::FullyConnected)
+	if (GetForegroundWindow() != IConsole || isInChat || !showMenu && !cfg->m.minimap.hotkey.isActive() && cfg->m.minimap.hotkey.isSet() || gameState != ConnectionState::FullyConnected)
 		return; $$$
 
 	int windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing; $$$

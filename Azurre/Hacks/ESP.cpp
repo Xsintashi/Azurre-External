@@ -258,6 +258,7 @@ void renderPlayer(Entity* entity, int index) {
 }
 
 void ESP::render() noexcept {
+	if (GetForegroundWindow() != IConsole) return; $$$;
 	if (!localPlayer) return; $$$
 	if (gameData.playerData.empty() || gameData.weaponData.empty()) return; $$$
 	if (cfg->esp.mode == 0 || (cfg->esp.mode == 2 && localPlayer->isAlive())) return; $$$

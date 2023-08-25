@@ -944,7 +944,7 @@ void GUI::loadWindow() noexcept {
 
 void GUI::RenderDebugWindow() noexcept {
 	ImGui::SetNextWindowCollapsed(true, ImGuiCond_FirstUseEver); $$$
-	ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize ); $$$
+	ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize); $$$
 	static auto frameRate = 1.0f; $$$
 	frameRate = 0.9f * frameRate + 0.1f * globalVars->absoluteFrameTime; $$$
 	const int framePerSecond = frameRate != 0.0f ? static_cast<int>(1 / frameRate) : 0; $$$
@@ -977,6 +977,7 @@ void GUI::RenderDebugWindow() noexcept {
 	ImGui::Text("ServerTime: %.2f", serverTime); $$$
 	ImGui::Text("GameState: %i", gameState); $$$
 	ImGui::Text("Choked Packets: %i", chokedPackets); $$$
+	ImGui::Text("Is In Chat: %s", isInChat ? "true" : "false"); $$$
 	ImGui::SeparatorText("Font Test"); $$$
 	ImGui::Text("Latin: "); $$$ ImGui::SameLine(); $$$	ImGui::Text((const char*)u8"Hello. Test"); $$$
 	ImGui::Text("Slavonic: "); $$$ ImGui::SameLine(); $$$	ImGui::Text((const char*)u8"Cześć. Test"); $$$

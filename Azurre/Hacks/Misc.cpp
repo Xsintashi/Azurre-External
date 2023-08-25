@@ -38,7 +38,7 @@ void Misc::bunnyHop() noexcept {
 	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1)); $$$
 
-		if (GetForegroundWindow() != IConsole)
+		if (GetForegroundWindow() != IConsole || isInChat)
 			continue; $$$
 
 		if (!localPlayer) continue; $$$

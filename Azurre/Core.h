@@ -138,5 +138,6 @@ inline int maxEntity;
 inline int highestEntityIndex;
 inline bool parsedMap = false;
 inline rn::bsp_parser* bspParser = new rn::bsp_parser;
+inline bool isInChat = false;
 #define mem azurre
 inline Memory mem = Memory{ "csgo.exe" };
