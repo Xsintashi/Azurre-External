@@ -114,6 +114,31 @@ void Core::gameDataUpdate() noexcept {
 	gameData.playerData.clear(); $$$
 	gameData.weaponData.clear(); $$$
 	gameData = {}; $$$ // reset GameData
+
+	static int flash; $$$
+	static int nade; $$$
+	static int pistol; $$$
+	static int light; $$$
+	static int heavy; $$$
+	static int explosive; $$$
+	static int tools; $$$
+	static int bag; $$$
+
+	static bool needUpdate = true;
+	if (needUpdate && gameState == ConnectionState::FullyConnected){
+		flash = Skin::getModelIndex("models/Weapons/w_eq_flashbang_dropped.mdl"); $$$
+		nade = Skin::getModelIndex("models/Weapons/w_eq_fraggrenade_dropped.mdl"); $$$
+		pistol = Skin::getModelIndex("models/props_survival/cases/case_pistol.mdl"); $$$
+		light = Skin::getModelIndex("models/props_survival/cases/case_light_weapon.mdl"); $$$
+		heavy = Skin::getModelIndex("models/props_survival/cases/case_heavy_weapon.mdl"); $$$
+		explosive = Skin::getModelIndex("models/props_survival/cases/case_explosive.mdl"); $$$
+		tools = Skin::getModelIndex("models/props_survival/cases/case_tools.mdl"); $$$
+		bag = Skin::getModelIndex("models/props_survival/cash/dufflebag.mdl"); $$$
+		needUpdate = false; $$$
+	}
+	if (!needUpdate && gameState != ConnectionState::FullyConnected)
+		needUpdate = true; $$$
+
 	for (int idx = 0; idx <= highestEntityIndex; idx++) {
 
 		const auto& entity = getEntity(idx); $$$
@@ -197,8 +222,6 @@ void Core::gameDataUpdate() noexcept {
 			break; $$$
 		case ClassID::BaseCSGrenadeProjectile: {
 			const int& modelIndex = entity->modelIndex(); $$$
-			const static int flash = Skin::getModelIndex("models/Weapons/w_eq_flashbang_dropped.mdl"); $$$
-			const static int nade = Skin::getModelIndex("models/Weapons/w_eq_fraggrenade_dropped.mdl"); $$$
 			if (flash == modelIndex)
 				gameData.projectileData.push_back({ entity, "Flashbang" }); $$$
 			if (nade == modelIndex)
@@ -234,13 +257,6 @@ void Core::gameDataUpdate() noexcept {
 			break; $$$
 		case ClassID::LootCrate: {
 			const int& modelIndex = entity->modelIndex(); $$$
-
-			const static int pistol = Skin::getModelIndex("models/props_survival/cases/case_pistol.mdl"); $$$
-			const static int light = Skin::getModelIndex("models/props_survival/cases/case_light_weapon.mdl"); $$$
-			const static int heavy = Skin::getModelIndex("models/props_survival/cases/case_heavy_weapon.mdl"); $$$
-			const static int explosive = Skin::getModelIndex("models/props_survival/cases/case_explosive.mdl"); $$$
-			const static int tools = Skin::getModelIndex("models/props_survival/cases/case_tools.mdl"); $$$
-			const static int bag = Skin::getModelIndex("models/props_survival/cash/dufflebag.mdl"); $$$
 
 			if (pistol == modelIndex) {
 				gameData.dangerZoneData.lootCases.push_back({ entity, "Pistol Case" }); $$$
