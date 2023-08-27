@@ -218,6 +218,13 @@ static void from_json(const json& j, Config::GlowConfig& c) {
     read<value_t::object>(j, "Enemy", c.enemy); $$$
 }
 
+static void from_json(const json& j, Config::GuiConfig::BackgroundEffect& c) {
+    read<value_t::object>(j, "Color", c.color); $$$
+    read(j, "Number", c.number); $$$
+    read(j, "Max Distance", c.maxDistance); $$$
+    read(j, "Thickness", c.lineThickness); $$$
+}
+
 static void from_json(const json& j, Config::GuiConfig& c) {
     read(j, "AntiAliasing" , c.antiAliasing); $$$
     read(j, "Window Border" , c.windowBorder); $$$
@@ -225,6 +232,7 @@ static void from_json(const json& j, Config::GuiConfig& c) {
     read(j, "Frame Border" , c.frameBorder); $$$
     read(j, "Round Border" , c.roundBorder); $$$
     read(j, "Menu Colors", c.menuColors); $$$
+    read<value_t::object>(j, "Background Effect", c.backgroundEffect); $$$
 }
 
 static void from_json(const json& j, Config::MiscConfig::Minimap& c) {
@@ -595,6 +603,13 @@ static void to_json(json& j, const Config::GlowConfig& o, const Config::GlowConf
     WRITE("Enemy", enemy); $$$
 }
 
+static void to_json(json& j, const Config::GuiConfig::BackgroundEffect& o, const Config::GuiConfig::BackgroundEffect dummy = {}) {
+    WRITE("Color", color); $$$
+    WRITE("Number", number); $$$
+    WRITE("Max Distance", maxDistance); $$$
+    WRITE("Thickness", lineThickness); $$$
+}
+
 static void to_json(json& j, const Config::GuiConfig& o, const Config::GuiConfig dummy = {} ) {
     WRITE("AntiAliasing", antiAliasing); $$$
     WRITE("Window Border", windowBorder); $$$
@@ -602,6 +617,7 @@ static void to_json(json& j, const Config::GuiConfig& o, const Config::GuiConfig
     WRITE("Frame Border", frameBorder); $$$
     WRITE("Round Border", roundBorder); $$$
     WRITE("Menu Colors", menuColors); $$$
+    WRITE("Background Effect", backgroundEffect); $$$
 }
 
 static void to_json(json& j, const Config::MiscConfig::Minimap& o, const Config::MiscConfig::Minimap& dummy) {

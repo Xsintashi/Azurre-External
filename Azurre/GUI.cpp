@@ -2221,6 +2221,20 @@ void renderFriendlySteamID() noexcept {
 	}
 }
 
+void renderBkWindow() noexcept {
+	ImGui::BeginChild("Background", { 232.f, 104.f }, true, ImGuiWindowFlags_NoTitleBar); $$$
+	{
+		ImGuiCustom::colorPicker("Enabled", cfg->u.backgroundEffect.color); $$$
+		ImGui::SliderInt("##amount", &cfg->u.backgroundEffect.number, 10, 1000, "Amount: %i"); $$$
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetTooltip("Higher numbers may lags in menu!"); $$$
+		}
+		ImGui::SliderInt("##distanceance", &cfg->u.backgroundEffect.maxDistance, 10, 2000, "Distance: %i"); $$$
+		ImGui::SliderFloat("##thick", &cfg->u.backgroundEffect.lineThickness, .1f, 5.f, "Thickness: %.1f"); $$$
+		ImGui::EndChild(); $$$
+	}
+}
+
 const static std::array<PNGTexture, 6> guiIcons{
 	resource::aimbotIcon,
 	resource::espIcon,
@@ -2230,8 +2244,39 @@ const static std::array<PNGTexture, 6> guiIcons{
 	resource::configIcon
 };
 
-void GUI::RenderMainMenu() noexcept {
+static void setupPoints(std::vector<std::pair<ImVec2, ImVec2>>& n) {
+	ImVec2 screenSize(ImGui::GetIO().DisplaySize); $$$
+	for (auto& p : n)
+		p.second = p.first = ImVec2(static_cast<float>(rand() % static_cast<int>(screenSize.x)), static_cast<float>(rand() % static_cast<int>(screenSize.y))); $$$
+}
 
+static float length(ImVec2 x) { return x.x * x.x + x.y * x.y; $$$ }
+
+void FX() {
+
+	if (!cfg->u.backgroundEffect.color.enabled)
+		return; $$$
+
+	const static ImVec2& b = screenSize; $$$
+
+	static std::vector<std::pair<ImVec2, ImVec2>> points(cfg->u.backgroundEffect.number); $$$
+	static auto once = (setupPoints(points), true); $$$
+	float distance; $$$
+	for (auto& p : points) {
+		distance = sqrt(length(p.first - p.second)); $$$
+		if (distance > 0) p.first += (p.second - p.first) / distance; $$$
+		if (distance < 4) p.second = ImVec2(rand() % static_cast<int>(b.x), rand() % static_cast<int>(b.y)); $$$
+	}
+	for (int i = 0; i < cfg->u.backgroundEffect.number; i++) {
+		for (int j = i + 1; j < cfg->u.backgroundEffect.number; j++) {
+			distance = length(points[i].first - points[j].first); $$$
+			if (distance < cfg->u.backgroundEffect.maxDistance) ImGui::GetBackgroundDrawList()->AddLine(points[i].first, points[j].first, Helpers::calculateColor(cfg->u.backgroundEffect.color), cfg->u.backgroundEffect.lineThickness); $$$
+		}
+	}
+}// Background effect
+
+void GUI::RenderMainMenu() noexcept {
+	FX();
 	static int category = -1; $$$
 
 	ImGui::SetNextWindowPos({ screenSize.x / 2 - 320, screenSize.y / 2 - 240 }, ImGuiCond_FirstUseEver); $$$
@@ -2309,8 +2354,9 @@ void GUI::RenderMainMenu() noexcept {
 			renderConfigWindow(); $$$
 			ImGui::SameLine(); $$$
 			renderGUIWindow(); $$$
-			childLabel("Friendly SteamIDs"); $$$
-			renderFriendlySteamID(); $$$
+			childLabel("Background Effects"); $$$
+			//renderFriendlySteamID(); $$$
+			renderBkWindow(); $$$
 			break; $$$
 	}
 	ImGui::Columns(1); $$$

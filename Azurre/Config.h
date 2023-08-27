@@ -204,6 +204,14 @@ public:
 		bool roundBorder = false;
 
 		int menuColors = 0;
+
+		struct BackgroundEffect {
+			ColorToggle3 color;
+			int number = 1000;
+			int maxDistance = 1000;
+			float lineThickness = 2.0f;
+		} backgroundEffect;
+
 	} u;
 
 	struct VisualsConfig {
