@@ -1,25 +1,26 @@
 /*
-	(24.07.2023)
+
+	(27.08.2023) Last Update
 	Fight me!. Spent prob more than 2000hrs making internal Genshi (now azurre) (14 November 2021 -> 24 July 2023) [Were days where I spent my whole day to code that no cap]
 	and 500hrs on external Azurre. 6 months and 6 days of playing with internal azurre and overwatch banned by semiraging on red trust.
 	I love medals and other pins - I started to regret playing then on that acc w loyalty and 5 years Badges but was too late. Nevermind that!
 	Could play longer if not that netvars checks casuing red trusts.
 
-	Now I play on different prime with internal azurre for 2 months with RPM only.
+	Now I've been playing on different prime with external azurre since May with RPM only.
 	Overall spent a lot of my free time w cs:go and more by coding cheat to it. At least started coding in c++ without knowledge at all,
 	now I know a lot more about c++ and CS:GO engine
 
 	Why am I writing this? I du know ;\
 
-	I will pubic this repo with that whole note, after CS2 Realease.
+	I will make this repo public with that whole note, after CS2 Release.
 
 	S/O:
-	Daniel Krupinski for perfect public free cheat I based my external azurre and for some funcs I yoinked to my interal azurre. kc Daniel
+	Daniel Krupinski for perfect public free cheat I based my internal azurre and for some funcs I yoinked to my external azurre. kc Daniel
 	notgoodusename for rage version of Osiris where also yoinked a lot code but also gave a lot code lol.
 
 
 	I didn't share my cheat to anyone except 2 ppl. KanashiQba & tenshi <3
-	Cuz this cheat was unique for me, even tho most features were public knowledge on public base.
+	cuz this cheat was unique for me, even tho most features were public knowledge on public base.
 
 	That's all I had to say bye! ~xsin ~xs9 ~azurre ~guest
 
