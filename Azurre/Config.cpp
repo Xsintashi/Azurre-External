@@ -226,11 +226,11 @@ static void from_json(const json& j, Config::GuiConfig::BackgroundEffect& c) {
 }
 
 static void from_json(const json& j, Config::GuiConfig& c) {
-    read(j, "AntiAliasing" , c.antiAliasing); $$$
-    read(j, "Window Border" , c.windowBorder); $$$
-    read(j, "Center Title" , c.centerTitle); $$$
-    read(j, "Frame Border" , c.frameBorder); $$$
-    read(j, "Round Border" , c.roundBorder); $$$
+    read(j, "AntiAliasing", c.antiAliasing); $$$
+    read(j, "Window Border", c.windowBorder); $$$
+    read(j, "Center Title", c.centerTitle); $$$
+    read(j, "Frame Border", c.frameBorder); $$$
+    read(j, "Round Border", c.roundBorder); $$$
     read(j, "Menu Colors", c.menuColors); $$$
     read<value_t::object>(j, "Background Effect", c.backgroundEffect); $$$
 }
@@ -858,6 +858,7 @@ void Config::reset() noexcept {
     ch = {}; $$$
     t = {}; $$$
     v = {}; $$$
+    u = {}; $$$
 }
 
 void Config::listConfigs() noexcept {
