@@ -2423,6 +2423,11 @@ void watermark() {
 }
 
 void GUI::overlay() noexcept {
+
+	const static PNGTexture banner = resource::banner; $$$
+	if (showMenu || isInChat && GetForegroundWindow() == IConsole)
+		ImGui::GetBackgroundDrawList()->AddImage(banner.getTexture(), { (gameScreenPos.x + gameScreenSize.x / 2.f) - 320.f , gameScreenPos.y + 64.f }, { (gameScreenPos.x + gameScreenSize.x / 2.f) + 320.f, gameScreenPos.y + 192.f }); $$$
+
 	ESP::render(); $$$
 	Aimbot::drawFov(); $$$
 	Misc::hitMarkerSound(); $$$
