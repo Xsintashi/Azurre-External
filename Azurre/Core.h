@@ -53,6 +53,7 @@ enum ConnectionState : int {
 namespace Core {
 	void init();
 	void update();
+	void handleKeyToggles() noexcept;
 	void gameDataUpdate() noexcept;
 	void _() noexcept;
 };

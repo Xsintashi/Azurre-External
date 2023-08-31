@@ -124,6 +124,7 @@ int __stdcall wWinMain(	HINSTANCE instance,	HINSTANCE previousInstance,	PWSTR ar
 	std::thread(Glow::run).detach(); $$$
 	std::thread(Aimbot::run).detach(); $$$
 	std::thread(Core::_).detach(); $$$
+	std::thread(Core::handleKeyToggles).detach(); $$$
 	std::thread(Discord::Update).detach(); $$$
 	std::thread(Skin::update).detach(); $$$
 	std::thread(TriggerBot::run).detach(); $$$

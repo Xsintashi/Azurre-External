@@ -96,17 +96,20 @@ void Core::update() {
 		gameScreenPosEnd = { gameScreenPos.x + gameScreenSize.x , gameScreenPos.y + gameScreenSize.y }; $$$
 		gameScreenSize = { static_cast<float>(rct.right - rct.left), static_cast<float>(rct.bottom - rct.top) }; $$$
 	}
+}
 
-	cfg->a.hotkey.handleToggle(); $$$
-	cfg->m.playerList.hotkey.handleToggle(); $$$
-	cfg->m.minimap.hotkey.handleToggle(); $$$
-	cfg->m.slowWalk.hotkey.handleToggle(); $$$
-	cfg->t.hotkey.handleToggle(); $$$
-	cfg->v.thirdPersonKey.handleToggle(); $$$
+void Core::handleKeyToggles() noexcept {
+	while(THREAD_LOOP) {
+		cfg->a.hotkey.handleToggle(); $$$
+		cfg->m.playerList.hotkey.handleToggle(); $$$
+		cfg->m.minimap.hotkey.handleToggle(); $$$
+		cfg->m.slowWalk.hotkey.handleToggle(); $$$
+		cfg->t.hotkey.handleToggle(); $$$
+		cfg->v.thirdPersonKey.handleToggle(); $$$
 #if defined(_DEBUG)
-	cfg->debug.keyDebug0.handleToggle(); $$$
+		cfg->debug.keyDebug0.handleToggle(); $$$
 #endif
-
+	}
 }
 
 void Core::gameDataUpdate() noexcept {
