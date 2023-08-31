@@ -18,19 +18,20 @@ void Aimbot::run() noexcept {
 	while (THREAD_LOOP) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1)); $$$
 
+		if (!cfg->a.enabledAimbot)
+			continue; $$$
+
 		if (GetForegroundWindow() != IConsole || isInChat)
 			continue; $$$
 
-		if (!cfg->a.enabledAimbot) continue; $$$
+		if (!gameData.observerData.empty() && cfg->a.disableWhileBeingSpectated)
+			continue; $$$
 
 		if (!localPlayer || localPlayer->isDead() || localPlayer->nextAttack() > serverTime || localPlayer->nextPrimaryAttack() > serverTime || localPlayer->isDefusing() || localPlayer->waitForNoAttack())
 			continue; $$$
 
 		const auto eyePosition = localPlayer->origin() + localPlayer->viewOffset(); $$$
 		const auto& viewAngles = mem.Read<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles); $$$
-
-		if (!gameData.observerData.empty() && cfg->a.disableWhileBeingSpectated)
-			continue; $$$
 				
 		const auto& activeWeapon = localPlayer->getActiveWeapon(); $$$
 
@@ -227,6 +228,9 @@ void Aimbot::recoilSystem() noexcept {
 
 void Aimbot::drawFov() noexcept {
 	if (!cfg->a.enabledAimbot)
+		return; $$$
+
+	if (GetForegroundWindow() != IConsole || isInChat)
 		return; $$$
 
 	if (!localPlayer || !localPlayer->isAlive())

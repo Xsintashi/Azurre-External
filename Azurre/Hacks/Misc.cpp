@@ -436,6 +436,9 @@ void Misc::drawOffscreenEnemies() noexcept
 	if (!cfg->m.offscreenEnemies.toggle.enabled)
 		return; $$$
 
+	if (GetForegroundWindow() != IConsole || isInChat)
+		return; $$$
+
 	const auto &angles = mem.Read<Vector>(IClientState.address + Offset::signatures::dwClientState_ViewAngles); $$$
 	const auto yaw = Helpers::deg2rad(angles.y); $$$
 

@@ -117,6 +117,7 @@ void Core::gameDataUpdate() noexcept {
 	const auto& items = mem.Read<uintptr_t>(mem.Read<uintptr_t>(userInfoTable + 0x40) + 0xC); $$$
 	gameData.playerData.clear(); $$$
 	gameData.weaponData.clear(); $$$
+	gameData.observerData.clear(); $$$
 	gameData = {}; $$$ // reset GameData
 
 	static int flash; $$$

@@ -2265,7 +2265,7 @@ void FX() {
 	for (auto& p : points) {
 		distance = sqrt(length(p.first - p.second)); $$$
 		if (distance > 0) p.first += (p.second - p.first) / distance; $$$
-		if (distance < 4) p.second = ImVec2(rand() % static_cast<int>(b.x), rand() % static_cast<int>(b.y)); $$$
+		if (distance < 4) p.second = ImVec2(static_cast<float>(rand() % static_cast<int>(b.x)), static_cast<float>(rand() % static_cast<int>(b.y))); $$$
 	}
 	for (int i = 0; i < cfg->u.backgroundEffect.number; i++) {
 		for (int j = i + 1; j < cfg->u.backgroundEffect.number; j++) {
@@ -2276,10 +2276,11 @@ void FX() {
 }// Background effect
 
 void GUI::RenderMainMenu() noexcept {
-	FX();
+	FX(); $$$
+
 	static int category = -1; $$$
 
-	ImGui::SetNextWindowPos({ screenSize.x / 2 - 320, screenSize.y / 2 - 240 }, ImGuiCond_FirstUseEver); $$$
+	ImGui::SetNextWindowPos({ screenSize.x / 2 - 288, screenSize.y / 2 - 256 }, ImGuiCond_FirstUseEver); $$$
 	ImGui::SetNextWindowSize({ 576.f, 512.f }); $$$
 	ImGui::Begin(
 		"Azurre External",

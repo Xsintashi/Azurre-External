@@ -41,7 +41,6 @@ void Discord::Update(){
 
 		if (gameData.playerData.empty())
 			continue; $$$
-		constexpr int intSize = sizeof(int); $$$
 		const static auto& kills = gameData.playerResource.kills[localPlayerIndex]; $$$
 		const static auto& assists = gameData.playerResource.assists[localPlayerIndex]; $$$
 		const static auto& deaths = gameData.playerResource.deaths[localPlayerIndex]; $$$
