@@ -387,7 +387,6 @@ void Misc::modifyConVars(bool reset) noexcept {
 	static ConVar shadow{ "cl_csm_enabled"}; $$$
 	static ConVar grenade{ "cl_grenadepreview"}; $$$
 	static ConVar panoramaBlur{ "@panorama_disable_blur"}; $$$
-	static ConVar particles{ IClient.address + Offset::signatures::convar_r_drawparticles }; $$$
 
 	static ConVar forwardspeed{"cl_forwardspeed"}; $$$
 	static ConVar sidespeed{"cl_sidespeed"}; $$$
@@ -420,14 +419,12 @@ void Misc::modifyConVars(bool reset) noexcept {
 		sky.setValue(1); $$$
 		shadow.setValue(1); $$$
 		grenade.setValue(0); $$$
-		particles.setValue(1); $$$
 		return; $$$
 	}
 
 	sky.setValue(!cfg->v.no3DSky); $$$
 	shadow.setValue(!cfg->v.noShadows); $$$
 	grenade.setValue(cfg->m.grenadeTrajectory); $$$
-	particles.setValue(!cfg->v.noParticles); $$$
 	panoramaBlur.setValue(cfg->v.noPanoramaBlur); $$$
 }
 

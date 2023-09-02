@@ -217,7 +217,6 @@ public:
 	struct VisualsConfig {
 		bool thirdPerson = false;
 		KeyBind thirdPersonKey = std::string("Thirdperson");
-		bool noParticles = false;
 		bool noAllies = false;
 		bool no3DSky = false;
 		bool noShadows = false;

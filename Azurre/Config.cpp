@@ -378,7 +378,6 @@ static void from_json(const json& j, Config::VisualsConfig::Trails& c) {
 
 static void from_json(const json& j, Config::VisualsConfig& c) {
     read(j, "No Allies", c.noAllies); $$$
-    read(j, "No Particles", c.noParticles); $$$
     read(j, "No Shadows", c.noShadows); $$$
     read(j, "No 3DSky", c.no3DSky); $$$
     read(j, "No Panorama Blur", c.noPanoramaBlur); $$$
@@ -786,7 +785,6 @@ static void to_json(json& j, const Config::VisualsConfig::Trails& o, const Confi
 
 static void to_json(json& j, const Config::VisualsConfig& o, const Config::VisualsConfig dummy = {} ) {
     WRITE("No Allies", noAllies); $$$
-    WRITE("No Particles", noParticles); $$$
     WRITE("No Shadows", noShadows); $$$
     WRITE("No 3DSky", no3DSky); $$$
     WRITE("No Panorama Blur", noPanoramaBlur); $$$
