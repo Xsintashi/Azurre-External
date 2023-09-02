@@ -73,7 +73,7 @@ void Core::update() {
 	localPlayerIndex = mem.Read<int>(IClientState.address + Offset::signatures::dwClientState_GetLocalPlayer); $$$
 	isDangerZoneModePlayed = mem.Read<DWORD>(IGameRules.address + Offset::netvars::m_SurvivalGameRuleDecisionTypes); $$$
 	screenSize = { static_cast<float>(GetSystemMetrics(SM_CXSCREEN)), static_cast<float>(GetSystemMetrics(SM_CYSCREEN)) }; $$$
-	isInChat = mem.Read<bool>(mem.Read<uintptr_t>(IClient.address + 0x534027C) + 0x21); $$$
+	isInChat = mem.Read<bool>(mem.Read<uintptr_t>(IClient.address + Offset::signatures::dwHudChatIsInChat) + 0x21); $$$
 	const auto map = mem.Read<std::array<char, 128>>(IClientState.address + Offset::signatures::dwClientState_Map); $$$
 	mapName = map.data(); $$$
 	static std::string mapBuff; $$$
