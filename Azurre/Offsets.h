@@ -131,14 +131,14 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t m_vecVelocity = 0x114;
 		constexpr ::std::ptrdiff_t m_vecViewOffset = 0x108;
 		constexpr ::std::ptrdiff_t m_viewPunchAngle = 0x3030;
-		constexpr ::std::ptrdiff_t m_zoomLevel = 0x33E0;
+		constexpr ::std::ptrdiff_t m_zoomLevel = 0x33E;
 		constexpr ::std::ptrdiff_t m_bReadyToDraw = 0x274;
 	} // namespace netvars
 	namespace signatures {
-		constexpr ::std::ptrdiff_t dwHudChatIsInChat = 0x80DE05; //"client.dll"+0x534132C + 0x20 ptr
+		constexpr ::std::ptrdiff_t dwHudChatIsInChat = 0x534132C; //"client.dll"+0x534132C + 0x21 ptr
 		constexpr ::std::ptrdiff_t m_szSteamName = 0x80DE05; //"engine.dll"+0x80DE05
 		constexpr ::std::ptrdiff_t anim_overlays = 0x2990;
-		constexpr ::std::ptrdiff_t clearHudWeapon = 0xDD69F178;
+		constexpr ::std::ptrdiff_t clearHudWeapon = 0xDE0DF178;
 		constexpr ::std::ptrdiff_t clientstate_choked_commands = 0x4D30;
 		constexpr ::std::ptrdiff_t clientstate_delta_ticks = 0x174;
 		constexpr ::std::ptrdiff_t clientstate_last_outgoing_command = 0x4D2C;
@@ -185,7 +185,7 @@ namespace Offset {
 		constexpr ::std::ptrdiff_t dwbSendPackets = 0xDD2D2;
 		constexpr ::std::ptrdiff_t dwppDirect3DDevice9 = 0xA62C0;
 		constexpr ::std::ptrdiff_t fakePrime = 0x6309B0;
-		constexpr ::std::ptrdiff_t find_hud_element = 0x22C326C0;
+		constexpr ::std::ptrdiff_t find_hud_element = 0x221F26C0;
 		constexpr ::std::ptrdiff_t force_update_spectator_glow = 0x3DB90A;
 		constexpr ::std::ptrdiff_t hud = 0x5237AE8;
 		constexpr ::std::ptrdiff_t interface_engine_cvar = 0x3FA9C;
